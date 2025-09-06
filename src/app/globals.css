@@ -39,9 +39,9 @@
   --color-card: var(--card);
   /* start of added color*/
   --color-neutral-dark: var(--neutral-dark);
-  --neutral-light: var(--neutral-light);
-  --success: var(--success);
-  --warning: var(--warning);
+  --color-neutral-light: var(--neutral-light);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   /* end of added color*/
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -51,13 +51,13 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --background: oklch(0.9789 0.0029 264.54);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.7767 0.1135 178.52);
+  --primary: oklch(77.613% 0.14176 175.639);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.646 0.1423 253.92);
   --secondary-foreground: oklch(0.7767 0.1135 178.52);
@@ -131,6 +131,30 @@
   body {
     @apply bg-background text-foreground;
   }
+
+    h1 {
+      @apply text-3xl md:text-4xl lg:text-5xl font-bold;
+    }
+  
+    h2 {
+      @apply text-2xl md:text-3xl lg:text-4xl font-semibold;
+    }
+  
+    h3 {
+      @apply text-xl md:text-2xl lg:text-3xl font-semibold;
+    }
+  
+    h4 {
+      @apply text-lg md:text-xl font-medium;
+    }
+  
+    h5 {
+      @apply text-base md:text-lg font-medium;
+    }
+  
+    h6 {
+      @apply text-sm md:text-base font-medium;
+    }
 }
 
 
@@ -150,5 +174,9 @@
   
     .link_style:hover::before {
       transform: scaleX(1);
+    }
+
+    .nav_icon{
+      @apply hover:text-primary hover:scale-105 duration-300
     }
 }

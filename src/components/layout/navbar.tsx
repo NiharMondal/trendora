@@ -1,11 +1,20 @@
 import React from "react";
-import { Search, User2, Heart, ShoppingBag } from "lucide-react";
+import { Search, User2, Heart, ShoppingBag, ShoppingCart } from "lucide-react";
 import TopBar from "./top-bar";
 import Container from "../common/container";
 import BigContainer from "../common/big-container";
 import Link from "next/link";
 import Image from "next/image";
-
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 const navItems = [
 	{ path: "/", label: "Home" },
 	{ path: "/men", label: "Men's" },
@@ -42,18 +51,79 @@ export default function Navbar() {
 							</li>
 						))}
 					</ul>
-					<ul className="flex items-center gap-x-4">
+					<ul className="flex items-center gap-x-4 *:text-muted">
 						<li>
-							<Search />
+							<Tooltip>
+								<TooltipTrigger>
+									<Search className="cursor-pointer hover:text-primary/80 hover:duration-300" />
+								</TooltipTrigger>
+								<TooltipContent>
+									<p className="font-mono tracking-wider">
+										Search
+									</p>
+								</TooltipContent>
+							</Tooltip>
 						</li>
 						<li>
-							<User2 />
+							<Popover>
+								<PopoverTrigger>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<User2 className="cursor-pointer hover:text-primary/80 hover:duration-300" />
+										</TooltipTrigger>
+										<TooltipContent>
+											<p className="font-mono tracking-wider">
+												My Account
+											</p>
+										</TooltipContent>
+									</Tooltip>
+								</PopoverTrigger>
+								<PopoverContent className="max-w-[200px]">
+									<ul className="px-5 py-3 space-y-1.5 ">
+										<li className="cursor-pointer hover:text-primary/70 tracking-wide">
+											<Link href={"/login"}>Sign In</Link>
+										</li>
+										<li className="cursor-pointer hover:text-primary/70 tracking-wide">
+											<Link href={"/register"}>
+												Register
+											</Link>
+										</li>
+										<li className="cursor-pointer hover:text-primary/70 tracking-wide">
+											<Link href={"/cart"}>
+												View Cart
+											</Link>
+										</li>
+									</ul>
+								</PopoverContent>
+							</Popover>
 						</li>
 						<li>
-							<Heart />
+							<Tooltip>
+								<TooltipTrigger>
+									<Link href={"/dashboard/wishlist"}>
+										<Heart className="cursor-pointer hover:text-primary/80 hover:duration-300" />
+									</Link>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p className="font-mono tracking-wider">
+										Wishlist
+									</p>
+								</TooltipContent>
+							</Tooltip>
 						</li>
 						<li>
-							<ShoppingBag />
+							<Tooltip>
+								<TooltipTrigger>
+									<Link href={"/cart"}>
+										<ShoppingCart className="cursor-pointer hover:text-primary/80 hover:duration-300" />
+									</Link>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p className="font-mono tracking-wider">
+										Cart
+									</p>
+								</TooltipContent>
+							</Tooltip>
 						</li>
 					</ul>
 				</nav>
