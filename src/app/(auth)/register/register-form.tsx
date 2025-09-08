@@ -2,7 +2,7 @@
 import TDInput from "@/components/form/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { login, register } from "@/form-schema/auth-schema";
+import { register } from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";

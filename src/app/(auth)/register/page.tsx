@@ -7,7 +7,7 @@ import RegisterForm from "./register-form";
 
 export default function RegisterPage() {
 	return (
-		<div className="py-24  bg-gradient-to-br md:bg-gradient-to-r from-primary/40 to-white">
+		<div className="py-24  bg-gradient-to-br md:bg-gradient-to-r from-primary/30 to-white">
 			<Container className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
 				{/** left side image */}
 				<div className="hidden md:block">
