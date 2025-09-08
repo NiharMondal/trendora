@@ -27,7 +27,7 @@ export default function Navbar() {
 		<header>
 			<BigContainer>
 				<TopBar />
-				<nav className="sticky top-0 left-0 right-0 flex items-center justify-between">
+				<nav className=" flex items-center justify-between">
 					<ul className="flex items-center gap-x-5">
 						<li className="-ml-5 overflow-hidden">
 							<Link href={"/"}>
