@@ -24,7 +24,7 @@ export default function HeroSection() {
 		customPaging: () => <div className="line-active"></div>,
 	};
 	return (
-		<div className="overflow-hidden pb-10 relative">
+		<div className="overflow-hidden relative">
 			<Slider {...settings}>
 				{heroSlide.map((item) => (
 					<div key={item.id} className="relative">
@@ -33,7 +33,7 @@ export default function HeroSection() {
 							height={700}
 							width={1200}
 							alt="collection-image"
-							className="min-w-full h-[300px] sm:h-[380px] md:h-[450px] xl:h-[540px] object-center object-cover"
+							className="min-w-full h-[300px] sm:h-[380px] md:h-[400px] lg:h-[420px] xl:h-[540px] object-center object-cover"
 						/>
 						<div className="absolute inset-0">
 							{item.id === "1" && (
@@ -51,9 +51,9 @@ export default function HeroSection() {
 										<Link href={item.link}>
 											<Button
 												size={"lg"}
-												className="cursor-pointer"
+												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
 											>
-												Discover now
+												Discover now!
 											</Button>
 										</Link>
 									</div>
@@ -76,9 +76,9 @@ export default function HeroSection() {
 										<Link href={item.link}>
 											<Button
 												size={"lg"}
-												className="cursor-pointer"
+												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
 											>
-												Discover now
+												Discover now!
 											</Button>
 										</Link>
 									</div>
@@ -99,9 +99,9 @@ export default function HeroSection() {
 										<Link href={item.link}>
 											<Button
 												size={"lg"}
-												className="cursor-pointer"
+												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
 											>
-												Discover now
+												Discover now!
 											</Button>
 										</Link>
 									</div>
