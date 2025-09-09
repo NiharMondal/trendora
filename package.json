@@ -25,7 +25,9 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
     "react-redux": "^9.2.0",
+    "react-slick": "^0.31.0",
     "redux-persist": "^6.0.0",
+    "slick-carousel": "^1.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.5"
@@ -36,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-slick": "^0.23.13",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",
