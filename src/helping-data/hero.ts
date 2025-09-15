@@ -18,12 +18,13 @@ export const heroSlide = [
 		short_description: "Here to bring your life style to the next level.",
 		link: "/categories/men",
 	},
+
 	{
-		id: "3",
-		image: heroSlideImage.kidsCollection,
-		title: "need-it-now",
+		id: "4",
+		image: heroSlideImage.winterCollection,
+		title: "winter is here!",
 		heading: "must-haves for the season",
-		short_description: "Contemporary, minimal and beautifully iconic.",
+		short_description: "Contemporary, minimal and stylish",
 		link: "/categories/kids",
 	},
 ];

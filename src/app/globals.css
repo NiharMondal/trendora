@@ -180,13 +180,6 @@
       @apply hover:text-primary hover:scale-105 duration-300
     }
 
-    .slick-slider > button::before{
-      display: none;
-    }
-    .slick-slider > button{
-      display: none;
-    }
-
     .slick-dots{
     text-align: center;
     width: 100%;
