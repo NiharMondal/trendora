@@ -27,10 +27,10 @@ export default function HeroSection() {
 		customPaging: () => <div className="line-active"></div>,
 	};
 	return (
-		<div className="overflow-hidden relative">
+		<React.Fragment>
 			<Slider {...settings}>
 				{heroSlide.map((item, index) => (
-					<div key={item.id} className="relative">
+					<div key={item.id}>
 						<Image
 							src={item.image}
 							height={700}
@@ -83,81 +83,10 @@ export default function HeroSection() {
 									</Link>
 								</div>
 							</div>
-							{/* {item.id === "1" && (
-								<div className="h-full flex items-center justify-start md:justify-around pl-5 ">
-									<div className="space-y-3.5 animated-section first-section">
-										<p className="uppercase text-xl font-bold">
-											{item.title}
-										</p>
-										<h1 className="capitalize max-w-xs md:max-w-lg">
-											{item.heading}
-										</h1>
-										<p className="text-muted tracking-wider max-w-sm md:max-w-full">
-											{item.short_description}
-										</p>
-										<Link href={item.link}>
-											<Button
-												size={"lg"}
-												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
-											>
-												Discover now!
-											</Button>
-										</Link>
-									</div>
-									<div></div>
-								</div>
-							)}
-							{item.id === "2" && (
-								<div className="h-full flex items-center justify-center xl:justify-around  pl-5">
-									<div></div>
-									<div className="space-y-3.5 text-neutral-light">
-										<p className="uppercase text-xl font-bold ">
-											{item.title}
-										</p>
-										<h1 className="capitalize max-w-xs ">
-											{item.heading}
-										</h1>
-										<p className="tracking-wider max-w-sm md:max-w-full">
-											{item.short_description}
-										</p>
-										<Link href={item.link}>
-											<Button
-												size={"lg"}
-												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
-											>
-												Discover now!
-											</Button>
-										</Link>
-									</div>
-								</div>
-							)}
-							{item.id === "3" && (
-								<div className="h-full flex items-center   justify-center  pl-5">
-									<div className="space-y-3.5 text-neutral-light text-center">
-										<p className="uppercase text-xl font-bold ">
-											{item.title}
-										</p>
-										<h1 className="capitalize max-w-sm">
-											{item.heading}
-										</h1>
-										<p className="tracking-wider max-w-sm md:max-w-full">
-											{item.short_description}
-										</p>
-										<Link href={item.link}>
-											<Button
-												size={"lg"}
-												className="cursor-pointer uppercase font-bold tracking-wider text-xs"
-											>
-												Discover now!
-											</Button>
-										</Link>
-									</div>
-								</div>
-							)} */}
 						</div>
 					</div>
 				))}
 			</Slider>
-		</div>
+		</React.Fragment>
 	);
 }

@@ -180,7 +180,7 @@
       @apply hover:text-primary hover:scale-105 duration-300
     }
 
-    .slick-dots{
+  .slick-dots{
     text-align: center;
     width: 100%;
     margin: 0;
@@ -190,6 +190,22 @@
     position: absolute !important;
     bottom: 8px !important;
     z-index: 6 !important;
+  }
+
+
+  .showcase .slick-slider .slick-track{
+      display: flex !important;
+      column-gap: 10px;
+  }
+  .showcase-slider .slick-dots{
+    text-align: center;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      position: absolute !important;
+      bottom: -40px !important;
+      z-index: 6;
   }
     .pagination-list{
       display: flex !important;
