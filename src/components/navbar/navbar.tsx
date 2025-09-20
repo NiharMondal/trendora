@@ -17,7 +17,5 @@ export default function Navbar() {
 		return () => window.removeEventListener("resize", checkMobile);
 	}, []);
 
-	return (
-		<Container>{isMobile ? <MobileNavbar /> : <DesktopNavbar />}</Container>
-	);
+	return isMobile ? <MobileNavbar /> : <DesktopNavbar />;
 }
