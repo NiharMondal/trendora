@@ -8,7 +8,7 @@ export default function Container({ children, className }: ContainerProps) {
 	return (
 		<div
 			className={cn(
-				"w-full px-5 lg:px-0  lg:max-w-3xl xl:max-w-7xl mx-auto",
+				"w-full px-5 lg:px-0  lg:max-w-4xl xl:max-w-6xl mx-auto",
 				className
 			)}
 		>

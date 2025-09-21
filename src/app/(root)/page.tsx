@@ -1,10 +1,17 @@
 import { Hero } from "@/components/home/hero";
-import Navbar from "@/components/navbar/navbar";
+import NewArrivals from "@/components/home/new-arrivals";
+import OfferSection from "@/components/home/offer";
+import Showcase from "@/components/home/showcase";
+import TrendingProduct from "@/components/home/trending-product";
 
 export default function Home() {
 	return (
 		<main>
 			<Hero />
+			<Showcase />
+			<NewArrivals />
+			<OfferSection />
+			<TrendingProduct />
 		</main>
 	);
 }

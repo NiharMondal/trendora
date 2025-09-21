@@ -1,18 +1,17 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import {
 	Carousel,
 	CarouselContent,
 	CarouselItem,
 } from "@/components/ui/carousel";
+
 import { heroSlide } from "@/helping-data/hero";
-import { cn } from "@/lib/utils";
-import Autoplay from "embla-carousel-autoplay";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { heroSlideImage } from "@/helping-data/image";
+
 export function Hero() {
 	return (
 		<Carousel
@@ -22,16 +21,16 @@ export function Hero() {
 		// 	}),
 		// ]}
 		>
-			<CarouselContent className="max-h-[600px]">
+			<CarouselContent>
 				{heroSlide.map((item, index) => (
 					<CarouselItem key={index} className="relative">
-						<div className="h-[500px] md:h-[650px] w-full overflow-hidden">
+						<div className="h-[550px] lg:h-[700px] w-full overflow-hidden ">
 							<Image
 								src={item.image}
 								width={1200}
 								height={600}
 								alt={item.heading}
-								className="w-full h-full object-center lg:object-center object-cover aspect-square sc"
+								className="w-full h-full object-center lg:object-center object-cover aspect-square moving"
 							/>
 						</div>
 

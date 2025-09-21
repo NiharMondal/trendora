@@ -60,9 +60,9 @@ export default function MobileNavbar() {
 						},
 					}}
 					animate={{ y: 0, opacity: 1 }}
-					className="absolute top-20 left-0 right-0 h-20  border-b"
+					className="absolute top-20 left-0 right-0 h-20  border-b z-50 bg-gray-100"
 				>
-					<div className="h-full flex items-center justify-between gap-x-5 p-5">
+					<div className="h-full flex items-center justify-between gap-x-5 p-5 z-50">
 						<div className="flex flex-1 items-center ring ring-primary/30 rounded-md justify-between ">
 							<input
 								type="text"
