@@ -1,5 +1,5 @@
 import Footer from "@/components/common/footer";
-import Navbar from "@/components/layout/navbar";
+import Navbar from "@/components/navbar/navbar";
 import React from "react";
 
 export default function RootPageLayout({
@@ -11,7 +11,7 @@ export default function RootPageLayout({
 		<section>
 			<Navbar />
 			{children}
-			<Footer />
+			{/* <Footer /> */}
 		</section>
 	);
 }

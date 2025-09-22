@@ -20,7 +20,7 @@ export const heroSlide = [
 	},
 
 	{
-		id: "4",
+		id: "3",
 		image: heroSlideImage.winterCollection,
 		title: "winter is here!",
 		heading: "must-haves for the season",

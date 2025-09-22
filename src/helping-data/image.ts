@@ -8,7 +8,10 @@ import womenCollection from "../assets/images/women.webp";
 import menCollection from "../assets/images/men.webp";
 import kidsCollection from "../assets/images/kids.webp";
 import winterCollection from "../assets/images/winter.webp";
-
+import offerBackground from "@/assets/images/offer.jpg";
+export const image = {
+	offerBackground,
+};
 export const socialIcon = {
 	facebook,
 	twitter,
