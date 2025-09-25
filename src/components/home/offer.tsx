@@ -6,11 +6,11 @@ import { Button } from "../ui/button";
 
 export default function OfferSection() {
 	return (
-		<div className="max-h-[400px] relative ">
+		<div className="h-[300px] md:h-[500px] lg:h-[600px] relative ">
 			<Image
 				src={image.offerBackground}
 				width={1200}
-				height={700}
+				height={400}
 				className="h-full w-full object-top object-cover"
 				alt="offer-image"
 			/>

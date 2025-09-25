@@ -1,3 +1,4 @@
+import FeaturedProduct from "@/components/home/featured-product";
 import { Hero } from "@/components/home/hero";
 import NewArrivals from "@/components/home/new-arrivals";
 import OfferSection from "@/components/home/offer";
@@ -12,6 +13,7 @@ export default function Home() {
 			<NewArrivals />
 			<OfferSection />
 			<TrendingProduct />
+			<FeaturedProduct />
 		</main>
 	);
 }
