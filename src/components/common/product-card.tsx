@@ -5,12 +5,38 @@ import Image from "next/image";
 import { heroSlideImage } from "@/helping-data/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Eye, Heart } from "lucide-react";
 
 export default function ProductCard() {
 	return (
 		<Card className="rounded-none p-0  shadow-none border-none group gap-2">
 			<CardHeader className="relative p-0">
-				<div className="relative h-[290px] border">
+				<div className="relative h-[290px] border ">
+					<div className="absolute right-0 top-0 overflow-hidden">
+						<div className="flex flex-col gap-y-2 pr-3 pt-3 translate-x-12 group-hover:translate-x-0 duration-300 ">
+							<Tooltip>
+								<TooltipTrigger className="bg-neutral-light size-9 rounded-full flex items-center justify-center text-neutral-dark/80">
+									<Heart />
+								</TooltipTrigger>
+								<TooltipContent side="left">
+									<p>Add to Wishlist</p>
+								</TooltipContent>
+							</Tooltip>
+							<Tooltip>
+								<TooltipTrigger className="bg-neutral-light size-9 rounded-full flex items-center justify-center text-neutral-dark/80">
+									<Eye />
+								</TooltipTrigger>
+								<TooltipContent side="left">
+									<p>Quick View</p>
+								</TooltipContent>
+							</Tooltip>
+						</div>
+					</div>
 					<Image
 						src={heroSlideImage.kidsCollection}
 						alt="image"
