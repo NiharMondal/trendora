@@ -4,11 +4,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Badge } from "../ui/badge";
 import Container from "../common/container";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Button } from "../ui/button";
 import { motion } from "motion/react";
 
