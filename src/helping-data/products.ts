@@ -1,0 +1,79 @@
+import { productsImage } from "./image";
+
+export const products = [
+	{
+		name: "Clothing and accessory boutiques for sale",
+		slug: "clothing-and-accessory",
+		basePrice: 43.67,
+		productVariants: [
+			{
+				size: "lg",
+				price: 32.54,
+				color: "Black",
+				stock: 45,
+				image: productsImage.black,
+			},
+			{
+				size: "md",
+				price: 42.54,
+				color: "Gray",
+				stock: 55,
+				image: productsImage.gray,
+			},
+			{
+				size: "sm",
+				price: 27.54,
+				color: "Silver",
+				stock: 15,
+				image: productsImage.silver,
+			},
+			{
+				size: "2xl",
+				price: 28.54,
+				color: "Red",
+				stock: 95,
+				image: productsImage.red,
+			},
+		],
+	},
+	{
+		name: " Lorem, ipsum dolor sit amet consectetur adipisicing elit. Minima, excepturi!",
+		slug: "lorem-ipsum-dolor",
+		basePrice: 32.67,
+		productVariants: [
+			{
+				size: "lg",
+				price: 32.54,
+				color: "Yellow",
+				stock: 55,
+				image: productsImage.yellow,
+			},
+			{
+				size: "md",
+				price: 42.54,
+				color: "Red",
+				stock: 78,
+				image: productsImage.red,
+			},
+			{
+				size: "sm",
+				price: 27.54,
+				color: "White",
+				stock: 20,
+				image: productsImage.white,
+			},
+			{
+				size: "xl",
+				price: 28.54,
+				color: "Gray",
+				stock: 55,
+				image: productsImage.gray,
+			},
+		],
+	},
+	{
+		name: "Lorem ipsum dolor sit amet.",
+		basePrice: 23.67,
+		slug: "amet-lorem",
+	},
+];
