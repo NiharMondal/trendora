@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "@/components/common/footer";
-
+import "react-photo-view/dist/react-photo-view.css";
 const geistSans = Geist({
 	variable: "--font-geist-sans",
 	subsets: ["latin"],

@@ -10,7 +10,7 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from "@/components/ui/carousel";
-import ProductCard from "../common/product-card";
+import ProductCard from "../product-card/product-card";
 import { Button } from "../ui/button";
 
 export default function TrendingProduct() {

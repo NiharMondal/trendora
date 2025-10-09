@@ -1,7 +1,7 @@
 import React from "react";
 import Container from "../common/container";
 
-import ProductCard from "../common/product-card";
+import ProductCard from "../product-card/product-card";
 import SectionHeader from "../common/section-header";
 import { products } from "@/helping-data/products";
 
