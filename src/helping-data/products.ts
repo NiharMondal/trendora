@@ -4,6 +4,37 @@ export const demoImages = [
 	"https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8ZHJlc3N8ZW58MHx8MHx8fDA%3D",
 	"https://images.unsplash.com/photo-1533659828870-95ee305cee3e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGRyZXNzfGVufDB8fDB8fHww",
 ];
+
+export const variants = [
+	{
+		size: "lg",
+		price: 32.54,
+		color: "Black",
+		stock: 45,
+		image: productsImage.black,
+	},
+	{
+		size: "md",
+		price: 42.54,
+		color: "Gray",
+		stock: 55,
+		image: productsImage.gray,
+	},
+	{
+		size: "sm",
+		price: 27.54,
+		color: "Silver",
+		stock: 15,
+		image: productsImage.silver,
+	},
+	{
+		size: "2xl",
+		price: 28.54,
+		color: "Red",
+		stock: 95,
+		image: productsImage.red,
+	},
+];
 export const products = [
 	{
 		name: "Clothing and accessory boutiques for sale",

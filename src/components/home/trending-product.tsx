@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import ProductCard from "../product-card/product-card";
 import { Button } from "../ui/button";
+import { products } from "@/helping-data/products";
 
 export default function TrendingProduct() {
 	const [api, setApi] = useState<CarouselApi>();
@@ -33,12 +34,12 @@ export default function TrendingProduct() {
 
 				<Carousel setApi={setApi} opts={{ align: "start" }}>
 					<CarouselContent>
-						{Array.from({ length: 10 }).map((_, index) => (
+						{products.map((product, index) => (
 							<CarouselItem
 								className="basis-1/2 lg:basis-1/3 xl:basis-1/4"
 								key={index}
 							>
-								<ProductCard />
+								<ProductCard product={product} />
 							</CarouselItem>
 						))}
 					</CarouselContent>
