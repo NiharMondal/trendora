@@ -96,8 +96,10 @@ export default function ProductDetails() {
 							))}
 						</div>
 					</div>
-
-					<Quantity />
+					<div className="space-y-2">
+						<p>Quantity</p>
+						<Quantity />
+					</div>
 
 					<Button
 						className="rounded-sm text-lg font-medium uppercase"
