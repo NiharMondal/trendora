@@ -1,7 +1,7 @@
 import React from "react";
 import Container from "../common/container";
 import SectionHeader from "../common/section-header";
-import ProductCard from "../common/product-card";
+import ProductCard from "../product-card/product-card";
 
 export default function FeaturedProduct() {
 	return (

@@ -1,8 +1,9 @@
 import React from "react";
 import Container from "../common/container";
 
-import ProductCard from "../common/product-card";
+import ProductCard from "../product-card/product-card";
 import SectionHeader from "../common/section-header";
+import { products } from "@/helping-data/products";
 
 export default function NewArrivals() {
 	return (
@@ -11,14 +12,9 @@ export default function NewArrivals() {
 				<SectionHeader title="New Arrivals" />
 
 				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
-					<ProductCard />
+					{products.map((item) => (
+						<ProductCard key={item.name} product={item} />
+					))}
 				</div>
 			</Container>
 		</div>

@@ -11,9 +11,9 @@ export default function Home() {
 			<Hero />
 			<Showcase />
 			<NewArrivals />
-			<OfferSection />
-			<TrendingProduct />
-			<FeaturedProduct />
+			{/* <OfferSection /> */}
+			{/* <TrendingProduct /> */}
+			{/* <FeaturedProduct /> */}
 		</main>
 	);
 }
