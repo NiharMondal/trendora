@@ -223,7 +223,9 @@
     transition: all .4s linear;
     animation: moving-around 20s alternate forwards infinite;
   }
-
+  .polygon{
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
   @keyframes moving-around {
     25%{
       transform: scale(1.05) ;
