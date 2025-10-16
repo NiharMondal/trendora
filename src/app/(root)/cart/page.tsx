@@ -109,12 +109,13 @@ export default function CartPage() {
 					<ul className="flex items-center justify-between ">
 						<li className="text-sm font-medium">Subtotal</li>
 						<li>
-							{" "}
-							<b>$533</b>{" "}
+							<b>$533</b>
 						</li>
 					</ul>
 
-					<Button className="w-full">Proceed to checkout</Button>
+					<Button className="w-full uppercase font-medium text-sm tracking-wider ">
+						Proceed to checkout
+					</Button>
 				</div>
 			</Container>
 		</div>
