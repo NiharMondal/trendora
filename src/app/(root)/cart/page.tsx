@@ -33,7 +33,7 @@ export default function CartPage() {
 	const [quantity, setQuantity] = useState(1);
 
 	return (
-		<div className="py-20">
+		<div className="py-10">
 			<Container className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 				<div className="col-span-full lg:col-span-2">
 					<Table>

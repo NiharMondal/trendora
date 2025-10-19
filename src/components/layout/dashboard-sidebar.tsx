@@ -16,35 +16,6 @@ import { useState } from "react";
 import { adminNavlink, customerNavlink } from "./dashboard-navlink";
 import Link from "next/link";
 
-// Menu items.
-const items = [
-	{
-		title: "Home",
-		url: "#",
-		icon: Home,
-	},
-	{
-		title: "Inbox",
-		url: "#",
-		icon: Inbox,
-	},
-	{
-		title: "Calendar",
-		url: "#",
-		icon: Calendar,
-	},
-	{
-		title: "Search",
-		url: "#",
-		icon: Search,
-	},
-	{
-		title: "Settings",
-		url: "#",
-		icon: Settings,
-	},
-];
-
 export function DashboardSidebar() {
 	const [user, setUser] = useState("admin");
 
