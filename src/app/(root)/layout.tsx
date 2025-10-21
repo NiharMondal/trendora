@@ -13,7 +13,7 @@ export default function RootPageLayout({
 			<Navbar />
 			<QuickLink />
 			{children}
-			{/* <Footer /> */}
+			<Footer />
 		</section>
 	);
 }
