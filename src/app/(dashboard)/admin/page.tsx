@@ -1,3 +1,5 @@
+import NewComments from "@/components/@dashboard/new-comments";
+import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
 import OrderChart from "@/components/charts/order-chart";
 import { cn } from "@/lib/utils";
@@ -48,6 +50,10 @@ export default function AdminHomePage() {
 
 				{/* top products  */}
 				<TopProducts />
+
+				<ProductsOverview />
+
+				<NewComments />
 			</div>
 		</div>
 	);
