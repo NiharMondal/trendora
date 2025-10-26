@@ -11,8 +11,8 @@ export default function DashboardLayout({
 		<SidebarProvider>
 			<DashboardSidebar />
 			<section className=" bg-white w-full">
-				<div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70">
-					<SidebarTrigger />
+				<div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
+					<SidebarTrigger className="cursor-pointer" />
 					<div className="">
 						<input
 							type="text"
@@ -25,8 +25,7 @@ export default function DashboardLayout({
 						<div>
 							<p>Your Balance</p>
 							<p>
-								{" "}
-								<strong>$12627</strong>{" "}
+								<strong>$12627</strong>
 							</p>
 						</div>
 					</div>

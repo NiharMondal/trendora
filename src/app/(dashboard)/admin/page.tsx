@@ -1,4 +1,5 @@
 import NewComments from "@/components/@dashboard/new-comments";
+import Orders from "@/components/@dashboard/orders";
 import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
 import OrderChart from "@/components/charts/order-chart";
@@ -52,7 +53,7 @@ export default function AdminHomePage() {
 				<TopProducts />
 
 				<ProductsOverview />
-
+				<Orders />
 				<NewComments />
 			</div>
 		</div>
