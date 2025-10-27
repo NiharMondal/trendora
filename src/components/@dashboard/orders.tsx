@@ -58,30 +58,38 @@ const invoices = [
 	},
 ];
 
-export default function TopProducts() {
+export default function Orders() {
 	return (
 		<div className="bg-white rounded-2xl shadow-2xl p-5 ">
-			<h4 className="mb-10 font-semibold text-black">Top Products</h4>
+			<h4 className="mb-10 font-semibold text-black">Orders</h4>
 			<Table>
+				<TableHeader>
+					<TableRow>
+						<TableHead>Product</TableHead>
+						<TableHead>Price</TableHead>
+						<TableHead className="text-right">
+							Delivery Date
+						</TableHead>
+					</TableRow>
+				</TableHeader>
 				<TableBody>
 					{invoices.map((invoice) => (
 						<TableRow key={invoice.invoice}>
-							<TableCell className="size-16 bg-gray-100 rounded-md">
-								<Image
-									src={productsImage.gray}
-									alt="Product"
-									height={40}
-									width={40}
-									className="size-12 object-center object-cover rounded-md"
-								/>
+							<TableCell className="flex gap-x-2 items-center">
+								<div className="flex items-center justify-center size-14 bg-gray-100 rounded-md">
+									<Image
+										src={productsImage.gray}
+										alt="Product"
+										height={40}
+										width={40}
+										className="size-10 object-center object-cover rounded-md"
+									/>
+								</div>
+								<p>Product name here</p>
 							</TableCell>
-							<TableCell className="font-semibold text-base">
-								Product name here
-							</TableCell>
-							<TableCell>{invoice.paymentMethod}</TableCell>
-							<TableCell className="text-right">
-								{invoice.totalAmount}
-							</TableCell>
+
+							<TableCell>231</TableCell>
+							<TableCell className="text-right">20 nov</TableCell>
 						</TableRow>
 					))}
 				</TableBody>

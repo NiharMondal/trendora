@@ -1,7 +1,5 @@
 "use client";
 
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
-
 import {
 	Sidebar,
 	SidebarContent,
@@ -11,13 +9,20 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useState } from "react";
+import React, { useState } from "react";
 import { adminNavlink, customerNavlink } from "./dashboard-navlink";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function DashboardSidebar() {
+	const pathname = usePathname();
 	const [user, setUser] = useState("admin");
+	console.log(pathname);
 
 	let label = user === "admin" ? "Admin Dashboard" : "Customer Dashboard";
 	let navLink = user === "admin" ? adminNavlink : customerNavlink;
@@ -25,19 +30,62 @@ export function DashboardSidebar() {
 		<Sidebar>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>{label}</SidebarGroupLabel>
+					<SidebarGroupLabel className="mb-4">
+						{label}
+					</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{navLink.map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild>
-										<Link href={item.url}>
-											<item.icon />
-											<span>{item.title}</span>
-										</Link>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
+							{navLink.map((nav) => {
+								return (
+									<React.Fragment key={nav.title}>
+										{nav.title && nav.url ? (
+											<SidebarMenuItem>
+												<SidebarMenuButton
+													asChild
+													className={cn(
+														nav.url === pathname
+															? "bg-accent text-accent-foreground"
+															: ""
+													)}
+												>
+													<Link href={nav.url}>
+														{nav.icon && (
+															<nav.icon />
+														)}
+														{nav.title}
+													</Link>
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										) : (
+											<SidebarMenuItem>
+												<SidebarMenuButton
+													tooltip={nav.title}
+												>
+													{nav.icon && <nav.icon />}
+													{nav.title}
+												</SidebarMenuButton>
+												<SidebarMenuSub>
+													{nav?.children?.map(
+														(sub) => (
+															<SidebarMenuSubItem
+																key={sub.name}
+															>
+																<SidebarMenuSubButton
+																	href={
+																		sub.url
+																	}
+																>
+																	{sub.name}
+																</SidebarMenuSubButton>
+															</SidebarMenuSubItem>
+														)
+													)}
+												</SidebarMenuSub>
+											</SidebarMenuItem>
+										)}
+									</React.Fragment>
+								);
+							})}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>
