@@ -59,7 +59,11 @@ export function DashboardSidebar() {
 										) : (
 											<SidebarMenuItem>
 												<SidebarMenuButton
-													tooltip={nav.title}
+													className={cn(
+														nav.url === pathname
+															? "bg-accent text-accent-foreground"
+															: ""
+													)}
 												>
 													{nav.icon && <nav.icon />}
 													{nav.title}
@@ -68,14 +72,20 @@ export function DashboardSidebar() {
 													{nav?.children?.map(
 														(sub) => (
 															<SidebarMenuSubItem
-																key={sub.name}
+																key={sub?.title}
 															>
 																<SidebarMenuSubButton
 																	href={
-																		sub.url
+																		sub?.url
 																	}
+																	className={cn(
+																		sub?.url ===
+																			pathname
+																			? "bg-accent text-accent-foreground"
+																			: ""
+																	)}
 																>
-																	{sub.name}
+																	{sub.title}
 																</SidebarMenuSubButton>
 															</SidebarMenuSubItem>
 														)

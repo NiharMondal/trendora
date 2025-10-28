@@ -15,8 +15,9 @@ import {
 	Coffee,
 } from "lucide-react";
 type TChildren = {
-	name: string;
+	title: string;
 	url: string;
+	index?: boolean;
 };
 type TSidebarLink = {
 	title: string;
@@ -30,24 +31,28 @@ export const adminNavlink: TSidebarLink[] = [
 		title: "Products",
 		icon: ShoppingCart,
 		children: [
-			{ name: "Add Product", url: "/admin/add-product" },
-			{ name: "Product List", url: "/admin/product-list" },
+			{ title: "Add Product", url: "/admin/add-product", index: true },
+			{ title: "Product List", url: "/admin/product-list" },
 		],
 	},
 	{
 		title: "Category",
 		icon: Layers,
 		children: [
-			{ name: "Category List", url: "/admin/category-list" },
-			{ name: "New Category", url: "/admin/new-category" },
+			{
+				title: "Category List",
+				url: "/admin/category-list",
+				index: true,
+			},
+			{ title: "New Category", url: "/admin/new-category" },
 		],
 	},
 	{
 		title: "Order History",
 		icon: FilePlus,
 		children: [
-			{ name: "Order List", url: "/admin/order-list" },
-			{ name: "Order Details", url: "/admin/order-details" },
+			{ title: "Order List", url: "/admin/order-list", index: true },
+			{ title: "Order Details", url: "/admin/order-details" },
 		],
 	},
 	{

@@ -30,7 +30,7 @@ export default function DashboardLayout({
 						</div>
 					</div>
 				</div>
-				<div className="p-5">{children}</div>
+				<div className="p-5 bg-neutral-light">{children}</div>
 			</section>
 		</SidebarProvider>
 	);
