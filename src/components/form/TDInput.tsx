@@ -9,6 +9,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { UseFormReturn, FieldValues, Path } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 type TDInputProps<T extends FieldValues> = {
 	form: UseFormReturn<T>;
@@ -18,6 +19,7 @@ type TDInputProps<T extends FieldValues> = {
 	type?: string;
 	description?: string;
 	disabled?: boolean;
+	required?: boolean;
 };
 
 export default function TDInput<T extends FieldValues>({
@@ -28,6 +30,7 @@ export default function TDInput<T extends FieldValues>({
 	description,
 	type = "text",
 	disabled,
+	required,
 }: TDInputProps<T>) {
 	return (
 		<FormField
@@ -35,7 +38,15 @@ export default function TDInput<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>{label}</FormLabel>
+					<FormLabel>
+						<span
+							className={cn(
+								required ? "relative required-label" : ""
+							)}
+						>
+							{label}
+						</span>
+					</FormLabel>
 					<FormControl>
 						<Input
 							type={type}

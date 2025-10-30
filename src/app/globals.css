@@ -226,6 +226,16 @@
   .polygon{
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
+
+  .required-label::after{
+    content: "*";
+    position: absolute;
+    top: 0;
+    right: -10;
+    
+    color: red;
+
+  }
   @keyframes moving-around {
     25%{
       transform: scale(1.05) ;
