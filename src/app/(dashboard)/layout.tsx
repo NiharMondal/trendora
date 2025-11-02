@@ -10,7 +10,7 @@ export default function DashboardLayout({
 	return (
 		<SidebarProvider>
 			<DashboardSidebar />
-			<section className=" bg-white w-full">
+			<section className="w-full">
 				<div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
 					<SidebarTrigger className="cursor-pointer" />
 					<div className="">

@@ -33,7 +33,10 @@ export const createProductSchema = z.object({
 		.number({ error: "Base price is required" })
 		.min(1, "Price should be positive")
 		.max(10000, "Price should be less than 10000"),
-	discountPrice: z.coerce.number().optional(),
+	discountPrice: z
+		.union([z.coerce.number().min(0).max(10000), z.literal("")])
+		.optional()
+		.transform((val) => (val === "" || 0 ? null : val)),
 	stockQuantity: z.coerce
 		.number({ error: "Stock quantity is required" })
 		.positive("Quantity should be positive")
@@ -44,8 +47,9 @@ export const createProductSchema = z.object({
 		.string({ error: "Category ID is required" })
 		.nonempty("Category can not be empty")
 		.trim(),
+	isFeatured: z.boolean(),
 	variants: z.array(productVariant).optional(),
 	images: z.array(productImage).min(1, "Provide at least 1 image"),
 });
 
-export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type CreateProductFormValues = z.infer<typeof createProductSchema>;

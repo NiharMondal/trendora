@@ -34,7 +34,7 @@
     "react-photo-view": "^1.2.7",
     "react-redux": "^9.2.0",
     "react-slick": "^0.31.0",
-    "react-smart-rating": "^1.2.0",
+    "react-smart-rating": "^3.0.0",
     "recharts": "^3.2.1",
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",

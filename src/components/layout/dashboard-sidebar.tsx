@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils";
 export function DashboardSidebar() {
 	const pathname = usePathname();
 	const [user, setUser] = useState("admin");
-	console.log(pathname);
 
 	let label = user === "admin" ? "Admin Dashboard" : "Customer Dashboard";
 	let navLink = user === "admin" ? adminNavlink : customerNavlink;
@@ -75,9 +74,7 @@ export function DashboardSidebar() {
 																key={sub?.title}
 															>
 																<SidebarMenuSubButton
-																	href={
-																		sub?.url
-																	}
+																	asChild
 																	className={cn(
 																		sub?.url ===
 																			pathname
@@ -85,7 +82,15 @@ export function DashboardSidebar() {
 																			: ""
 																	)}
 																>
-																	{sub.title}
+																	<Link
+																		href={
+																			sub?.url
+																		}
+																	>
+																		{
+																			sub.title
+																		}
+																	</Link>
 																</SidebarMenuSubButton>
 															</SidebarMenuSubItem>
 														)

@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import {
 	createProductSchema,
-	CreateProductInput,
+	CreateProductFormValues,
 } from "@/form-schema/product-schema";
 import TDInput from "@/components/form/TDInput";
 import TDSelect from "@/components/form/TDSelect";
@@ -13,17 +13,35 @@ import TDTextArea from "@/components/form/TDTextArea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useCreateProductMutation } from "@/redux/api/productApi";
+import { toast } from "sonner";
+import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
+import TDCheckbox from "@/components/form/TDCheckbox";
+import { productSizes } from "@/helping-data/products";
 
 export default function ProductForm() {
+	const { data: categories } = useAllCategoryQuery(undefined);
+
+	const categoryOption = categories?.result?.map((category) => {
+		return {
+			label: category.name,
+			value: category.id,
+		};
+	});
+
+	const [createProduct] = useCreateProductMutation();
 	const form = useForm({
 		resolver: zodResolver(createProductSchema),
 		defaultValues: {
 			name: "",
-			basePrice: 20,
+			basePrice: 0,
+			discountPrice: "",
 			categoryId: "",
 			description: "",
 			stockQuantity: 200,
-			variants: [{ stock: 0, price: 0, color: "Blue", size: "" }],
+			isFeatured: false,
+
+			variants: [{ stock: 0, price: 0, color: "", size: "" }],
 			images: [{ isMain: false, url: "" }],
 		},
 	});
@@ -58,15 +76,21 @@ export default function ProductForm() {
 		setValue("images", updatedImages);
 	};
 
-	const createProduct = async (values: CreateProductInput) => {
-		console.log("Final product data:", values);
+	const handleCreateProduct = async (values: CreateProductFormValues) => {
+		try {
+			await createProduct(values).unwrap();
+			toast.success("Product created successfully");
+		} catch (error: any) {
+			console.log(error);
+			toast.error(error?.data.message);
+		}
 	};
 
 	return (
 		<Form {...form}>
 			<form
 				className="grid grid-cols-1 md:grid-cols-2 gap-5"
-				onSubmit={handleSubmit(createProduct)}
+				onSubmit={handleSubmit(handleCreateProduct)}
 			>
 				<div className="bg-white rounded-2xl shadow-lg p-5 space-y-5">
 					<TDInput
@@ -102,7 +126,7 @@ export default function ProductForm() {
 						placeholder="Select category"
 						className="w-full"
 						required
-						options={[{ label: "Nihar", value: "nihar" }]}
+						options={categoryOption}
 					/>
 					<TDTextArea
 						form={form}
@@ -110,6 +134,13 @@ export default function ProductForm() {
 						name="description"
 						placeholder="Write description here..."
 						required
+					/>
+
+					<TDCheckbox
+						form={form}
+						name="isFeatured"
+						label="Featured Product"
+						description="Enable this to mark as a featured item"
 					/>
 				</div>
 
@@ -141,11 +172,13 @@ export default function ProductForm() {
 								className="border p-4 rounded-lg space-y-3"
 							>
 								<div className="grid grid-cols-2 gap-4">
-									<TDInput
+									<TDSelect
 										form={form}
 										name={`variants.${index}.size`}
 										label="Size"
-										placeholder="M, L, XL"
+										placeholder="Select Size"
+										options={productSizes}
+										className="w-full"
 										required
 									/>
 									<TDInput
@@ -188,9 +221,14 @@ export default function ProductForm() {
 					</div>
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">
-								Product Images
-							</h3>
+							<div>
+								<h3 className="text-lg font-semibold">
+									Product Images
+								</h3>
+								<p className="text-xs text-muted-foreground">
+									Provide at least one image
+								</p>
+							</div>
 							<Button
 								type="button"
 								variant="outline"

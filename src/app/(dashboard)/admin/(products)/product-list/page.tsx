@@ -13,7 +13,6 @@ import { Plus } from "lucide-react";
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -31,7 +30,7 @@ export default function ProductList() {
 					unique ID, which you can rely on to find the exact product
 					you need.
 				</p>
-				<div className="md:flex items-center justify-between gap-x-5">
+				<div className="flex flex-col md:flex-row items-center justify-between gap-3">
 					<div className="flex gap-x-4 items-center">
 						<p>Showing</p>
 						<Select>
