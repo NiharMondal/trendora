@@ -22,7 +22,7 @@ export default function DashboardLayout({
 					</div>
 					<div className="flex items-center gap-x-4 xl:gap-x-10">
 						<Bell />
-						<div>
+						<div className="hidden md:block">
 							<p>Your Balance</p>
 							<p>
 								<strong>$12627</strong>

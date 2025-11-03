@@ -2,10 +2,10 @@ import z from "zod";
 
 //product variant
 const productVariant = z.object({
-	size: z.string({ error: "Variant size is required" }).trim().optional(),
-	color: z.string({ error: "Variant color is required" }).trim().optional(),
-	stock: z.coerce.number({ error: "Variant stock is required" }).optional(),
-	price: z.coerce.number({ error: "Variant price is required" }).optional(),
+	size: z.string({ error: "Variant size is required" }).trim(),
+	color: z.string({ error: "Variant color is required" }).lowercase().trim(),
+	stock: z.coerce.number({ error: "Variant stock is required" }),
+	price: z.coerce.number({ error: "Variant price is required" }),
 });
 
 //product image

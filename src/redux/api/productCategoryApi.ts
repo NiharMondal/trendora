@@ -23,11 +23,22 @@ export const categoryCategoryApi = baseApi.injectEndpoints({
 		}),
 
 		// get all categories
-		allCategory: builder.query<TServerResponse<TCategory[]>, void>({
-			query: () => {
+		allCategory: builder.query<
+			TServerResponse<TCategory[]>,
+			Record<string, string>
+		>({
+			query: (query) => {
+				const params = new URLSearchParams();
+
+				Object.entries(query).forEach(([Key, value]) => {
+					if (value?.trim().length > 0) {
+						params.append(Key, value);
+					}
+				});
 				return {
 					url: "/categories",
 					method: "GET",
+					params,
 				};
 			},
 			providesTags: ["categories"],
