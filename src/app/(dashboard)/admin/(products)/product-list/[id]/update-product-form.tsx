@@ -19,7 +19,7 @@ import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
 import TDCheckbox from "@/components/form/TDCheckbox";
 import { productSizes } from "@/helping-data/products";
 
-export default function ProductForm() {
+export default function UpdateProductForm() {
 	const { data: categories } = useAllCategoryQuery({});
 
 	const categoryOption = categories?.result?.map((category) => {

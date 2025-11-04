@@ -30,15 +30,17 @@ import { useDebounce } from "use-debounce";
 import { Edit, Eye, Trash } from "lucide-react";
 import Pagination from "@/components/common/pagination";
 import { toast } from "sonner";
+import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
+import { cn } from "@/lib/utils";
 
 export default function ProductTable() {
 	const [currentPage, setCurrentPage] = useState(1);
-	const [limit, setLimit] = useState("");
+	const [limit, setLimit] = useState("10");
 	const [search, setSearch] = useState("");
 	const [value] = useDebounce(search, 1000);
 
 	const [deleteProduct] = useDeleteProductMutation();
-	const { data: products } = useAllProductsQuery({
+	const { data: products, isLoading } = useAllProductsQuery({
 		search: value,
 		limit: limit,
 		page: currentPage.toString(),
@@ -52,18 +54,26 @@ export default function ProductTable() {
 			toast.error(error?.data?.message);
 		}
 	};
+
+	if (isLoading) {
+		return (
+			<div className="mt-5">
+				<TableLoadingSkeleton />
+			</div>
+		);
+	}
 	return (
-		<div className="space-y-5">
+		<React.Fragment>
 			<div className="flex flex-col md:flex-row items-center justify-between gap-3">
-				<div className="flex items-center gap-x-10 ">
-					<div className="flex gap-x-4 items-center">
-						<p>Showing</p>
+				<div className="flex items-center justify-between w-full md:max-w-fit">
+					<div className="flex gap-x-2 items-center ">
+						<p className="text-xs text-muted-foreground">Showing</p>
 						<Select onValueChange={(value) => setLimit(value)}>
 							<SelectTrigger className="w-[120px]">
-								<SelectValue placeholder="Select Limit" />
+								<SelectValue placeholder="Limit" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="10">10</SelectItem>
+								<SelectItem value="15">15</SelectItem>
 								<SelectItem value="20">20</SelectItem>
 								<SelectItem value="30">30</SelectItem>
 							</SelectContent>
@@ -96,11 +106,22 @@ export default function ProductTable() {
 						<TableHead>Price</TableHead>
 						<TableHead>Quantity</TableHead>
 						<TableHead>Stock</TableHead>
-						<TableHead className="text-right">Action</TableHead>
+						<TableHead>Featured Product</TableHead>
+						<TableHead className="text-center w-[160px]">
+							Action
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					{products?.result.map((p) => {
+						let stock = "";
+						if (p.stockQuantity > 50) {
+							stock = "Available";
+						} else if (p.stockQuantity < 10) {
+							stock = "Out of Stock";
+						} else {
+							stock = "Low Stock";
+						}
 						return (
 							<TableRow key={p.id}>
 								<TableCell className="flex items-center gap-x-2">
@@ -117,14 +138,33 @@ export default function ProductTable() {
 								</TableCell>
 								<TableCell>{p.basePrice}</TableCell>
 								<TableCell>{p.stockQuantity}</TableCell>
-								<TableCell>Low Quantity</TableCell>
+
+								<TableCell>
+									<span
+										className={cn(
+											"text-xs font-medium",
+											p.stockQuantity > 50
+												? "text-primary "
+												: p.stockQuantity < 1
+												? "text-destructive"
+												: " text-cyan-700"
+										)}
+									>
+										{stock}
+									</span>
+								</TableCell>
+								<TableCell>
+									{p.isFeatured ? "Yes" : "No"}
+								</TableCell>
 								<TableCell className="text-right space-x-2">
 									<Button variant={"secondary"}>
 										<Eye />
 									</Button>
-									<Button variant={"outline"}>
-										<Edit />
-									</Button>
+									<Link href={`/admin/product-list/${p.id}`}>
+										<Button variant={"outline"}>
+											<Edit />
+										</Button>
+									</Link>
 									<Button
 										variant={"destructive"}
 										onClick={() => handleDelete(p.id)}
@@ -149,6 +189,6 @@ export default function ProductTable() {
 					/>
 				</div>
 			)}
-		</div>
+		</React.Fragment>
 	);
 }

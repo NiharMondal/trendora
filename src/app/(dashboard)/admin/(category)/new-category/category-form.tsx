@@ -7,12 +7,23 @@ import {
 	CategoryInput,
 	createCategorySchema,
 } from "@/form-schema/category-schema";
-import { useCreateCategoryMutation } from "@/redux/api/productCategoryApi";
+import {
+	useAllCategoryQuery,
+	useCreateCategoryMutation,
+} from "@/redux/api/productCategoryApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 export default function CategoryForm() {
+	const { data: categories } = useAllCategoryQuery({});
+	const categoryOptions = categories?.result.map((cat) => {
+		return {
+			label: cat.name,
+			value: cat.id,
+		};
+	});
+
 	const [createCategory] = useCreateCategoryMutation();
 	const form = useForm<CategoryInput>({
 		resolver: zodResolver(createCategorySchema),
@@ -26,9 +37,9 @@ export default function CategoryForm() {
 		try {
 			await createCategory(values).unwrap();
 			toast.success("Category created successfully");
+			form.reset();
 		} catch (error: any) {
 			toast.error(error?.data?.message);
-			console.log(error);
 		}
 	};
 	return (
@@ -43,6 +54,7 @@ export default function CategoryForm() {
 					name="parentId"
 					label="Parent ID"
 					className="w-full"
+					options={categoryOptions}
 				/>
 
 				<Button type="submit">+ Add Category</Button>

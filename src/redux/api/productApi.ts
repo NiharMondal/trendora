@@ -5,9 +5,8 @@ import { TProduct } from "@/app/types/product.types";
 export const productApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({
 		// create product
-		createProduct: builder.mutation({
+		createProduct: builder.mutation<TServerResponse<TProduct>, any>({
 			query: (payload) => {
-				console.log(payload);
 				return {
 					url: "/products",
 					method: "POST",
@@ -30,6 +29,7 @@ export const productApi = baseApi.injectEndpoints({
 						params.append(Key, value);
 					}
 				});
+
 				return {
 					url: "/products",
 					method: "GET",

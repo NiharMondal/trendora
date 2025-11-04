@@ -45,7 +45,7 @@ export const categoryCategoryApi = baseApi.injectEndpoints({
 		}),
 
 		//get category by ID
-		categoryById: builder.query<TServerResponse<TCategory[]>, string>({
+		categoryById: builder.query<TServerResponse<TCategory>, string>({
 			query: (id) => ({
 				url: `/categories/${id}`,
 				method: "GET",
@@ -55,7 +55,7 @@ export const categoryCategoryApi = baseApi.injectEndpoints({
 
 		// update category
 		updateCategory: builder.mutation<
-			TServerResponse<TCategory[]>,
+			TServerResponse<TCategory>,
 			{ payload: Partial<TCategory>; id: string }
 		>({
 			query: ({ payload, id }) => ({

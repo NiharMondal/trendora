@@ -25,13 +25,13 @@ export default function OrderListPage() {
 	return (
 		<div className="space-y-4">
 			<h4>Order List</h4>
-			<div className="bg-white p-8 rounded-2xl shadow-md space-y-5">
-				<div className="flex flex-col md:flex-row items-center justify-between gap-3">
-					<div className="flex gap-x-4 items-center">
-						<p>Showing</p>
+			<div className="bg-white p-5 rounded-2xl shadow-md space-y-5">
+				<div className="flex  items-center justify-between gap-3">
+					<div className="flex gap-x-2 items-center">
+						<p className="text-xs text-muted-foreground">Showing</p>
 						<Select>
-							<SelectTrigger className="w-[120px]">
-								<SelectValue placeholder="10" />
+							<SelectTrigger className="w-[80px] md:w-[120px]">
+								<SelectValue placeholder="Limit" />
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="10" defaultValue={"10"}>

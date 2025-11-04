@@ -28,13 +28,15 @@ import {
 } from "@/redux/api/productCategoryApi";
 import { toast } from "sonner";
 import Pagination from "@/components/common/pagination";
+import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
+import UpdateCategory from "./update-category";
 export default function CategoryTable() {
 	const [currentPage, setCurrentPage] = useState(1);
-	const [limit, setLimit] = useState("");
+	const [limit, setLimit] = useState("10");
 	const [search, setSearch] = useState("");
 	const [value] = useDebounce(search, 1000);
 
-	const { data: categories } = useAllCategoryQuery({
+	const { data: categories, isLoading } = useAllCategoryQuery({
 		search: value,
 		limit: limit,
 		page: currentPage.toString(),
@@ -50,18 +52,26 @@ export default function CategoryTable() {
 			toast.error(error?.data?.message);
 		}
 	};
+
+	if (isLoading) {
+		return (
+			<div className="mt-5">
+				<TableLoadingSkeleton />
+			</div>
+		);
+	}
 	return (
 		<React.Fragment>
 			<div className="flex flex-col md:flex-row items-center justify-between gap-3">
 				<div className="flex items-center gap-x-10 ">
-					<div className="flex gap-x-4 items-center">
-						<p>Showing</p>
+					<div className="flex gap-x-2 items-center">
+						<p className="text-xs text-muted-foreground">Showing</p>
 						<Select onValueChange={(value) => setLimit(value)}>
 							<SelectTrigger className="w-[120px]">
-								<SelectValue placeholder="Select Limit" />
+								<SelectValue placeholder="Limit" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="10">10</SelectItem>
+								<SelectItem value="15">15</SelectItem>
 								<SelectItem value="20">20</SelectItem>
 								<SelectItem value="30">30</SelectItem>
 							</SelectContent>
@@ -93,7 +103,9 @@ export default function CategoryTable() {
 					<TableRow className="bg-neutral-light">
 						<TableHead>Name</TableHead>
 						<TableHead>Status</TableHead>
-						<TableHead className="text-right">Action</TableHead>
+						<TableHead className="text-center w-[100px]">
+							Action
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -106,12 +118,9 @@ export default function CategoryTable() {
 								{cat.isDeleted ? "Inactive" : "Active"}
 							</TableCell>
 							<TableCell className="text-right space-x-2">
-								<Button variant={"secondary"}>
-									<Eye />
-								</Button>
-								<Button variant={"outline"}>
-									<Edit />
-								</Button>
+								{/** update category modal */}
+								<UpdateCategory id={cat.id} />
+								{/** Delete button */}
 								<Button
 									variant={"destructive"}
 									onClick={() => handleDelete(cat.id)}
