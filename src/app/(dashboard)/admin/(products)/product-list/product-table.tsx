@@ -32,6 +32,7 @@ import Pagination from "@/components/common/pagination";
 import { toast } from "sonner";
 import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import { cn } from "@/lib/utils";
+import NoDataFound from "@/components/common/no-data-found";
 
 export default function ProductTable() {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +47,7 @@ export default function ProductTable() {
 		page: currentPage.toString(),
 	});
 
+	console.log(products);
 	const handleDelete = async (id: string) => {
 		try {
 			await deleteProduct(id).unwrap();
@@ -61,6 +63,10 @@ export default function ProductTable() {
 				<TableLoadingSkeleton />
 			</div>
 		);
+	}
+
+	if (!products?.result.length) {
+		return <NoDataFound />;
 	}
 	return (
 		<React.Fragment>
@@ -113,7 +119,7 @@ export default function ProductTable() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{products?.result.map((p) => {
+					{products?.result.map((p, index) => {
 						let stock = "";
 						if (p.stockQuantity > 50) {
 							stock = "Available";
@@ -122,16 +128,17 @@ export default function ProductTable() {
 						} else {
 							stock = "Low Stock";
 						}
+
 						return (
 							<TableRow key={p.id}>
 								<TableCell className="flex items-center gap-x-2">
 									<div className="size-12">
 										<Image
-											src={productsImage.black}
+											src={p?.images[0]?.url}
 											alt="product-image"
 											width={20}
 											height={20}
-											className="h-full w-full object-top object-cover rounded "
+											className="h-full w-full object-top object-cover rounded scale-90 "
 										/>
 									</div>
 									<p className="font-semibold">{p.name}</p>

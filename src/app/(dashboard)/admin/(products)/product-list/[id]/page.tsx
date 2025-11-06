@@ -2,6 +2,7 @@
 import React, { use } from "react";
 
 import GeneralInfo from "./general-info";
+import UpdateProductForm from "./update-product-form";
 
 export default function UpdateProductPage({
 	params,
@@ -14,9 +15,10 @@ export default function UpdateProductPage({
 		<div className="space-y-4">
 			<h4>Update Product</h4>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+			{/* <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 				<GeneralInfo id={id} />
-			</div>
+			</div> */}
+			<UpdateProductForm productId={id} />
 		</div>
 	);
 }

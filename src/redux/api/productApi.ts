@@ -60,13 +60,16 @@ export const productApi = baseApi.injectEndpoints({
 		// update product
 		updateProduct: builder.mutation<
 			TServerResponse<TProduct>,
-			{ payload: Partial<TProduct>; id: string }
+			{ payload: any; id: string }
 		>({
-			query: ({ payload, id }) => ({
-				url: `/products/${id}`,
-				method: "PATCH",
-				body: payload,
-			}),
+			query: ({ payload, id }) => {
+				console.log(payload);
+				return {
+					url: `/products/${id}`,
+					method: "PATCH",
+					body: payload,
+				};
+			},
 			invalidatesTags: ["products"],
 		}),
 		// delete product
