@@ -10,7 +10,7 @@ export default function DashboardLayout({
 	return (
 		<SidebarProvider>
 			<DashboardSidebar />
-			<section className=" bg-white w-full">
+			<section className="w-full">
 				<div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
 					<SidebarTrigger className="cursor-pointer" />
 					<div className="">
@@ -22,7 +22,7 @@ export default function DashboardLayout({
 					</div>
 					<div className="flex items-center gap-x-4 xl:gap-x-10">
 						<Bell />
-						<div>
+						<div className="hidden md:block">
 							<p>Your Balance</p>
 							<p>
 								<strong>$12627</strong>
@@ -30,7 +30,7 @@ export default function DashboardLayout({
 						</div>
 					</div>
 				</div>
-				<div className="p-5">{children}</div>
+				<div className="p-5 bg-neutral-light">{children}</div>
 			</section>
 		</SidebarProvider>
 	);

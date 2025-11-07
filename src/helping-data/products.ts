@@ -112,3 +112,11 @@ export const products = [
 		slug: "amet-lorem",
 	},
 ];
+
+export const productSizes = [
+	{ label: "S", value: "S" },
+	{ label: "M", value: "M" },
+	{ label: "L", value: "L" },
+	{ label: "XL", value: "XL" },
+	{ label: "2XL", value: "2XL" },
+];

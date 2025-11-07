@@ -14,6 +14,7 @@ import {
 	SelectValue,
 } from "../ui/select";
 import { UseFormReturn, FieldValues, Path } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 type Option = {
 	label: string;
@@ -26,6 +27,8 @@ type TDSelectProps<T extends FieldValues> = {
 	label: string;
 	placeholder?: string;
 	options?: Option[];
+	className?: string;
+	required?: boolean;
 };
 
 export default function TDSelect<T extends FieldValues>({
@@ -34,6 +37,8 @@ export default function TDSelect<T extends FieldValues>({
 	label,
 	placeholder = "Select an option",
 	options = [],
+	className,
+	required,
 }: TDSelectProps<T>) {
 	return (
 		<FormField
@@ -41,13 +46,21 @@ export default function TDSelect<T extends FieldValues>({
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>{label}</FormLabel>
+					<FormLabel>
+						<span
+							className={cn(
+								required ? "relative required-label" : ""
+							)}
+						>
+							{label}
+						</span>
+					</FormLabel>
 					<FormControl>
 						<Select
 							value={field.value}
 							onValueChange={field.onChange}
 						>
-							<SelectTrigger>
+							<SelectTrigger className={cn(className)}>
 								<SelectValue placeholder={placeholder} />
 							</SelectTrigger>
 							<SelectContent>
