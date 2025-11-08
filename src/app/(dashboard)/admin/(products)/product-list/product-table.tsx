@@ -164,10 +164,17 @@ export default function ProductTable() {
 									{p.isFeatured ? "Yes" : "No"}
 								</TableCell>
 								<TableCell className="text-right space-x-2">
-									<Button variant={"secondary"}>
-										<Eye />
-									</Button>
+									{/** redirect to product details page */}
 									<Link href={`/admin/product-list/${p.id}`}>
+										<Button variant={"secondary"}>
+											<Eye />
+										</Button>
+									</Link>
+
+									{/** redirect to product update page */}
+									<Link
+										href={`/admin/product-list/update-product/${p.id}`}
+									>
 										<Button variant={"outline"}>
 											<Edit />
 										</Button>
