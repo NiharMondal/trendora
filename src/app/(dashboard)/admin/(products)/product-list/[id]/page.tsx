@@ -60,8 +60,8 @@ export default function ProductDetailsPage({
 					</p>
 				</div>
 				<div className="space-y-3">
-					<p>Product Variant</p>
-					<div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+					<p className="font-medium">Product Variant</p>
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 						{product?.result.variants.map((variant) => (
 							<div className="flex items-center justify-between  px-3 py-1 border rounded">
 								<div>{variant.color}</div>
@@ -69,6 +69,18 @@ export default function ProductDetailsPage({
 							</div>
 						))}
 					</div>
+				</div>
+				<div className="flex items-center gap-x-10">
+					<p>
+						{product?.result.isFeatured
+							? "Featured"
+							: "Not Featured"}
+					</p>
+					<p className="flex gap-x-1.5">
+						{" "}
+						<strong>Stock: </strong>
+						{product?.result.stockQuantity}
+					</p>
 				</div>
 			</div>
 		</div>

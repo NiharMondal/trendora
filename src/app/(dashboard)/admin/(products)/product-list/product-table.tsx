@@ -47,7 +47,6 @@ export default function ProductTable() {
 		page: currentPage.toString(),
 	});
 
-	console.log(products);
 	const handleDelete = async (id: string) => {
 		try {
 			await deleteProduct(id).unwrap();
