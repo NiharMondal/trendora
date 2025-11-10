@@ -1,6 +1,6 @@
-import { TServerResponse } from "@/app/types/common.types";
+import { TServerResponse } from "@/types/common.types";
 import { baseApi } from "./baseApi";
-import { TCategory } from "@/app/types/category.types";
+import { TCategory } from "@/types/category.types";
 type TCategoryInput = {
 	name: string;
 	parentId?: string | null;
