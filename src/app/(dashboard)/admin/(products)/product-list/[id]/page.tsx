@@ -31,6 +31,7 @@ export default function ProductDetailsPage({
 				<div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
 					{product?.result.images.map((image, index) => (
 						<div
+							key={image.id}
 							onClick={() => setSelectedImage(index)}
 							className={cn(
 								"h-[120px] sm:h-[100px] rounded-md overflow-hidden",
@@ -63,7 +64,10 @@ export default function ProductDetailsPage({
 					<p className="font-medium">Product Variant</p>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-5">
 						{product?.result.variants.map((variant) => (
-							<div className="flex items-center justify-between  px-3 py-1 border rounded">
+							<div
+								key={variant.id}
+								className="flex items-center justify-between  px-3 py-1 border rounded"
+							>
 								<div>{variant.color}</div>
 								<div>{variant.size}</div>
 							</div>
@@ -72,15 +76,21 @@ export default function ProductDetailsPage({
 				</div>
 				<div className="flex items-center gap-x-10">
 					<p>
-						{product?.result.isFeatured
-							? "Featured"
-							: "Not Featured"}
+						<strong>Featured:</strong>
+						<span className="ml-3 text-primary text-sm font-normal">
+							{product?.result.isFeatured ? "Yes" : "No"}
+						</span>
 					</p>
 					<p className="flex gap-x-1.5">
 						{" "}
 						<strong>Stock: </strong>
 						{product?.result.stockQuantity}
 					</p>
+				</div>
+				<div className="space-y-2">
+					<p className="font-medium">Description</p>
+
+					<p>{product?.result.description}</p>
 				</div>
 			</div>
 		</div>

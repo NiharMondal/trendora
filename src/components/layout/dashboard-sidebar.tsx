@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 export function DashboardSidebar() {
 	const pathname = usePathname();
-	const [user, setUser] = useState("admin");
+	const [user, setUser] = useState("user");
 
 	let label = user === "admin" ? "Admin Dashboard" : "Customer Dashboard";
 	let navLink = user === "admin" ? adminNavlink : customerNavlink;
