@@ -98,7 +98,7 @@ export default function ProductDetails() {
 					</div>
 					<div className="space-y-2">
 						<p>Quantity</p>
-						<Quantity />
+						<Quantity  />
 					</div>
 
 					<Button

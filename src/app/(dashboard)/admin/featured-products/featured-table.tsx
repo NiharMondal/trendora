@@ -5,10 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import {
-	useAllProductsQuery,
-	useDeleteProductMutation,
-} from "@/redux/api/productApi";
+import { useAllProductsQuery } from "@/redux/api/productApi";
 import {
 	Select,
 	SelectContent,
@@ -33,27 +30,17 @@ import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import { cn } from "@/lib/utils";
 import NoDataFound from "@/components/common/no-data-found";
 
-export default function ProductTable() {
+export default function FeaturedTable() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit, setLimit] = useState("10");
 	const [search, setSearch] = useState("");
 	const [value] = useDebounce(search, 1000);
 
-	const [deleteProduct] = useDeleteProductMutation();
 	const { data: products, isLoading } = useAllProductsQuery({
 		search: value,
 		limit: limit,
 		page: currentPage.toString(),
 	});
-
-	const handleDelete = async (id: string) => {
-		try {
-			await deleteProduct(id).unwrap();
-			toast.success("Product deleted successfully");
-		} catch (error: any) {
-			toast.error(error?.data?.message);
-		}
-	};
 
 	if (isLoading) {
 		return (
@@ -67,7 +54,7 @@ export default function ProductTable() {
 		return <NoDataFound />;
 	}
 	return (
-		<React.Fragment>
+		<div className="bg-white p-8 rounded-2xl shadow-2xl space-y-5">
 			<div className="flex flex-col md:flex-row items-center justify-between gap-3">
 				<div className="flex items-center justify-between w-full md:max-w-fit">
 					<div className="flex gap-x-2 items-center ">
@@ -83,25 +70,12 @@ export default function ProductTable() {
 							</SelectContent>
 						</Select>
 					</div>
-					<Link
-						href={"/admin/add-product"}
-						className="block md:hidden"
-					>
-						<Button size={"lg"} className="cursor-pointer">
-							<Plus /> Add New
-						</Button>
-					</Link>
 				</div>
 				<Input
 					placeholder="Search here..."
 					className="max-w-lg"
 					onChange={(e) => setSearch(e.target.value)}
 				/>
-				<Link href={"/admin/add-product"} className="hidden md:block">
-					<Button size={"lg"} className="cursor-pointer">
-						<Plus /> Add New
-					</Button>
-				</Link>
 			</div>
 			<Table>
 				<TableHeader className="border-t">
@@ -177,12 +151,6 @@ export default function ProductTable() {
 											<Edit />
 										</Button>
 									</Link>
-									<Button
-										variant={"destructive"}
-										onClick={() => handleDelete(p.id)}
-									>
-										<Trash />
-									</Button>
 								</TableCell>
 							</TableRow>
 						);
@@ -201,6 +169,6 @@ export default function ProductTable() {
 					/>
 				</div>
 			)}
-		</React.Fragment>
+		</div>
 	);
 }

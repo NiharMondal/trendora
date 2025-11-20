@@ -13,6 +13,11 @@ import {
 	Feather,
 	Star,
 	Coffee,
+	Key,
+	Save,
+	UserRoundPen,
+	ScrollText,
+	MapPinHouse,
 } from "lucide-react";
 type TChildren = {
 	title: string;
@@ -71,11 +76,14 @@ export const adminNavlink: TSidebarLink[] = [
 
 export const customerNavlink: TSidebarLink[] = [
 	{ title: "Dashboard", url: "/dashboard", icon: Home },
-	{ title: "My Orders", url: "/dashboard/my-orders", icon: Home },
+	{ title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
+
+	{ title: "Address", url: "/dashboard/address", icon: MapPinHouse },
+	{ title: "Wishlist", url: "/dashboard/wishlist", icon: Save },
+	{ title: "Change Password", url: "/dashboard/change-password", icon: Key },
 	{
-		title: "Account Information",
-		url: "/dashboard/account-information",
-		icon: Home,
+		title: "Edit Account",
+		url: "/dashboard/edit-account",
+		icon: UserRoundPen,
 	},
-	{ title: "Address", url: "/dashboard/address", icon: Home },
 ];
