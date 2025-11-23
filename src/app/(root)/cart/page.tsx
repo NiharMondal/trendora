@@ -13,6 +13,7 @@ import Image from "next/image";
 import { productsImage } from "@/helping-data/image";
 import Quantity from "@/components/common/quantity";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const invoices = [
 	{
@@ -113,9 +114,11 @@ export default function CartPage() {
 						</li>
 					</ul>
 
-					<Button className="w-full uppercase font-medium text-sm tracking-wider ">
-						Proceed to checkout
-					</Button>
+					<Link href={"/checkout"}>
+						<Button className="w-full uppercase font-medium text-sm tracking-wider ">
+							Proceed to checkout
+						</Button>
+					</Link>
 				</div>
 			</Container>
 		</div>
