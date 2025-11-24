@@ -1,4 +1,4 @@
 export const paymentMethodOptions = [
-	{ label: "Strip", value: "strip" },
+	{ label: "Stripe", value: "stripe" },
 	{ label: "Cash On Delivery", value: "CASH_ON_DELIVERY" },
 ];

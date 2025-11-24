@@ -2,65 +2,79 @@
 import Container from "@/components/common/container";
 import Quantity from "@/components/common/quantity";
 import RelatedProducts from "@/components/common/related-product";
-import ProductCard from "@/components/product-card/product-card";
 import { Button } from "@/components/ui/button";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-} from "@/components/ui/carousel";
-import { demoImages, products, variants } from "@/helping-data/products";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import React, { useState } from "react";
-import { PhotoProvider, PhotoView, PhotoSlider } from "react-photo-view";
-export default function ProductDetails() {
-	const [variant, setVariant] = useState(0);
-	const [color, setColor] = useState(variants[variant].color);
 
-	const setValue = (index: number) => {
-		setVariant(index);
-		setColor(variants[index].color);
-	};
+import { demoImages, variants } from "@/helping-data/products";
+import { cn } from "@/lib/utils";
+import { useProductBySlugQuery } from "@/redux/api/productApi";
+import Image from "next/image";
+import React, { use, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+
+export default function ProductDetails({
+	params,
+}: {
+	params: Promise<{ slug: string }>;
+}) {
+	const { slug } = use(params);
+	const { data: product } = useProductBySlugQuery(slug);
+	console.log(product);
+	const [quantity, setQuantity] = useState(1);
+	const [selectedPhoto, setSelectedPhoto] = useState(0);
+
 	return (
 		<Container className="py-10">
-			<section className="grid grid-cols-1 md:grid-cols-2 gap-10">
+			<section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 				{/* Photo section  */}
-				<PhotoProvider
-					speed={() => 800}
-					easing={(type) =>
-						type === 2
-							? "cubic-bezier(0.36, 0, 0.66, -0.56)"
-							: "cubic-bezier(0.34, 1.56, 0.64, 1)"
-					}
-				>
-					{demoImages.map((item, index) => (
-						<PhotoView key={index} src={item}>
-							{index < 1 ? (
+				<div className="lg:col-span-2 flex flex-col lg:flex-row gap-3">
+					<PhotoProvider
+						speed={() => 800}
+						easing={(type) =>
+							type === 2
+								? "cubic-bezier(0.36, 0, 0.66, -0.56)"
+								: "cubic-bezier(0.34, 1.56, 0.64, 1)"
+						}
+					>
+						{product?.result?.images?.map((item, index) => (
+							<PhotoView key={index} src={item.id}>
+								{index < 1 ? (
+									<Image
+										src={item.url}
+										alt="Product photo"
+										width={600}
+										height={600}
+										loading="lazy"
+										className="hover:cursor-crosshair"
+									/>
+								) : undefined}
+							</PhotoView>
+						))}
+					</PhotoProvider>
+					<div className="flex flex-row lg:flex-col gap-3">
+						{product?.result?.images.map((img, index) => (
+							<div
+								key={img.id}
+								className={cn(
+									"overflow-hidden rounded border size-[100px]"
+								)}
+								onClick={() => setSelectedPhoto(index)}
+							>
 								<Image
-									src={item}
-									alt="photo"
-									width={600}
-									height={600}
+									src={img.url}
+									alt={img.productId}
+									height={200}
+									width={200}
+									className="size-full object-center object-cover"
 								/>
-							) : undefined}
-						</PhotoView>
-					))}
-				</PhotoProvider>
+							</div>
+						))}
+					</div>
+				</div>
 
 				{/* details section  */}
 				<div className="space-y-3">
-					<h2>Product name </h2>
-					<p>
-						Product details Lorem, ipsum dolor sit amet consectetur
-						adipisicing elit. Atque, Lorem ipsum dolor sit amet,
-						consectetur adipisicing elit. Sint ullam tenetur neque
-						accusamus, ad repellendus quisquam numquam consequatur
-						animi doloribus natus ex nostrum atque hic odit impedit
-						quidem culpa corrupti.
-					</p>
+					<h2>{product?.result.name} </h2>
+					<p>{product?.result.description}</p>
 
 					<p>Availability: In Stock</p>
 
@@ -69,8 +83,8 @@ export default function ProductDetails() {
 					</p>
 
 					<div className="space-y-2">
-						<p>Color: {color}</p>
-						<div className="flex gap-x-3">
+						<p>Color: </p>
+						{/* <div className="flex gap-x-3">
 							{variants.map((item, index) => (
 								<div
 									key={index}
@@ -94,11 +108,14 @@ export default function ProductDetails() {
 									/>
 								</div>
 							))}
-						</div>
+						</div> */}
 					</div>
 					<div className="space-y-2">
 						<p>Quantity</p>
-						<Quantity  />
+						<Quantity
+							quantity={quantity}
+							setQuantity={setQuantity}
+						/>
 					</div>
 
 					<Button
