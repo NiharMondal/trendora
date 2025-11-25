@@ -2,9 +2,8 @@
 import Container from "@/components/common/container";
 import Quantity from "@/components/common/quantity";
 import RelatedProducts from "@/components/common/related-product";
+import SpinnerLoading from "@/components/common/spinner-loading";
 import { Button } from "@/components/ui/button";
-
-import { demoImages, variants } from "@/helping-data/products";
 import { cn } from "@/lib/utils";
 import { useProductBySlugQuery } from "@/redux/api/productApi";
 import Image from "next/image";
@@ -17,64 +16,73 @@ export default function ProductDetails({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = use(params);
-	const { data: product } = useProductBySlugQuery(slug);
-	console.log(product);
-	const [quantity, setQuantity] = useState(1);
-	const [selectedPhoto, setSelectedPhoto] = useState(0);
+	const { data: product, isLoading } = useProductBySlugQuery(slug);
 
+	const [quantity, setQuantity] = useState(1);
+	const [currentIndex, setCurrentIndex] = useState(0);
+
+	const [size, setSize] = useState("");
+
+	if (isLoading) return <SpinnerLoading />;
 	return (
 		<Container className="py-10">
-			<section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+			<section className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 				{/* Photo section  */}
-				<div className="lg:col-span-2 flex flex-col lg:flex-row gap-3">
+				<div className="space-y-3">
 					<PhotoProvider
-						speed={() => 800}
-						easing={(type) =>
-							type === 2
-								? "cubic-bezier(0.36, 0, 0.66, -0.56)"
-								: "cubic-bezier(0.34, 1.56, 0.64, 1)"
-						}
+						onIndexChange={(newIndex) => setCurrentIndex(newIndex)}
 					>
-						{product?.result?.images?.map((item, index) => (
-							<PhotoView key={index} src={item.id}>
+						{/* ⭐ MAIN IMAGE — click to open fullscreen viewer */}
+						{product?.result.images.map((item, index) => (
+							<PhotoView src={item.url} key={item.id}>
 								{index < 1 ? (
 									<Image
-										src={item.url}
-										alt="Product photo"
-										width={600}
-										height={600}
-										loading="lazy"
-										className="hover:cursor-crosshair"
+										height={200}
+										width={200}
+										src={
+											product?.result?.images[
+												currentIndex
+											]?.url
+										}
+										alt="Main"
+										className="w-full h-[600px] object-cover rounded cursor-crosshair"
+										onClick={() =>
+											setCurrentIndex(currentIndex)
+										}
 									/>
 								) : undefined}
 							</PhotoView>
 						))}
 					</PhotoProvider>
-					<div className="flex flex-row lg:flex-col gap-3">
+					{/* ⭐ THUMBNAILS */}
+					<div className="grid grid-cols-4 gap-4">
 						{product?.result?.images.map((img, index) => (
-							<div
+							<Image
 								key={img.id}
+								height={80}
+								width={100}
+								src={img.url}
+								alt="thumb"
 								className={cn(
-									"overflow-hidden rounded border size-[100px]"
+									"h-20 w-full object-cover rounded cursor-pointer",
+									index === currentIndex
+										? "ring-2 ring-blue-500"
+										: ""
 								)}
-								onClick={() => setSelectedPhoto(index)}
-							>
-								<Image
-									src={img.url}
-									alt={img.productId}
-									height={200}
-									width={200}
-									className="size-full object-center object-cover"
-								/>
-							</div>
+								onClick={() => setCurrentIndex(index)}
+							/>
 						))}
 					</div>
 				</div>
 
 				{/* details section  */}
 				<div className="space-y-3">
-					<h2>{product?.result.name} </h2>
-					<p>{product?.result.description}</p>
+					<h3 className="text-neutral-dark">
+						{product?.result.name}{" "}
+					</h3>
+					<p className="text-neutral-dark/90">
+						{product?.result.description}
+					</p>
 
 					<p>Availability: In Stock</p>
 
@@ -83,32 +91,24 @@ export default function ProductDetails({
 					</p>
 
 					<div className="space-y-2">
-						<p>Color: </p>
-						{/* <div className="flex gap-x-3">
-							{variants.map((item, index) => (
+						<p>Size: {size}</p>
+						<div className="flex gap-x-3">
+							{product?.result?.variants.map((variant, index) => (
 								<div
 									key={index}
 									className={cn(
-										"size-8 lg:size-9 rounded-full ring-1 ring-neutral-dark/50 overflow-hidden",
-										variant === index
+										"flex items-center justify-center w-14 px-2 py-1 rounded border hover:cursor-pointer",
+										variant.size === size
 											? "ring-2 ring-primary"
-											: "ring-0"
+											: ""
 									)}
-									onClick={() => setValue(index)}
-									title={item.color}
+									onClick={() => setSize(variant.size)}
+									title={variant.size}
 								>
-									<Image
-										src={item.image || ""}
-										alt="image-variant"
-										height={20}
-										width={20}
-										className={cn(
-											"size-8 lg:size-9 rounded-full object-cover object-center"
-										)}
-									/>
+									{variant.size}
 								</div>
 							))}
-						</div> */}
+						</div>
 					</div>
 					<div className="space-y-2">
 						<p>Quantity</p>

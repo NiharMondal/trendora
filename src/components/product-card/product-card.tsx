@@ -18,15 +18,19 @@ export default function ProductCard({ product }: Props) {
 			<CardHeader className="relative p-0">
 				<div className="relative h-[290px] border overflow-hidden">
 					<CardUtility />
+
 					<Link href={`/products/${product.slug}`}>
-						<Image
-							src={product.images?.[selected].url}
-							alt="image"
-							height={300}
-							width={200}
-							className="w-full h-full object-cover object-center rounded"
-						/>
+						{product.images && (
+							<Image
+								src={product.images?.[selected].url}
+								alt="image"
+								height={300}
+								width={200}
+								className="w-full h-full object-cover object-center rounded"
+							/>
+						)}
 					</Link>
+
 					<div className="absolute -bottom-10 opacity-0 left-0 right-0 group-hover:bottom-0 duration-200 group-hover:opacity-100">
 						<Button
 							className="w-full cursor-pointer rounded-none"
