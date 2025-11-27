@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
 import TDCheckbox from "@/components/form/TDCheckbox";
 import { productSizes } from "@/helping-data/products";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ProductForm() {
 	const { data: categories } = useAllCategoryQuery({});
@@ -29,7 +30,7 @@ export default function ProductForm() {
 		};
 	});
 
-	const [createProduct] = useCreateProductMutation();
+	const [createProduct, { isLoading }] = useCreateProductMutation();
 	const form = useForm({
 		resolver: zodResolver(createProductSchema),
 		defaultValues: {
@@ -282,8 +283,12 @@ export default function ProductForm() {
 							</div>
 						))}
 					</div>
-					<Button size={"lg"} className="cursor-pointer">
-						+ Add Product
+					<Button
+						size={"lg"}
+						className="cursor-pointer"
+						disabled={isLoading}
+					>
+						{isLoading && <Spinner />} Add Product
 					</Button>
 				</div>
 			</form>

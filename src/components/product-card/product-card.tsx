@@ -1,49 +1,36 @@
 "use client";
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import CardUtility from "./card-utility";
-type ProductVariant = {
-	size: string;
-	color: string;
-	stock: number;
-	price: number;
-	image: StaticImageData;
+import { TProduct } from "@/types/product.types";
+type Props = {
+	product: TProduct;
 };
-type ProductCardProps = {
-	product: {
-		name: string;
-		slug: string;
-		basePrice: number;
-		productVariants?: ProductVariant[];
-	};
-};
-export default function ProductCard({ product }: ProductCardProps) {
-	const { name, slug, basePrice, productVariants } = product;
-	const [variant, setVariant] = useState(0);
+export default function ProductCard({ product }: Props) {
+	const [selected, setSelected] = useState(0);
 
 	return (
-		<Card className="rounded-none p-0  shadow-none border-none group gap-2">
+		<Card className="rounded p-0  shadow-none border-none group gap-2">
 			<CardHeader className="relative p-0">
-				<div className="relative h-[290px] border ">
+				<div className="relative h-[290px] border overflow-hidden">
 					<CardUtility />
-					<Link href={`/products/${slug}`}>
-						<Image
-							src={productVariants?.[variant].image || ""}
-							alt="image"
-							height={300}
-							width={200}
-							className="w-full h-full object-cover object-center"
-						/>
+
+					<Link href={`/products/${product.slug}`}>
+						{product.images && (
+							<Image
+								src={product.images?.[selected].url}
+								alt="image"
+								height={300}
+								width={200}
+								className="w-full h-full object-cover object-center rounded"
+							/>
+						)}
 					</Link>
+
 					<div className="absolute -bottom-10 opacity-0 left-0 right-0 group-hover:bottom-0 duration-200 group-hover:opacity-100">
 						<Button
 							className="w-full cursor-pointer rounded-none"
@@ -57,50 +44,39 @@ export default function ProductCard({ product }: ProductCardProps) {
 			</CardHeader>
 			<CardContent className=" text-center p-0">
 				<Link
-					href={`/products/${slug}`}
+					href={`/products/${product.slug}`}
 					className="text-sm tracking-wide hover:underline"
 				>
-					{name}
+					{product.name}
 				</Link>
 				<p className="mt-3 mb-2">
-					<small>from</small>{" "}
-					{productVariants ? (
-						<strong>{productVariants[variant].price}</strong>
-					) : (
-						<strong>{basePrice}</strong>
-					)}
+					<small className="mr-2">from </small>
+					<strong>${product?.basePrice}</strong>
 				</p>
 				<div className="flex items-center justify-center gap-x-1.5">
-					{productVariants &&
-						productVariants?.map((item, index) => (
-							<Tooltip key={index}>
-								<TooltipTrigger className="cursor-pointer">
-									<div
-										key={index}
-										className={cn(
-											"size-8 lg:size-9 rounded-full ring-1 ring-neutral-dark/50 overflow-hidden",
-											variant === index
-												? "ring-2 ring-primary"
-												: "ring-0"
-										)}
-										onClick={() => setVariant(index)}
-										title={item.color}
-									>
-										<Image
-											src={item.image || ""}
-											alt="image-variant"
-											height={20}
-											width={20}
-											className={cn(
-												"size-8 lg:size-9 rounded-full object-cover object-center"
-											)}
-										/>
-									</div>
-								</TooltipTrigger>
-								<TooltipContent side="top">
-									<p>{item.color}</p>
-								</TooltipContent>
-							</Tooltip>
+					{product.images &&
+						product.images?.slice(0, 5).map((item, index) => (
+							<div
+								key={index}
+								className={cn(
+									"size-8 lg:size-9 rounded-full ring-1 ring-neutral-dark/50 overflow-hidden cursor-pointer",
+									selected === index
+										? "ring-2 ring-primary"
+										: "ring-0"
+								)}
+								onClick={() => setSelected(index)}
+								title={item.id}
+							>
+								<Image
+									src={item.url}
+									alt="image-variant"
+									height={20}
+									width={20}
+									className={cn(
+										"size-8 lg:size-9 rounded-full object-cover object-center"
+									)}
+								/>
+							</div>
 						))}
 				</div>
 			</CardContent>

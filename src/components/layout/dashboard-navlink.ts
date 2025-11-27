@@ -1,11 +1,6 @@
 import {
-	Calendar,
 	Home,
-	Inbox,
 	type LucideIcon,
-	Search,
-	Settings,
-	User,
 	Layers,
 	ShoppingCart,
 	FilePlus,
@@ -18,6 +13,7 @@ import {
 	UserRoundPen,
 	ScrollText,
 	MapPinHouse,
+	Heart,
 } from "lucide-react";
 type TChildren = {
 	title: string;
@@ -79,7 +75,7 @@ export const customerNavlink: TSidebarLink[] = [
 	{ title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
 
 	{ title: "Address", url: "/dashboard/address", icon: MapPinHouse },
-	{ title: "Wishlist", url: "/dashboard/wishlist", icon: Save },
+	{ title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
 	{ title: "Change Password", url: "/dashboard/change-password", icon: Key },
 	{
 		title: "Edit Account",

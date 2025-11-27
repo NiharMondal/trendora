@@ -2,64 +2,86 @@
 import Container from "@/components/common/container";
 import Quantity from "@/components/common/quantity";
 import RelatedProducts from "@/components/common/related-product";
-import ProductCard from "@/components/product-card/product-card";
+import SpinnerLoading from "@/components/common/spinner-loading";
 import { Button } from "@/components/ui/button";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-} from "@/components/ui/carousel";
-import { demoImages, products, variants } from "@/helping-data/products";
 import { cn } from "@/lib/utils";
+import { useProductBySlugQuery } from "@/redux/api/productApi";
 import Image from "next/image";
-import React, { useState } from "react";
-import { PhotoProvider, PhotoView, PhotoSlider } from "react-photo-view";
-export default function ProductDetails() {
-	const [variant, setVariant] = useState(0);
-	const [color, setColor] = useState(variants[variant].color);
+import React, { use, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
-	const setValue = (index: number) => {
-		setVariant(index);
-		setColor(variants[index].color);
-	};
+export default function ProductDetails({
+	params,
+}: {
+	params: Promise<{ slug: string }>;
+}) {
+	const { slug } = use(params);
+	const { data: product, isLoading } = useProductBySlugQuery(slug);
+
+	const [quantity, setQuantity] = useState(1);
+	const [currentIndex, setCurrentIndex] = useState(0);
+
+	const [size, setSize] = useState("");
+
+	if (isLoading) return <SpinnerLoading />;
 	return (
 		<Container className="py-10">
-			<section className="grid grid-cols-1 md:grid-cols-2 gap-10">
+			<section className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 				{/* Photo section  */}
-				<PhotoProvider
-					speed={() => 800}
-					easing={(type) =>
-						type === 2
-							? "cubic-bezier(0.36, 0, 0.66, -0.56)"
-							: "cubic-bezier(0.34, 1.56, 0.64, 1)"
-					}
-				>
-					{demoImages.map((item, index) => (
-						<PhotoView key={index} src={item}>
-							{index < 1 ? (
-								<Image
-									src={item}
-									alt="photo"
-									width={600}
-									height={600}
-								/>
-							) : undefined}
-						</PhotoView>
-					))}
-				</PhotoProvider>
+				<div className="space-y-3">
+					<PhotoProvider
+						onIndexChange={(newIndex) => setCurrentIndex(newIndex)}
+					>
+						{/* ⭐ MAIN IMAGE — click to open fullscreen viewer */}
+						{product?.result.images.map((item, index) => (
+							<PhotoView src={item.url} key={item.id}>
+								{index < 1 ? (
+									<Image
+										height={200}
+										width={200}
+										src={
+											product?.result?.images[
+												currentIndex
+											]?.url
+										}
+										alt="Main"
+										className="w-full h-[600px] object-cover rounded cursor-crosshair"
+										onClick={() =>
+											setCurrentIndex(currentIndex)
+										}
+									/>
+								) : undefined}
+							</PhotoView>
+						))}
+					</PhotoProvider>
+					{/* ⭐ THUMBNAILS */}
+					<div className="grid grid-cols-4 gap-4">
+						{product?.result?.images.map((img, index) => (
+							<Image
+								key={img.id}
+								height={80}
+								width={100}
+								src={img.url}
+								alt="thumb"
+								className={cn(
+									"h-20 w-full object-cover rounded cursor-pointer",
+									index === currentIndex
+										? "ring-2 ring-blue-500"
+										: ""
+								)}
+								onClick={() => setCurrentIndex(index)}
+							/>
+						))}
+					</div>
+				</div>
 
 				{/* details section  */}
 				<div className="space-y-3">
-					<h2>Product name </h2>
-					<p>
-						Product details Lorem, ipsum dolor sit amet consectetur
-						adipisicing elit. Atque, Lorem ipsum dolor sit amet,
-						consectetur adipisicing elit. Sint ullam tenetur neque
-						accusamus, ad repellendus quisquam numquam consequatur
-						animi doloribus natus ex nostrum atque hic odit impedit
-						quidem culpa corrupti.
+					<h3 className="text-neutral-dark">
+						{product?.result.name}{" "}
+					</h3>
+					<p className="text-neutral-dark/90">
+						{product?.result.description}
 					</p>
 
 					<p>Availability: In Stock</p>
@@ -69,36 +91,31 @@ export default function ProductDetails() {
 					</p>
 
 					<div className="space-y-2">
-						<p>Color: {color}</p>
+						<p>Size: {size}</p>
 						<div className="flex gap-x-3">
-							{variants.map((item, index) => (
+							{product?.result?.variants.map((variant, index) => (
 								<div
 									key={index}
 									className={cn(
-										"size-8 lg:size-9 rounded-full ring-1 ring-neutral-dark/50 overflow-hidden",
-										variant === index
+										"flex items-center justify-center w-14 px-2 py-1 rounded border hover:cursor-pointer",
+										variant.size === size
 											? "ring-2 ring-primary"
-											: "ring-0"
+											: ""
 									)}
-									onClick={() => setValue(index)}
-									title={item.color}
+									onClick={() => setSize(variant.size)}
+									title={variant.size}
 								>
-									<Image
-										src={item.image || ""}
-										alt="image-variant"
-										height={20}
-										width={20}
-										className={cn(
-											"size-8 lg:size-9 rounded-full object-cover object-center"
-										)}
-									/>
+									{variant.size}
 								</div>
 							))}
 						</div>
 					</div>
 					<div className="space-y-2">
 						<p>Quantity</p>
-						<Quantity  />
+						<Quantity
+							quantity={quantity}
+							setQuantity={setQuantity}
+						/>
 					</div>
 
 					<Button

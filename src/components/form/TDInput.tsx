@@ -20,6 +20,7 @@ type TDInputProps<T extends FieldValues> = {
 	description?: string;
 	disabled?: boolean;
 	required?: boolean;
+	ornament?: React.ReactElement;
 };
 
 export default function TDInput<T extends FieldValues>({
@@ -30,6 +31,7 @@ export default function TDInput<T extends FieldValues>({
 	description,
 	type = "text",
 	disabled,
+	ornament,
 	required,
 }: TDInputProps<T>) {
 	return (
@@ -47,14 +49,21 @@ export default function TDInput<T extends FieldValues>({
 							{label}
 						</span>
 					</FormLabel>
-					<FormControl>
-						<Input
-							type={type}
-							placeholder={placeholder}
-							disabled={disabled}
-							{...field}
-						/>
-					</FormControl>
+					<div className="relative">
+						<FormControl>
+							<Input
+								type={type}
+								placeholder={placeholder}
+								disabled={disabled}
+								{...field}
+							/>
+						</FormControl>
+						{ornament && (
+							<div className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer">
+								{ornament}
+							</div>
+						)}
+					</div>
 					{description && (
 						<FormDescription className="text-gray-shade-35">
 							{description}

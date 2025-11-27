@@ -82,5 +82,6 @@ export const baseApi = createApi({
 		"orders",
 		"payments",
 		"brands",
+		"address",
 	],
 });
