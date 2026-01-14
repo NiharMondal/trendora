@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.542.0",
@@ -33,6 +34,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
     "react-photo-view": "^1.2.7",
+    "react-range-slider-input": "^3.3.2",
     "react-redux": "^9.2.0",
     "react-slick": "^0.31.0",
     "react-slider": "^2.0.6",
@@ -43,6 +45,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "use-debounce": "^10.0.6",
+    "vaul": "^1.1.2",
     "zod": "^4.1.5"
   },
   "devDependencies": {
@@ -55,6 +58,9 @@
     "@types/react-slider": "^1.3.6",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5"

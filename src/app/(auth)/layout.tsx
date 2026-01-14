@@ -1,17 +1,17 @@
-import Footer from "@/components/common/footer";
-import Navbar from "@/components/layout/navbar";
+import Container from "@/components/common/container";
+import AuthNavbar from "@/layout/auth/auth-navbar";
+
 import React from "react";
 
 export default function AuthLayout({
-	children,
+    children,
 }: {
-	children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-	return (
-		<section>
-			<Navbar />
-			{children}
-			<Footer />
-		</section>
-	);
+    return (
+        <section>
+            <AuthNavbar />
+            <Container>{children}</Container>
+        </section>
+    );
 }
