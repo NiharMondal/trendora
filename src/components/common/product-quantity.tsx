@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { Minus, Plus } from "lucide-react";
+import React from "react";
 
 type Props = {
     quantity: number;
@@ -13,8 +13,12 @@ export default function ProductQuantity({ quantity, setQuantity }: Props) {
             setQuantity((prev) => prev - 1);
         }
     };
+
+    const increment = () => {
+        setQuantity((prev) => prev + 1);
+    };
     return (
-        <div className="border rounded flex items-center justify-between max-w-[220px] px-5 py-1.5">
+        <div className="border rounded flex items-center justify-between max-w-[220px] px-5 py-1.5 ">
             <button
                 onClick={decrement}
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
@@ -26,7 +30,7 @@ export default function ProductQuantity({ quantity, setQuantity }: Props) {
             </button>
             <button
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={increment}
             >
                 <Plus />
             </button>

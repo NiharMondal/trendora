@@ -4,12 +4,6 @@ export default function Home() {
     return (
         <main>
             <HeroSlider />
-            {/*
-            <Showcase />
-            <NewArrivals /> */}
-            {/* <OfferSection /> */}
-            {/* <TrendingProduct /> */}
-            {/* <FeaturedProduct /> */}
         </main>
     );
 }
