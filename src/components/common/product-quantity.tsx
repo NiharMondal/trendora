@@ -1,36 +1,32 @@
 import { Minus, Plus } from "lucide-react";
-import React from "react";
 
 type Props = {
     quantity: number;
-    setQuantity: React.Dispatch<React.SetStateAction<number>>;
+    onIncrease: () => void;
+    onDecrease: () => void;
+    min?: number;
 };
-export default function ProductQuantity({ quantity, setQuantity }: Props) {
-    const decrement = () => {
-        if (quantity === 1) {
-            setQuantity(1);
-        } else {
-            setQuantity((prev) => prev - 1);
-        }
-    };
-
-    const increment = () => {
-        setQuantity((prev) => prev + 1);
-    };
+export default function ProductQuantity({
+    quantity,
+    onIncrease,
+    onDecrease,
+    min = 1,
+}: Props) {
     return (
         <div className="border rounded flex items-center justify-between max-w-[220px] px-5 py-1.5 ">
             <button
-                onClick={decrement}
+                onClick={onDecrease}
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
+                disabled={quantity <= min}
             >
                 <Minus />
             </button>
-            <button className="h-8 w-12 inline-flex justify-center items-center">
+            <span className="h-8 w-12 inline-flex justify-center items-center">
                 {quantity}
-            </button>
+            </span>
             <button
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
-                onClick={increment}
+                onClick={onIncrease}
             >
                 <Plus />
             </button>

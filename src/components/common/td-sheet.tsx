@@ -5,12 +5,11 @@ import {
     SheetContent,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from "@/components/ui/sheet";
 import { useIsDesktop } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
 import { X } from "lucide-react";
+import { Button } from "../ui/button";
 
 type TDSheetProps = {
     isOpen: boolean;
@@ -37,12 +36,12 @@ export default function TDSheet({
                 className={cn(
                     "w-full [&>button]:hidden",
                     {
-                        "min-h-[576px]": isDesktop,
+                        "max-h-4/5 overflow-y-auto pb-10": isDesktop,
                     },
                     className
                 )}
             >
-                <SheetHeader className=" flex flex-row items-center justify-between gap-x-5 pb-1 border-b border-muted pb-4">
+                <SheetHeader className=" flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
                     <SheetTitle className="text-2xl w-fit">{title}</SheetTitle>
                     <Button
                         className="bg-muted hover:bg-muted rounded-full text-muted-foreground hover:text-destructive scale-120 hover:rotate-90"

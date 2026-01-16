@@ -1,102 +1,154 @@
 "use client";
 import Container from "@/components/common/container";
-import React, { useState } from "react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import Image from "next/image";
-import { productsImage } from "@/helping-data/image";
-import Quantity from "@/components/common/product-quantity";
+import ProductQuantity from "@/components/common/product-quantity";
+import TDButton from "@/components/common/td-button";
+
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { productsImage } from "@/helping-data/image";
+import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
+import {
+    decreaseQuantity,
+    increaseQuantity,
+    removeCartItem,
+    selectCartItems,
+    selectTotalAmount,
+} from "@/redux/slice/cartSlice";
+import { Trash } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
-const invoices = [
-    {
-        name: "esdasdfasf",
-        price: 123,
-        quantity: 1,
-        total: "Credit Card",
-    },
-    {
-        name: "INV002",
-        price: 234,
-        quantity: 1,
-        paymentMethod: "PayPal",
-    },
-];
-
 export default function CartPage() {
-    const [quantity, setQuantity] = useState(1);
+    const dispatch = useAppDispatch();
+    const cartItems = useAppSelector(selectCartItems);
+    const totalAmount = useAppSelector(selectTotalAmount);
 
+    if (!cartItems.length) {
+        return (
+            <Container className="min-h-[calc(100vh-80px)] flex items-center justify-center ">
+                <div className=" text-center space-y-3">
+                    <h1>Your Cart is Empty</h1>
+                    <p className="font-inter">Please visit product page</p>
+                    <div className="mt-10"></div>
+                    <Link
+                        href={"/products"}
+                        className="border  border-accent rounded px-4 py-2 hover:bg-accent hover:text-white duration-200"
+                    >
+                        Go Back
+                    </Link>
+                </div>
+            </Container>
+        );
+    }
     return (
         <div className="py-10">
             <Container className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 <div className="col-span-full lg:col-span-2">
                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Product</TableHead>
-                                <TableHead>
-                                    <div className="hidden sm:block">Price</div>
-                                </TableHead>
-                                <TableHead>
-                                    <div className="hidden sm:block">
-                                        Quantity
-                                    </div>
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    Total
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
                         <TableBody>
-                            {invoices.map((invoice) => (
-                                <TableRow key={invoice.name}>
-                                    <TableCell className="flex gap-x-2 max-w-[450px]">
-                                        <Image
-                                            src={productsImage.black}
-                                            width={100}
-                                            height={70}
-                                            alt="Image"
-                                            className="w-[100px] h-[100px] hover:object-bottom object-top object-cover duration-200"
-                                        />
-                                        <div className="space-y-2">
-                                            <p className="text-wrap">
-                                                Lorem ipsum dolor sit amet
-                                                consectetur adipisicing elit.
-                                                Magnam sunt eos dolor ad
-                                                repellat itaque architecto
-                                                assumenda harum excepturi
-                                                reiciendis.
-                                            </p>
-                                            <div className="block sm:hidden">
-                                                <Quantity
-                                                    quantity={quantity}
-                                                    setQuantity={setQuantity}
-                                                />
+                            {cartItems.map((item, index) => (
+                                <TableRow key={index}>
+                                    <TableCell className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-2 md:gap-4">
+                                        <div className="flex items-center gap-x-4 ">
+                                            <Image
+                                                src={
+                                                    item.productImage ||
+                                                    productsImage.black
+                                                }
+                                                width={100}
+                                                height={70}
+                                                alt="Image"
+                                                className="size-[70px] rounded overflow-hidden hover:object-bottom object-top object-cover duration-200"
+                                            />
+                                            <div className="space-y-2">
+                                                <p className="text-wrap">
+                                                    {item.productName}
+                                                </p>
+
+                                                <div>
+                                                    ${item.price.toFixed(2)} x{" "}
+                                                    {item.quantity}
+                                                </div>
                                             </div>
                                         </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="hidden sm:block">
-                                            {invoice.price}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="hidden sm:block">
-                                            <Quantity
-                                                quantity={quantity}
-                                                setQuantity={setQuantity}
+                                        <div className="sm:hidden">
+                                            <ProductQuantity
+                                                quantity={item.quantity}
+                                                onIncrease={() =>
+                                                    dispatch(
+                                                        increaseQuantity({
+                                                            productId:
+                                                                item.productId,
+                                                            variantId:
+                                                                item.variantId,
+                                                        })
+                                                    )
+                                                }
+                                                onDecrease={() =>
+                                                    dispatch(
+                                                        decreaseQuantity({
+                                                            productId:
+                                                                item.productId,
+                                                            variantId:
+                                                                item.variantId,
+                                                        })
+                                                    )
+                                                }
                                             />
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        {invoice.price * invoice.quantity}
+
+                                    <TableCell>
+                                        <div className="hidden sm:block">
+                                            <ProductQuantity
+                                                quantity={item.quantity}
+                                                onIncrease={() =>
+                                                    dispatch(
+                                                        increaseQuantity({
+                                                            productId:
+                                                                item.productId,
+                                                            variantId:
+                                                                item.variantId,
+                                                        })
+                                                    )
+                                                }
+                                                onDecrease={() =>
+                                                    dispatch(
+                                                        decreaseQuantity({
+                                                            productId:
+                                                                item.productId,
+                                                            variantId:
+                                                                item.variantId,
+                                                        })
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        $
+                                        {(item.price * item.quantity).toFixed(
+                                            2
+                                        )}
+                                    </TableCell>
+                                    <TableCell></TableCell>
+                                    <TableCell>
+                                        <TDButton
+                                            className="bg-none text-destructive hover:bg-destructive"
+                                            variant="ghost"
+                                            onClick={() =>
+                                                dispatch(
+                                                    removeCartItem({
+                                                        productId:
+                                                            item.productId,
+                                                        variantId:
+                                                            item.variantId,
+                                                    })
+                                                )
+                                            }
+                                        >
+                                            <Trash />
+                                        </TDButton>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -110,7 +162,7 @@ export default function CartPage() {
                     <ul className="flex items-center justify-between ">
                         <li className="text-sm font-medium">Subtotal</li>
                         <li>
-                            <b>$533</b>
+                            <b>${totalAmount.toFixed(2)}</b>
                         </li>
                     </ul>
 
