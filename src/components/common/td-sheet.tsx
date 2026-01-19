@@ -36,9 +36,9 @@ export default function TDSheet({
                 className={cn(
                     "w-full [&>button]:hidden",
                     {
-                        "max-h-4/5 overflow-y-auto pb-10": isDesktop,
+                        "max-h-4/5 pb-10 rounded-t-xl": isDesktop,
                     },
-                    className
+                    className,
                 )}
             >
                 <SheetHeader className=" flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
@@ -52,7 +52,7 @@ export default function TDSheet({
                         <X />
                     </Button>
                 </SheetHeader>
-                <div className="px-4">{children}</div>
+                <div className="px-4 overflow-y-auto">{children}</div>
             </SheetContent>
         </Sheet>
     );
