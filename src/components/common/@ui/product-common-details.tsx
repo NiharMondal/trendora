@@ -60,7 +60,7 @@ export default function ProductCommonDetails({
         toast.success("Product added to cart");
     };
     return (
-        <>
+        <div className="space-y-5">
             <h2>{product?.name}</h2>
             <p>Rating section</p>
             <ProductPrice
@@ -90,7 +90,7 @@ export default function ProductCommonDetails({
                         "grid grid-cols-3 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3",
                         {
                             "2xl:grid-cols-4": quickView,
-                        }
+                        },
                     )}
                 >
                     {product?.variants?.map((variant) => (
@@ -102,7 +102,7 @@ export default function ProductCommonDetails({
                                 {
                                     "ring-2 ring-primary":
                                         variant?.id === variantInfo.id,
-                                }
+                                },
                             )}
                         >
                             <p>Color: {variant.color}</p>
@@ -142,6 +142,6 @@ export default function ProductCommonDetails({
                     </TooltipContent>
                 </Tooltip>
             </div>
-        </>
+        </div>
     );
 }

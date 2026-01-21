@@ -6,16 +6,15 @@ import {
     CarouselContent,
     CarouselItem,
 } from "@/components/ui/carousel";
-import Link from "next/link";
 import { useAllSlideQuery } from "@/redux/api/slideApi";
+import Link from "next/link";
 
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 import SpinnerLoading from "../common/spinner-loading";
 import TDButton from "../common/td-button";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
 
 export function HeroSlider() {
-    console.log("first");
     const { data, isLoading } = useAllSlideQuery({ limit: "5" });
     const [api, setApi] = useState<CarouselApi>();
     const [selectedIndex, setSelectedIndex] = useState(0);

@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { Button } from "../ui/button";
 import { Search, ShoppingBasket } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import Container from "../common/container";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
-export default function DesktopNavbar() {
+export default function DesktopNavbar({
+    cartQuantity = 0,
+}: {
+    cartQuantity: number;
+}) {
     const [focused, setFocused] = useState(false);
 
     return (
@@ -52,7 +56,7 @@ export default function DesktopNavbar() {
                             className="text-accent/90 size-5 rounded-full border-none absolute -top-2 -right-4"
                             variant={"outline"}
                         >
-                            4
+                            {cartQuantity}
                         </Badge>
                     </div>
 

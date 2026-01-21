@@ -1,18 +1,33 @@
-import React from "react";
-import { Button } from "../../ui/button";
-import Link from "next/link";
-import CardUtility from "./card-utility";
+import { useAppDispatch } from "@/redux/redux.hooks";
+import { addItemToCart } from "@/redux/slice/cartSlice";
 import { TProduct } from "@/types/product.types";
-import { cn } from "@/lib/utils";
-import Price from "./product-price";
+import Link from "next/link";
+import { toast } from "sonner";
+import { Button } from "../../ui/button";
+import CardUtility from "./card-utility";
+import ProductPrice from "./product-price";
 
 type Props = {
     product: TProduct;
 };
 
 export default function ProductCard({ product }: Props) {
+    const dispatch = useAppDispatch();
     const isMainPhoto = product?.images?.find((img) => img?.isMain);
-
+    const productPrice = product?.discountPrice
+        ? product?.discountPrice
+        : product?.basePrice;
+    const handleAddToCart = (product: TProduct | undefined) => {
+        const productData = {
+            productId: product?.id ?? "",
+            productName: product?.name ?? "",
+            productImage: product?.images[0].url,
+            quantity: 1,
+            price: Number(productPrice),
+        };
+        dispatch(addItemToCart(productData));
+        toast.success("Product added to cart");
+    };
     return (
         <div className="rounded-md group space-y-2">
             <div className="relative h-[330px] overflow-hidden">
@@ -34,6 +49,7 @@ export default function ProductCard({ product }: Props) {
                     <Button
                         className="w-full cursor-pointer  rounded-full"
                         variant={"outline"}
+                        onClick={() => handleAddToCart(product)}
                     >
                         Quick Add
                     </Button>
@@ -46,7 +62,7 @@ export default function ProductCard({ product }: Props) {
                 >
                     {product.name}
                 </Link>
-                <Price
+                <ProductPrice
                     basePrice={product.basePrice}
                     discountPrice={product.discountPrice}
                 />

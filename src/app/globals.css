@@ -256,4 +256,10 @@
             transform: scale(1.1);
         }
     }
+
+    .quick-view-image-scroll {
+        direction: rtl;
+        overflow-y: auto;
+        max-height: 870px;
+    }
 }
