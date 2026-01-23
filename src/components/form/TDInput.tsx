@@ -1,15 +1,15 @@
+import { cn } from "@/lib/utils";
 import React from "react";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import {
+    FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormControl,
     FormMessage,
-    FormDescription,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { UseFormReturn, FieldValues, Path } from "react-hook-form";
-import { cn } from "@/lib/utils";
 
 type TDInputProps<T extends FieldValues> = {
     form: UseFormReturn<T>;
@@ -21,6 +21,7 @@ type TDInputProps<T extends FieldValues> = {
     disabled?: boolean;
     required?: boolean;
     ornament?: React.ReactElement;
+    inputSize?: "default" | "sm" | "lg";
 };
 
 export default function TDInput<T extends FieldValues>({
@@ -33,6 +34,7 @@ export default function TDInput<T extends FieldValues>({
     disabled,
     ornament,
     required,
+    inputSize,
 }: TDInputProps<T>) {
     return (
         <FormField
@@ -42,9 +44,9 @@ export default function TDInput<T extends FieldValues>({
                 <FormItem className="-space-y-1">
                     <FormLabel className="text-muted-foreground font-inter text-base">
                         <span
-                            className={cn(
-                                required ? "relative required-label" : ""
-                            )}
+                            className={cn({
+                                "relative required-label": required,
+                            })}
                         >
                             {label}
                         </span>
@@ -55,6 +57,7 @@ export default function TDInput<T extends FieldValues>({
                                 type={type}
                                 placeholder={placeholder}
                                 disabled={disabled}
+                                inputSize={inputSize}
                                 {...field}
                             />
                         </FormControl>
@@ -69,7 +72,9 @@ export default function TDInput<T extends FieldValues>({
                             {description}
                         </FormDescription>
                     )}
-                    <FormMessage className="text-red-500" />
+                    <div className="min-h-4">
+                        <FormMessage className="text-red-500 text-xs" />
+                    </div>
                 </FormItem>
             )}
         />

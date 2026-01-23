@@ -1,12 +1,8 @@
-import React, { useState } from "react";
-import {
-    FormField,
-    FormItem,
-    FormLabel,
-    FormControl,
-    FormMessage,
-} from "../ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { Button } from "../ui/button";
 import {
     Command,
     CommandEmpty,
@@ -14,10 +10,14 @@ import {
     CommandInput,
     CommandItem,
 } from "../ui/command";
-import { Button } from "../ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { UseFormReturn, FieldValues, Path } from "react-hook-form";
-import { cn } from "@/lib/utils";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "../ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type Option = {
     label: string;
@@ -55,11 +55,11 @@ export default function TDCombobox<T extends FieldValues>({
             name={name}
             render={({ field }) => (
                 <FormItem className="flex flex-col">
-                    <FormLabel className="text-muted-foreground font-inter text-base">
+                    <FormLabel className="text-muted-foreground font-inter text-base max-w-fit">
                         <span
-                            className={cn(
-                                required ? "relative required-label" : ""
-                            )}
+                            className={cn({
+                                "relative required-label": required,
+                            })}
                         >
                             {label}
                         </span>
@@ -75,13 +75,13 @@ export default function TDCombobox<T extends FieldValues>({
                                         "w-full h-12 bg-white hover:bg-white hover:text-muted-foreground text-muted-foreground font-normal",
                                         "justify-between",
                                         !field.value && "text-muted-foreground",
-                                        className
+                                        className,
                                     )}
                                 >
                                     {field.value
                                         ? options.find(
                                               (option) =>
-                                                  option.value === field.value
+                                                  option.value === field.value,
                                           )?.label
                                         : placeholder}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -100,7 +100,7 @@ export default function TDCombobox<T extends FieldValues>({
                                                 value={option.label}
                                                 onSelect={() => {
                                                     field.onChange(
-                                                        option.value
+                                                        option.value,
                                                     );
                                                     setOpen(false);
                                                 }}
@@ -111,7 +111,7 @@ export default function TDCombobox<T extends FieldValues>({
                                                         field.value ===
                                                             option.value
                                                             ? "opacity-100"
-                                                            : "opacity-0"
+                                                            : "opacity-0",
                                                     )}
                                                 />
                                                 {option.label}
@@ -126,7 +126,9 @@ export default function TDCombobox<T extends FieldValues>({
                             </Command>
                         </PopoverContent>
                     </Popover>
-                    <FormMessage className="text-red-500" />
+                    <div className="min-h-4">
+                        <FormMessage className="text-red-500 text-xs" />
+                    </div>
                 </FormItem>
             )}
         />

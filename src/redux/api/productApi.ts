@@ -1,3 +1,4 @@
+import { CreateProductFormValues } from "@/form-schema/product-schema";
 import { TServerResponse } from "@/types/common.types";
 import { TProduct } from "@/types/product.types";
 import { baseApi } from "./baseApi";
@@ -5,7 +6,10 @@ import { baseApi } from "./baseApi";
 export const productApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         // create product
-        createProduct: builder.mutation<TServerResponse<TProduct>, any>({
+        createProduct: builder.mutation<
+            TServerResponse<TProduct>,
+            CreateProductFormValues
+        >({
             query: (payload) => {
                 return {
                     url: "/products",
