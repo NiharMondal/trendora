@@ -49,7 +49,7 @@ export default function CartPage() {
                             {cartItems.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-2 md:gap-4">
-                                        <div className="flex items-center gap-x-4 ">
+                                        <div className="flex items-center gap-x-4">
                                             <Image
                                                 src={
                                                     item.productImage ||
@@ -58,17 +58,26 @@ export default function CartPage() {
                                                 width={100}
                                                 height={70}
                                                 alt="Image"
-                                                className="size-[70px] rounded overflow-hidden hover:object-bottom object-top object-cover duration-200"
+                                                className="size-[45px] sm:size-[50px] md:size-[60px] rounded overflow-hidden hover:object-bottom object-top object-cover duration-200"
                                             />
-                                            <div className="space-y-2">
-                                                <p className="text-wrap">
+                                            <div className="sm:space-y-0.5">
+                                                <p className="text-nowrap flex items-center gap-x-2 text-xs sm:text-base">
                                                     {item.productName}
+                                                    {item.variantId ? (
+                                                        <small className="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-xs font-medium italic ">
+                                                            Variant
+                                                        </small>
+                                                    ) : (
+                                                        <small className="bg-accent/20 text-accent px-2 py-0.5 rounded-full text-xs font-medium italic ">
+                                                            Normal
+                                                        </small>
+                                                    )}
                                                 </p>
 
-                                                <div>
+                                                <p className="text-muted-foreground font-medium text-sm">
                                                     ${item.price.toFixed(2)} x{" "}
                                                     {item.quantity}
-                                                </div>
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="sm:hidden">
@@ -81,7 +90,7 @@ export default function CartPage() {
                                                                 item.productId,
                                                             variantId:
                                                                 item.variantId,
-                                                        })
+                                                        }),
                                                     )
                                                 }
                                                 onDecrease={() =>
@@ -91,7 +100,7 @@ export default function CartPage() {
                                                                 item.productId,
                                                             variantId:
                                                                 item.variantId,
-                                                        })
+                                                        }),
                                                     )
                                                 }
                                             />
@@ -109,7 +118,7 @@ export default function CartPage() {
                                                                 item.productId,
                                                             variantId:
                                                                 item.variantId,
-                                                        })
+                                                        }),
                                                     )
                                                 }
                                                 onDecrease={() =>
@@ -119,7 +128,7 @@ export default function CartPage() {
                                                                 item.productId,
                                                             variantId:
                                                                 item.variantId,
-                                                        })
+                                                        }),
                                                     )
                                                 }
                                             />
@@ -128,7 +137,7 @@ export default function CartPage() {
                                     <TableCell>
                                         $
                                         {(item.price * item.quantity).toFixed(
-                                            2
+                                            2,
                                         )}
                                     </TableCell>
                                     <TableCell></TableCell>
@@ -143,7 +152,7 @@ export default function CartPage() {
                                                             item.productId,
                                                         variantId:
                                                             item.variantId,
-                                                    })
+                                                    }),
                                                 )
                                             }
                                         >

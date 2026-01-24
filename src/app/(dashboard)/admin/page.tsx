@@ -1,11 +1,10 @@
-import NewComments from "@/components/@dashboard/new-comments";
-import Orders from "@/components/@dashboard/orders";
 import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
+import NewComments from "@/components/_admin/dashboard/new-comments";
+import RecentOrders from "@/components/_admin/dashboard/recent-orders/recent-orders";
 import OrderChart from "@/components/charts/order-chart";
 import { cn } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
-import React from "react";
 
 export default function AdminHomePage() {
     return (
@@ -25,7 +24,7 @@ export default function AdminHomePage() {
                     return (
                         <div
                             className={cn(
-                                "rounded-2xl p-5 shadow-md flex gap-x-4 items-center bg-white"
+                                "rounded-2xl p-5 shadow-md flex gap-x-4 items-center bg-white",
                             )}
                             key={index}
                         >
@@ -45,7 +44,7 @@ export default function AdminHomePage() {
                     );
                 })}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
                 {/* Recent Orders  */}
                 <OrderChart />
 
@@ -53,7 +52,8 @@ export default function AdminHomePage() {
                 <TopProducts />
 
                 <ProductsOverview />
-                <Orders />
+
+                <RecentOrders />
                 <NewComments />
             </div>
         </div>

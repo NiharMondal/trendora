@@ -1,5 +1,6 @@
 import { RootState } from "../store";
 
+import { envConfig } from "@/config/env-config";
 import {
     BaseQueryFn,
     createApi,
@@ -8,7 +9,6 @@ import {
     FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { logout, setCredentials } from "../slice/authSlice";
-import { envConfig } from "@/config/env-config";
 
 // Explicitly type the refreshResult data
 type RefreshResponse = {
@@ -47,7 +47,7 @@ const baseQueryWithReauth: BaseQueryFn<
                 method: "POST",
             },
             api,
-            extraOptions
+            extraOptions,
         );
 
         const user = (api.getState() as RootState).auth.user;
@@ -59,7 +59,7 @@ const baseQueryWithReauth: BaseQueryFn<
                 setCredentials({
                     user: user,
                     token: refreshData?.result?.accessToken,
-                })
+                }),
             );
 
             result = await baseQuery(args, api, extraOptions);
@@ -84,5 +84,6 @@ export const baseApi = createApi({
         "brands",
         "address",
         "slides",
+        "reviews",
     ],
 });

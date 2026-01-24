@@ -1,20 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import MobileNavbar from "./mobile-navbar";
+import { useIsDesktop } from "@/hooks/use-mobile";
+import { useAppSelector } from "@/redux/redux.hooks";
+import { selectCartQuantity } from "@/redux/slice/cartSlice";
 import DesktopNavbar from "./desktop-navbar";
+import MobileNavbar from "./mobile-navbar";
 
 export default function Navbar() {
-    const [isMobile, setIsMobile] = useState(false);
+    const cartQuantity = useAppSelector(selectCartQuantity);
+    const isDesktop = useIsDesktop();
 
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 1024);
-        };
-
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
-
-    return isMobile ? <MobileNavbar /> : <DesktopNavbar />;
+    return isDesktop ? (
+        <DesktopNavbar cartQuantity={cartQuantity} />
+    ) : (
+        <MobileNavbar cartQuantity={cartQuantity} />
+    );
 }

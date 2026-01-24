@@ -1,14 +1,13 @@
-import React from "react";
+import { cn } from "@/lib/utils";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import {
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
-    FormControl,
     FormMessage,
 } from "../ui/form";
 import { Textarea } from "../ui/textarea";
-import { UseFormReturn, FieldValues, Path } from "react-hook-form";
-import { cn } from "@/lib/utils";
 
 type TDTextAreaProps<T extends FieldValues> = {
     form: UseFormReturn<T>;
@@ -32,12 +31,12 @@ export default function TDTextArea<T extends FieldValues>({
             control={form.control}
             name={name}
             render={({ field }) => (
-                <FormItem>
+                <FormItem className="-space-y-1">
                     <FormLabel className="text-muted-foreground font-inter text-base">
                         <span
-                            className={cn(
-                                required ? "relative required-label" : ""
-                            )}
+                            className={cn({
+                                "relative required-label": required,
+                            })}
                         >
                             {label}
                         </span>
@@ -49,7 +48,9 @@ export default function TDTextArea<T extends FieldValues>({
                             className={className}
                         />
                     </FormControl>
-                    <FormMessage className="text-red-500" />
+                    <div className="min-h-4">
+                        <FormMessage className="text-red-500 text-xs" />
+                    </div>
                 </FormItem>
             )}
         />

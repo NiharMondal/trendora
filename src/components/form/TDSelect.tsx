@@ -1,9 +1,10 @@
-import React from "react";
+import { cn } from "@/lib/utils";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import {
+    FormControl,
     FormField,
     FormItem,
     FormLabel,
-    FormControl,
     FormMessage,
 } from "../ui/form";
 import {
@@ -13,8 +14,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { UseFormReturn, FieldValues, Path } from "react-hook-form";
-import { cn } from "@/lib/utils";
 
 type Option = {
     label: string;
@@ -29,6 +28,7 @@ type TDSelectProps<T extends FieldValues> = {
     options?: Option[];
     className?: string;
     required?: boolean;
+    size?: "sm" | "default" | "lg";
 };
 
 export default function TDSelect<T extends FieldValues>({
@@ -39,18 +39,19 @@ export default function TDSelect<T extends FieldValues>({
     options = [],
     className,
     required,
+    size,
 }: TDSelectProps<T>) {
     return (
         <FormField
             control={form.control}
             name={name}
             render={({ field }) => (
-                <FormItem>
+                <FormItem className="-space-y-1">
                     <FormLabel className="text-muted-foreground font-inter text-base">
                         <span
-                            className={cn(
-                                required ? "relative required-label" : ""
-                            )}
+                            className={cn({
+                                "relative required-label": required,
+                            })}
                         >
                             {label}
                         </span>
@@ -60,7 +61,10 @@ export default function TDSelect<T extends FieldValues>({
                             value={field.value}
                             onValueChange={field.onChange}
                         >
-                            <SelectTrigger className={cn(className)}>
+                            <SelectTrigger
+                                className={cn(className)}
+                                size={size}
+                            >
                                 <SelectValue placeholder={placeholder} />
                             </SelectTrigger>
                             <SelectContent>
@@ -81,7 +85,9 @@ export default function TDSelect<T extends FieldValues>({
                             </SelectContent>
                         </Select>
                     </FormControl>
-                    <FormMessage className="text-red-500" />
+                    <div className="min-h-4">
+                        <FormMessage className="text-red-500 text-xs" />
+                    </div>
                 </FormItem>
             )}
         />

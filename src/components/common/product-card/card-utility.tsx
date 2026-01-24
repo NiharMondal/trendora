@@ -49,17 +49,19 @@ export default function CardUtility({ product }: Props) {
 
 const QuickViewDetails = ({ product }: Props) => {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 overflow-hidden">
             {/** image section */}
-            <div className="lg:grid-cols-1 flex flex-row lg:flex-col  items-center justify-between gap-5 overflow-x-auto">
-                {product.images?.map((img) => (
-                    <img
-                        src={img.url}
-                        alt={product.name}
-                        className="w-full h-[320px] rounded-lg overflow-hidden"
-                        key={img.id}
-                    />
-                ))}
+            <div className="quick-view-image-scroll">
+                <div className="lg:grid-cols-1 flex flex-row lg:flex-col  items-center justify-between gap-5 h-[300px] lg:h-[500px]">
+                    {product.images?.map((img) => (
+                        <img
+                            src={img.url}
+                            alt={product.name}
+                            className="h-full w-full object-cover rounded-md object-center"
+                            key={img.id}
+                        />
+                    ))}
+                </div>
             </div>
 
             {/** details section */}

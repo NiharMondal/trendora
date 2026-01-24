@@ -1,19 +1,21 @@
-import { TBrand } from "@/types/brand.types";
 import { TServerResponse } from "@/types/common.types";
+
+import { TOrder } from "@/types/order.types";
 import { baseApi } from "./baseApi";
 
-export const brandApi = baseApi.injectEndpoints({
+export const orderApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        createBrand: builder.mutation<TServerResponse<TBrand>, TBrand>({
+        createOrder: builder.mutation<TServerResponse<TOrder>, TOrder>({
             query: (payload) => ({
-                url: "/brands",
+                url: "/orders",
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["brands"],
+            invalidatesTags: ["orders"],
         }),
-        allBrand: builder.query<
-            TServerResponse<TBrand[]>,
+
+        allOrder: builder.query<
+            TServerResponse<TOrder[]>,
             Record<string, string>
         >({
             query: (query) => {
@@ -26,52 +28,53 @@ export const brandApi = baseApi.injectEndpoints({
                 });
 
                 return {
-                    url: "/brands",
+                    url: "/orders",
                     method: "GET",
                     params,
                 };
             },
-            providesTags: ["brands"],
+            providesTags: ["orders"],
         }),
 
-        //get product by id
-        brandById: builder.query<TServerResponse<TBrand>, string>({
+        //get order by id
+        orderById: builder.query<TServerResponse<TOrder>, string>({
             query: (id) => ({
-                url: `/brands/${id}`,
+                url: `/orders/${id}`,
                 method: "GET",
             }),
-            providesTags: ["products"],
+            providesTags: ["orders"],
         }),
 
-        // update brand
-        updateBrand: builder.mutation<
-            TServerResponse<TBrand>,
-            { payload: TBrand; id: string }
+        // update order
+        updateOrder: builder.mutation<
+            TServerResponse<TOrder>,
+            { payload: TOrder; id: string }
         >({
             query: ({ payload, id }) => {
                 return {
-                    url: `/brands/${id}`,
+                    url: `/orders/${id}`,
                     method: "PATCH",
                     body: payload,
                 };
             },
-            invalidatesTags: ["brands"],
+            invalidatesTags: ["orders"],
         }),
-        // delete product
-        deleteBrand: builder.mutation<TServerResponse<TBrand>, string>({
+
+        // delete order
+        deleteOrder: builder.mutation<TServerResponse<TOrder>, string>({
             query: (id) => ({
-                url: `/brands/${id}`,
+                url: `/orders/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["brands"],
+            invalidatesTags: ["orders"],
         }),
     }),
 });
 
 export const {
-    useAllBrandQuery,
-    useCreateBrandMutation,
-    useBrandByIdQuery,
-    useDeleteBrandMutation,
-    useUpdateBrandMutation,
-} = brandApi;
+    useAllOrderQuery,
+    useCreateOrderMutation,
+    useOrderByIdQuery,
+    useDeleteOrderMutation,
+    useUpdateOrderMutation,
+} = orderApi;
