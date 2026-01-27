@@ -1,4 +1,3 @@
-"use client";
 import ProductCommonDetails from "@/components/common/@ui/product-common-details";
 import { TProduct } from "@/types/product.types";
 import DeliveryDetails from "./delivery-details";

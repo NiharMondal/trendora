@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet";
@@ -32,17 +33,18 @@ export default function TDSheet({
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetContent
-                side={isDesktop ? "bottom" : "right"}
+                side={!isDesktop ? "bottom" : "right"}
                 className={cn(
-                    "w-full [&>button]:hidden",
+                    "w-full min-w-2xl [&>button]:hidden",
                     {
-                        "max-h-4/5 pb-10 rounded-t-xl": isDesktop,
+                        "max-h-4/5 pb-10 rounded-t-xl": !isDesktop,
                     },
                     className,
                 )}
             >
                 <SheetHeader className=" flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
                     <SheetTitle className="text-2xl w-fit">{title}</SheetTitle>
+                    <SheetDescription className="sr-only"></SheetDescription>
                     <Button
                         className="bg-muted hover:bg-muted rounded-full text-muted-foreground hover:text-destructive scale-120 hover:rotate-90"
                         onClick={() => setIsOpen(false)}

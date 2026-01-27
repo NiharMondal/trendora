@@ -1,7 +1,7 @@
+import NewComments from "@/components/@dashboard/admin/dashboard/new-comments";
+import RecentOrdersTable from "@/components/@dashboard/admin/dashboard/recent-orders/recent-orders-table";
 import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
-import NewComments from "@/components/_admin/dashboard/new-comments";
-import RecentOrders from "@/components/_admin/dashboard/recent-orders/recent-orders";
 import OrderChart from "@/components/charts/order-chart";
 import { cn } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
@@ -53,7 +53,7 @@ export default function AdminHomePage() {
 
                 <ProductsOverview />
 
-                <RecentOrders />
+                <RecentOrdersTable />
                 <NewComments />
             </div>
         </div>

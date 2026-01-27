@@ -59,6 +59,10 @@ export default function TDInput<T extends FieldValues>({
                                 disabled={disabled}
                                 inputSize={inputSize}
                                 {...field}
+                                {...(type === "number" && {
+                                    onChange: (e) =>
+                                        field.onChange(e.target.valueAsNumber),
+                                })}
                             />
                         </FormControl>
                         {ornament && (

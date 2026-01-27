@@ -1,3 +1,4 @@
+import { TReviewFormData } from "@/form-schema/review-schema";
 import { TServerResponse } from "@/types/common.types";
 import { TReview } from "@/types/review.types";
 import { baseApi } from "./baseApi";
@@ -47,7 +48,7 @@ export const reviewApi = baseApi.injectEndpoints({
         // update review
         updateReview: builder.mutation<
             TServerResponse<TReview>,
-            { payload: TReview; id: string }
+            { payload: TReviewFormData; id: string }
         >({
             query: ({ payload, id }) => {
                 return {

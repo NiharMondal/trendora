@@ -1,5 +1,10 @@
-import React from "react";
+import ReviewTable from "./review-table";
 
 export default function Reviews() {
-	return <div>Reviews</div>;
+    return (
+        <div className="space-y-5">
+            <h4 className="font-medium text-black">Review List</h4>
+            <ReviewTable />
+        </div>
+    );
 }
