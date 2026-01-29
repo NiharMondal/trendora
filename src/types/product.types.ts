@@ -26,6 +26,7 @@ export type TProduct = {
     isPublished: boolean;
     isFeatured: boolean;
     categoryId: string;
+    brandId: string;
     isDeleted: boolean;
     variants: TProductVariant[];
     images: TProductImage[];

@@ -1,13 +1,14 @@
 import TDInput from "@/components/form/TDInput";
 import TDSelect from "@/components/form/TDSelect";
 import { Button } from "@/components/ui/button";
-import { CreateProductFormValues } from "@/form-schema/product-schema";
+import { TProductFormValues } from "@/form-schema/product-schema";
+
 import { productSizeOptions } from "@/helping-data/products";
 import { Plus, X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 export default function ProductVariant() {
-    const form = useFormContext<CreateProductFormValues>();
+    const form = useFormContext<TProductFormValues>();
     const {
         fields: variantFields,
         append: appendVariant,
@@ -17,7 +18,7 @@ export default function ProductVariant() {
         name: "variants",
     });
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto">
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Product Variants</h3>
                 <Button
@@ -38,7 +39,7 @@ export default function ProductVariant() {
             {variantFields.map((field, index) => (
                 <div
                     key={field.id}
-                    className="border p-4 rounded-lg relative grid grid-cols-2 gap-x-4 gap-y-1.5"
+                    className="border p-4 rounded-lg relative grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-1.5"
                 >
                     <TDSelect
                         form={form}

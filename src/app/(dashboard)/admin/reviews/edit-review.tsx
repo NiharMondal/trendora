@@ -1,4 +1,4 @@
-import AddEditReviewForm from "@/components/common/add-edit-review-form";
+import ReviewForm from "@/components/common/review-form";
 import { TReviewFormData } from "@/form-schema/review-schema";
 import {
     useReviewByIdQuery,
@@ -33,7 +33,7 @@ export default function EditReview({ onClose }: EditReviewProps) {
         try {
             await updateReview({
                 payload: values,
-                id: review?.result?.id || "",
+                id: review?.result?.id || reviewId!,
             }).unwrap();
             toast.success("Review updated successfully");
         } catch (error) {
@@ -44,7 +44,7 @@ export default function EditReview({ onClose }: EditReviewProps) {
     if (!reviewId) return null;
     if (getLoading) return <p>Loading...</p>;
     return (
-        <AddEditReviewForm
+        <ReviewForm
             defaultValues={defaultValues}
             onSubmit={handleReviewSubmit}
             isSubmitting={isLoading}

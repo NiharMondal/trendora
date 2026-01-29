@@ -17,7 +17,7 @@ type AddEditReviewFormProps = {
         [key in keyof TReviewFormData]?: boolean;
     };
 };
-export default function AddEditReviewForm({
+export default function ReviewForm({
     defaultValues,
     onSubmit,
     isSubmitting,

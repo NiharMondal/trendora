@@ -1,18 +1,19 @@
-import React, { use } from "react";
-import UpdateProductForm from "./update-product-form";
+import Headline from "@/components/common/dashboard/headline";
+import { use } from "react";
+import UpdateProductForm from "./update-product";
 
 export default function UpdateProductPage({
-	params,
+    params,
 }: {
-	params: Promise<{ id: string }>;
+    params: Promise<{ id: string }>;
 }) {
-	const { id } = use(params);
+    const { id } = use(params);
 
-	return (
-		<div className="space-y-4">
-			<h4>Update Product</h4>
+    return (
+        <div className="space-y-4">
+            <Headline title="Update Product" showBackButton />
 
-			<UpdateProductForm productId={id} />
-		</div>
-	);
+            <UpdateProductForm productId={id} />
+        </div>
+    );
 }
