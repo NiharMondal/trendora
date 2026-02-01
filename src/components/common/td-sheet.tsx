@@ -54,7 +54,7 @@ export default function TDSheet({
                         <X />
                     </Button>
                 </SheetHeader>
-                <div className="px-4 overflow-y-auto">{children}</div>
+                <div className="px-4">{children}</div>
             </SheetContent>
         </Sheet>
     );

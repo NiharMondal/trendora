@@ -9,13 +9,13 @@ import { toast } from "sonner";
 export default function UpdateProduct({ productId }: { productId: string }) {
     const { data: product, isLoading: fetchLoading } =
         useProductByIdQuery(productId);
-
+    console.log(product);
     const [updateProduct, { isLoading: updateLoading }] =
         useUpdateProductMutation();
     const defaultValues = product?.result ?? {
         name: product?.result.name,
-        basePrice: product?.result.basePrice,
-        discountPrice: product?.result.discountPrice || "",
+        basePrice: Number(product?.result.basePrice),
+        discountPrice: Number(product?.result.discountPrice) || undefined,
         categoryId: product?.result.categoryId || "",
         description: product?.result.description || "",
         stockQuantity: product?.result.stockQuantity,

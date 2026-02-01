@@ -1,12 +1,11 @@
 "use client";
-import TDInput from "@/components/form/TDInput";
+import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { loginSchema, TLoginSchemaType } from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
-import React from "react";
 import { useForm } from "react-hook-form";
 
 export default function LoginForm() {

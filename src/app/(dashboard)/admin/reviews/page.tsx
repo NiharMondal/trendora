@@ -1,4 +1,4 @@
-import ReviewTable from "./review-table";
+import ReviewTable from "@/components/@dashboard/admin/review-table/review-table";
 
 export default function Reviews() {
     return (

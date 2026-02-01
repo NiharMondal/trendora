@@ -1,6 +1,6 @@
 "use client";
 import TDButton from "@/components/common/td-button";
-import TDInput from "@/components/form/TDInput";
+import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import { registerSchema, TRegisterSchemaType } from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";

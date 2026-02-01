@@ -1,10 +1,10 @@
 "use client";
 import TDSeparator from "@/components/common/@ui/td-separator";
 import TDButton from "@/components/common/td-button";
-import TDCheckbox from "@/components/form/TDCheckbox";
-import TDCombobox from "@/components/form/TDCombobox";
-import TDInput from "@/components/form/TDInput";
-import TDTextArea from "@/components/form/TDTextArea";
+import TDCheckbox from "@/components/form-input/TDCheckbox";
+import TDCombobox from "@/components/form-input/TDCombobox";
+import TDInput from "@/components/form-input/TDInput";
+import TDTextArea from "@/components/form-input/TDTextArea";
 import { Form } from "@/components/ui/form";
 import {
     TProductFormValues,

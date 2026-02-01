@@ -14,6 +14,7 @@ import { TProduct, TProductVariant } from "@/types/product.types";
 
 import { Heart, RefreshCw, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { ReactSmartRating } from "react-smart-rating";
 import { toast } from "sonner";
 
 type Props = {
@@ -60,9 +61,9 @@ export default function ProductCommonDetails({
         toast.success("Product added to cart");
     };
     return (
-        <div className="space-y-5">
+        <div className="space-y-5 pr-4">
             <h2>{product?.name}</h2>
-            <p>Rating section</p>
+            <ReactSmartRating initialRating={5} activeColor="orange" readOnly />
             <ProductPrice
                 basePrice={product?.basePrice || ""}
                 discountPrice={product?.discountPrice}
@@ -70,7 +71,7 @@ export default function ProductCommonDetails({
             <p>{product?.description}</p>
             <hr className="border-t border-muted my-5" />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <p>Variants:</p>
                     <Tooltip>
@@ -89,7 +90,7 @@ export default function ProductCommonDetails({
                     className={cn(
                         "grid grid-cols-3 md:grid-cols-5 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3",
                         {
-                            "2xl:grid-cols-4": quickView,
+                            "2xl:grid-cols-3": quickView,
                         },
                     )}
                 >

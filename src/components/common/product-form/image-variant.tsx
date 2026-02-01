@@ -1,4 +1,4 @@
-import TDInput from "@/components/form/TDInput";
+import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";

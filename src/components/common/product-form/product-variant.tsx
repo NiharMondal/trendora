@@ -1,5 +1,5 @@
-import TDInput from "@/components/form/TDInput";
-import TDSelect from "@/components/form/TDSelect";
+import TDInput from "@/components/form-input/TDInput";
+import TDSelect from "@/components/form-input/TDSelect";
 import { Button } from "@/components/ui/button";
 import { TProductFormValues } from "@/form-schema/product-schema";
 

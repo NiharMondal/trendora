@@ -12,4 +12,17 @@ export type DataTableProps<T> = {
     columns: DataTableColumn<T>[];
     rowKey: (row: T) => string;
     rowClassName?: (row: T) => string;
+    isLoading?: boolean;
+    search?: {
+        value: string;
+        onChange: (value: string) => void;
+        placeholder?: string;
+    };
+    pagination?: {
+        total: number;
+        page: number;
+        limit: number;
+        onPageChange: (page: number) => void;
+        onLimitChange: (limit: number) => void;
+    };
 };

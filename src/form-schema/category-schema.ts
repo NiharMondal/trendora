@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const createCategorySchema = z.object({
+export const categorySchema = z.object({
 	name: z
 		.string({ error: "Category name is required" })
 		.min(2, "Min character is 2")
@@ -14,7 +14,4 @@ export const createCategorySchema = z.object({
 		.optional(),
 });
 
-export const updateCategorySchema = createCategorySchema.partial();
-
-export type CategoryInput = z.infer<typeof createCategorySchema>;
-export type CategoryUpdateInput = z.infer<typeof updateCategorySchema>;
+export type TCategoryFormValues = z.infer<typeof categorySchema>;

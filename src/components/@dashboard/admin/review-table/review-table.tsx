@@ -1,9 +1,10 @@
 "use client";
 
-import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import TDSheet from "@/components/common/td-sheet";
-import { TDTable } from "@/components/common/td-table";
 import { useAllReviewQuery } from "@/redux/api/reviewApi";
+import { DataTable } from "@/shared/data-table";
+import NoDataFound from "@/shared/no-data-found";
+import TableLoading from "@/shared/table-loading";
 import { TReview } from "@/types/review.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -28,15 +29,19 @@ export default function ReviewTable() {
     const handleCloseDrawer = () => {
         router.push("?", { scroll: false });
     };
-    if (isLoading) return <TableLoadingSkeleton />;
+    if (isLoading) return <TableLoading />;
     return (
         <React.Fragment>
             <div className="bg-white rounded-md p-5">
-                <TDTable
-                    columns={reviewColumns(handleAction)}
-                    data={reviews?.result || []}
-                    rowKey={(row) => row.id}
-                />
+                {reviews?.result?.length === 0 ? (
+                    <NoDataFound />
+                ) : (
+                    <DataTable
+                        columns={reviewColumns(handleAction)}
+                        data={reviews?.result || []}
+                        rowKey={(row) => row.id}
+                    />
+                )}
             </div>
 
             <TDSheet

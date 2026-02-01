@@ -1,8 +1,8 @@
 import { TReviewFormData, reviewSchema } from "@/form-schema/review-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import TDInput from "../form/TDInput";
-import TDTextArea from "../form/TDTextArea";
+import TDInput from "../form-input/TDInput";
+import TDTextArea from "../form-input/TDTextArea";
 import { Form } from "../ui/form";
 import TDButton from "./td-button";
 

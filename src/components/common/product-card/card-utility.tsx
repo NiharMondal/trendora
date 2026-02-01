@@ -39,7 +39,7 @@ export default function CardUtility({ product }: Props) {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 title="Quick View"
-                className="md:min-w-3xl"
+                className="md:min-w-4xl"
             >
                 <QuickViewDetails product={product} />
             </TDSheet>
@@ -52,7 +52,7 @@ const QuickViewDetails = ({ product }: Props) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 overflow-hidden">
             {/** image section */}
             <div className="quick-view-image-scroll">
-                <div className="lg:grid-cols-1 flex flex-row lg:flex-col  items-center justify-between gap-5 h-[300px] lg:h-[500px]">
+                <div className="lg:grid-cols-1 flex flex-row lg:flex-col  items-center justify-between gap-5 h-[300px] lg:h-[850px]">
                     {product.images?.map((img) => (
                         <img
                             src={img.url}
