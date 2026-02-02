@@ -1,6 +1,6 @@
 "use client";
 import { useAllOrderQuery } from "@/redux/api/orderApi";
-import { DataTable } from "@/shared/data-table";
+import { DataTable } from "@/shared/table";
 import { orderColumns } from "./order-columns";
 
 export default function RecentOrdersTable() {

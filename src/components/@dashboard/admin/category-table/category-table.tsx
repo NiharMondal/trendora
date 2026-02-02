@@ -1,9 +1,11 @@
 "use client";
+import Pagination from "@/components/common/pagination";
 import {
     useAllCategoryQuery,
     useDeleteCategoryMutation,
 } from "@/redux/api/productCategoryApi";
-import { DataTable } from "@/shared/data-table";
+import { DataTable, TableToolbar } from "@/shared/table";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
@@ -34,24 +36,30 @@ export default function CategoryTable({}: Props) {
         }
     };
     return (
-        <div>
+        <div className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
+                <TableToolbar
+                    search={search}
+                    setSearch={setSearch}
+                    limit={limit}
+                    setLimit={(val) => setLimit(val)}
+                />
+            </div>
             <DataTable
                 data={categories?.result || []}
                 columns={categoryColumns(handleDelete)}
-                isLoading={isLoading}
+                isFetching={isLoading}
                 rowKey={(row) => row.id}
-                search={{
-                    value: search,
-                    onChange: setSearch,
-                }}
-                pagination={{
-                    total: categories?.meta?.totalPages || 0,
-                    page: currentPage,
-                    limit: Number(limit),
-                    onPageChange: setCurrentPage,
-                    onLimitChange: (val) => setLimit(val.toString()),
-                }}
             />
+            {categories?.result && categories.result.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={categories?.meta?.totalPages || 0}
+                    limit={Number(limit)}
+                    totalData={categories?.meta?.totalData || 0}
+                />
+            )}
         </div>
     );
 }

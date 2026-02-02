@@ -1,7 +1,9 @@
+import Pagination from "@/components/common/pagination";
 import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
+import { DataTable } from "@/components/common/td-table";
 import { useAllUserQuery } from "@/redux/api/userApi";
-import { DataTable } from "@/shared/data-table";
 import NoDataFound from "@/shared/no-data-found";
+import TableToolbar from "@/shared/table/table-toolbar";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { userManagementColumns } from "./user-management-columns";
@@ -24,12 +26,29 @@ export default function UserManagementTable() {
         return <NoDataFound />;
     }
     return (
-        <div>
+        <div className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
+                <TableToolbar
+                    search={search}
+                    setSearch={setSearch}
+                    limit={limit}
+                    setLimit={(val) => setLimit(val)}
+                />
+            </div>
             <DataTable
                 columns={userManagementColumns}
                 data={users.result}
                 rowKey={(row) => row.id}
             />
+            {users?.result?.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={users?.meta?.totalPages || 0}
+                    limit={Number(limit)}
+                    totalData={users?.meta?.totalData || 0}
+                />
+            )}
         </div>
     );
 }

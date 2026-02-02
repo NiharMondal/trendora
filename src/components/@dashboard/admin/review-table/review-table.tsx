@@ -1,10 +1,10 @@
 "use client";
 
 import TDSheet from "@/components/common/td-sheet";
+import { DataTable } from "@/components/common/td-table";
 import { useAllReviewQuery } from "@/redux/api/reviewApi";
-import { DataTable } from "@/shared/data-table";
 import NoDataFound from "@/shared/no-data-found";
-import TableLoading from "@/shared/table-loading";
+import TableLoading from "@/shared/table/table-loading";
 import { TReview } from "@/types/review.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -40,6 +40,7 @@ export default function ReviewTable() {
                         columns={reviewColumns(handleAction)}
                         data={reviews?.result || []}
                         rowKey={(row) => row.id}
+                        isFetching={isLoading}
                     />
                 )}
             </div>

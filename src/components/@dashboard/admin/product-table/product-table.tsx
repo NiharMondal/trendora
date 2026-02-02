@@ -1,11 +1,11 @@
 "use client";
 
-import Sorting from "@/components/common/sorting/sorting";
+import Pagination from "@/components/common/pagination";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
 } from "@/redux/api/productApi";
-import { DataTable } from "@/shared/data-table";
+import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
@@ -16,13 +16,18 @@ export default function ProductTable() {
     const [limit, setLimit] = useState("10");
     const [search, setSearch] = useState("");
     const [value] = useDebounce(search, 1000);
-
-    const [deleteProduct] = useDeleteProductMutation();
-    const { data: products, isLoading } = useAllProductsQuery({
+    const [sortBy, setSortBy] = useState("createdAt:asc");
+    const {
+        data: products,
+        isLoading,
+        isFetching,
+    } = useAllProductsQuery({
         search: value,
         limit: limit,
         page: currentPage.toString(),
+        sortBy: sortBy,
     });
+    const [deleteProduct] = useDeleteProductMutation();
 
     const handleDelete = async (id: string) => {
         try {
@@ -32,23 +37,39 @@ export default function ProductTable() {
             toast.error(error?.data?.message);
         }
     };
-
+    if (isLoading) return <TableLoading />;
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
-            <Sorting setSearch={setSearch} setLimit={setLimit} />
+            <TableToolbar
+                search={search}
+                limit={limit}
+                sortBy={sortBy}
+                setLimit={setLimit}
+                setSortBy={setSortBy}
+                setSearch={setSearch}
+                sortByOptions={[
+                    { label: "Asc", value: "createdAt:asc" },
+                    { label: "Desc", value: "createdAt:desc" },
+                    { label: "Name(asc)", value: "name:asc" },
+                    { label: "Name(desc)", value: "name:desc" },
+                ]}
+            />
+
             <DataTable
                 columns={productColumns}
                 data={products?.result || []}
                 rowKey={(row) => row.id}
-                isLoading={isLoading}
-                pagination={{
-                    total: products?.meta?.totalPages || 0,
-                    page: currentPage,
-                    limit: Number(limit),
-                    onPageChange: setCurrentPage,
-                    onLimitChange: (val) => setLimit(val.toString()),
-                }}
+                isFetching={isFetching}
             />
+            {products?.result && products.result.length > 10 && (
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={products?.meta?.totalPages || 0}
+                    limit={Number(limit)}
+                    totalData={products?.meta?.totalData || 0}
+                />
+            )}
         </div>
     );
 }

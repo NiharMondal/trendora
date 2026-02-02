@@ -10,18 +10,21 @@ export const productColumns: DataTableColumn<TProduct>[] = [
     {
         key: "name",
         header: "Product",
-        cell: (row) => (
-            <div className="flex items-center gap-x-2">
-                <div className="size-16 flex items-center justify-center bg-gray-100 rounded-md">
-                    <img
-                        src={row.images[0].url}
-                        alt="User Avatar"
-                        className="size-full rounded-md"
-                    />
+        cell: (row) => {
+            const isMain = row?.images?.find((image) => image.isMain);
+            return (
+                <div className="flex items-center gap-x-2">
+                    <div className="size-16 flex items-center justify-center bg-gray-100 rounded-md">
+                        <img
+                            src={isMain?.url || ""}
+                            alt={row.name}
+                            className="size-full rounded-md"
+                        />
+                    </div>
+                    <p className="font-medium">{row.name}</p>
                 </div>
-                <p className="font-medium">{row.name}</p>
-            </div>
-        ),
+            );
+        },
     },
     {
         key: "basePrice",
