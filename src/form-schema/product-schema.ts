@@ -1,7 +1,7 @@
 import z from "zod";
 
 //product variant
-export const productVariant = z.object({
+export const productVariantSchema = z.object({
     size: z
         .string({ error: "Variant size is required" })
         .nonempty({ error: "Variant Size is required" })
@@ -20,92 +20,71 @@ export const productVariant = z.object({
         .number({ error: "Variant price is required" })
         .positive("Price must be positive"),
 });
-export type ZTProductVariant = z.infer<typeof productVariant>;
+export type TProductVariant = z.infer<typeof productVariantSchema>;
 //product image
-export const productImage = z.object({
+export const productImageSchema = z.object({
     url: z
         .string({ error: "Image URL is required" })
         .nonempty("Image URL is required")
         .trim(),
     isMain: z.coerce.boolean().optional(),
 });
-export type ZTProductImage = z.infer<typeof productImage>;
+export type TProductImage = z.infer<typeof productImageSchema>;
 //product schema
-export const createProductSchema = z.object({
-    name: z
-        .string()
-        .min(5, "Min character is 5")
-        .max(50, "Max character is 50")
-        .trim(),
-    description: z
-        .string()
-        .min(30, "Min character is 30")
-        .max(500, "Max character is 500")
-        .trim(),
-    basePrice: z.coerce
-        .number({ error: "Base price is required" })
-        .min(1, "Price should be positive")
-        .max(10000, "Price should be less than 10000"),
-    discountPrice: z
-        .union([z.coerce.number().min(0).max(10000), z.literal("")])
-        .optional()
-        .transform((val) => (val === "" || 0 ? null : val)),
-    stockQuantity: z.coerce
-        .number({ error: "Stock quantity is required" })
-        .positive("Quantity should be positive")
-        .min(1, "Quantity should be more than 0")
-        .max(10000, "Price should be less than 10000"),
-
-    categoryId: z
-        .string({ error: "Category ID is required" })
-        .nonempty("Category can not be empty")
-        .trim(),
-    isFeatured: z.boolean(),
-    variants: z.array(productVariant),
-    images: z.array(productImage).min(1, "Provide at least 1 image"),
-});
-export type CreateProductFormValues = z.infer<typeof createProductSchema>;
-const updateProduct = createProductSchema.optional();
-
-export type UpdateProductFromValues = z.infer<typeof updateProduct>;
-
-export const updateProductGeneralInfo = z.object({
-    name: z
-        .string()
-        .min(5, "Min character is 5")
-        .max(50, "Max character is 50")
-        .trim()
-        .optional(),
-    description: z
-        .string()
-        .min(30, "Min character is 30")
-        .max(500, "Max character is 500")
-        .trim()
-        .optional(),
-    basePrice: z.coerce
-        .number({ error: "Base price is required" })
-        .min(1, "Price should be positive")
-        .max(10000, "Price should be less than 10000")
-        .optional(),
-    discountPrice: z
-        .union([z.coerce.number().min(0).max(10000), z.literal("")])
-        .optional()
-        .transform((val) => (val === "" || 0 ? null : val)),
-    stockQuantity: z.coerce
-        .number({ error: "Stock quantity is required" })
-        .positive("Quantity should be positive")
-        .min(1, "Quantity should be more than 0")
-        .max(10000, "Price should be less than 10000")
-        .optional(),
-
-    categoryId: z
-        .string({ error: "Category ID is required" })
-        .nonempty("Category can not be empty")
-        .trim()
-        .optional(),
-    isFeatured: z.boolean().optional(),
-});
-
-export type UpdateProductGeneralFormValues = z.infer<
-    typeof updateProductGeneralInfo
->;
+export const productSchema = z
+    .object({
+        name: z
+            .string()
+            .min(1, "Product name is required")
+            .max(255, "Name is too long"),
+        description: z
+            .string()
+            .min(10, "Description must be at least 10 characters"),
+        basePrice: z.coerce
+            .number({ error: "Base price is required" })
+            .positive("Base price must be greater than 0"),
+        discountPrice: z
+            .union([z.string(), z.number()])
+            .transform((val) => {
+                if (val === "" || val === null || val === undefined)
+                    return undefined;
+                const num = typeof val === "string" ? parseFloat(val) : val;
+                return isNaN(num) ? undefined : num;
+            })
+            .pipe(z.number().positive("Discount price must be greater than 0"))
+            .optional(),
+        stockQuantity: z.coerce
+            .number({ error: "Stock quantity must be a number" })
+            .int("Stock quantity must be an integer")
+            .min(0, "Stock quantity cannot be negative"),
+        isFeatured: z.boolean().optional(),
+        categoryId: z.string().min(1, "Category is required"),
+        brandId: z.string().min(1, "Brand is required"),
+        variants: z
+            .array(productVariantSchema)
+            .min(1, "At least one variant is required")
+            .refine(
+                (variants) => variants.some((v) => v.stock > 0),
+                "At least one variant must have stock available",
+            ),
+        images: z
+            .array(productImageSchema)
+            .min(1, "At least one image is required")
+            .refine(
+                (images) => images.filter((img) => img.isMain).length === 1,
+                "Exactly one image must be marked as main",
+            ),
+    })
+    .superRefine((data, ctx) => {
+        // Validate that discount price is less than base price
+        if (data.discountPrice && typeof data.discountPrice === "number") {
+            if (data.discountPrice >= data.basePrice) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "Discount price must be less than base price",
+                    path: ["discountPrice"],
+                });
+            }
+        }
+    });
+export type TProductFormValues = z.infer<typeof productSchema>;

@@ -50,11 +50,11 @@ const ProductPhotoView = ({
                 {images?.map((item, index) => (
                     <PhotoView src={item.url} key={item.id}>
                         {index < 1 ? (
-                            <Image
+                            <img
                                 height={200}
                                 width={200}
                                 src={images[currentIndex]?.url}
-                                alt="Main"
+                                alt={item.productId}
                                 className="w-full h-[600px] object-cover rounded cursor-crosshair"
                                 onClick={() => setCurrentIndex(currentIndex)}
                             />

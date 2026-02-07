@@ -6,9 +6,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { DataTableProps } from "@/types/table.types";
 
-export function TDTable<T>({
+export function DataTable<T>({
     data,
     columns,
     rowKey,
@@ -17,9 +18,15 @@ export function TDTable<T>({
     return (
         <Table>
             <TableHeader>
-                <TableRow>
-                    {columns.map((col) => (
-                        <TableHead key={col.key as string}>
+                <TableRow className="bg-gray-100 h-20 rounded-md">
+                    {columns.map((col, index) => (
+                        <TableHead
+                            key={col.key as string}
+                            className={cn(
+                                index === 0 && "rounded-tl-md",
+                                index === columns.length - 1 && "rounded-tr-md",
+                            )}
+                        >
                             {col.header}
                         </TableHead>
                     ))}

@@ -59,6 +59,17 @@ export default function TDInput<T extends FieldValues>({
                                 disabled={disabled}
                                 inputSize={inputSize}
                                 {...field}
+                                value={field.value ?? ""}
+                                {...(type === "number" && {
+                                    onChange: (e) => {
+                                        const value = e.target.value;
+                                        field.onChange(
+                                            value === ""
+                                                ? ""
+                                                : parseFloat(value),
+                                        );
+                                    },
+                                })}
                             />
                         </FormControl>
                         {ornament && (

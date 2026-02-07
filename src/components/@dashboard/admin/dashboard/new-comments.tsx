@@ -1,19 +1,19 @@
 "use client";
-import TDSeparator from "@/components/common/@ui/td-separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAllReviewQuery } from "@/redux/api/reviewApi";
 import { ReactSmartRating } from "react-smart-rating";
+
 export default function NewComments() {
     const { data } = useAllReviewQuery({
         limit: "5",
         sortBy: "createdAt",
         orderBy: "desc",
     });
-    console.log(data);
+
     return (
         <div className="bg-white rounded-2xl shadow-2xl p-5 lg:col-span-2">
-            <h4 className="font-semibold text-black">New Comments</h4>
-            <TDSeparator />
+            <h4 className="mb-10 font-medium text-black">New Comments</h4>
+
             {!data?.result?.length && <p>No comments found.</p>}
             <div className="space-y-3">
                 {data?.result?.map((review) => (
@@ -23,12 +23,13 @@ export default function NewComments() {
                     >
                         <Avatar className="size-12 rounded-full overflow-hidden">
                             <AvatarImage
+                                className="size-full object-center object-cover"
                                 src={
                                     review?.user?.avatar ||
                                     "https://github.com/shadcn.png"
                                 }
                             />
-                            <AvatarFallback>CN</AvatarFallback>
+                            <AvatarFallback>{review.user.name}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col gap-y-1.5">
                             <div>
@@ -37,7 +38,7 @@ export default function NewComments() {
                                 </p>
                                 <ReactSmartRating
                                     initialRating={review?.rating}
-                                    activeColor="red"
+                                    activeColor="orange"
                                     size={16}
                                     readOnly
                                 />

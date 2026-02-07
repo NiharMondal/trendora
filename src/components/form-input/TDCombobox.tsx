@@ -88,7 +88,10 @@ export default function TDCombobox<T extends FieldValues>({
                                 </Button>
                             </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0" align="start">
+                        <PopoverContent
+                            className="min-w-full p-0"
+                            align="start"
+                        >
                             <Command>
                                 <CommandInput placeholder={searchPlaceholder} />
                                 <CommandEmpty>{emptyText}</CommandEmpty>

@@ -1,18 +1,18 @@
 import {
-    Home,
-    type LucideIcon,
-    Layers,
-    ShoppingCart,
-    FilePlus,
-    User2,
-    Feather,
-    Star,
     Coffee,
-    Key,
-    UserRoundPen,
-    ScrollText,
-    MapPinHouse,
+    Feather,
+    FilePlus,
     Heart,
+    Home,
+    Key,
+    Layers,
+    MapPinHouse,
+    ScrollText,
+    ShoppingCart,
+    Star,
+    User2,
+    UserRoundPen,
+    type LucideIcon,
 } from "lucide-react";
 type TChildren = {
     title: string;
@@ -44,7 +44,7 @@ export const adminNavlink: TSidebarLink[] = [
                 url: "/admin/category-list",
                 index: true,
             },
-            { title: "New Category", url: "/admin/new-category" },
+            { title: "Add Category", url: "/admin/add-category" },
         ],
     },
     {
@@ -56,8 +56,8 @@ export const adminNavlink: TSidebarLink[] = [
         ],
     },
     {
-        title: "User",
-        url: "/admin/user",
+        title: "User Management",
+        url: "/admin/user-management",
         icon: User2,
     },
     {

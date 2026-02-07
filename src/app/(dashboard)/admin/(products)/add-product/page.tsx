@@ -1,12 +1,12 @@
-import React from "react";
-import ProductForm from "./product-form";
+import Headline from "@/components/common/dashboard/headline";
+import CreateProduct from "./create-product";
 
 export default function AddProduct() {
-	return (
-		<div className="space-y-4">
-			<h4>Add Product</h4>
+    return (
+        <div className="space-y-5">
+            <Headline title="Add Product" />
 
-			<ProductForm />
-		</div>
-	);
+            <CreateProduct />
+        </div>
+    );
 }

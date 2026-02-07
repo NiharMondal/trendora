@@ -3,7 +3,7 @@ export type TProductVariant = {
     productId: string;
     size: string;
     color: string;
-    stock: number;
+    stock: number | string;
     price: string;
     isDeleted: boolean;
 };
@@ -26,6 +26,8 @@ export type TProduct = {
     isPublished: boolean;
     isFeatured: boolean;
     categoryId: string;
+    rating: number | null;
+    brandId: string;
     isDeleted: boolean;
     variants: TProductVariant[];
     images: TProductImage[];

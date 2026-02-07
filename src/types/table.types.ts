@@ -12,4 +12,5 @@ export type DataTableProps<T> = {
     columns: DataTableColumn<T>[];
     rowKey: (row: T) => string;
     rowClassName?: (row: T) => string;
+    isFetching?: boolean;
 };
