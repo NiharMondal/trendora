@@ -31,8 +31,8 @@ export const adminNavlink: TSidebarLink[] = [
         title: "Products",
         icon: ShoppingCart,
         children: [
-            { title: "Add Product", url: "/admin/add-product", index: true },
-            { title: "Product List", url: "/admin/product-list" },
+            { title: "Product List", url: "/admin/product-list", index: true },
+            { title: "Add Product", url: "/admin/add-product" },
         ],
     },
     {

@@ -3,6 +3,7 @@ export type TCategory = {
     name: string;
     slug: string;
     parentId: string | null;
+    parent?: TCategory | null;
     isDeleted: boolean;
     createdAt: string;
     updatedAt: string;

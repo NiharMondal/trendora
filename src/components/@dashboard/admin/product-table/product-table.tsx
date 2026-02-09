@@ -1,6 +1,7 @@
 "use client";
 
 import Pagination from "@/components/common/pagination";
+import { allSortOptions } from "@/components/helpers/sort-options";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
@@ -16,7 +17,10 @@ export default function ProductTable() {
     const [limit, setLimit] = useState("10");
     const [search, setSearch] = useState("");
     const [value] = useDebounce(search, 1000);
-    const [sortBy, setSortBy] = useState("createdAt:asc");
+    const [sortBy, setSortBy] = useState("createdAt:desc");
+
+    const [deleteProduct] = useDeleteProductMutation();
+
     const {
         data: products,
         isLoading,
@@ -27,9 +31,8 @@ export default function ProductTable() {
         page: currentPage.toString(),
         sortBy: sortBy,
     });
-    const [deleteProduct] = useDeleteProductMutation();
 
-    const handleDelete = async (id: string) => {
+    const handleDeleteProduct = async (id: string) => {
         try {
             await deleteProduct(id).unwrap();
             toast.success("Product deleted successfully");
@@ -37,7 +40,9 @@ export default function ProductTable() {
             toast.error(error?.data?.message);
         }
     };
+
     if (isLoading) return <TableLoading />;
+
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
             <TableToolbar
@@ -47,16 +52,12 @@ export default function ProductTable() {
                 setLimit={setLimit}
                 setSortBy={setSortBy}
                 setSearch={setSearch}
-                sortByOptions={[
-                    { label: "Asc", value: "createdAt:asc" },
-                    { label: "Desc", value: "createdAt:desc" },
-                    { label: "Name(asc)", value: "name:asc" },
-                    { label: "Name(desc)", value: "name:desc" },
-                ]}
+                sortByOptions={allSortOptions}
+                placeholder="Search by product name..."
             />
 
             <DataTable
-                columns={productColumns}
+                columns={productColumns(handleDeleteProduct)}
                 data={products?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}

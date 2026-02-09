@@ -4,7 +4,7 @@ import CreateProduct from "./create-product";
 export default function AddProduct() {
     return (
         <div className="space-y-5">
-            <Headline title="Add Product" />
+            <Headline title="Add Product" showBackButton />
 
             <CreateProduct />
         </div>

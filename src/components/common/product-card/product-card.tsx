@@ -41,6 +41,7 @@ export default function ProductCard({ product }: Props) {
                             height={300}
                             width={200}
                             className="w-full h-full object-cover object-center rounded aspect-auto"
+                            loading="lazy"
                         />
                     )}
                 </Link>

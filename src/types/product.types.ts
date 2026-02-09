@@ -1,9 +1,12 @@
+import { TBrand } from "./brand.types";
+import { TCategory } from "./category.types";
+
 export type TProductVariant = {
     id: string;
     productId: string;
     size: string;
     color: string;
-    stock: number | string;
+    stock: number;
     price: string;
     isDeleted: boolean;
 };
@@ -26,11 +29,13 @@ export type TProduct = {
     isPublished: boolean;
     isFeatured: boolean;
     categoryId: string;
-    rating: number | null;
+    averageRating: number | null;
     brandId: string;
     isDeleted: boolean;
     variants: TProductVariant[];
     images: TProductImage[];
+    category?: TCategory;
+    brand?: TBrand;
     createdAt: string;
     updatedAt: string;
 };

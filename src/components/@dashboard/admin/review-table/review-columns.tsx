@@ -18,6 +18,7 @@ export const reviewColumns = (
                         src={row.user.avatar}
                         alt="User Avatar"
                         className="size-full rounded-md"
+                        loading="lazy"
                     />
                 </div>
                 <p className="font-medium">{row.user.name}</p>

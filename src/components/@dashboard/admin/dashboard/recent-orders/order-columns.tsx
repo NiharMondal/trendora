@@ -13,6 +13,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
                         src={row.user.avatar}
                         alt="User Avatar"
                         className="size-full rounded-md"
+                        loading="lazy"
                     />
                 </div>
                 <div>

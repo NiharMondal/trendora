@@ -1,5 +1,6 @@
 "use client";
 import TDButton from "@/components/common/td-button";
+import TDCombobox from "@/components/form-input/TDCombobox";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import {
@@ -7,6 +8,7 @@ import {
     TCategoryFormValues,
 } from "@/form-schema/category-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 type Props = {
@@ -14,16 +16,14 @@ type Props = {
     onSubmit: (values: TCategoryFormValues) => Promise<void> | void;
     isSubmitting?: boolean;
     onSuccess?: () => void;
-    readOnlyFields?: {
-        [key in keyof TCategoryFormValues]?: boolean;
-    };
+    categories: { label: string; value: string }[];
 };
 export default function CategoryForm({
     defaultValues,
     onSubmit,
     isSubmitting,
-    readOnlyFields,
     onSuccess,
+    categories,
 }: Props) {
     const hookForm = useForm({
         resolver: zodResolver(categorySchema),
@@ -35,25 +35,22 @@ export default function CategoryForm({
 
     const handleCategorySubmit = (values: TCategoryFormValues) => {
         onSubmit(values);
+        hookForm.reset();
         onSuccess?.();
     };
+
     return (
         <Form {...hookForm}>
             <form
                 onSubmit={hookForm.handleSubmit(handleCategorySubmit)}
                 className="space-y-1.5 bg-white p-5 rounded-md"
             >
-                <TDInput
-                    form={hookForm}
-                    name="name"
-                    label="Category Name"
-                    disabled={readOnlyFields?.name}
-                />
-                <TDInput
+                <TDInput form={hookForm} name="name" label="Category Name" />
+                <TDCombobox
                     form={hookForm}
                     name="parentId"
                     label="Parent Category"
-                    disabled={readOnlyFields?.parentId}
+                    options={categories}
                 />
 
                 <TDButton
