@@ -6,12 +6,12 @@ import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import moment from "moment";
 
 type Props = {
-    onEdit: (category: TCategory) => void;
-    onDelete: (category: TCategory) => void;
+    handleEdit: (category: TCategory) => void;
+    handleDelete: (category: TCategory) => void;    
 };
 export const categoryColumns = ({
-    onEdit,
-    onDelete,
+    handleEdit,
+    handleDelete,
 }: Props): DataTableColumn<TCategory>[] => [
     {
         key: "name",
@@ -59,7 +59,7 @@ export const categoryColumns = ({
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => onEdit(category)}
+                            onClick={() => handleEdit(category)}
                         >
                             <Edit />
                             Edit
@@ -67,7 +67,7 @@ export const categoryColumns = ({
                         <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => onDelete(category)}
+                            onClick={() => handleDelete(category)}       
                         >
                             <Trash />
                             Delete

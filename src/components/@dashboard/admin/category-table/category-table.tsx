@@ -1,45 +1,40 @@
 "use client";
-import CategoryForm from "@/components/common/form/category-form";
 import Pagination from "@/components/common/pagination";
 import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
-import { TCategoryFormValues } from "@/form-schema/category-schema";
 import {
     useAllCategoryQuery,
-    useCategoryByIdQuery,
     useDeleteCategoryMutation,
-    useUpdateCategoryMutation,
 } from "@/redux/api/productCategoryApi";
 import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
+import { TCategory } from "@/types/category.types";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { categoryColumns } from "./category-columns";
+import EditCategory from "./edit-category";
+import TDButton from "@/components/common/td-button";
 
-type Props = {};
-
-export default function CategoryTable({}: Props) {
-    const [openDrawer, setOpenDrawer] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-        null,
-    );
-
+export default function CategoryTable() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const categoryId = searchParams.get("categoryId");
+    // filter section
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState("10");
     const [search, setSearch] = useState("");
     const [value] = useDebounce(search, 1000);
     const [sortBy, setSortBy] = useState("createdAt:desc");
 
-    const { data: selectedCategory } = useCategoryByIdQuery(
-        selectedCategoryId!,
-        { skip: !selectedCategoryId },
+    const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(
+        null,
     );
-    const [deleteCategory] = useDeleteCategoryMutation();
-    const [updateCategory, { isLoading: isUpdating }] =
-        useUpdateCategoryMutation();
+    const [deleteCategory, { isLoading: isDeleting }] =
+        useDeleteCategoryMutation();
+
     const {
         data: categories,
         isLoading,
@@ -51,46 +46,26 @@ export default function CategoryTable({}: Props) {
         sortBy: sortBy,
     });
 
-    const handleDeleteCategory = async () => {
-        if (!selectedCategoryId) return;
+    const handleEdit = (category: TCategory) => {
+        router.push(`?categoryId=${category.id}`, { scroll: false });
+    };
+    const handleCloseDrawer = () => {
+        router.push(`?`, { scroll: false });
+    };
+    const handleDelete = (category: TCategory) => {
+        setDeleteCategoryId(category.id);
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteCategoryId) return;
         try {
-            await deleteCategory(selectedCategoryId).unwrap();
+            await deleteCategory(deleteCategoryId).unwrap();
             toast.success("Category deleted successfully");
-            setOpenModal(false);
-            setSelectedCategoryId(null);
+            setDeleteCategoryId(null);
         } catch (error: any) {
             toast.error(error?.data?.message);
         }
     };
-
-    const handleUpdateCategory = async (values: TCategoryFormValues) => {
-        if (!selectedCategoryId) return;
-        try {
-            await updateCategory({
-                payload: values,
-                id: selectedCategoryId,
-            }).unwrap();
-            toast.success("Category updated successfully");
-            setOpenDrawer(false);
-            setSelectedCategoryId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
-        }
-    };
-
-    const defaultValues: TCategoryFormValues | undefined = selectedCategory
-        ? {
-              name: selectedCategory.result?.name,
-              parentId: selectedCategory.result?.parentId || "",
-          }
-        : undefined;
-
-    const categoryOptions =
-        categories?.result?.map((c) => ({
-            label: c.name,
-            value: c.id,
-        })) || [];
-
     if (isLoading) return <TableLoading />;
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
@@ -106,16 +81,7 @@ export default function CategoryTable({}: Props) {
             />
 
             <DataTable
-                columns={categoryColumns({
-                    onEdit: (category) => {
-                        setSelectedCategoryId(category.id);
-                        setOpenDrawer(true);
-                    },
-                    onDelete: (category) => {
-                        setSelectedCategoryId(category.id);
-                        setOpenModal(true);
-                    },
-                })}
+                columns={categoryColumns({ handleEdit, handleDelete })}
                 data={categories?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}
@@ -131,41 +97,36 @@ export default function CategoryTable({}: Props) {
             )}
 
             <TDSheet
-                isOpen={openDrawer}
-                setIsOpen={setOpenDrawer}
+                isOpen={!!categoryId}
+                setIsOpen={(open) => !open && handleCloseDrawer()}
                 title="Edit Category"
             >
-                {selectedCategoryId && !selectedCategory ? (
-                    <div>Loading...</div>
-                ) : (
-                    <CategoryForm
-                        onSubmit={handleUpdateCategory}
-                        isSubmitting={isUpdating}
-                        defaultValues={defaultValues}
-                        categories={categoryOptions}
-                    />
-                )}
+                <EditCategory
+                    onClose={handleCloseDrawer}
+                    categories={categories?.result || []}
+                />
             </TDSheet>
 
             <TDModal
-                title="Delete Category"
-                description="Are you sure you want to delete this category?"
-                open={openModal}
-                onOpenChange={setOpenModal}
+                open={!!deleteCategoryId}
+                onOpenChange={(open) => !open && setDeleteCategoryId(null)}
+                title="Are you sure you want to delete this category?"
+                description="This action cannot be undone."
             >
                 <div className="flex justify-end gap-2 mt-4">
                     <Button
                         variant="outline"
-                        onClick={() => setOpenModal(false)}
+                        onClick={() => setDeleteCategoryId(null)}
                     >
                         Cancel
                     </Button>
-                    <Button
+                    <TDButton
                         variant="destructive"
-                        onClick={handleDeleteCategory}
+                        onClick={confirmDelete}
+                        disabled={isDeleting}
                     >
-                        Delete
-                    </Button>
+                        {isDeleting ? "Deleting..." : "Delete"}
+                    </TDButton>
                 </div>
             </TDModal>
         </div>

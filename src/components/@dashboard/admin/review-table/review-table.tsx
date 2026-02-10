@@ -14,7 +14,7 @@ import { reviewColumns } from "./review-columns";
 export default function ReviewTable() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const editId = searchParams.get("edit");
+    const reviewId = searchParams.get("reviewId");
 
     const { data: reviews, isLoading } = useAllReviewQuery({
         limit: "10",
@@ -23,7 +23,7 @@ export default function ReviewTable() {
     });
 
     const handleAction = (review: TReview) => {
-        router.push(`?edit=${review.id}`, { scroll: false });
+        router.push(`?reviewId=${review.id}`, { scroll: false });
     };
 
     const handleCloseDrawer = () => {
@@ -46,7 +46,7 @@ export default function ReviewTable() {
             </div>
 
             <TDSheet
-                isOpen={!!editId}
+                isOpen={!!reviewId}
                 setIsOpen={(open) => !open && handleCloseDrawer()}
                 title="Edit Review Form"
             >

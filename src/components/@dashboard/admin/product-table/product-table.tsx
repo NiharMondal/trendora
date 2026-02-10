@@ -1,7 +1,10 @@
 "use client";
 
 import Pagination from "@/components/common/pagination";
+import TDButton from "@/components/common/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
+import { TDModal } from "@/components/package/TDModal";
+import { Button } from "@/components/ui/button";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
@@ -19,7 +22,10 @@ export default function ProductTable() {
     const [value] = useDebounce(search, 1000);
     const [sortBy, setSortBy] = useState("createdAt:desc");
 
-    const [deleteProduct] = useDeleteProductMutation();
+    const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+
+    const [deleteProduct, { isLoading: isDeleting }] =
+        useDeleteProductMutation();
 
     const {
         data: products,
@@ -32,13 +38,18 @@ export default function ProductTable() {
         sortBy: sortBy,
     });
 
-    const handleDeleteProduct = async (id: string) => {
+    const confirmDelete = async () => {
+        if (!deleteProductId) return;
         try {
-            await deleteProduct(id).unwrap();
+            await deleteProduct(deleteProductId).unwrap();
             toast.success("Product deleted successfully");
+            setDeleteProductId(null);
         } catch (error: any) {
             toast.error(error?.data?.message);
         }
+    };
+    const handleDeleteProduct = async (id: string) => {
+        setDeleteProductId(id);
     };
 
     if (isLoading) return <TableLoading />;
@@ -71,6 +82,29 @@ export default function ProductTable() {
                     totalData={products?.meta?.totalData || 0}
                 />
             )}
+
+            <TDModal
+                open={!!deleteProductId}
+                onOpenChange={(open) => !open && setDeleteProductId(null)}
+                title="Are you sure you want to delete this product?"
+                description="This action cannot be undone."
+            >
+                <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                        variant="outline"
+                        onClick={() => setDeleteProductId(null)}
+                    >
+                        Cancel
+                    </Button>
+                    <TDButton
+                        variant="destructive"
+                        onClick={confirmDelete}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                    </TDButton>
+                </div>
+            </TDModal>
         </div>
     );
 }

@@ -8,7 +8,6 @@ import {
     TCategoryFormValues,
 } from "@/form-schema/category-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 type Props = {
@@ -25,7 +24,8 @@ export default function CategoryForm({
     onSuccess,
     categories,
 }: Props) {
-    const hookForm = useForm({
+    
+    const hookForm = useForm<TCategoryFormValues>({
         resolver: zodResolver(categorySchema),
         defaultValues: defaultValues ?? {
             name: "",
