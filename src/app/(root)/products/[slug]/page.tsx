@@ -57,6 +57,7 @@ const ProductPhotoView = ({
                                 alt={item.productId}
                                 className="w-full h-[600px] object-cover rounded cursor-crosshair"
                                 onClick={() => setCurrentIndex(currentIndex)}
+                                loading="lazy"
                             />
                         ) : undefined}
                     </PhotoView>

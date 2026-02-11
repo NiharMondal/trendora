@@ -1,12 +1,23 @@
 "use client";
+import CategoryForm from "@/components/common/form/category-form";
 import { TCategoryFormValues } from "@/form-schema/category-schema";
-import CategoryForm from "@/form/category-form";
-import { useCreateCategoryMutation } from "@/redux/api/productCategoryApi";
+import {
+    useAllCategoryQuery,
+    useCreateCategoryMutation,
+} from "@/redux/api/productCategoryApi";
 
 import { toast } from "sonner";
 
 export default function AddCategory() {
     const [addCategory, { isLoading }] = useCreateCategoryMutation();
+    const { data: categories } = useAllCategoryQuery({});
+
+    const categoryOptions =
+        categories?.result?.map((c) => ({
+            label: c.name,
+            value: c.id,
+        })) || [];
+
     const onSubmit = async (values: TCategoryFormValues) => {
         try {
             await addCategory(values).unwrap();
@@ -15,5 +26,11 @@ export default function AddCategory() {
             toast.error(error.data?.message);
         }
     };
-    return <CategoryForm onSubmit={onSubmit} isSubmitting={isLoading} />;
+    return (
+        <CategoryForm
+            onSubmit={onSubmit}
+            isSubmitting={isLoading}
+            categories={categoryOptions}
+        />
+    );
 }

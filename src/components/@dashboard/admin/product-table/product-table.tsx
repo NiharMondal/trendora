@@ -1,6 +1,10 @@
 "use client";
 
 import Pagination from "@/components/common/pagination";
+import TDButton from "@/components/common/td-button";
+import { allSortOptions } from "@/components/helpers/sort-options";
+import { TDModal } from "@/components/package/TDModal";
+import { Button } from "@/components/ui/button";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
@@ -16,7 +20,13 @@ export default function ProductTable() {
     const [limit, setLimit] = useState("10");
     const [search, setSearch] = useState("");
     const [value] = useDebounce(search, 1000);
-    const [sortBy, setSortBy] = useState("createdAt:asc");
+    const [sortBy, setSortBy] = useState("createdAt:desc");
+
+    const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+
+    const [deleteProduct, { isLoading: isDeleting }] =
+        useDeleteProductMutation();
+
     const {
         data: products,
         isLoading,
@@ -27,17 +37,23 @@ export default function ProductTable() {
         page: currentPage.toString(),
         sortBy: sortBy,
     });
-    const [deleteProduct] = useDeleteProductMutation();
 
-    const handleDelete = async (id: string) => {
+    const confirmDelete = async () => {
+        if (!deleteProductId) return;
         try {
-            await deleteProduct(id).unwrap();
+            await deleteProduct(deleteProductId).unwrap();
             toast.success("Product deleted successfully");
+            setDeleteProductId(null);
         } catch (error: any) {
             toast.error(error?.data?.message);
         }
     };
+    const handleDeleteProduct = async (id: string) => {
+        setDeleteProductId(id);
+    };
+
     if (isLoading) return <TableLoading />;
+
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
             <TableToolbar
@@ -47,16 +63,12 @@ export default function ProductTable() {
                 setLimit={setLimit}
                 setSortBy={setSortBy}
                 setSearch={setSearch}
-                sortByOptions={[
-                    { label: "Asc", value: "createdAt:asc" },
-                    { label: "Desc", value: "createdAt:desc" },
-                    { label: "Name(asc)", value: "name:asc" },
-                    { label: "Name(desc)", value: "name:desc" },
-                ]}
+                sortByOptions={allSortOptions}
+                placeholder="Search by product name..."
             />
 
             <DataTable
-                columns={productColumns}
+                columns={productColumns(handleDeleteProduct)}
                 data={products?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}
@@ -70,6 +82,29 @@ export default function ProductTable() {
                     totalData={products?.meta?.totalData || 0}
                 />
             )}
+
+            <TDModal
+                open={!!deleteProductId}
+                onOpenChange={(open) => !open && setDeleteProductId(null)}
+                title="Are you sure you want to delete this product?"
+                description="This action cannot be undone."
+            >
+                <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                        variant="outline"
+                        onClick={() => setDeleteProductId(null)}
+                    >
+                        Cancel
+                    </Button>
+                    <TDButton
+                        variant="destructive"
+                        onClick={confirmDelete}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                    </TDButton>
+                </div>
+            </TDModal>
         </div>
     );
 }

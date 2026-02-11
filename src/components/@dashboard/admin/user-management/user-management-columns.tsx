@@ -15,6 +15,7 @@ export const userManagementColumns: DataTableColumn<TUser>[] = [
                         height={40}
                         width={40}
                         className="size-14 rounded-md overflow-hidden object-center object-cover"
+                        loading="lazy"
                     />
                     <div className="space-y-1.5">
                         <p className="font-semibold">{row.name}</p>

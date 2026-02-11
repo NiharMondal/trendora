@@ -1,4 +1,5 @@
 import ReviewForm from "@/components/common/review-form";
+import SpinnerLoading from "@/components/common/spinner-loading";
 import { TReviewFormData } from "@/form-schema/review-schema";
 import {
     useReviewByIdQuery,
@@ -11,15 +12,12 @@ type EditReviewProps = {
 };
 export default function EditReview({ onClose }: EditReviewProps) {
     const searchParams = useSearchParams();
-    const reviewId = searchParams.get("edit");
-    const [updateReview, { isLoading }] = useUpdateReviewMutation();
+    const reviewId = searchParams.get("reviewId");
+    const [updateReview, { isLoading: isUpdating }] = useUpdateReviewMutation();
 
-    const { data: review, isLoading: getLoading } = useReviewByIdQuery(
-        reviewId!,
-        {
-            skip: !reviewId,
-        },
-    );
+    const { data: review, isLoading } = useReviewByIdQuery(reviewId!, {
+        skip: !reviewId,
+    });
 
     const defaultValues: TReviewFormData | undefined = review?.result
         ? {
@@ -42,12 +40,12 @@ export default function EditReview({ onClose }: EditReviewProps) {
     };
 
     if (!reviewId) return null;
-    if (getLoading) return <p>Loading...</p>;
+    if (isLoading) return <SpinnerLoading />;
     return (
         <ReviewForm
             defaultValues={defaultValues}
             onSubmit={handleReviewSubmit}
-            isSubmitting={isLoading}
+            isSubmitting={isUpdating}
             userName={review?.result.user?.name}
             onSuccess={onClose}
             readOnlyFields={{

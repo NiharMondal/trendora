@@ -1,6 +1,7 @@
 import { TCategory } from "@/types/category.types";
 import { TServerResponse } from "@/types/common.types";
 import { baseApi } from "./baseApi";
+import { TCategoryFormValues } from "@/form-schema/category-schema";
 type TCategoryInput = {
     name: string;
     parentId?: string | null;
@@ -56,7 +57,7 @@ export const categoryApi = baseApi.injectEndpoints({
         // update category
         updateCategory: builder.mutation<
             TServerResponse<TCategory>,
-            { payload: Partial<TCategory>; id: string }
+            { payload: TCategoryFormValues; id: string }
         >({
             query: ({ payload, id }) => ({
                 url: `/categories/${id}`,

@@ -6,7 +6,9 @@ import { DataTableColumn } from "@/types/table.types";
 import { Edit, EllipsisVertical, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 
-export const productColumns: DataTableColumn<TProduct>[] = [
+export const productColumns = (
+    handleDeleteProduct: (id: string) => void,
+): DataTableColumn<TProduct>[] => [
     {
         key: "name",
         header: "Product",
@@ -19,6 +21,7 @@ export const productColumns: DataTableColumn<TProduct>[] = [
                             src={isMain?.url || ""}
                             alt={row.name}
                             className="size-full rounded-md"
+                            loading="lazy"
                         />
                     </div>
                     <p className="font-medium">{row.name}</p>
@@ -27,52 +30,31 @@ export const productColumns: DataTableColumn<TProduct>[] = [
         },
     },
     {
+        key: "category",
+        header: "Category",
+        cell: (row) => <span>{row.category?.name}</span>,
+    },
+    {
         key: "basePrice",
         header: "Base Price",
+    },
+    {
+        key: "brand",
+        header: "Brand",
+        cell: (row) => <span>{row.brand?.name}</span>,
     },
     {
         key: "discountPrice",
         header: "Discount Price",
         cell: (row) => (
-            <span>{row.discountPrice ? row.discountPrice : "--"}</span>
+            <span>{row.discountPrice ? row.discountPrice : "N/A"}</span>
         ),
     },
     {
         key: "stockQuantity",
         header: "Quantity",
     },
-    {
-        key: "stock",
-        header: "Stock Status",
-        cell: (row) => {
-            let stock = "";
-            if (row.stockQuantity > 50) {
-                stock = "Available";
-            } else if (row.stockQuantity < 10) {
-                stock = "Very Low";
-            } else {
-                stock = "Low Stock";
-            }
-            return (
-                <span
-                    className={cn(
-                        "bg-success/5 text-success font-medium px-3 py-0.5 rounded-full",
-                        {
-                            "bg-destructive/bg-success/5":
-                                row.stockQuantity < 10,
-                        },
-                        {
-                            "bg-warning/bg-success/5 text-warning":
-                                row.stockQuantity > 10 &&
-                                row.stockQuantity < 50,
-                        },
-                    )}
-                >
-                    {stock}
-                </span>
-            );
-        },
-    },
+
     {
         key: "isFeatured",
         header: "Featured",
@@ -94,27 +76,43 @@ export const productColumns: DataTableColumn<TProduct>[] = [
         header: "Actions",
         cell: (row) => (
             <TDPopover
-                triggerIcon={<EllipsisVertical />}
-                className="max-w-[200px]"
+                trigger={
+                    <Button variant="ghost" size="icon">
+                        <EllipsisVertical />
+                    </Button>
+                }
+                className="max-w-[150px]"
             >
                 <div className="flex flex-col gap-2">
                     <Link
                         href={`/admin/product-list/update-product/${row.id}`}
                         className="min-w-full"
                     >
-                        <Button variant={"outline"} className=" min-w-full">
+                        <Button
+                            variant={"outline"}
+                            size={"sm"}
+                            className=" min-w-full"
+                        >
                             <Edit />
                             Edit
                         </Button>
                     </Link>
                     <Link href={`/products/${row.slug}`} className="min-w-full">
-                        <Button variant={"secondary"} className="w-full">
+                        <Button
+                            variant={"secondary"}
+                            size={"sm"}
+                            className="w-full"
+                        >
                             <Eye />
                             View
                         </Button>
                     </Link>
 
-                    <Button variant={"destructive"} className="justify-start">
+                    <Button
+                        variant={"destructive"}
+                        size={"sm"}
+                        onClick={() => handleDeleteProduct(row.id)}
+                    >
                         <Trash />
                         Delete
                     </Button>

@@ -13,7 +13,7 @@ type SortByOption = {
 };
 type TableToolbarProps = {
     search?: string;
-    searchPlaceholder?: string;
+    placeholder?: string;
     limit?: string;
     sortBy?: string;
     setLimit?: (value: string) => void;
@@ -25,7 +25,7 @@ type TableToolbarProps = {
 export default function TableToolbar({
     search,
     setSearch,
-    searchPlaceholder = "Search here...",
+    placeholder = "Search here...",
     limit,
     setLimit,
     sortBy,
@@ -39,7 +39,7 @@ export default function TableToolbar({
         <div className="flex items-center justify-between flex-wrap gap-3 w-full bg-white border border-muted p-3 rounded-md">
             {setSearch && (
                 <Input
-                    placeholder={searchPlaceholder}
+                    placeholder={placeholder}
                     className="flex-1 md:max-w-sm"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}

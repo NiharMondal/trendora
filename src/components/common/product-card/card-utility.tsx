@@ -59,6 +59,7 @@ const QuickViewDetails = ({ product }: Props) => {
                             alt={product.name}
                             className="h-full w-full object-cover rounded-md object-center"
                             key={img.id}
+                            loading="lazy"
                         />
                     ))}
                 </div>

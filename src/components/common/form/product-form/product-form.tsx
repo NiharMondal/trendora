@@ -55,7 +55,7 @@ export default function ProductForm({
         },
     });
 
-    const handleCreateProduct = async (values: TProductFormValues) => {
+    const handleProductSubmit = (values: TProductFormValues) => {
         onSubmit(values);
     };
 
@@ -63,7 +63,7 @@ export default function ProductForm({
         <Form {...form}>
             <form
                 className="flex flex-col gap-5"
-                onSubmit={form.handleSubmit(handleCreateProduct)}
+                onSubmit={form.handleSubmit(handleProductSubmit)}
             >
                 <div className="bg-white rounded-md p-5 space-y-5">
                     <h5 className="text-lg font-semibold">
