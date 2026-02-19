@@ -55,7 +55,7 @@ export default function TDCombobox<T extends FieldValues>({
             name={name}
             render={({ field }) => (
                 <FormItem className="flex flex-col">
-                    <FormLabel className="text-muted-foreground font-inter text-base max-w-fit">
+                    <FormLabel className="text-muted-foreground font-inter text-sm max-w-fit">
                         <span
                             className={cn({
                                 "relative required-label": required,

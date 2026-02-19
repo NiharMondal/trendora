@@ -20,7 +20,7 @@ export const mapProductToFormValues = (
 
         categoryId: product.categoryId,
         brandId: product.brandId,
-
+        gender: product?.gender,
         variants: product.variants 
             .filter((v) => !v.isDeleted)
             .map((v) => ({
