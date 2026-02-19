@@ -24,25 +24,28 @@ type TableToolbarProps = {
 };
 
 export default function TableToolbar({
-    search,
-    setSearch,
-    placeholder = "Search here...",
-    limit,
-    setLimit,
-    sortBy,
-    setSortBy,
-    sortByOptions = [
-        { label: "Asc", value: "createdAt:asc" },
-        { label: "Desc", value: "createdAt:desc" },
-    ],
+	search,
+	setSearch,
+	placeholder = "Search here...",
+	limit,
+	setLimit,
+	sortBy,
+	setSortBy,
+	sortByOptions = [
+		{ label: "CreatedAt (Asc)", value: "createdAt:asc" },
+		{ label: "CreatedAt (Desc)", value: "createdAt:desc" },
+	],
 }: TableToolbarProps) {
-
-    const handleResetFilters = () => {
-        if (setSearch) setSearch("");
-        if (setLimit) setLimit("10");
-        if (setSortBy) setSortBy("createdAt:desc");
-    }
-    return (
+	const handleResetFilters = () => {
+		if (setSearch) setSearch("");
+		if (setLimit) setLimit("10");
+		if (setSortBy) setSortBy("createdAt:desc");
+	};
+    const isButtonDisabled =
+        (!search || search.trim() === "") &&
+        (!limit || limit === "10") &&
+        (!sortBy || sortBy === "createdAt:desc");
+	return (
 		<div className="flex items-center justify-between flex-wrap gap-3 w-full bg-white border border-muted p-3 rounded-md">
 			{setSearch && (
 				<Input
@@ -104,7 +107,7 @@ export default function TableToolbar({
 					</div>
 				)}
 
-				<TDButton variant="destructive" onClick={handleResetFilters}>
+				<TDButton variant="destructive" onClick={handleResetFilters} disabled={isButtonDisabled}>
 					Reset Filters
 				</TDButton>
 			</div>
