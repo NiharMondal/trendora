@@ -26,29 +26,30 @@ export default function UserManagementTable() {
         return <NoDataFound />;
     }
     return (
-        <div className="space-y-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
-                <TableToolbar
-                    search={search}
-                    setSearch={setSearch}
-                    limit={limit}
-                    setLimit={(val) => setLimit(val)}
-                />
-            </div>
-            <DataTable
-                columns={userManagementColumns}
-                data={users.result}
-                rowKey={(row) => row.id}
-            />
-            {users?.result?.length > 0 && (
-                <Pagination
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    totalPages={users?.meta?.totalPages || 0}
-                    limit={Number(limit)}
-                    totalData={users?.meta?.totalData || 0}
-                />
-            )}
-        </div>
-    );
+		<div className="space-y-4">
+			<div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
+				<TableToolbar
+					search={search}
+					setSearch={setSearch}
+					limit={limit}
+					setLimit={(val) => setLimit(val)}
+				/>
+			</div>
+			<DataTable
+				columns={userManagementColumns}
+				data={users.result}
+				rowKey={(row) => row.id}
+			/>
+			{users?.meta?.totalData &&
+				users?.meta?.totalData > Number(limit) && (
+					<Pagination
+						currentPage={currentPage}
+						onPageChange={setCurrentPage}
+						totalPages={users?.meta?.totalPages || 0}
+						limit={Number(limit)}
+						totalData={users?.meta?.totalData || 0}
+					/>
+				)}
+		</div>
+	);
 }

@@ -1,24 +1,30 @@
 import { Button } from "@/components/ui/button";
 import TDPopover from "@/shared/td-popover";
-import { TCategory } from "@/types/category.types";
-import { TSizeGroup } from "@/types/size-group.types";
+import { TSize } from "@/types/size.types";
 import { DataTableColumn } from "@/types/table.types";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import moment from "moment";
 
 type Props = {
-	handleEdit: (sizeGroup: TSizeGroup) => void;
-	handleDelete: (sizeGroup: TSizeGroup) => void;
+	handleEdit: (size: TSize) => void;
+	handleDelete: (size: TSize) => void;
 };
-export const sizeGroupColumns = ({
+export const sizeColumns = ({
 	handleEdit,
 	handleDelete,
-}: Props): DataTableColumn<TSizeGroup>[] => [
+}: Props): DataTableColumn<TSize>[] => [
 	{
 		key: "name",
-		header: "Size Group Name",
+		header: "Size Name",
 	},
-
+	{
+		key: "sizeGroupId",
+		header: "Size Group Name",
+		cell: (row) => {
+			const sizeGroup = row.sizeGroup;
+			return <span>{sizeGroup?.name}</span>;
+		},
+	},
 	{
 		key: "createdAt",
 		header: "Created At",

@@ -86,15 +86,16 @@ export default function CategoryTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{sizeGroups?.result && sizeGroups.result.length > 10 && (
-				<Pagination
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					totalPages={sizeGroups?.meta?.totalPages || 0}
-					limit={Number(limit)}
-					totalData={sizeGroups?.meta?.totalData || 0}
-				/>
-			)}
+			{sizeGroups?.meta?.totalData &&
+				sizeGroups?.meta?.totalData > Number(limit) && (
+					<Pagination
+						currentPage={currentPage}
+						onPageChange={setCurrentPage}
+						totalPages={sizeGroups?.meta?.totalPages || 0}
+						limit={Number(limit)}
+						totalData={sizeGroups?.meta?.totalData || 0}
+					/>
+				)}
 
 			<TDSheet
 				isOpen={!!sizeGroupId}
