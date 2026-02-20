@@ -1,27 +1,28 @@
 "use client";
 import Pagination from "@/components/common/pagination";
-import TDButton from "@/components/common/td-button";
 import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
-import {
-	useAllCategoryQuery,
-	useDeleteCategoryMutation,
-} from "@/redux/api/productCategoryApi";
 import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
-import { TCategory } from "@/types/category.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
-import { categoryColumns } from "./category-columns";
-import EditCategory from "./edit-category";
+
+import TDButton from "@/components/common/td-button";
+import {
+	useAllSizeGroupsQuery,
+	useDeleteSizeGroupMutation,
+} from "@/redux/api/sizeGroupApi";
+import { TSizeGroup } from "@/types/size-group.types";
+import EditSizeGroup from "./edit-size-group";
+import { sizeGroupColumns } from "./size-group-columns";
 
 export default function CategoryTable() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const categoryId = searchParams.get("categoryId");
+	const sizeGroupId = searchParams.get("id");
 	// filter section
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit, setLimit] = useState("10");
@@ -29,39 +30,38 @@ export default function CategoryTable() {
 	const [value] = useDebounce(search, 1000);
 	const [sortBy, setSortBy] = useState("createdAt:desc");
 
-	const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(
+	const [deleteSizeGroupId, setDeleteSizeGroupId] = useState<string | null>(
 		null,
 	);
-	const [deleteCategory, { isLoading: isDeleting }] =
-		useDeleteCategoryMutation();
-
+	const [deleteSizeGroup, { isLoading: isDeleting }] =
+		useDeleteSizeGroupMutation();
 	const {
-		data: categories,
+		data: sizeGroups,
 		isLoading,
 		isFetching,
-	} = useAllCategoryQuery({
+	} = useAllSizeGroupsQuery({
 		search: value,
 		limit: limit,
 		page: currentPage.toString(),
 		sortBy: sortBy,
 	});
 
-	const handleEdit = (category: TCategory) => {
-		router.push(`?categoryId=${category.id}`, { scroll: false });
+	const handleEdit = (sizeGroup: TSizeGroup) => {
+		router.push(`?id=${sizeGroup.id}`, { scroll: false });
 	};
 	const handleCloseDrawer = () => {
 		router.push(`?`, { scroll: false });
 	};
-	const handleDelete = (category: TCategory) => {
-		setDeleteCategoryId(category.id);
+	const handleDelete = (sizeGroup: TSizeGroup) => {
+		setDeleteSizeGroupId(sizeGroup.id);
 	};
 
 	const confirmDelete = async () => {
-		if (!deleteCategoryId) return;
+		if (!deleteSizeGroupId) return;
 		try {
-			await deleteCategory(deleteCategoryId).unwrap();
-			toast.success("Category deleted successfully");
-			setDeleteCategoryId(null);
+			await deleteSizeGroup(deleteSizeGroupId).unwrap();
+			toast.success("Size group deleted successfully");
+			setDeleteSizeGroupId(null);
 		} catch (error: any) {
 			toast.error(error?.data?.message);
 		}
@@ -81,43 +81,40 @@ export default function CategoryTable() {
 			/>
 
 			<DataTable
-				columns={categoryColumns({ handleEdit, handleDelete })}
-				data={categories?.result || []}
+				columns={sizeGroupColumns({ handleEdit, handleDelete })}
+				data={sizeGroups?.result || []}
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{categories?.meta?.totalData &&
-				categories?.meta?.totalData > Number(limit) && (
+			{sizeGroups?.meta?.totalData &&
+				sizeGroups?.meta?.totalData > Number(limit) && (
 					<Pagination
 						currentPage={currentPage}
 						onPageChange={setCurrentPage}
-						totalPages={categories?.meta?.totalPages || 0}
+						totalPages={sizeGroups?.meta?.totalPages || 0}
 						limit={Number(limit)}
-						totalData={categories?.meta?.totalData || 0}
+						totalData={sizeGroups?.meta?.totalData || 0}
 					/>
 				)}
 
 			<TDSheet
-				isOpen={!!categoryId}
+				isOpen={!!sizeGroupId}
 				setIsOpen={(open) => !open && handleCloseDrawer()}
-				title="Edit Category"
+				title="Edit Size Group"
 			>
-				<EditCategory
-					onClose={handleCloseDrawer}
-					categories={categories?.result || []}
-				/>
+				<EditSizeGroup onClose={handleCloseDrawer} />
 			</TDSheet>
 
 			<TDModal
-				open={!!deleteCategoryId}
-				onOpenChange={(open) => !open && setDeleteCategoryId(null)}
-				title="Are you sure you want to delete this category?"
+				open={!!deleteSizeGroupId}
+				onOpenChange={(open) => !open && setDeleteSizeGroupId(null)}
+				title="Are you sure you want to delete this size group?"
 				description="This action cannot be undone."
 			>
 				<div className="flex justify-end gap-2 mt-4">
 					<Button
 						variant="outline"
-						onClick={() => setDeleteCategoryId(null)}
+						onClick={() => setDeleteSizeGroupId(null)}
 					>
 						Cancel
 					</Button>

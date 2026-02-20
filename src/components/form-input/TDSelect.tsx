@@ -42,54 +42,54 @@ export default function TDSelect<T extends FieldValues>({
     size,
 }: TDSelectProps<T>) {
     return (
-        <FormField
-            control={form.control}
-            name={name}
-            render={({ field }) => (
-                <FormItem className="-space-y-1">
-                    <FormLabel className="text-muted-foreground font-inter text-base">
-                        <span
-                            className={cn({
-                                "relative required-label": required,
-                            })}
-                        >
-                            {label}
-                        </span>
-                    </FormLabel>
-                    <FormControl>
-                        <Select
-                            value={field.value}
-                            onValueChange={field.onChange}
-                        >
-                            <SelectTrigger
-                                className={cn(className)}
-                                size={size}
-                            >
-                                <SelectValue placeholder={placeholder} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {options.length > 0 ? (
-                                    options.map((option) => (
-                                        <SelectItem
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="a" disabled>
-                                        No option available
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
-                    </FormControl>
-                    <div className="min-h-4">
-                        <FormMessage className="text-red-500 text-xs" />
-                    </div>
-                </FormItem>
-            )}
-        />
-    );
+		<FormField
+			control={form.control}
+			name={name}
+			render={({ field }) => (
+				<FormItem className="-space-y-1">
+					<FormLabel className="text-muted-foreground font-inter text-sm">
+						<span
+							className={cn({
+								"relative required-label": required,
+							})}
+						>
+							{label}
+						</span>
+					</FormLabel>
+					<FormControl>
+						<Select
+							value={field.value}
+							onValueChange={field.onChange}
+						>
+							<SelectTrigger
+								className={cn(className)}
+								size={size}
+							>
+								<SelectValue placeholder={placeholder} />
+							</SelectTrigger>
+							<SelectContent>
+								{options.length > 0 ? (
+									options.map((option) => (
+										<SelectItem
+											key={option.value}
+											value={option.value}
+										>
+											{option.label}
+										</SelectItem>
+									))
+								) : (
+									<SelectItem value="a" disabled>
+										No option available
+									</SelectItem>
+								)}
+							</SelectContent>
+						</Select>
+					</FormControl>
+					<div className="min-h-4">
+						<FormMessage className="text-red-500 text-xs" />
+					</div>
+				</FormItem>
+			)}
+		/>
+	);
 }

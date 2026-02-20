@@ -1,5 +1,4 @@
 import z from "zod";
-
 //product variant
 export const productVariantSchema = z.object({
     size: z
@@ -24,9 +23,11 @@ export type TProductVariant = z.infer<typeof productVariantSchema>;
 //product image
 export const productImageSchema = z.object({
     url: z
-        .string({ error: "Image URL is required" })
+        .url({ error: "Provide valid URL" })
         .nonempty("Image URL is required")
         .trim(),
+    publicId: z.string().trim(),
+    altText:z.string().trim().optional(),
     isMain: z.coerce.boolean().optional(),
 });
 export type TProductImage = z.infer<typeof productImageSchema>;
@@ -39,12 +40,12 @@ export const productSchema = z
             .max(255, "Name is too long"),
         description: z
             .string()
-            .min(10, "Description must be at least 10 characters"),
+            .min(30, "Description must be at least 30 characters"),
         basePrice: z.coerce
             .number({ error: "Base price is required" })
             .positive("Base price must be greater than 0"),
         discountPrice: z
-            .union([z.string(), z.number()])
+            .union([z.string(), z.number(), z.undefined()])
             .transform((val) => {
                 if (val === "" || val === null || val === undefined)
                     return undefined;

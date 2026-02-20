@@ -30,7 +30,7 @@ export const categoryColumns = ({
         header: "Created At",
         cell: (row) => {
             const category = row;
-            return <span>{moment(category.createdAt).format("LL")}</span>;
+            return <span>{moment(category.createdAt).format("ll")}</span>;
         },
     },
     {
@@ -38,7 +38,7 @@ export const categoryColumns = ({
         header: "Updated At",
         cell: (row) => {
             const category = row;
-            return <span>{moment(category.updatedAt).format("LL")}</span>;
+            return <span>{moment(category.updatedAt).format("ll")}</span>;
         },
     },
     {

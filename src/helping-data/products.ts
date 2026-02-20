@@ -122,3 +122,9 @@ export const productSizeOptions = [
     { label: "2XL", value: "2XL" },
     { label: "3XL", value: "3XL" },
 ];
+
+export const productGenderOptions = [
+	{ label: "Men", value: "MEN" },
+	{ label: "Women", value: "WOMEN" },
+	{ label: "Kids", value: "KIDS" },
+];

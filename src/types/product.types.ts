@@ -15,6 +15,8 @@ export type TProductImage = {
     id: string;
     productId: string;
     url: string;
+    publicId: string;
+    altText?: string;
     isMain: boolean;
     isDeleted: boolean;
 };

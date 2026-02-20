@@ -55,56 +55,57 @@ export default function ProductTable() {
     if (isLoading) return <TableLoading />;
 
     return (
-        <div className="space-y-5 bg-white p-5 rounded-md">
-            <TableToolbar
-                search={search}
-                limit={limit}
-                sortBy={sortBy}
-                setLimit={setLimit}
-                setSortBy={setSortBy}
-                setSearch={setSearch}
-                sortByOptions={allSortOptions}
-                placeholder="Search by product name..."
-            />
+		<div className="space-y-5 bg-white p-5 rounded-md">
+			<TableToolbar
+				search={search}
+				limit={limit}
+				sortBy={sortBy}
+				setLimit={setLimit}
+				setSortBy={setSortBy}
+				setSearch={setSearch}
+				sortByOptions={allSortOptions}
+				placeholder="Search by product name..."
+			/>
 
-            <DataTable
-                columns={productColumns(handleDeleteProduct)}
-                data={products?.result || []}
-                rowKey={(row) => row.id}
-                isFetching={isFetching}
-            />
-            {products?.result && products.result.length > 10 && (
-                <Pagination
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    totalPages={products?.meta?.totalPages || 0}
-                    limit={Number(limit)}
-                    totalData={products?.meta?.totalData || 0}
-                />
-            )}
+			<DataTable
+				columns={productColumns(handleDeleteProduct)}
+				data={products?.result || []}
+				rowKey={(row) => row.id}
+				isFetching={isFetching}
+			/>
+			{products?.meta?.totalData &&
+				products?.meta?.totalData > Number(limit) && (
+					<Pagination
+						currentPage={currentPage}
+						onPageChange={setCurrentPage}
+						totalPages={products?.meta?.totalPages || 0}
+						limit={Number(limit)}
+						totalData={products?.meta?.totalData || 0}
+					/>
+				)}
 
-            <TDModal
-                open={!!deleteProductId}
-                onOpenChange={(open) => !open && setDeleteProductId(null)}
-                title="Are you sure you want to delete this product?"
-                description="This action cannot be undone."
-            >
-                <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                        variant="outline"
-                        onClick={() => setDeleteProductId(null)}
-                    >
-                        Cancel
-                    </Button>
-                    <TDButton
-                        variant="destructive"
-                        onClick={confirmDelete}
-                        disabled={isDeleting}
-                    >
-                        {isDeleting ? "Deleting..." : "Delete"}
-                    </TDButton>
-                </div>
-            </TDModal>
-        </div>
-    );
+			<TDModal
+				open={!!deleteProductId}
+				onOpenChange={(open) => !open && setDeleteProductId(null)}
+				title="Are you sure you want to delete this product?"
+				description="This action cannot be undone."
+			>
+				<div className="flex justify-end gap-2 mt-4">
+					<Button
+						variant="outline"
+						onClick={() => setDeleteProductId(null)}
+					>
+						Cancel
+					</Button>
+					<TDButton
+						variant="destructive"
+						onClick={confirmDelete}
+						disabled={isDeleting}
+					>
+						{isDeleting ? "Deleting..." : "Delete"}
+					</TDButton>
+				</div>
+			</TDModal>
+		</div>
+	);
 }
