@@ -6,8 +6,13 @@ import { TProductFormValues } from "@/form-schema/product-schema";
 import { productSizeOptions } from "@/helping-data/products";
 import { Plus, X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-
-export default function ProductVariant() {
+type ProductVariantProps = {
+    options: {
+        label: string;
+        value: string;
+    }[];
+};
+export default function ProductVariant({ options }: ProductVariantProps) {
     const form = useFormContext<TProductFormValues>();
     const {
         fields: variantFields,
@@ -26,7 +31,7 @@ export default function ProductVariant() {
                     variant="outline"
                     onClick={() =>
                         appendVariant({
-                            size: "",
+                            sizeId: "",
                             color: "",
                             price: 0,
                             stock: 0,
@@ -43,10 +48,10 @@ export default function ProductVariant() {
                 >
                     <TDSelect
                         form={form}
-                        name={`variants.${index}.size`}
+                        name={`variants.${index}.sizeId`}
                         label="Size"
                         placeholder="Select Size"
-                        options={productSizeOptions}
+                        options={options}
                         className="w-full"
                         size="sm"
                         required

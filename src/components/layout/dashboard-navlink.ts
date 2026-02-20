@@ -1,4 +1,5 @@
 import {
+	Blend,
 	Boxes,
 	Coffee,
 	Feather,
@@ -63,6 +64,18 @@ export const adminNavlink: TSidebarLink[] = [
 				index: true,
 			},
 			{ title: "Add Category", url: "/admin/add-category" },
+		],
+	},
+	{
+		title: "Brand",
+		icon: Blend,
+		children: [
+			{
+				title: "Brand List",
+				url: "/admin/brand-list",
+				index: true,
+			},
+			{ title: "Add Brand", url: "/admin/add-brand" },
 		],
 	},
 	{

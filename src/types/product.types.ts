@@ -4,10 +4,14 @@ import { TCategory } from "./category.types";
 export type TProductVariant = {
     id: string;
     productId: string;
-    size: string;
+    sizeId: string;
     color: string;
     stock: number;
     price: string;
+    size:{
+        id: string;
+        name: string;
+    }
     isDeleted: boolean;
 };
 
@@ -26,6 +30,7 @@ export type TProduct = {
     slug: string;
     description: string;
     basePrice: string;
+    gender: string;
     discountPrice: string | null;
     stockQuantity: number;
     isPublished: boolean;

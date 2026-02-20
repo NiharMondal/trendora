@@ -107,7 +107,7 @@ export default function ProductCommonDetails({
                             )}
                         >
                             <p>Color: {variant.color}</p>
-                            <p>Size: {variant.size}</p>
+                            <p>Size: {variant.size?.name}</p>
                             <p>Price: {variant.price}</p>
                         </div>
                     ))}

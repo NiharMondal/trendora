@@ -4,15 +4,21 @@ import TDButton from "@/components/common/td-button";
 import TDCheckbox from "@/components/form-input/TDCheckbox";
 import TDCombobox from "@/components/form-input/TDCombobox";
 import TDInput from "@/components/form-input/TDInput";
+import TDSelect from "@/components/form-input/TDSelect";
 import TDTextArea from "@/components/form-input/TDTextArea";
+import { genderOptions } from "@/components/helpers/product/gender-options";
 import { Form } from "@/components/ui/form";
 import {
 	TProductFormValues,
 	productSchema,
 } from "@/form-schema/product-schema";
 import { useAllBrandQuery } from "@/redux/api/brandApi";
-import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
+import {
+	useAllCategoryQuery,
+	useCategoryByIdQuery,
+} from "@/redux/api/productCategoryApi";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ImageVariant from "./image-variant";
 import ProductVariant from "./product-variant";
@@ -29,12 +35,26 @@ export default function ProductForm({
 	onSubmit,
 	isLoading,
 }: ProductFormProps) {
+	const [categoryId, setCategoryId] = useState(
+		defaultValues?.categoryId || "",
+	);
+
 	const { data: categories } = useAllCategoryQuery({});
-	const { data: brands } = useAllBrandQuery({});
+	const { data: brands } = useAllBrandQuery({ limit: "100" });
 	const categoryOption = categories?.result?.map((category) => ({
 		label: category.name,
 		value: category.id,
 	}));
+
+	const { data: categoryDetails } = useCategoryByIdQuery(categoryId, {
+		skip: !categoryId,
+	});
+	const sizeGroupOptions = categoryDetails?.result?.sizeGroup?.sizes?.map(
+		(size) => ({
+			label: size.name,
+			value: size.id,
+		}),
+	);
 	const brandOption = brands?.result?.map((brand) => ({
 		label: brand.name,
 		value: brand.id,
@@ -47,18 +67,27 @@ export default function ProductForm({
 			discountPrice: undefined,
 			categoryId: "",
 			description: "",
+			gender: "",
 			stockQuantity: 200,
 			isFeatured: false,
 			brandId: "",
-			variants: [{ stock: 0, price: 0, color: "", size: "" }],
+			variants: [{ stock: 0, price: 0, color: "", sizeId: "" }],
 			images: [{ isMain: true, url: "" }],
 		},
 	});
 
+	const handleCategoryChange = (value: string) => {
+		setCategoryId(value);
+	};
 	const handleProductSubmit = (values: TProductFormValues) => {
 		onSubmit(values);
 	};
-
+	useEffect(() => {
+		if (defaultValues) {
+			setCategoryId(defaultValues.categoryId);
+		}
+	}, [defaultValues]);
+	
 	return (
 		<Form {...form}>
 			<form
@@ -69,13 +98,13 @@ export default function ProductForm({
 					<h5 className="text-lg font-semibold">
 						Product Information
 					</h5>
+					<TDInput
+						form={form}
+						label="Product name"
+						name="name"
+						required
+					/>
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-1.5">
-						<TDInput
-							form={form}
-							label="Product name"
-							name="name"
-							required
-						/>
 						<TDInput
 							form={form}
 							label="Price"
@@ -104,8 +133,9 @@ export default function ProductForm({
 							placeholder="Select category"
 							searchPlaceholder="Search categories..."
 							emptyText="No category found."
-							required
 							options={categoryOption || []}
+							onChange={handleCategoryChange}
+							required
 						/>
 						<TDCombobox
 							form={form}
@@ -117,7 +147,15 @@ export default function ProductForm({
 							required
 							options={brandOption || []}
 						/>
+						<TDSelect
+							form={form}
+							name="gender"
+							options={genderOptions}
+							label="Gender"
+							className="w-full"
+						/>
 					</div>
+
 					<TDTextArea
 						form={form}
 						label="Product description"
@@ -143,7 +181,7 @@ export default function ProductForm({
 					<TDSeparator className="my-10" />
 
 					{/** product variants */}
-					<ProductVariant />
+					<ProductVariant options={sizeGroupOptions || []} />
 					<TDButton type="submit" isLoading={isLoading}>
 						{productId ? "Update Product" : "Create Product"}
 					</TDButton>

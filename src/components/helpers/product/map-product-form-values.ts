@@ -24,7 +24,7 @@ export const mapProductToFormValues = (
         variants: product.variants 
             .filter((v) => !v.isDeleted)
             .map((v) => ({
-                size: v.size,
+                sizeId: v.sizeId,
                 color: v.color,
                 stock: v.stock,
                 price: Number(v.price),
@@ -34,6 +34,8 @@ export const mapProductToFormValues = (
             .filter((img) => !img.isDeleted)
             .map((img) => ({
                 url: img.url,
+                publicId: img.publicId,
+                altText: img.altText,
                 isMain: img.isMain,
             })),
     };

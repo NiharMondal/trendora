@@ -22,7 +22,6 @@ export default function EditSizeGroup({ onClose }: EditSizeGroupProps) {
 			skip: !sizeGroupId,
 		},
 	);
-	console.log(selectedSizeGroup);
 	const [updateSizeGroup, { isLoading: isUpdating }] =
 		useUpdateSizeGroupMutation();
 

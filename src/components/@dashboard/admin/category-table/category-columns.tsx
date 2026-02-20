@@ -18,6 +18,14 @@ export const categoryColumns = ({
         header: "Category Name",
     },
     {
+        key: "sizeGroupId",
+        header: "Size Group",
+        cell: (row) => {
+            const category = row;
+            return <span>{category.sizeGroup?.name}</span>;
+        },
+    },
+    {
         key: "parent",
         header: "Parent Category",
         cell: (row) => {

@@ -22,7 +22,6 @@ export default function SizeForm({
 	isSubmitting,
 }: Props) {
     const {data: sizeGroups} = useAllSizeGroupsQuery({});
-    console.log(sizeGroups)
 	const hookform = useForm<TSizeFormValues>({
 		resolver: zodResolver(sizeFormSchema),
 		defaultValues: defaultValues ?? {
