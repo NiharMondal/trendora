@@ -1,4 +1,6 @@
+import { TServerResponse } from "@/types/common.types";
 import { baseApi } from "./baseApi";
+import { TAddress } from "@/types/address.types";
 
 export const addressApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({
@@ -14,8 +16,16 @@ export const addressApi = baseApi.injectEndpoints({
 			invalidatesTags: ["address"],
 		}),
 
+		// all address // TODO: this should be only for admin, need to change the endpoint
+		allAddress: builder.query<TServerResponse<TAddress[]>, undefined>({
+			query: () => ({
+				url: `/address`,
+				method: "GET",
+			}),
+			providesTags: ["address"],
+		}),
 		// my address
-		myAddress: builder.query({
+		myAddress: builder.query<TServerResponse<TAddress[]>, undefined>({
 			query: () => ({
 				url: `/address/my-address`,
 				method: "GET",
@@ -60,6 +70,7 @@ export const addressApi = baseApi.injectEndpoints({
 export const {
 	useCreateAddressMutation,
 	useMyAddressQuery,
+	useAllAddressQuery,
 	useAddressByIdQuery,
 	useDeleteAddressMutation,
 	useUpdateAddressMutation,

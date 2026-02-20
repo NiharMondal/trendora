@@ -1,34 +1,34 @@
 import z from "zod";
 //product variant
 export const productVariantSchema = z.object({
-    sizeId: z
-        .string({ error: "Variant size is required" })
-        .nonempty({ error: "Variant Size is required" })
-        .trim(),
-    color: z
-        .string({ error: "Variant color is required" })
-        .nonempty({ error: "Variant color is required" })
-        .trim()
-        .transform(
-            (val) => val.charAt(0).toUpperCase() + val.slice(1).toLowerCase(),
-        ),
-    stock: z.coerce
-        .number({ error: "Variant stock is required" })
-        .positive("Number of stock must be positive"),
-    price: z.coerce
-        .number({ error: "Variant price is required" })
-        .positive("Price must be positive"),
+	sizeId: z
+		.string({ error: "Variant size is required" })
+		.nonempty({ error: "Variant Size is required" })
+		.trim(),
+	color: z
+		.string({ error: "Variant color is required" })
+		.nonempty({ error: "Variant color is required" })
+		.trim()
+		.transform(
+			(val) => val.charAt(0).toUpperCase() + val.slice(1).toLowerCase(),
+		),
+	stock: z.coerce
+		.number({ error: "Variant stock is required" })
+		.positive("Number of stock must be positive"),
+	price: z.coerce
+		.number({ error: "Variant price is required" })
+		.positive("Price must be positive"),
 });
 export type TProductVariant = z.infer<typeof productVariantSchema>;
 //product image
 export const productImageSchema = z.object({
-    url: z
-        .url({ error: "Provide valid URL" })
-        .nonempty("Image URL is required")
-        .trim(),
-    publicId: z.string().trim(),
-    altText:z.string().trim().optional(),
-    isMain: z.coerce.boolean().optional(),
+	url: z
+		.url({ error: "Provide valid URL" })
+		.nonempty("Image URL is required")
+		.trim(),
+	publicId: z.string().trim(),
+	altText: z.string().trim().optional(),
+	isMain: z.coerce.boolean().optional(),
 });
 export type TProductImage = z.infer<typeof productImageSchema>;
 //product schema
@@ -70,13 +70,7 @@ export const productSchema = z
 		isFeatured: z.boolean().optional(),
 		categoryId: z.string().min(1, "Category is required"),
 		brandId: z.string().min(1, "Brand is required"),
-		variants: z
-			.array(productVariantSchema)
-			.min(1, "At least one variant is required")
-			.refine(
-				(variants) => variants.some((v) => v.stock > 0),
-				"At least one variant must have stock available",
-			),
+		variants: z.array(productVariantSchema).optional(),
 		images: z
 			.array(productImageSchema)
 			.min(1, "At least one image is required")
