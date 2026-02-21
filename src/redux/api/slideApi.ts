@@ -49,7 +49,6 @@ export const slideApi = baseApi.injectEndpoints({
             { payload: TSlide; id: string }
         >({
             query: ({ payload, id }) => {
-                console.log(payload);
                 return {
                     url: `/slides/${id}`,
                     method: "PATCH",

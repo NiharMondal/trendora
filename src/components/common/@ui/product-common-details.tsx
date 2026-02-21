@@ -63,12 +63,13 @@ export default function ProductCommonDetails({
     return (
         <div className="space-y-5 pr-4">
             <h2>{product?.name}</h2>
-            <ReactSmartRating initialRating={5} activeColor="orange" readOnly />
+            {product?.averageRating && <ReactSmartRating initialRating={product.averageRating} activeColor="orange" readOnly />}
             <ProductPrice
                 basePrice={product?.basePrice || ""}
                 discountPrice={product?.discountPrice}
             />
-            <p>{product?.description}</p>
+            <p className="text-sm">Brand: <span className="font-medium">{product?.brand?.name}</span></p>
+            <p className="text-muted-foreground">{product?.description}</p>
             <hr className="border-t border-muted my-5" />
 
             <div className="space-y-3">
@@ -107,7 +108,7 @@ export default function ProductCommonDetails({
                             )}
                         >
                             <p>Color: {variant.color}</p>
-                            <p>Size: {variant.size}</p>
+                            <p>Size: {variant.size?.name}</p>
                             <p>Price: {variant.price}</p>
                         </div>
                     ))}

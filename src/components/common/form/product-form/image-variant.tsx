@@ -59,21 +59,33 @@ export default function ImageVariant() {
 				{imageFields.map((field, index) => (
 					<div
 						key={field.id}
-						className="border p-5 rounded-lg space-y-1 relative"
+						className="border p-5 rounded-lg space-y-1 relative grid grid-cols-2 gap-3"
 					>
+						<Button
+							size={"icon-sm"}
+							className="absolute top-1.5 right-2 size-8"
+							type="button"
+							variant="destructive"
+							onClick={() => removeImage(index)}
+							title="Remove Image"
+							disabled={imageFields.length === 1}
+						>
+							<X />
+						</Button>
+
 						<TDImageUploadField
 							form={form}
 							urlName={`images.${index}.url`}
 							publicIdName={`images.${index}.publicId`}
 						/>
-						<TDInput
-							form={form}
-							name={`images.${index}.altText`}
-							label="Alt Text"
-							inputSize="sm"
-						/>
+						<div className="flex flex-col">
+							<TDInput
+								form={form}
+								name={`images.${index}.altText`}
+								label="Alt Text"
+								inputSize="sm"
+							/>
 
-						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-3 cursor-pointer">
 								<Checkbox
 									id={`isMain-${index}`}
@@ -89,18 +101,6 @@ export default function ImageVariant() {
 									Main Image
 								</Label>
 							</div>
-
-							<Button
-								size={"icon-sm"}
-								className="absolute top-1.5 right-2 size-8"
-								type="button"
-								variant="destructive"
-								onClick={() => removeImage(index)}
-								title="Remove Image"
-								disabled={imageFields.length === 1}
-							>
-								<X />
-							</Button>
 						</div>
 					</div>
 				))}

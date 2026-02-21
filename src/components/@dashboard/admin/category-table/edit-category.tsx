@@ -31,6 +31,7 @@ export default function EditCategory({
     const defaultValues = useMemo(
         () => ({
             name: selectedCategory?.result?.name,
+            sizeGroupId: selectedCategory?.result?.sizeGroupId || "",
             parentId: selectedCategory?.result?.parentId || "",
         }),
         [selectedCategory],

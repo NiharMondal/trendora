@@ -10,9 +10,9 @@ export const sizeFormSchema = z.object({
 			error: "Size name must be at most 10 characters",
 		}),
 	sizeGroupId: z
-		.uuidv4({
-			error: "Invalid size group ID",
-		}).nonempty({error: "Size group is required"})
+		.string({
+			error: "Size group ID is required",
+		}).nonempty({error: "Size group ID is required"})
 });
 
 export type TSizeFormValues = z.infer<typeof sizeFormSchema>;

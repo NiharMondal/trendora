@@ -1,6 +1,6 @@
 "use client";
 import ProductForm from "@/components/common/form/product-form/product-form";
-import { mapProductToFormValues } from "@/components/helpers/map-product-form-values";
+import { mapProductToFormValues } from "@/components/helpers/product/map-product-form-values";
 import { TProductFormValues } from "@/form-schema/product-schema";
 import {
     useProductByIdQuery,
@@ -23,7 +23,7 @@ export default function UpdateProduct({ productId }: { productId: string }) {
         () => (product ? mapProductToFormValues(product.result) : undefined),
         [product],
     );
-
+    console.log({defaultValues})
     const handleUpdateProduct = async (values: TProductFormValues) => {
         try {
             await updateProduct({
