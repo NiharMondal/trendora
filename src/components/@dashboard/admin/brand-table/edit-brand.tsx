@@ -24,7 +24,7 @@ export default function EditBrand({ onClose }: EditBrandProps) {
 	const defaultValues = useMemo(
 		() => ({
 			name: selectedBrand?.result?.name,
-			logo: selectedBrand?.result?.logo,
+			// logo: selectedBrand?.result?.logo,
 		}),
 		[selectedBrand],
 	);
@@ -40,6 +40,7 @@ export default function EditBrand({ onClose }: EditBrandProps) {
 		} catch (error: any) {
 			toast.error(error?.data?.message);
 		}
+		console.log(values)
 	};
 	if (!brandId) return null;
 	if (isLoading) return <SpinnerLoading />;

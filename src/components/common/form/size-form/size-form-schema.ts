@@ -12,7 +12,7 @@ export const sizeFormSchema = z.object({
 	sizeGroupId: z
 		.string({
 			error: "Size group ID is required",
-		}).nonempty({error: "Size group ID is required"})
+		}).optional()
 });
 
 export type TSizeFormValues = z.infer<typeof sizeFormSchema>;

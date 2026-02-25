@@ -65,15 +65,15 @@ export default function TDImageUploadField<T extends FieldValues>({
 
 	return (
 		<div className="space-y-2">
-			<div className="w-full">
+			<div className="relative w-full h-36 border rounded-md bg-gray-100">
 				{url ? (
-					<div className="relative w-full h-40">
+					<>
 						<Image
 							src={url}
 							alt="Preview"
 							fill
 							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-							className="object-cover rounded-md border w-full"
+							className="object-cover rounded-md w-full"
 						/>
 						<button
 							type="button"
@@ -82,18 +82,30 @@ export default function TDImageUploadField<T extends FieldValues>({
 						>
 							<X size={14} />
 						</button>
-					</div>
+					</>
 				) : (
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => fileRef.current?.click()}
-						disabled={loading}
-					>
-						{loading ? "Uploading..." : "Upload Image"}
-					</Button>
+					<div className="w-full h-full flex items-center justify-center">
+						<p className="text-muted-foreground text-sm">
+							No image selected
+						</p>
+					</div>
+				)}
+				{form.formState.errors[urlName] && (
+					<p className="text-red-500 text-xs mt-1">
+						{form.formState.errors[urlName]?.message as string}
+					</p>
 				)}
 			</div>
+
+			<Button
+				type="button"
+				variant="outline"
+				onClick={() => fileRef.current?.click()}
+				disabled={loading}
+				className="w-full"
+			>
+				{loading ? "Uploading..." : "Upload Image"}
+			</Button>
 
 			<input
 				ref={fileRef}

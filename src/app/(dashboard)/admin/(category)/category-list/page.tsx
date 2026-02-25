@@ -3,7 +3,7 @@ import Headline from "@/components/common/dashboard/headline";
 
 export default function CategoryList() {
     return (
-        <div className="space-y-4">
+        <div className="space-y-5">
             <Headline
                 title="Category List"
                 showBackButton

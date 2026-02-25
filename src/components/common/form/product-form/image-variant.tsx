@@ -39,6 +39,14 @@ export default function ImageVariant() {
 					<p className="text-xs text-muted-foreground">
 						Provide at least one image
 					</p>
+					{form.formState.errors.images && (
+						<p className="text-xs text-red-500 mt-1">
+							{typeof form.formState.errors.images === "string"
+								? form.formState.errors.images
+								: form.formState.errors.images?.message ||
+									"At least one image is required"}
+						</p>
+					)}
 				</div>
 				<Button
 					type="button"
