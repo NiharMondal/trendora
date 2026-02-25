@@ -86,7 +86,7 @@ export default function CategoryTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			
+
 			{categories?.meta?.totalPages && categories?.meta?.totalPages > 1 && (
 				<Pagination
 					currentPage={currentPage}
@@ -94,6 +94,8 @@ export default function CategoryTable() {
 					totalPages={categories?.meta?.totalPages }
 					hasNextPage={categories?.meta?.hasNextPage}
 					hasPreviousPage={categories?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={categories?.meta?.totalData || 0}
 				/>
 			)}
 

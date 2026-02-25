@@ -122,9 +122,11 @@ export default function UserPage() {
 					<Pagination
 						currentPage={currentPage}
 						onPageChange={setCurrentPage}
-						totalPages={users?.meta?.totalPages || 0}
+						totalPages={users?.meta?.totalPages}
 						hasNextPage={users?.meta?.hasNextPage}
 						hasPreviousPage={users?.meta?.hasPreviousPage}
+						limit={Number(limit)}
+						totalData={users?.meta?.totalData || 0}
 					/>
 				)}
 			</div>

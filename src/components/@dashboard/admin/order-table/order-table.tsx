@@ -70,6 +70,8 @@ export default function OrderTable() {
 					totalPages={orders?.meta?.totalPages}
 					hasNextPage={orders?.meta?.hasNextPage}
 					hasPreviousPage={orders?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={orders?.meta?.totalData || 0}
 				/>
 			)}
 

@@ -92,6 +92,9 @@ export default function CategoryTable() {
 					totalPages={sizeGroups?.meta?.totalPages}
 					hasNextPage={sizeGroups?.meta?.hasNextPage}
 					hasPreviousPage={sizeGroups?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={sizeGroups?.meta?.totalData || 0}
+
 				/>
 			)}
 
