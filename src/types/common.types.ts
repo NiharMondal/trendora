@@ -2,6 +2,8 @@ type TMetaData = {
 	currentPage: number;
 	totalPages: number;
 	totalData: number;
+	hasNextPage: boolean;
+	hasPreviousPage: boolean;
 };
 
 export type TServerResponse<T> = {

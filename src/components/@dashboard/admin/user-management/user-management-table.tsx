@@ -1,4 +1,3 @@
-import Pagination from "@/components/common/pagination";
 import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import { DataTable } from "@/components/common/td-table";
 import { useAllUserQuery } from "@/redux/api/userApi";
@@ -7,6 +6,7 @@ import TableToolbar from "@/shared/table/table-toolbar";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { userManagementColumns } from "./user-management-columns";
+import { Pagination } from "@/shared/table";
 
 export default function UserManagementTable() {
     const [search, setSearch] = useState("");
@@ -40,16 +40,15 @@ export default function UserManagementTable() {
 				data={users.result}
 				rowKey={(row) => row.id}
 			/>
-			{users?.meta?.totalData &&
-				users?.meta?.totalData > Number(limit) && (
-					<Pagination
-						currentPage={currentPage}
-						onPageChange={setCurrentPage}
-						totalPages={users?.meta?.totalPages || 0}
-						limit={Number(limit)}
-						totalData={users?.meta?.totalData || 0}
-					/>
-				)}
+			{users?.meta?.totalPages && users?.meta?.totalPages > 1 && (
+				<Pagination
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					totalPages={users?.meta?.totalPages || 0}
+					hasNextPage={users?.meta?.hasNextPage}
+					hasPreviousPage={users?.meta?.hasPreviousPage}
+				/>
+			)}
 		</div>
 	);
 }

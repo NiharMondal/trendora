@@ -21,6 +21,7 @@ type TableToolbarProps = {
     setSortBy?: (value: string) => void;
     setSearch?: (value: string) => void;
     sortByOptions?: SortByOption[];
+	onReset?: () => void;
 };
 
 export default function TableToolbar({
@@ -30,6 +31,7 @@ export default function TableToolbar({
 	limit,
 	setLimit,
 	sortBy,
+	onReset,
 	setSortBy,
 	sortByOptions = [
 		{ label: "CreatedAt (Asc)", value: "createdAt:asc" },
@@ -40,6 +42,7 @@ export default function TableToolbar({
 		if (setSearch) setSearch("");
 		if (setLimit) setLimit("10");
 		if (setSortBy) setSortBy("createdAt:desc");
+		if(onReset) onReset?.();
 	};
     const isButtonDisabled =
         (!search || search.trim() === "") &&

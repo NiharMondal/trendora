@@ -1,6 +1,5 @@
 "use client";
 
-import Pagination from "@/components/common/pagination";
 import TDButton from "@/components/common/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
@@ -9,7 +8,7 @@ import {
     useAllProductsQuery,
     useDeleteProductMutation,
 } from "@/redux/api/productApi";
-import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
+import { DataTable, Pagination, TableLoading, TableToolbar } from "@/shared/table";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
@@ -73,16 +72,15 @@ export default function ProductTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{products?.meta?.totalData &&
-				products?.meta?.totalData > Number(limit) && (
-					<Pagination
-						currentPage={currentPage}
-						onPageChange={setCurrentPage}
-						totalPages={products?.meta?.totalPages || 0}
-						limit={Number(limit)}
-						totalData={products?.meta?.totalData || 0}
-					/>
-				)}
+			{products?.meta?.totalPages && products?.meta?.totalPages > 1 && (
+				<Pagination
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					totalPages={products?.meta?.totalPages}
+					hasNextPage={products?.meta?.hasNextPage}
+					hasPreviousPage={products?.meta?.hasPreviousPage}
+				/>
+			)}
 
 			<TDModal
 				open={!!deleteProductId}

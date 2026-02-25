@@ -1,12 +1,11 @@
 "use client";
-import Pagination from "@/components/common/pagination";
 import TDButton from "@/components/common/td-button";
 import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
 import { useAllBrandQuery, useDeleteBrandMutation } from "@/redux/api/brandApi";
-import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
+import { DataTable, Pagination, TableLoading, TableToolbar } from "@/shared/table";
 import { TBrand } from "@/types/brand.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -80,16 +79,15 @@ export default function BrandTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{brands?.meta?.totalData &&
-				brands?.meta?.totalData > Number(limit) && (
-					<Pagination
-						currentPage={currentPage}
-						onPageChange={setCurrentPage}
-						totalPages={brands?.meta?.totalPages || 0}
-						limit={Number(limit)}
-						totalData={brands?.meta?.totalData || 0}
-					/>
-				)}
+			{brands?.meta?.totalPages && brands?.meta?.totalPages > 1 && (
+				<Pagination
+					currentPage={currentPage}
+					onPageChange={setCurrentPage}
+					totalPages={brands?.meta?.totalPages}
+					hasNextPage={brands?.meta?.hasNextPage}
+					hasPreviousPage={brands?.meta?.hasPreviousPage}
+				/>
+			)}
 
 			<TDSheet
 				isOpen={!!brandId}
