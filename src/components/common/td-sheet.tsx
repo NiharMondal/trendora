@@ -16,17 +16,19 @@ type TDSheetProps = {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     title?: string;
-    children: React.ReactNode;
-    icon?: React.ReactElement;
-    trigger?: string;
     className?: string;
+    sheetWidth?: string;
+    sheetHeight?: string;
+    children: React.ReactNode;
 };
 export default function TDSheet({
     isOpen,
     setIsOpen,
-    children,
-    title,
+    title="Title",
     className,
+    sheetWidth,
+    sheetHeight,
+    children,
 }: TDSheetProps) {
     const isDesktop = useIsDesktop();
 
@@ -35,11 +37,11 @@ export default function TDSheet({
             <SheetContent
                 side={!isDesktop ? "bottom" : "right"}
                 className={cn(
-                    "w-full min-w-2xl [&>button]:hidden",
-                    {
-                        "max-h-4/5 pb-10 rounded-t-xl": !isDesktop,
-                    },
-                    className,
+                    "[&>button]:hidden",
+                    {"min-w-2xl": isDesktop},
+                    {"min-h-4/5 rounded-t-lg": !isDesktop},
+                    isDesktop && sheetWidth && `w-${sheetWidth}`,
+                    !isDesktop && sheetHeight && `h-${sheetHeight}`,
                 )}
             >
                 <SheetHeader className=" flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
