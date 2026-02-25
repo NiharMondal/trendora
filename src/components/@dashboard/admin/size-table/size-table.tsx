@@ -87,6 +87,8 @@ export default function SizeTable() {
 					totalPages={sizes?.meta?.totalPages}
 					hasNextPage={sizes?.meta?.hasNextPage}
 					hasPreviousPage={sizes?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={sizes?.meta?.totalData || 0}
 				/>
 			)}
 

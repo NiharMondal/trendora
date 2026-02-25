@@ -86,6 +86,8 @@ export default function BrandTable() {
 					totalPages={brands?.meta?.totalPages}
 					hasNextPage={brands?.meta?.hasNextPage}
 					hasPreviousPage={brands?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={brands?.meta?.totalData || 0}
 				/>
 			)}
 

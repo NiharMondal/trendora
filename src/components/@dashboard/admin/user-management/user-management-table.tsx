@@ -47,6 +47,8 @@ export default function UserManagementTable() {
 					totalPages={users?.meta?.totalPages || 0}
 					hasNextPage={users?.meta?.hasNextPage}
 					hasPreviousPage={users?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={users?.meta?.totalData || 0}
 				/>
 			)}
 		</div>

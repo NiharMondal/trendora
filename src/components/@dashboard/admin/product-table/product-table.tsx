@@ -79,6 +79,8 @@ export default function ProductTable() {
 					totalPages={products?.meta?.totalPages}
 					hasNextPage={products?.meta?.hasNextPage}
 					hasPreviousPage={products?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={products?.meta?.totalData || 0}
 				/>
 			)}
 

@@ -159,9 +159,11 @@ export default function FeaturedTable() {
 				<Pagination
 					currentPage={currentPage}
 					onPageChange={setCurrentPage}
-					totalPages={products?.meta?.totalPages || 0}
+					totalPages={products?.meta?.totalPages}
 					hasNextPage={products?.meta?.hasNextPage}
 					hasPreviousPage={products?.meta?.hasPreviousPage}
+					limit={Number(limit)}
+					totalData={products?.meta?.totalData || 0}
 				/>
 			)}
 		</div>
