@@ -19,9 +19,9 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import TDButton from "../../shared/td-button";
 import ImageVariant from "./image-variant";
 import ProductVariant from "./product-variant";
-import TDButton from "../../shared/td-button";
 
 type ProductFormProps = {
 	productId?: string;
@@ -87,7 +87,7 @@ export default function ProductForm({
 			setCategoryId(defaultValues.categoryId);
 		}
 	}, [defaultValues]);
-	
+
 	return (
 		<Form {...form}>
 			<form
