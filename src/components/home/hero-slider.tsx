@@ -12,7 +12,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import SpinnerLoading from "../common/loading/spinner-loading";
-import TDButton from "../common/td-button";
+import TDButton from "../common/shared/td-button";
 
 export function HeroSlider() {
 	const { data, isLoading } = useAllSlideQuery({ limit: "5" });

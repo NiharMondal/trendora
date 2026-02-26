@@ -3,7 +3,7 @@ import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 import ProductCommonDetails from "../@ui/product-common-details";
-import TDSheet from "../td-sheet";
+import TDSheet from "../shared/td-sheet";
 
 type Props = {
 	product: TProduct;
