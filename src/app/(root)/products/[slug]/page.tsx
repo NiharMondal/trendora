@@ -1,7 +1,7 @@
 "use client";
-import Container from "@/components/common/container";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import RelatedProducts from "@/components/common/related-product";
+import Container from "@/components/common/shared/container";
+import RelatedProducts from "@/components/common/shared/related-product";
 import { TProductImage } from "@/components/types/product.types";
 import { cn } from "@/lib/utils";
 import { useProductBySlugQuery } from "@/redux/api/productApi";
