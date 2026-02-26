@@ -1,6 +1,6 @@
 "use client";
 
-import SpinnerLoading from "@/components/common/spinner-loading";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import TDButton from "@/components/common/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import TDTextArea from "@/components/form-input/TDTextArea";

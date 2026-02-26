@@ -92,7 +92,6 @@ export const adminNavlink: TSidebarLink[] = [
 		icon: FilePlus,
 		children: [
 			{ title: "Order List", url: "/admin/order-list", index: true },
-			{ title: "Order Details", url: "/admin/order-details/" },
 		],
 	},
 	{

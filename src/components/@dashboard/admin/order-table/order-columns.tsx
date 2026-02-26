@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { TOrder } from "@/types/order.types";
 import { DataTableColumn } from "@/types/table.types";
-import { getOrderStatusStyles, OrderStatus } from "@/utils/order-status";
-import { getPaymentStatusStyles, PaymentStatus } from "@/utils/payment-status";
+import { getOrderStatusStyles, EnumOrderStatus } from "@/utils/order-status";
+import { getPaymentStatusStyles, EnumPaymentStatus } from "@/utils/payment-status";
 import { FileSearch } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
@@ -54,7 +54,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
 			return (
 				<span
 					className={getOrderStatusStyles(
-						order.orderStatus as OrderStatus,
+						order.orderStatus as EnumOrderStatus,
 					)}
 				>
 					{order.orderStatus}
@@ -78,7 +78,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
 			return (
 				<span
 					className={getPaymentStatusStyles(
-						order.paymentStatus as PaymentStatus,
+						order.paymentStatus as EnumPaymentStatus,
 					)}
 				>
 					{order.paymentStatus}

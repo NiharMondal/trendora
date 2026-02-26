@@ -5,7 +5,8 @@ import { useAllProductsQuery } from "@/redux/api/productApi";
 
 export default function ProductWrapper() {
     const { data, isLoading } = useAllProductsQuery({});
-    console.log(data);
+
+    
     return (
         <Container className="space-y-5">
             <div>Filter section</div>

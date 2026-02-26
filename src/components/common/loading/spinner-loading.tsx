@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import React from "react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "../../ui/spinner";
 type SpinnerLoadingProps = {
 	className?: string;
 };

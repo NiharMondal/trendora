@@ -1,59 +1,64 @@
 "use client";
 
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import TDButton from "@/components/common/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
 import {
-    useAllProductsQuery,
-    useDeleteProductMutation,
+	useAllProductsQuery,
+	useDeleteProductMutation,
 } from "@/redux/api/productApi";
-import { DataTable, Pagination, TableLoading, TableToolbar } from "@/shared/table";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { productColumns } from "./product-columns";
 
 export default function ProductTable() {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState("10");
-    const [search, setSearch] = useState("");
-    const [value] = useDebounce(search, 1000);
-    const [sortBy, setSortBy] = useState("createdAt:desc");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [limit, setLimit] = useState("10");
+	const [search, setSearch] = useState("");
+	const [value] = useDebounce(search, 1000);
+	const [sortBy, setSortBy] = useState("createdAt:desc");
 
-    const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+	const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
-    const [deleteProduct, { isLoading: isDeleting }] =
-        useDeleteProductMutation();
+	const [deleteProduct, { isLoading: isDeleting }] =
+		useDeleteProductMutation();
 
-    const {
-        data: products,
-        isLoading,
-        isFetching,
-    } = useAllProductsQuery({
-        search: value,
-        limit: limit,
-        page: currentPage.toString(),
-        sortBy: sortBy,
-    });
+	const {
+		data: products,
+		isLoading,
+		isFetching,
+	} = useAllProductsQuery({
+		search: value,
+		limit: limit,
+		page: currentPage.toString(),
+		sortBy: sortBy,
+	});
 
-    const confirmDelete = async () => {
-        if (!deleteProductId) return;
-        try {
-            await deleteProduct(deleteProductId).unwrap();
-            toast.success("Product deleted successfully");
-            setDeleteProductId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
-        }
-    };
-    const handleDeleteProduct = async (id: string) => {
-        setDeleteProductId(id);
-    };
+	const confirmDelete = async () => {
+		if (!deleteProductId) return;
+		try {
+			await deleteProduct(deleteProductId).unwrap();
+			toast.success("Product deleted successfully");
+			setDeleteProductId(null);
+		} catch (error: any) {
+			toast.error(error?.data?.message);
+		}
+	};
+	const handleDeleteProduct = async (id: string) => {
+		setDeleteProductId(id);
+	};
 
-    if (isLoading) return <TableLoading />;
+	if (isLoading) return <TableLoading />;
 
-    return (
+	return (
 		<div className="space-y-5 bg-white p-5 rounded-md">
 			<TableToolbar
 				search={search}

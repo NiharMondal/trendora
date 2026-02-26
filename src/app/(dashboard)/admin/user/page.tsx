@@ -11,6 +11,8 @@ import {
 import { Eye, Trash } from "lucide-react";
 import { useState } from "react";
 
+import NoDataFound from "@/components/common/shared/no-data-found";
+import { Pagination } from "@/components/common/shared/table";
 import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import {
 	Table,
@@ -22,8 +24,6 @@ import {
 } from "@/components/ui/table";
 import { productsImage } from "@/helping-data/image";
 import { useAllUserQuery } from "@/redux/api/userApi";
-import NoDataFound from "@/shared/no-data-found";
-import { Pagination } from "@/shared/table";
 import Image from "next/image";
 import { useDebounce } from "use-debounce";
 
