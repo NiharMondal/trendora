@@ -1,6 +1,5 @@
+import TDPopover from "@/components/common/shared/td-popover";
 import { Button } from "@/components/ui/button";
-import TDPopover from "@/shared/td-popover";
-import { TCategory } from "@/types/category.types";
 import { TSizeGroup } from "@/types/size-group.types";
 import { DataTableColumn } from "@/types/table.types";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";

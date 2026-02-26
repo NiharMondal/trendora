@@ -6,7 +6,7 @@ import {
     useProductByIdQuery,
     useUpdateProductMutation,
 } from "@/redux/api/productApi";
-import GeneralLoading from "@/shared/general-loading";
+import GeneralLoading from "@/components/common/loading/general-loading";
 import { useMemo } from "react";
 import { toast } from "sonner";
 

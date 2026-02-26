@@ -1,6 +1,6 @@
 import BrandForm from "@/components/common/form/brand-form/brand-form";
 import { TBrandFormValues } from "@/components/common/form/brand-form/brand-form-schema";
-import SpinnerLoading from "@/components/common/spinner-loading";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import {
 	useBrandByIdQuery,
 	useUpdateBrandMutation,
@@ -40,7 +40,7 @@ export default function EditBrand({ onClose }: EditBrandProps) {
 		} catch (error: any) {
 			toast.error(error?.data?.message);
 		}
-		console.log(values)
+		console.log(values);
 	};
 	if (!brandId) return null;
 	if (isLoading) return <SpinnerLoading />;

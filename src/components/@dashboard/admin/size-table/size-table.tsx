@@ -1,10 +1,15 @@
 "use client";
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import TDButton from "@/components/common/td-button";
 import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
-import { DataTable, Pagination, TableLoading, TableToolbar } from "@/shared/table";
 import { TSize } from "@/types/size.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";

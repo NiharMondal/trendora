@@ -201,6 +201,14 @@
         @apply cursor-pointer;
     }
 }
+@layer utilities{
+    .padding{
+        @apply p-3 md:p-5
+    }
+    .border-radius{
+        @apply rounded md:rounded-md
+    }
+}
 
 @layer components {
     .link_style::before {

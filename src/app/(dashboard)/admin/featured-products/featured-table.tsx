@@ -1,27 +1,27 @@
 "use client";
 
+import NoDataFound from "@/components/common/shared/no-data-found";
+import { Pagination } from "@/components/common/shared/table";
 import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/components/ui/select";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useAllProductsQuery } from "@/redux/api/productApi";
-import NoDataFound from "@/shared/no-data-found";
-import { Pagination } from "@/shared/table";
 import { Edit, Eye } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,29 +29,29 @@ import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
 export default function FeaturedTable() {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState("10");
-    const [search, setSearch] = useState("");
-    const [value] = useDebounce(search, 1000);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [limit, setLimit] = useState("10");
+	const [search, setSearch] = useState("");
+	const [value] = useDebounce(search, 1000);
 
-    const { data: products, isLoading } = useAllProductsQuery({
-        search: value,
-        limit: limit,
-        page: currentPage.toString(),
-    });
+	const { data: products, isLoading } = useAllProductsQuery({
+		search: value,
+		limit: limit,
+		page: currentPage.toString(),
+	});
 
-    if (isLoading) {
-        return (
-            <div className="mt-5">
-                <TableLoadingSkeleton />
-            </div>
-        );
-    }
+	if (isLoading) {
+		return (
+			<div className="mt-5">
+				<TableLoadingSkeleton />
+			</div>
+		);
+	}
 
-    if (!products?.result.length) {
-        return <NoDataFound />;
-    }
-    return (
+	if (!products?.result.length) {
+		return <NoDataFound />;
+	}
+	return (
 		<div className="bg-white p-8 rounded-2xl shadow-2xl space-y-5">
 			<div className="flex flex-col md:flex-row items-center justify-between gap-3">
 				<div className="flex items-center justify-between w-full md:max-w-fit">

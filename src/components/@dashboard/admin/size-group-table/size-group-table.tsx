@@ -1,9 +1,14 @@
 "use client";
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
-import { DataTable, Pagination, TableLoading, TableToolbar } from "@/shared/table";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -85,18 +90,18 @@ export default function CategoryTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{sizeGroups?.meta?.totalPages && sizeGroups?.meta?.totalPages > 1 && (
-				<Pagination
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					totalPages={sizeGroups?.meta?.totalPages}
-					hasNextPage={sizeGroups?.meta?.hasNextPage}
-					hasPreviousPage={sizeGroups?.meta?.hasPreviousPage}
-					limit={Number(limit)}
-					totalData={sizeGroups?.meta?.totalData || 0}
-
-				/>
-			)}
+			{sizeGroups?.meta?.totalPages &&
+				sizeGroups?.meta?.totalPages > 1 && (
+					<Pagination
+						currentPage={currentPage}
+						onPageChange={setCurrentPage}
+						totalPages={sizeGroups?.meta?.totalPages}
+						hasNextPage={sizeGroups?.meta?.hasNextPage}
+						hasPreviousPage={sizeGroups?.meta?.hasPreviousPage}
+						limit={Number(limit)}
+						totalData={sizeGroups?.meta?.totalData || 0}
+					/>
+				)}
 
 			<TDSheet
 				isOpen={!!sizeGroupId}

@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
-import TDPopover from "@/shared/td-popover";
 import { TOrder } from "@/types/order.types";
 import { DataTableColumn } from "@/types/table.types";
-import { getOrderStatusStyles, OrderStatus } from "@/utils/order-status";
-import { getPaymentStatusStyles, PaymentStatus } from "@/utils/payment-status";
-import { EllipsisVertical, FileSearch } from "lucide-react";
+import { getOrderStatusStyles, EnumOrderStatus } from "@/utils/order-status";
+import { getPaymentStatusStyles, EnumPaymentStatus } from "@/utils/payment-status";
+import { FileSearch } from "lucide-react";
 import moment from "moment";
+import Link from "next/link";
 
-export const orderColumns = ({handleClick}:{handleClick: (id: string) => void}): DataTableColumn<TOrder>[] => [
+export const orderColumns: DataTableColumn<TOrder>[] = [
 	{
 		key: "userInfo",
 		header: "User",
@@ -54,7 +54,7 @@ export const orderColumns = ({handleClick}:{handleClick: (id: string) => void}):
 			return (
 				<span
 					className={getOrderStatusStyles(
-						order.orderStatus as OrderStatus,
+						order.orderStatus as EnumOrderStatus,
 					)}
 				>
 					{order.orderStatus}
@@ -78,7 +78,7 @@ export const orderColumns = ({handleClick}:{handleClick: (id: string) => void}):
 			return (
 				<span
 					className={getPaymentStatusStyles(
-						order.paymentStatus as PaymentStatus,
+						order.paymentStatus as EnumPaymentStatus,
 					)}
 				>
 					{order.paymentStatus}
@@ -100,21 +100,12 @@ export const orderColumns = ({handleClick}:{handleClick: (id: string) => void}):
 		cell: (row) => {
 			const order = row;
 			return (
-				<TDPopover
-					trigger={
-						<Button variant="ghost" size="icon">
-							<EllipsisVertical />
-						</Button>
-					}
-					className="max-w-[150px]"
-				>
-					<div className="flex flex-col gap-2">
-						<Button variant="outline" size="sm" onClick={() => handleClick(order.id)}>
-							<FileSearch />
-							Details
-						</Button>
-					</div>
-				</TDPopover>
+				<Link href={`/admin/order-details/${order.id}`}>
+					<Button variant="outline" size="sm">
+						<FileSearch />
+						Details
+					</Button>
+				</Link>
 			);
 		},
 	},

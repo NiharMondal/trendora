@@ -1,18 +1,16 @@
 "use client";
 
-import TDSheet from "@/components/common/td-sheet";
+import {
+	DataTable,
+	Pagination,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import { useAllOrderQuery } from "@/redux/api/orderApi";
-import { DataTable, Pagination, TableToolbar } from "@/shared/table";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { orderColumns } from "./order-columns";
 
 export default function OrderTable() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const orderId = searchParams.get("id");
-
 	// filter section
 	const [currentPage, setCurrentPage] = useState(1);
 	const [limit, setLimit] = useState("10");
@@ -25,14 +23,6 @@ export default function OrderTable() {
 		search: value,
 		sortBy: sortBy,
 	});
-
-	const handleClick = (id: string) => {
-		router.push(`?id=${id}`, { scroll: false });
-	};
-
-	const handleCloseDrawer = () => {
-		router.push(`?`, { scroll: false });
-	};
 
 	const handleLimitChange = (value: string) => {
 		setLimit(value);
@@ -57,7 +47,7 @@ export default function OrderTable() {
 			/>
 
 			<DataTable
-				columns={orderColumns({ handleClick })}
+				columns={orderColumns}
 				data={orders?.result || []}
 				rowKey={(row) => row.id}
 				isFetching={isLoading}
@@ -74,14 +64,6 @@ export default function OrderTable() {
 					totalData={orders?.meta?.totalData || 0}
 				/>
 			)}
-
-			<TDSheet
-				isOpen={!!orderId}
-				setIsOpen={(open) => !open && handleCloseDrawer()}
-				title="View Order Details"
-			>
-				<div>Hello World</div>
-			</TDSheet>
 		</div>
 	);
 }
