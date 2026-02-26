@@ -6,12 +6,12 @@ import DesktopNavbar from "./desktop-navbar";
 import MobileNavbar from "./mobile-navbar";
 
 export default function Navbar() {
-    const cartQuantity = useAppSelector(selectCartQuantity);
-    const isDesktop = useIsDesktop();
+	const cartQuantity = useAppSelector(selectCartQuantity);
+	const isDesktop = useIsDesktop();
 
-    return isDesktop ? (
-        <DesktopNavbar cartQuantity={cartQuantity} />
-    ) : (
-        <MobileNavbar cartQuantity={cartQuantity} />
-    );
+	return isDesktop ? (
+		<DesktopNavbar cartQuantity={cartQuantity} />
+	) : (
+		<MobileNavbar cartQuantity={cartQuantity} />
+	);
 }

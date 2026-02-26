@@ -1,8 +1,11 @@
+import { TOrder } from "@/components/types/order.types";
+import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
-import { TOrder } from "@/types/order.types";
-import { DataTableColumn } from "@/types/table.types";
-import { getOrderStatusStyles, EnumOrderStatus } from "@/utils/order-status";
-import { getPaymentStatusStyles, EnumPaymentStatus } from "@/utils/payment-status";
+import { EnumOrderStatus, getOrderStatusStyles } from "@/utils/order-status";
+import {
+	EnumPaymentStatus,
+	getPaymentStatusStyles,
+} from "@/utils/payment-status";
 import { FileSearch } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";

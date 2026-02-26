@@ -5,7 +5,6 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
@@ -14,12 +13,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
-import TDButton from "@/components/common/td-button";
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
+import { TSizeGroup } from "@/components/types/size-group.types";
 import {
 	useAllSizeGroupsQuery,
 	useDeleteSizeGroupMutation,
 } from "@/redux/api/sizeGroupApi";
-import { TSizeGroup } from "@/types/size-group.types";
 import EditSizeGroup from "./edit-size-group";
 import { sizeGroupColumns } from "./size-group-columns";
 

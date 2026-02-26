@@ -1,6 +1,5 @@
-import { customerNavlink } from "@/components/layout/dashboard-navlink";
+import { customerNavlink } from "@/components/layout/dashboard/dashboard-navlink";
 import Link from "next/link";
-import React from "react";
 
 export default function UserDashboardPage() {
 	return (

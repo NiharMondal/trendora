@@ -6,16 +6,17 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDButton from "@/components/common/td-button";
-import TDSheet from "@/components/common/td-sheet";
+
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
+import { TCategory } from "@/components/types/category.types";
 import { Button } from "@/components/ui/button";
 import {
 	useAllCategoryQuery,
 	useDeleteCategoryMutation,
 } from "@/redux/api/productCategoryApi";
-import { TCategory } from "@/types/category.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

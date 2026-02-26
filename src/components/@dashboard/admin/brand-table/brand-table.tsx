@@ -5,13 +5,13 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDButton from "@/components/common/td-button";
-import TDSheet from "@/components/common/td-sheet";
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
+import { TBrand } from "@/components/types/brand.types";
 import { Button } from "@/components/ui/button";
 import { useAllBrandQuery, useDeleteBrandMutation } from "@/redux/api/brandApi";
-import { TBrand } from "@/types/brand.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

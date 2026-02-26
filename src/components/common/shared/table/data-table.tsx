@@ -1,4 +1,5 @@
 import NoDataFound from "@/components/common/shared/no-data-found";
+import { DataTableProps } from "@/components/types/table.types";
 import {
 	Table,
 	TableBody,
@@ -8,7 +9,6 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { DataTableProps } from "@/types/table.types";
 import TableLoading from "./table-loading";
 
 export default function TableData<T>({

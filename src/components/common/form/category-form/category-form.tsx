@@ -1,51 +1,50 @@
 "use client";
-import TDButton from "@/components/common/td-button";
+
 import TDCombobox from "@/components/form-input/TDCombobox";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
-import {
-    categorySchema,
-    TCategoryFormValues,
-} from "@/form-schema/category-schema";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import TDButton from "../../shared/td-button";
+import { categorySchema, TCategoryFormValues } from "./category-schema";
 
 type Props = {
-    defaultValues?: TCategoryFormValues | undefined;
-    onSubmit: (values: TCategoryFormValues) => Promise<void> | void;
-    isSubmitting?: boolean;
-    onSuccess?: () => void;
-    categories: { label: string; value: string }[];
+	defaultValues?: TCategoryFormValues | undefined;
+	onSubmit: (values: TCategoryFormValues) => Promise<void> | void;
+	isSubmitting?: boolean;
+	onSuccess?: () => void;
+	categories: { label: string; value: string }[];
 };
 export default function CategoryForm({
-    defaultValues,
-    onSubmit,
-    isSubmitting,
-    onSuccess,
-    categories,
+	defaultValues,
+	onSubmit,
+	isSubmitting,
+	onSuccess,
+	categories,
 }: Props) {
-    const {data:sizeGroups} = useAllSizeGroupsQuery({limit:"100"});
-    const sizeGroupOptions = sizeGroups?.result.map((sg) => ({
-        label: sg.name,
-        value: sg.id,
-    })) || [];
-    const hookForm = useForm<TCategoryFormValues>({
-        resolver: zodResolver(categorySchema),
-        defaultValues: defaultValues ?? {
-            name: "",
-            sizeGroupId: "",
-            parentId: "",
-        },
-    });
+	const { data: sizeGroups } = useAllSizeGroupsQuery({ limit: "100" });
+	const sizeGroupOptions =
+		sizeGroups?.result.map((sg) => ({
+			label: sg.name,
+			value: sg.id,
+		})) || [];
+	const hookForm = useForm<TCategoryFormValues>({
+		resolver: zodResolver(categorySchema),
+		defaultValues: defaultValues ?? {
+			name: "",
+			sizeGroupId: "",
+			parentId: "",
+		},
+	});
 
-    const handleCategorySubmit = (values: TCategoryFormValues) => {
-        onSubmit(values);
-        hookForm.reset();
-        onSuccess?.();
-    };
+	const handleCategorySubmit = (values: TCategoryFormValues) => {
+		onSubmit(values);
+		hookForm.reset();
+		onSuccess?.();
+	};
 
-    return (
+	return (
 		<Form {...hookForm}>
 			<form
 				onSubmit={hookForm.handleSubmit(handleCategorySubmit)}

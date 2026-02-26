@@ -2,9 +2,9 @@
 import Container from "@/components/common/container";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import RelatedProducts from "@/components/common/related-product";
+import { TProductImage } from "@/components/types/product.types";
 import { cn } from "@/lib/utils";
 import { useProductBySlugQuery } from "@/redux/api/productApi";
-import { TProductImage } from "@/types/product.types";
 import Image from "next/image";
 import { use, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";

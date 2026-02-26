@@ -6,7 +6,7 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDButton from "@/components/common/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";

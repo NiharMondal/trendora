@@ -1,11 +1,11 @@
-import CategoryForm from "@/components/common/form/category-form";
+import CategoryForm from "@/components/common/form/category-form/category-form";
+import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import { TCategoryFormValues } from "@/form-schema/category-schema";
+import { TCategory } from "@/components/types/category.types";
 import {
 	useCategoryByIdQuery,
 	useUpdateCategoryMutation,
 } from "@/redux/api/productCategoryApi";
-import { TCategory } from "@/types/category.types";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";

@@ -1,12 +1,9 @@
-import React from "react";
-import Container from "./container";
 import { footerInfo, order, ourPolicies } from "@/helping-data/footer";
-import Link from "next/link";
-import { Input } from "../ui/input";
+import { socialIcon } from "@/helping-data/image";
 import { Mail } from "lucide-react";
 import Image from "next/image";
-import facebook from "../../assets/icons/facebook.svg";
-import { socialIcon } from "@/helping-data/image";
+import Link from "next/link";
+import Container from "./container";
 export default function Footer() {
 	return (
 		<footer className="py-10 bg-neutral-dark text-white">
