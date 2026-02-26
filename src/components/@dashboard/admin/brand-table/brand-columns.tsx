@@ -1,7 +1,7 @@
 import TDPopover from "@/components/common/shared/td-popover";
+import { TBrand } from "@/components/types/brand.types";
+import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
-import { TBrand } from "@/types/brand.types";
-import { DataTableColumn } from "@/types/table.types";
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
 import moment from "moment";
 

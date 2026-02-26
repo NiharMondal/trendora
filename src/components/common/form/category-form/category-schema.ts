@@ -7,13 +7,14 @@ export const categorySchema = z.object({
 		.max(20, "Max character is 20")
 		.trim(),
 	sizeGroupId: z
-			.string({ error: "Size group is required" }).nonempty({ error: "Size group is required" }),
-		parentId: z
-			.string()
-			.trim()
-			.transform((val) => (val === "" ? null : val))
-			.nullable()
-			.optional(),
+		.string({ error: "Size group is required" })
+		.nonempty({ error: "Size group is required" }),
+	parentId: z
+		.string()
+		.trim()
+		.transform((val) => (val === "" ? null : val))
+		.nullable()
+		.optional(),
 });
 
 export type TCategoryFormValues = z.infer<typeof categorySchema>;

@@ -1,26 +1,26 @@
-import TDButton from "@/components/common/td-button";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/components/ui/select";
+import TDButton from "../td-button";
 
 type SortByOption = {
-    label: string;
-    value: string;
+	label: string;
+	value: string;
 };
 type TableToolbarProps = {
-    search?: string;
-    placeholder?: string;
-    limit?: string;
-    sortBy?: string;
-    setLimit?: (value: string) => void;
-    setSortBy?: (value: string) => void;
-    setSearch?: (value: string) => void;
-    sortByOptions?: SortByOption[];
+	search?: string;
+	placeholder?: string;
+	limit?: string;
+	sortBy?: string;
+	setLimit?: (value: string) => void;
+	setSortBy?: (value: string) => void;
+	setSearch?: (value: string) => void;
+	sortByOptions?: SortByOption[];
 	onReset?: () => void;
 };
 
@@ -42,12 +42,12 @@ export default function TableToolbar({
 		if (setSearch) setSearch("");
 		if (setLimit) setLimit("10");
 		if (setSortBy) setSortBy("createdAt:desc");
-		if(onReset) onReset?.();
+		if (onReset) onReset?.();
 	};
-    const isButtonDisabled =
-        (!search || search.trim() === "") &&
-        (!limit || limit === "10") &&
-        (!sortBy || sortBy === "createdAt:desc");
+	const isButtonDisabled =
+		(!search || search.trim() === "") &&
+		(!limit || limit === "10") &&
+		(!sortBy || sortBy === "createdAt:desc");
 	return (
 		<div className="flex items-center justify-between flex-wrap gap-3 w-full bg-white border border-muted p-3 rounded-md">
 			{setSearch && (
@@ -110,7 +110,11 @@ export default function TableToolbar({
 					</div>
 				)}
 
-				<TDButton variant="destructive" onClick={handleResetFilters} disabled={isButtonDisabled}>
+				<TDButton
+					variant="destructive"
+					onClick={handleResetFilters}
+					disabled={isButtonDisabled}
+				>
 					Reset Filters
 				</TDButton>
 			</div>

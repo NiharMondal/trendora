@@ -5,17 +5,17 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDButton from "@/components/common/td-button";
-import TDSheet from "@/components/common/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
+import { TSize } from "@/components/types/size.types";
 import { Button } from "@/components/ui/button";
-import { TSize } from "@/types/size.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
 import { useAllSizesQuery, useDeleteSizeMutation } from "@/redux/api/size";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";

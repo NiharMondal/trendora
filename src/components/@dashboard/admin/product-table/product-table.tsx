@@ -6,7 +6,6 @@ import {
 	TableLoading,
 	TableToolbar,
 } from "@/components/common/shared/table";
-import TDButton from "@/components/common/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 import { productColumns } from "./product-columns";
+import TDButton from "@/components/common/shared/td-button";
 
 export default function ProductTable() {
 	const [currentPage, setCurrentPage] = useState(1);

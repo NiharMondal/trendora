@@ -1,6 +1,6 @@
-import { TServerResponse } from "@/types/common.types";
+import { TAddress } from "@/components/types/address.types";
+import { TServerResponse } from "@/components/types/common.types";
 import { baseApi } from "./baseApi";
-import { TAddress } from "@/types/address.types";
 
 export const addressApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({

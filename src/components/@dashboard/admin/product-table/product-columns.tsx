@@ -1,8 +1,8 @@
 import TDPopover from "@/components/common/shared/td-popover";
+import { TProduct } from "@/components/types/product.types";
+import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TProduct } from "@/types/product.types";
-import { DataTableColumn } from "@/types/table.types";
 import { Edit, EllipsisVertical, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 

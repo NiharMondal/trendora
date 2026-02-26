@@ -1,6 +1,5 @@
 "use client";
 import TDSeparator from "@/components/common/@ui/td-separator";
-import TDButton from "@/components/common/td-button";
 import TDCheckbox from "@/components/form-input/TDCheckbox";
 import TDCombobox from "@/components/form-input/TDCombobox";
 import TDInput from "@/components/form-input/TDInput";
@@ -22,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import ImageVariant from "./image-variant";
 import ProductVariant from "./product-variant";
+import TDButton from "../../shared/td-button";
 
 type ProductFormProps = {
 	productId?: string;
