@@ -1,4 +1,4 @@
-import Container from "@/components/common/container";
+import Container from "@/components/common/shared/container";
 import AuthNavbar from "@/components/layout/auth/auth-navbar";
 
 import React from "react";
