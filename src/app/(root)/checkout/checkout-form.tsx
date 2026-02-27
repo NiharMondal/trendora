@@ -1,34 +1,38 @@
 "use client";
-import TDButton from "@/components/common/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import TDRadioGroup from "@/components/form-input/TDRadioGroup";
 import { Form } from "@/components/ui/form";
-import { paymentMethodOptions } from "@/CONST/payment-method";
+import { useCreateOrderMutation } from "@/redux/api/orderApi";
 import { useAppSelector } from "@/redux/redux.hooks";
-import { selectCartItems, selectTotalAmount } from "@/redux/slice/cartSlice";
+import { selectCartItems } from "@/redux/slice/cartSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
 	checkoutFormSchema,
 	TCheckoutFormValues,
 } from "./checkout-form-schema";
 import CustomerInformation from "./customer-information";
+import { paymentMethodOptions } from "./payment-method-options";
 
 export default function CheckoutForm() {
+	const [createOrder, { isLoading }] = useCreateOrderMutation();
 	const cartItems = useAppSelector(selectCartItems);
-	const totalAmount = useAppSelector(selectTotalAmount);
 	const form = useForm<TCheckoutFormValues>({
 		resolver: zodResolver(checkoutFormSchema),
 		defaultValues: {
+			userId: "",
 			shippingAddressId: "",
 			paymentMethod: "",
 			notes: "",
 		},
 	});
-	const handleCreateOrder = (values: TCheckoutFormValues) => {
+	const handleCreateOrder = async (values: TCheckoutFormValues) => {
 		const payload = {
+			userId: "7c99679d-412f-4819-93a0-08861f270c8e",
 			items: cartItems.map((item) => ({
 				productId: item.productId,
-				variantId: item.variantId,
+				variantId: item?.variantId || undefined,
 				quantity: item.quantity,
 			})),
 			paymentMethod: values.paymentMethod,
@@ -47,6 +51,13 @@ export default function CheckoutForm() {
 						},
 					}),
 		};
+		try {
+			await createOrder(payload as any).unwrap();
+			toast.success("Order placed successfully");
+		} catch (error: any) {
+			toast.error(error?.data?.message);
+		}
+
 		console.log(payload);
 	};
 
@@ -101,9 +112,12 @@ export default function CheckoutForm() {
 								</div>
 							))}
 						</div>
-						<TDButton type="submit" className="w-full font-bold">
-							<span className="mr-1">${totalAmount}</span> Place
-							Order
+						<TDButton
+							type="submit"
+							className="w-full font-bold"
+							isLoading={isLoading}
+						>
+							Place Order
 						</TDButton>
 					</div>
 				</div>
