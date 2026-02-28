@@ -1,7 +1,6 @@
 "use client";
 
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import TDButton from "@/components/common/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import TDTextArea from "@/components/form-input/TDTextArea";
 import { cn } from "@/lib/utils";
@@ -9,6 +8,7 @@ import { useAllAddressQuery } from "@/redux/api/addressApi";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { TCheckoutFormValues } from "./checkout-form-schema";
+import TDButton from "@/components/common/shared/td-button";
 
 type AddressMode = "SELECT" | "CREATE";
 

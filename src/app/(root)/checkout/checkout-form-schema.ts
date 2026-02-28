@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const checkoutFormSchema = z
 	.object({
+		userId: z.string("User ID is required"),
 		shippingAddressId: z.uuidv4("Please select an address").optional(),
 		fullName: z.string().trim().optional(),
 		phone: z.string().trim().optional(),

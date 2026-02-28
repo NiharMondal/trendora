@@ -19,8 +19,8 @@ export type TOrderItemResponse = {
 	orderId: string;
 	productId: string;
 	productName: string;
-	variantId: any;
-	variantDetails: any;
+	variantId?: string;
+	variantDetails?: string;
 	quantity: number;
 	priceAtPurchase: string;
 	originalPrice: string;
@@ -79,3 +79,39 @@ export type TOrder = {
 	createdAt: string;
 	updatedAt: string;
 };
+
+
+
+
+
+type OrderItemInput = {
+	productId: string;
+	variantId?: string;
+	quantity: number;
+};
+
+type NewShippingAddressInput = {
+	fullName: string;
+	phone: string;
+	street: string;
+	city: string;
+	state: string;
+	postalCode: string;
+	country: string;
+};
+
+export type CreateOrderPayload =
+	| {
+			userId: string;
+			items: OrderItemInput[];
+			paymentMethod: string;
+			note?: string;
+			shippingAddressId?: string;
+	  }
+	| {
+			userId: string;
+			items: OrderItemInput[];
+			paymentMethod: string;
+			note?: string;
+			address?: NewShippingAddressInput;
+	  };
