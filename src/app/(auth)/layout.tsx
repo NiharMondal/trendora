@@ -1,17 +1,17 @@
-import Container from "@/components/common/container";
-import AuthNavbar from "@/layout/auth/auth-navbar";
+import Container from "@/components/common/shared/container";
+import AuthNavbar from "@/components/layout/auth/auth-navbar";
 
 import React from "react";
 
 export default function AuthLayout({
-    children,
+	children,
 }: {
-    children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-    return (
-        <section>
-            <AuthNavbar />
-            <Container>{children}</Container>
-        </section>
-    );
+	return (
+		<section>
+			<AuthNavbar />
+			<Container>{children}</Container>
+		</section>
+	);
 }

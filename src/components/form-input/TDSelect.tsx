@@ -23,7 +23,7 @@ type Option = {
 type TDSelectProps<T extends FieldValues> = {
     form: UseFormReturn<T>;
     name: Path<T>;
-    label: string;
+    label?: string;
     placeholder?: string;
     options?: Option[];
     className?: string;

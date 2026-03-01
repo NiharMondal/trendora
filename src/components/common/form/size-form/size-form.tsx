@@ -4,9 +4,9 @@ import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import TDButton from "../../td-button";
 import { sizeFormSchema, TSizeFormValues } from "./size-form-schema";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
+import TDButton from "../../shared/td-button";
 
 type Props = {
 	defaultValues?: TSizeFormValues | undefined;
@@ -22,7 +22,6 @@ export default function SizeForm({
 	isSubmitting,
 }: Props) {
     const {data: sizeGroups} = useAllSizeGroupsQuery({});
-    console.log(sizeGroups)
 	const hookform = useForm<TSizeFormValues>({
 		resolver: zodResolver(sizeFormSchema),
 		defaultValues: defaultValues ?? {

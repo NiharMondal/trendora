@@ -1,11 +1,9 @@
 "use client";
 
-import SpinnerLoading from "@/components/common/spinner-loading";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { useMyAddressQuery } from "@/redux/api/addressApi";
-import { Pen, Trash } from "lucide-react";
-import React from "react";
+import { Trash } from "lucide-react";
 import UpdateAddress from "./update-address";
 
 export default function AddressList() {

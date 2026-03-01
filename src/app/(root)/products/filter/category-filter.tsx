@@ -1,8 +1,6 @@
-import SpinnerLoading from "@/components/common/spinner-loading";
-import { Skeleton } from "@/components/ui/skeleton";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
 import Link from "next/link";
-import React from "react";
 
 export default function CategoryFilter() {
 	const { data: categories, isLoading } = useAllCategoryQuery({});

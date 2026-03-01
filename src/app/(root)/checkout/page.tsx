@@ -1,6 +1,7 @@
-import Container from "@/components/common/container";
+
 import { Metadata } from "next";
 import CheckoutForm from "./checkout-form";
+import Container from "@/components/common/shared/container";
 
 export const metadata: Metadata = {
 	title: "Trendora | Checkout",

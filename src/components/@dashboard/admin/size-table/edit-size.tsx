@@ -1,17 +1,14 @@
 import SizeForm from "@/components/common/form/size-form/size-form";
 import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
-import SpinnerLoading from "@/components/common/spinner-loading";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import { useSizeByIdQuery, useUpdateSizeMutation } from "@/redux/api/size";
-import { TCategory } from "@/types/category.types";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 type EditSizeProps = {
 	onClose: () => void;
 };
-export default function EditSize({
-	onClose,
-}: EditSizeProps) {
+export default function EditSize({ onClose }: EditSizeProps) {
 	const searchParams = useSearchParams();
 	const sizeId = searchParams.get("id");
 	const { data: selectedSize, isLoading } = useSizeByIdQuery(sizeId!, {

@@ -34,6 +34,7 @@ type TDComboboxProps<T extends FieldValues> = {
     options?: Option[];
     className?: string;
     required?: boolean;
+    onChange?: (value: string) => void;
 };
 
 export default function TDCombobox<T extends FieldValues>({
@@ -46,6 +47,7 @@ export default function TDCombobox<T extends FieldValues>({
     options = [],
     className,
     required,
+    onChange,
 }: TDComboboxProps<T>) {
     const [open, setOpen] = useState(false);
 
@@ -89,7 +91,7 @@ export default function TDCombobox<T extends FieldValues>({
                             </FormControl>
                         </PopoverTrigger>
                         <PopoverContent
-                            className="min-w-full p-0"
+                            className="min-w-full p-0 max-h-[350px] overflow-y-auto"
                             align="start"
                         >
                             <Command>
@@ -105,6 +107,7 @@ export default function TDCombobox<T extends FieldValues>({
                                                     field.onChange(
                                                         option.value,
                                                     );
+                                                    onChange?.(option.value);
                                                     setOpen(false);
                                                 }}
                                             >

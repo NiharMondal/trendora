@@ -1,17 +1,21 @@
 "use client";
-import Pagination from "@/components/common/pagination";
-import TDButton from "@/components/common/td-button";
-import TDSheet from "@/components/common/td-sheet";
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
+import { TSize } from "@/components/types/size.types";
 import { Button } from "@/components/ui/button";
-import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
-import { TSize } from "@/types/size.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
 import { useAllSizesQuery, useDeleteSizeMutation } from "@/redux/api/size";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";
@@ -81,11 +85,13 @@ export default function SizeTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{sizes?.meta?.totalData && sizes?.meta?.totalData > Number(limit) && (
+			{sizes?.meta?.totalPages && sizes?.meta?.totalPages > 1 && (
 				<Pagination
 					currentPage={currentPage}
 					onPageChange={setCurrentPage}
-					totalPages={sizes?.meta?.totalPages || 0}
+					totalPages={sizes?.meta?.totalPages}
+					hasNextPage={sizes?.meta?.hasNextPage}
+					hasPreviousPage={sizes?.meta?.hasPreviousPage}
 					limit={Number(limit)}
 					totalData={sizes?.meta?.totalData || 0}
 				/>

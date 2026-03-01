@@ -32,7 +32,7 @@ export default function TDTextArea<T extends FieldValues>({
             name={name}
             render={({ field }) => (
                 <FormItem className="-space-y-1">
-                    <FormLabel className="text-muted-foreground font-inter text-base">
+                    <FormLabel className="text-muted-foreground font-inter text-sm">
                         <span
                             className={cn({
                                 "relative required-label": required,

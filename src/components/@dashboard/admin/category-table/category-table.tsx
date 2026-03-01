@@ -1,16 +1,22 @@
 "use client";
-import Pagination from "@/components/common/pagination";
-import TDButton from "@/components/common/td-button";
-import TDSheet from "@/components/common/td-sheet";
+
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
+
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
+import { TCategory } from "@/components/types/category.types";
 import { Button } from "@/components/ui/button";
 import {
 	useAllCategoryQuery,
 	useDeleteCategoryMutation,
 } from "@/redux/api/productCategoryApi";
-import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
-import { TCategory } from "@/types/category.types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -86,12 +92,15 @@ export default function CategoryTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{categories?.meta?.totalData &&
-				categories?.meta?.totalData > Number(limit) && (
+
+			{categories?.meta?.totalPages &&
+				categories?.meta?.totalPages > 1 && (
 					<Pagination
 						currentPage={currentPage}
 						onPageChange={setCurrentPage}
-						totalPages={categories?.meta?.totalPages || 0}
+						totalPages={categories?.meta?.totalPages}
+						hasNextPage={categories?.meta?.hasNextPage}
+						hasPreviousPage={categories?.meta?.hasPreviousPage}
 						limit={Number(limit)}
 						totalData={categories?.meta?.totalData || 0}
 					/>

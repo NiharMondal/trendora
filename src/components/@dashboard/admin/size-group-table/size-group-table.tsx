@@ -1,21 +1,25 @@
 "use client";
-import Pagination from "@/components/common/pagination";
-import TDSheet from "@/components/common/td-sheet";
+import {
+	DataTable,
+	Pagination,
+	TableLoading,
+	TableToolbar,
+} from "@/components/common/shared/table";
 import { categorySortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
 import { Button } from "@/components/ui/button";
-import { DataTable, TableLoading, TableToolbar } from "@/shared/table";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
-import TDButton from "@/components/common/td-button";
+import TDButton from "@/components/common/shared/td-button";
+import TDSheet from "@/components/common/shared/td-sheet";
+import { TSizeGroup } from "@/components/types/size-group.types";
 import {
 	useAllSizeGroupsQuery,
 	useDeleteSizeGroupMutation,
 } from "@/redux/api/sizeGroupApi";
-import { TSizeGroup } from "@/types/size-group.types";
 import EditSizeGroup from "./edit-size-group";
 import { sizeGroupColumns } from "./size-group-columns";
 
@@ -86,12 +90,14 @@ export default function CategoryTable() {
 				rowKey={(row) => row.id}
 				isFetching={isFetching}
 			/>
-			{sizeGroups?.meta?.totalData &&
-				sizeGroups?.meta?.totalData > Number(limit) && (
+			{sizeGroups?.meta?.totalPages &&
+				sizeGroups?.meta?.totalPages > 1 && (
 					<Pagination
 						currentPage={currentPage}
 						onPageChange={setCurrentPage}
-						totalPages={sizeGroups?.meta?.totalPages || 0}
+						totalPages={sizeGroups?.meta?.totalPages}
+						hasNextPage={sizeGroups?.meta?.hasNextPage}
+						hasPreviousPage={sizeGroups?.meta?.hasPreviousPage}
 						limit={Number(limit)}
 						totalData={sizeGroups?.meta?.totalData || 0}
 					/>

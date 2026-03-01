@@ -1,12 +1,12 @@
 "use client";
 import ProductForm from "@/components/common/form/product-form/product-form";
-import { mapProductToFormValues } from "@/components/helpers/map-product-form-values";
+import { mapProductToFormValues } from "@/components/helpers/product/map-product-form-values";
 import { TProductFormValues } from "@/form-schema/product-schema";
 import {
     useProductByIdQuery,
     useUpdateProductMutation,
 } from "@/redux/api/productApi";
-import GeneralLoading from "@/shared/general-loading";
+import GeneralLoading from "@/components/common/loading/general-loading";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
@@ -23,7 +23,7 @@ export default function UpdateProduct({ productId }: { productId: string }) {
         () => (product ? mapProductToFormValues(product.result) : undefined),
         [product],
     );
-
+    console.log({defaultValues})
     const handleUpdateProduct = async (values: TProductFormValues) => {
         try {
             await updateProduct({
