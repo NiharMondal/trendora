@@ -22,15 +22,13 @@ export default function CustomerInformation() {
 	const addresses = data?.result ?? [];
 	const hasAddresses = addresses.length > 0;
 
-	const [mode, setMode] = useState<AddressMode>(
-		hasAddresses ? "SELECT" : "CREATE",
-	);
+	const [mode, setMode] = useState<AddressMode>("SELECT");
 
 	useEffect(() => {
-		if (!hasAddresses) {
+		if (data && !hasAddresses) {
 			setMode("CREATE");
 		}
-	}, [hasAddresses]);
+	}, [data, hasAddresses]);
 
 	const selectedId = form.watch("shippingAddressId");
 
