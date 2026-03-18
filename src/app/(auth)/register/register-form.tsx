@@ -2,12 +2,17 @@
 import TDButton from "@/components/common/shared/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
+import { useRegisterUserMutation } from "@/redux/api/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { registerSchema, TRegisterValues } from "./register-schema";
 
 export default function RegisterForm() {
+    const router = useRouter();
+    const [registerUser] = useRegisterUserMutation();
     const form = useForm({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -17,8 +22,17 @@ export default function RegisterForm() {
         },
     });
 
-    const handleRegistration = (data: TRegisterValues) => {
-        console.log(data);
+    const handleRegistration = async (data: TRegisterValues) => {
+        try {
+            const res = await registerUser(data).unwrap();
+            if (res?.success) {
+                toast.success(res?.message);
+                form.reset();
+                router.push("/login");
+            }
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
     };
     return (
         <div className="border border-muted rounded-md  p-10">

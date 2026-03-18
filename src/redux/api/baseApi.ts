@@ -76,6 +76,7 @@ export const baseApi = createApi({
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
     tagTypes: [
+        "auth",
         "products",
         "users",
         "categories",

@@ -7,8 +7,11 @@ import Link from "next/link";
 
 import { useForm } from "react-hook-form";
 import { loginSchema, TLoginValues } from "./login-schema";
+import { useLoginUserMutation } from "@/redux/api/authApi";
+import { toast } from "sonner";
 
 export default function LoginForm() {
+    const [loginUser] = useLoginUserMutation()
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -17,8 +20,17 @@ export default function LoginForm() {
         },
     });
 
-    const handleLogin = (data: TLoginValues) => {
-        console.log(data);
+    const handleLogin = async(data: TLoginValues) => {
+        try{
+            const res = await loginUser(data).unwrap();
+            console.log(res)
+            if(res?.success){
+                toast.success(res?.message);
+                form.reset();
+            }
+        }catch(error){
+            toast.error("Something went wrong");
+        }
     };
     return (
         <div className="border border-muted rounded-md  p-10">
