@@ -2,16 +2,16 @@
 import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import {
-    changePasswordSchema,
-    TChangePassword,
-} from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+    changePasswordSchema,
+    TChangePassword,
+} from "./change-password-schema";
 
-export default function PasswordForm() {
+export default function ChangePasswordForm() {
     const [showPassword, setShowPassword] = useState(false);
     const form = useForm<TChangePassword>({
         resolver: zodResolver(changePasswordSchema),

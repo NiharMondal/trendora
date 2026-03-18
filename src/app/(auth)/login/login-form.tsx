@@ -2,11 +2,11 @@
 import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { loginSchema, TLoginSchemaType } from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
 import { useForm } from "react-hook-form";
+import { loginSchema, TLoginValues } from "./login-schema";
 
 export default function LoginForm() {
     const form = useForm({
@@ -17,7 +17,7 @@ export default function LoginForm() {
         },
     });
 
-    const handleLogin = (data: TLoginSchemaType) => {
+    const handleLogin = (data: TLoginValues) => {
         console.log(data);
     };
     return (

@@ -1,11 +1,11 @@
 "use client";
-import TDButton from "@/components/common/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
-import { registerSchema, TRegisterSchemaType } from "@/form-schema/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { registerSchema, TRegisterValues } from "./register-schema";
 
 export default function RegisterForm() {
     const form = useForm({
@@ -17,7 +17,7 @@ export default function RegisterForm() {
         },
     });
 
-    const handleRegistration = (data: TRegisterSchemaType) => {
+    const handleRegistration = (data: TRegisterValues) => {
         console.log(data);
     };
     return (

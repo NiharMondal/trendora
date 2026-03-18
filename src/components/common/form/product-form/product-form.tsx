@@ -7,10 +7,7 @@ import TDSelect from "@/components/form-input/TDSelect";
 import TDTextArea from "@/components/form-input/TDTextArea";
 import { genderOptions } from "@/components/helpers/product/gender-options";
 import { Form } from "@/components/ui/form";
-import {
-	TProductFormValues,
-	productSchema,
-} from "@/form-schema/product-schema";
+
 import { useAllBrandQuery } from "@/redux/api/brandApi";
 import {
 	useAllCategoryQuery,
@@ -22,6 +19,7 @@ import { useForm } from "react-hook-form";
 import TDButton from "../../shared/td-button";
 import ImageVariant from "./image-variant";
 import ProductVariant from "./product-variant";
+import { productSchema, TProductFormValues } from "./product-form-schema";
 
 type ProductFormProps = {
 	productId?: string;
