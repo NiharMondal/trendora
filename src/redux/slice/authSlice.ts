@@ -1,41 +1,48 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
+export type TLoginSessionResponse = {
+    user: TUserState;
+    expires: string;
+    accessToken: string;
+};
+
 export type TUserState = {
-	id: string;
-	name: string;
-	email: string;
-	role: string;
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    image: string;
 };
 
 export type TAuthState = {
-	user: null | TUserState;
-	token: null | string;
+    user: null | TUserState;
+    token: null | string;
 };
 
 const initialState: TAuthState = {
-	user: null,
-	token: null,
+    user: null,
+    token: null,
 };
 
 const authSlice = createSlice({
-	name: "auth",
-	initialState,
-	reducers: {
-		setCredentials: (
-			state,
-			{ payload: { user, token } }: PayloadAction<TAuthState>
-		) => {
-			state.user = user;
-			state.token = token;
-		},
+    name: "auth",
+    initialState,
+    reducers: {
+        setCredentials: (
+            state,
+            { payload: { user, token } }: PayloadAction<TAuthState>,
+        ) => {
+            state.user = user;
+            state.token = token;
+        },
 
-		tokenReceived: () => {},
-		logout: (state) => {
-			state.user = null;
-			state.token = null;
-		},
-	},
+        tokenReceived: () => {},
+        logout: (state) => {
+            state.user = null;
+            state.token = null;
+        },
+    },
 });
 
 export const { setCredentials, logout } = authSlice.actions;

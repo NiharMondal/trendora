@@ -5,13 +5,24 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
+import { useAppDispatch } from "@/redux/redux.hooks";
+import {
+    setCredentials,
+    TLoginSessionResponse,
+    TUserState,
+} from "@/redux/slice/authSlice";
 import { useForm } from "react-hook-form";
-import { loginSchema, TLoginValues } from "./login-schema";
-import { useLoginUserMutation } from "@/redux/api/authApi";
 import { toast } from "sonner";
+import { loginSchema, TLoginValues } from "./login-schema";
+import { useRouter } from "next/navigation";
+import { EnumUserRole } from "@/global/user-role";
+import { setCookie } from "cookies-next";
+import { getSession, signIn } from "next-auth/react";
 
 export default function LoginForm() {
-    const [loginUser] = useLoginUserMutation()
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -20,16 +31,48 @@ export default function LoginForm() {
         },
     });
 
-    const handleLogin = async(data: TLoginValues) => {
-        try{
-            const res = await loginUser(data).unwrap();
-            console.log(res)
-            if(res?.success){
-                toast.success(res?.message);
-                form.reset();
+    const handleLogin = async (data: TLoginValues) => {
+        try {
+            const res = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
+
+            if (res?.error) {
+                toast.error(res.error);
+                return;
             }
-        }catch(error){
-            toast.error("Something went wrong");
+
+            if (res?.ok) {
+                // Fetch session to retrieve user role and token so we can sync Redux
+                const session = await getSession();
+
+                if (session && session.user) {
+                    // Sync token to cookie and Redux to keep existing RTK queries working smoothly
+                    const userRole = (session.user as TUserState).role;
+                    const token = (session as TLoginSessionResponse)
+                        .accessToken;
+
+                    setCookie("accessToken", token);
+                    dispatch(
+                        setCredentials({
+                            user: session.user as TUserState,
+                            token: token,
+                        }),
+                    );
+
+                    if (userRole === EnumUserRole.ADMIN) {
+                        router.push("/admin");
+                    } else {
+                        router.push("/dashboard");
+                    }
+                    router.refresh();
+                }
+                toast.success("Logged in successfully");
+            }
+        } catch (error: any) {
+            toast.error(error?.message || "Something went wrong");
         }
     };
     return (
@@ -38,6 +81,7 @@ export default function LoginForm() {
                 <form
                     className="space-y-5"
                     onSubmit={form.handleSubmit(handleLogin)}
+                    autoComplete="off"
                 >
                     <TDInput
                         form={form}

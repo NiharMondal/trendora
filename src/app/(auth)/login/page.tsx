@@ -1,5 +1,6 @@
 import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
 import LoginForm from "./login-form";
+import GoogleLoginButton from "./google-login-button";
 
 export default function LoginPage() {
 	return (
@@ -11,9 +12,7 @@ export default function LoginPage() {
 					<h1>Login</h1>
 					<p>Hi, Welcome back </p>
 				</div>
-				<div className="border border-muted rounded-md flex items-center justify-center p-4">
-					Login with Google Coming Soon
-				</div>
+                <GoogleLoginButton />
 
 				<div className="flex items-center justify-center gap-x-4 text-sm text-muted-foreground w-full">
 					<hr className="border w-full border-muted" />
