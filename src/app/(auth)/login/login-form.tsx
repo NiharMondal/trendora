@@ -5,23 +5,15 @@ import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
-import { useAppDispatch } from "@/redux/redux.hooks";
-import {
-    setCredentials,
-    TLoginSessionResponse,
-    TUserState,
-} from "@/redux/slice/authSlice";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { loginSchema, TLoginValues } from "./login-schema";
 import { useRouter } from "next/navigation";
-import { EnumUserRole } from "@/global/user-role";
-import { setCookie } from "cookies-next";
 import { getSession, signIn } from "next-auth/react";
+import { EnumUserRole } from "@/global/user-role";
 
 export default function LoginForm() {
     const router = useRouter();
-    const dispatch = useAppDispatch();
 
     const form = useForm({
         resolver: zodResolver(loginSchema),
@@ -44,44 +36,23 @@ export default function LoginForm() {
                 return;
             }
 
-            if (res?.ok) {
-                // Fetch session to retrieve user role and token so we can sync Redux
-                const session = await getSession();
+            toast.success("Logged in successfully");
 
-                if (session && session.user) {
-                    // Sync token to cookie and Redux to keep existing RTK queries working smoothly
-                    const userRole = (session.user as TUserState).role;
-                    const token = (session as TLoginSessionResponse)
-                        .accessToken;
-
-                    setCookie("accessToken", token);
-                    dispatch(
-                        setCredentials({
-                            user: session.user as TUserState,
-                            token: token,
-                        }),
-                    );
-
-                    if (userRole === EnumUserRole.ADMIN) {
-                        router.push("/admin");
-                    } else {
-                        router.push("/dashboard");
-                    }
-                    router.refresh();
-                }
-                toast.success("Logged in successfully");
-            }
+            const session = await getSession();
+            const role = (session as any)?.user?.role;
+            if (role === EnumUserRole.ADMIN) router.push("/admin");
+            else router.push("/dashboard");
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
         }
     };
+    
     return (
-        <div className="border border-muted rounded-md  p-10">
+        <div className="border border-muted rounded-md p-10">
             <Form {...form}>
                 <form
-                    className="space-y-5"
                     onSubmit={form.handleSubmit(handleLogin)}
-                    autoComplete="off"
+                    className="space-y-5"
                 >
                     <TDInput
                         form={form}
@@ -92,8 +63,8 @@ export default function LoginForm() {
                     />
                     <TDInput
                         form={form}
-                        type="password"
                         label="Password"
+                        type="password"
                         name="password"
                         placeholder="Enter your password"
                     />
@@ -110,16 +81,14 @@ export default function LoginForm() {
                     </Button>
                 </form>
             </Form>
-            <div className="mt-10">
-                <p className="text-center">
-                    Don't have an account?{" "}
-                    <Link
-                        href={"/register"}
-                        className="font-semibold text-accent hover:underline "
-                    >
-                        Sign Up
-                    </Link>{" "}
-                </p>
+            <div className="mt-10 text-center">
+                Don't have an account?{" "}
+                <Link
+                    href={"/register"}
+                    className="font-semibold text-accent hover:underline"
+                >
+                    Sign Up
+                </Link>
             </div>
         </div>
     );

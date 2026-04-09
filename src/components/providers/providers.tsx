@@ -8,13 +8,14 @@ import { SessionProvider } from "next-auth/react";
 import AuthSync from "./auth-sync";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	   const [persistor, setPersistor] = useState<any>(null);
+    const [persistor, setPersistor] = useState<any>(null);
 
-       useEffect(() => {
-           setPersistor(persistStore(store));
-       }, []);
+    useEffect(() => {
+        setPersistor(persistStore(store));
+    }, []);
 
-       if (!persistor) return <>{children}</>;
+    if (!persistor) return <>{children}</>;
+
     return (
         <SessionProvider>
             <Provider store={store}>

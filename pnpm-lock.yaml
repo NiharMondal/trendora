@@ -53,9 +53,6 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      cookies-next:
-        specifier: ^6.1.1
-        version: 6.1.1(next@15.5.2(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       embla-carousel-autoplay:
         specifier: ^8.6.0
         version: 8.6.0(embla-carousel@8.6.0)
@@ -1791,16 +1788,6 @@ packages:
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
-
-  cookie@1.1.1:
-    resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
-    engines: {node: '>=18'}
-
-  cookies-next@6.1.1:
-    resolution: {integrity: sha512-8JZBc4IN2m8xqOXyG7uicth6yH3SvynAUGSeV/FQ5lcEclzNGoR0+YCjySdn8r6keZdRyGQr4YJ8qy8F+Jq5uw==}
-    peerDependencies:
-      next: '>=15.0.0'
-      react: '>= 16.8.0'
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -4867,14 +4854,6 @@ snapshots:
   convert-source-map@2.0.0: {}
 
   cookie@0.7.2: {}
-
-  cookie@1.1.1: {}
-
-  cookies-next@6.1.1(next@15.5.2(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0):
-    dependencies:
-      cookie: 1.1.1
-      next: 15.5.2(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react: 19.1.0
 
   cross-spawn@7.0.6:
     dependencies:
