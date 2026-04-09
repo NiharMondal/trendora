@@ -63,19 +63,53 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user, account }) {
-            // Initial sign in
-            if (user) {
+            // 1. Credentials login (already correct)
+            if (user && account?.provider === "credentials") {
                 token.id = user.id;
                 token.role = (user as any).role;
                 token.accessToken = (user as any).accessToken;
+                return token;
             }
-            if (account && account.provider === "google") {
-                // If the user signed in with google, we might just pass the google access token or sync user here.
-                // We will add the google account provider access token to our JWT if needed.
-                token.provider = account.provider;
+
+            if (account?.provider === "google") {
+                try {
+                    const res = await fetch(
+                        `${envConfig.backend_url}/auth/oauth-login`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                email: token.email || user?.email,
+                                name: token.name || user?.name,
+                                avatar: token.picture || user?.image,
+                                provider: "google",
+                                providerId: account.providerAccountId,
+                            }),
+                        },
+                    );
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        throw new Error(data?.message || "OAuth login failed");
+                    }
+
+                    const result = data?.result;
+
+                    token.id = result?.user?.id;
+                    token.role = result?.user?.role;
+                    token.accessToken = result?.accessToken;
+                    token.provider = "google";
+                } catch (error) {
+                    console.error("OAuth error:", error);
+                }
             }
+
             return token;
         },
+
         async session({ session, token }) {
             if (session.user) {
                 (session.user as any).id = token.id;

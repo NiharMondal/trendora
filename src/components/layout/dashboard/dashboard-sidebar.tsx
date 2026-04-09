@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
     Sidebar,
@@ -15,22 +15,26 @@ import {
 } from "@/components/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/redux/redux.hooks";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { adminNavlink, customerNavlink } from "./dashboard-navlink";
+import {
+    adminNavlink,
+    customerDashboardCardOptions,
+} from "./dashboard-navlink";
 
-export function DashboardSidebar() {
+export function DashboardSidebar({role}:{role:EnumUserRole}) {
     const pathname = usePathname();
-    const { user } = useAppSelector((state) => state.auth);
 
     const label =
-        user?.role === EnumUserRole.ADMIN
+        role === EnumUserRole.ADMIN
             ? "Admin Dashboard"
             : "Customer Dashboard";
     const navLink =
-        user?.role === EnumUserRole.ADMIN ? adminNavlink : customerNavlink;
+        role === EnumUserRole.ADMIN
+            ? adminNavlink
+            : customerDashboardCardOptions;
     return (
         <Sidebar>
             <SidebarContent>

@@ -1,11 +1,12 @@
-"use client";
+"use client"
 
 import TDButton from "@/components/common/shared/td-button";
 import { signIn } from "next-auth/react";
 
-export default function GoogleLoginButton() {
+export default function GoogleLoginButton() { 
+
     return (
-        <TDButton 
+        <TDButton
             variant="outline"
             className="w-full flex items-center justify-center p-4 border border-muted rounded-md bg-transparent"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
@@ -30,5 +31,5 @@ export default function GoogleLoginButton() {
             </svg>
             Sign in with Google
         </TDButton>
-    )
+    );
 }

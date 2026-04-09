@@ -108,7 +108,7 @@ export const adminNavlink: TSidebarLink[] = [
 	{ title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
 ];
 
-export const customerNavlink: TSidebarLink[] = [
+export const customerDashboardCardOptions: TSidebarLink[] = [
 	{ title: "Dashboard", url: "/dashboard", icon: Home },
 	{ title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
 
