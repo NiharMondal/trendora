@@ -14,6 +14,7 @@ type THeadlineProps = {
     showBackButton?: boolean;
     href?: string;
     buttonText?: string;
+    children?: React.ReactNode;
 };
 export default function Headline({
     title,
@@ -21,6 +22,7 @@ export default function Headline({
     showBackButton = false,
     href,
     buttonText,
+    children
 }: THeadlineProps) {
     const router = useRouter();
     const handleBack = () => {
@@ -60,6 +62,7 @@ export default function Headline({
                     </Link>
                 )}
             </div>
+            {children}
         </div>
     );
 }
