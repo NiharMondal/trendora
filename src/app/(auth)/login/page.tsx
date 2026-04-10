@@ -1,6 +1,6 @@
 import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
 
-import GoogleLoginButton from "./google-login-button";
+import GoogleLoginButton from "@/components/common/@ui/google-login-button";
 import LoginForm from "./login-form";
 
 export default function LoginPage() {

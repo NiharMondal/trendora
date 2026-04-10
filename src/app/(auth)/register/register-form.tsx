@@ -10,9 +10,12 @@ import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import { useRegisterUserMutation } from "@/redux/api/authApi";
 
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { registerSchema, TRegisterValues } from "./register-schema";
 
 export default function RegisterForm() {
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const [registerUser] = useRegisterUserMutation();
     const form = useForm({
@@ -57,11 +60,24 @@ export default function RegisterForm() {
                         placeholder="Enter your email"
                     />
                     <TDInput
-                        form={form}
-                        type="password"
                         label="Password"
+                        form={form}
+                        type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="Enter your password"
+                        ornament={
+                            <button
+                                type="button"
+                                className="mt-1.5 cursor-pointer"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                            >
+                                {showPassword ? (
+                                    <EyeOff className="text-gray-500" />
+                                ) : (
+                                    <Eye className="text-gray-500" />
+                                )}
+                            </button>
+                        }
                     />
                     <TDButton type="submit" className="w-full">
                         Create Account
@@ -70,13 +86,13 @@ export default function RegisterForm() {
             </Form>
             <div className="mt-10">
                 <p className="text-center">
-                    Already have an account?{" "}
+                    Already have an account?
                     <Link
                         href={"/login"}
-                        className="font-semibold text-accent hover:underline "
+                        className="font-semibold text-accent hover:underline ml-1"
                     >
                         Sign In
-                    </Link>{" "}
+                    </Link>
                 </p>
             </div>
         </div>

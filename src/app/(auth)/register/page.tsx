@@ -1,5 +1,6 @@
 import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
 
+import GoogleLoginButton from "@/components/common/@ui/google-login-button";
 import RegisterForm from "./register-form";
 
 export default function RegisterPage() {
@@ -12,9 +13,7 @@ export default function RegisterPage() {
                     <h1>Register here</h1>
                     <p>Hi, Create a new account </p>
                 </div>
-                <div className="border border-muted rounded-md flex items-center justify-center p-4">
-                    Register with Google Coming Soon
-                </div>
+                <GoogleLoginButton />
 
                 <div className="flex items-center justify-center gap-x-4 text-sm text-muted-foreground w-full">
                     <hr className="border w-full border-muted" />
