@@ -1,5 +1,4 @@
 "use client";
-import { Pen } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import TDInput from "@/components/form-input/TDInput";
@@ -11,17 +10,21 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-export default function UpdateAddress() {
+
+export default function AddNewAddress() {
     const form = useForm();
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant={"secondary"} size={"sm"}>
-                    <Pen />
+                <Button
+                    variant={"ghost"}
+                    className="w-full h-14 border border-accent"
+                >
+                    Add New Address
                 </Button>
             </DialogTrigger>
             <DialogContent className="w-full md:min-w-3xl">
-                <DialogTitle className="mb-3">Update Address</DialogTitle>
+                <DialogTitle className="mb-3">Add New Address</DialogTitle>
                 <Form {...form}>
                     <form className="space-y-5 ">
                         <TDInput name="fullname" label="Fullname" form={form} />

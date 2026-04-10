@@ -6,7 +6,6 @@ import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import { Button } from "@/components/ui/button";
 import { useMyAddressQuery } from "@/redux/api/addressApi";
 
-import UpdateAddress from "./update-address";
 
 export default function AddressList() {
     const { data, isLoading } = useMyAddressQuery(undefined);
@@ -18,7 +17,6 @@ export default function AddressList() {
                 <span>Nihar Mondal, Barishal</span>
             </div>
             <div className="flex gap-x-2">
-                <UpdateAddress />
                 <Button variant={"destructive"} size={"sm"}>
                     <Trash />
                 </Button>

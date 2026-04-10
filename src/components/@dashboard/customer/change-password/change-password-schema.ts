@@ -7,13 +7,13 @@ export const changePasswordSchema = z
             .nonempty("Old password is required!")
             .trim(),
         newPassword: z
-            .string({ error: "New password is required" })
+            .string({ error: "New password is required!" })
             .min(6, "Password must be at least 6 characters long")
             .regex(/[A-Za-z]/, "Password must contain at least one letter")
             .regex(/[0-9]/, "Password must contain at least one number")
             .trim(),
         confirmPassword: z
-            .string({ error: "Confirm password is required" })
+            .string({ error: "Confirm password is required!" })
             .min(6, "Password must be at least 6 characters long")
             .regex(/[A-Za-z]/, "Password must contain at least one letter")
             .regex(/[0-9]/, "Password must contain at least one number")
@@ -24,4 +24,4 @@ export const changePasswordSchema = z
         path: ["confirmPassword"],
     });
 
-export type TChangePassword = z.infer<typeof changePasswordSchema>;
+export type TChangePasswordValues = z.infer<typeof changePasswordSchema>;
