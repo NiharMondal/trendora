@@ -1,6 +1,6 @@
 import React from "react";
+
 import AccountForm from "./account-form";
-import Image from "next/image";
 
 export default function EditAccount() {
 	return (

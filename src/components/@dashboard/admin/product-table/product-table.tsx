@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { toast } from "sonner";
+import { useDebounce } from "use-debounce";
+
 import {
 	DataTable,
 	Pagination,
@@ -14,9 +18,7 @@ import {
 	useAllProductsQuery,
 	useDeleteProductMutation,
 } from "@/redux/api/productApi";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useDebounce } from "use-debounce";
+
 import { productColumns } from "./product-columns";
 
 export default function ProductTable() {

@@ -1,12 +1,8 @@
 import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
 import { TServerResponse } from "@/components/types/common.types";
 import { TSize } from "@/components/types/size.types";
-import { baseApi } from "./baseApi";
 
-type TCategoryInput = {
-	name: string;
-	parentId?: string | null;
-};
+import { baseApi } from "./baseApi";
 
 export const sizeApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({

@@ -1,3 +1,7 @@
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { toast } from "sonner";
+
 import CategoryForm from "@/components/common/form/category-form/category-form";
 import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
@@ -6,9 +10,6 @@ import {
 	useCategoryByIdQuery,
 	useUpdateCategoryMutation,
 } from "@/redux/api/productCategoryApi";
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
-import { toast } from "sonner";
 type EditCategoryProps = {
 	onClose: () => void;
 	categories: TCategory[];

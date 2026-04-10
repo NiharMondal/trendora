@@ -1,8 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
 
 interface GeneralLoadingProps {
     title?: string;

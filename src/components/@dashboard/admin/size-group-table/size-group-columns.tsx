@@ -1,9 +1,10 @@
+import { Edit, EllipsisVertical, Trash } from "lucide-react";
+import moment from "moment";
+
 import TDPopover from "@/components/common/shared/td-popover";
 import { TSizeGroup } from "@/components/types/size-group.types";
 import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
-import { Edit, EllipsisVertical, Trash } from "lucide-react";
-import moment from "moment";
 
 type Props = {
 	handleEdit: (sizeGroup: TSizeGroup) => void;

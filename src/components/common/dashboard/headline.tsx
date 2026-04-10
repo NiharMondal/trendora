@@ -1,11 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { ArrowBigLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type THeadlineProps = {
     title: string;

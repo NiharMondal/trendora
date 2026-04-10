@@ -1,3 +1,7 @@
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { toast } from "sonner";
+
 import BrandForm from "@/components/common/form/brand-form/brand-form";
 import { TBrandFormValues } from "@/components/common/form/brand-form/brand-form-schema";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
@@ -5,9 +9,6 @@ import {
 	useBrandByIdQuery,
 	useUpdateBrandMutation,
 } from "@/redux/api/brandApi";
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
-import { toast } from "sonner";
 
 type EditBrandProps = {
 	onClose: () => void;

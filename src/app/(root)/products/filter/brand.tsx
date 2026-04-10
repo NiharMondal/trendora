@@ -1,8 +1,9 @@
+import { useState } from "react";
+
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAllBrandQuery } from "@/redux/api/brandApi";
-import { useState } from "react";
 
 export default function Brand() {
 	const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
