@@ -1,5 +1,6 @@
 import { TAddress } from "@/components/types/address.types";
 import { TServerResponse } from "@/components/types/common.types";
+
 import { baseApi } from "./baseApi";
 
 export const addressApi = baseApi.injectEndpoints({

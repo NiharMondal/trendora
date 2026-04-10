@@ -1,10 +1,11 @@
-import Container from "@/components/common/shared/container";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Search, ShoppingBasket } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+
+import Container from "@/components/common/shared/container";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function DesktopNavbar({
 	cartQuantity = 0,

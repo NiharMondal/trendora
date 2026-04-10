@@ -1,13 +1,15 @@
 "use client";
-import TDButton from "@/components/common/shared/td-button";
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
-import { useRegisterUserMutation } from "@/redux/api/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+import TDButton from "@/components/common/shared/td-button";
+import TDInput from "@/components/form-input/TDInput";
+import { Form } from "@/components/ui/form";
+import { useRegisterUserMutation } from "@/redux/api/authApi";
+
 import { registerSchema, TRegisterValues } from "./register-schema";
 
 export default function RegisterForm() {
@@ -30,8 +32,8 @@ export default function RegisterForm() {
                 form.reset();
                 router.push("/login");
             }
-        } catch (error) {
-            toast.error("Something went wrong");
+        } catch (error: any) {
+            toast.error(error?.data?.message || "Something went wrong!");
         }
     };
     return (

@@ -1,8 +1,10 @@
-import { footerInfo, order, ourPolicies } from "@/helping-data/footer";
-import { socialIcon } from "@/helping-data/image";
 import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+import { footerInfo, order, ourPolicies } from "@/helping-data/footer";
+import { socialIcon } from "@/helping-data/image";
+
 import Container from "./container";
 export default function Footer() {
 	return (

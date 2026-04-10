@@ -1,5 +1,9 @@
 "use client"
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
+
 import {
     Sidebar,
     SidebarContent,
@@ -16,9 +20,6 @@ import {
 import { EnumUserRole } from "@/global/user-role";
 import { cn } from "@/lib/utils";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
 import {
     adminNavlink,
     customerDashboardCardOptions,

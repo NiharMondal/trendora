@@ -1,3 +1,7 @@
+import { FileSearch } from "lucide-react";
+import moment from "moment";
+import Link from "next/link";
+
 import { TOrder } from "@/components/types/order.types";
 import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
@@ -6,9 +10,6 @@ import {
 	EnumPaymentStatus,
 	getPaymentStatusStyles,
 } from "@/utils/payment-status";
-import { FileSearch } from "lucide-react";
-import moment from "moment";
-import Link from "next/link";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
 	{

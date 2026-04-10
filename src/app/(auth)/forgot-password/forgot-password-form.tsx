@@ -1,14 +1,16 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+
+import TDButton from "@/components/common/shared/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+
 import {
     forgotPasswordSchema,
     TForgotPasswordValues,
 } from "./forgot-password-schema";
-import TDButton from "@/components/common/shared/td-button";
-import Link from "next/link";
 
 export default function ForgotPasswordForm() {
     const form = useForm<TForgotPasswordValues>({

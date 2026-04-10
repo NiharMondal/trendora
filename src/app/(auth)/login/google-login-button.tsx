@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import TDButton from "@/components/common/shared/td-button";
 import { signIn } from "next-auth/react";
 
-export default function GoogleLoginButton() { 
+import TDButton from "@/components/common/shared/td-button";
 
+export default function GoogleLoginButton() {
     return (
         <TDButton
             variant="outline"

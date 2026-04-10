@@ -1,5 +1,9 @@
 "use client";
 
+import { Trash } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
 import Container from "@/components/common/shared/container";
 import ProductQuantity from "@/components/common/shared/product-quantity";
 import TDButton from "@/components/common/shared/td-button";
@@ -14,9 +18,6 @@ import {
 	selectCartItems,
 	selectTotalAmount,
 } from "@/redux/slice/cartSlice";
-import { Trash } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 
 export default function CartPage() {
 	const dispatch = useAppDispatch();

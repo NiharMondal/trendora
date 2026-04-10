@@ -1,7 +1,7 @@
 import { TServerResponse } from "@/components/types/common.types";
-import { baseApi } from "./baseApi";
-
 import { TUser } from "@/components/types/user.types";
+
+import { baseApi } from "./baseApi";
 
 export const userApi = baseApi.injectEndpoints({
 	endpoints: (builder) => ({

@@ -1,14 +1,15 @@
 "use client";
+import { useMemo } from "react";
+import { toast } from "sonner";
+
 import ProductForm from "@/components/common/form/product-form/product-form";
+import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
+import GeneralLoading from "@/components/common/loading/general-loading";
 import { mapProductToFormValues } from "@/components/helpers/product/map-product-form-values";
-import { TProductFormValues } from "@/form-schema/product-schema";
 import {
     useProductByIdQuery,
     useUpdateProductMutation,
 } from "@/redux/api/productApi";
-import GeneralLoading from "@/components/common/loading/general-loading";
-import { useMemo } from "react";
-import { toast } from "sonner";
 
 export default function UpdateProduct({ productId }: { productId: string }) {
     // get product by id
@@ -23,7 +24,7 @@ export default function UpdateProduct({ productId }: { productId: string }) {
         () => (product ? mapProductToFormValues(product.result) : undefined),
         [product],
     );
-    console.log({defaultValues})
+    console.log({ defaultValues });
     const handleUpdateProduct = async (values: TProductFormValues) => {
         try {
             await updateProduct({

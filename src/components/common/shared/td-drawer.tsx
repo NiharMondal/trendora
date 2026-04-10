@@ -1,4 +1,6 @@
 "use client";
+import { Dispatch, SetStateAction } from "react";
+
 import {
     Drawer,
     DrawerClose,
@@ -9,8 +11,8 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Dispatch, SetStateAction } from "react";
-import { Button } from "../ui/button";
+
+import { Button } from "@/components/ui/button";
 import TDButton from "./td-button";
 type TDDrawerProps = {
     isDrawerOpen: boolean;

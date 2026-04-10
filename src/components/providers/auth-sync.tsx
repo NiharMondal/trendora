@@ -1,10 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef } from "react";
+
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { setCredentials, TUserState } from "@/redux/slice/authSlice";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
 
 export default function AuthSync({ children }: { children: React.ReactNode }) {
     const router = useRouter();

@@ -1,13 +1,12 @@
 
+import { Bell } from "lucide-react";
+import { getServerSession } from "next-auth";
+import React from "react";
+
 import { DashboardSidebar } from "@/components/layout/dashboard/dashboard-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 import { authOptions } from "@/lib/authOptions";
-import { Bell } from "lucide-react";
-import { getServerSession } from "next-auth";
-
-
-import React from "react";
 export default async function DashboardLayout({
     children,
 }: {

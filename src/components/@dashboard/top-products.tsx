@@ -1,6 +1,7 @@
+import Image from "next/image";
+
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { productsImage } from "@/helping-data/image";
-import Image from "next/image";
 
 const invoices = [
     {

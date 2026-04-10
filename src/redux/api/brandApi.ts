@@ -1,6 +1,7 @@
 import { TBrandFormValues } from "@/components/common/form/brand-form/brand-form-schema";
 import { TBrand } from "@/components/types/brand.types";
 import { TServerResponse } from "@/components/types/common.types";
+
 import { baseApi } from "./baseApi";
 
 export const brandApi = baseApi.injectEndpoints({

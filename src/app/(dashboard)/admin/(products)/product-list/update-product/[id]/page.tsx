@@ -1,5 +1,7 @@
-import Headline from "@/components/common/dashboard/headline";
 import { use } from "react";
+
+import Headline from "@/components/common/dashboard/headline";
+
 import UpdateProductForm from "./update-product";
 
 export default function UpdateProductPage({

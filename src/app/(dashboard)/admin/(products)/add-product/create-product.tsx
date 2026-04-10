@@ -1,8 +1,9 @@
 "use client";
+import { toast } from "sonner";
+
 import ProductForm from "@/components/common/form/product-form/product-form";
 import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
 import { useCreateProductMutation } from "@/redux/api/productApi";
-import { toast } from "sonner";
 
 export default function CreateProduct() {
     const [createProduct, { isLoading }] = useCreateProductMutation();

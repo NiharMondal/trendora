@@ -1,20 +1,22 @@
-import { TReviewFormData, reviewSchema } from "@/form-schema/review-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import TDInput from "../form-input/TDInput";
-import TDTextArea from "../form-input/TDTextArea";
-import { Form } from "../ui/form";
-import TDButton from "./td-button";
+
+import TDInput from "@/components/form-input/TDInput";
+import TDTextArea from "@/components/form-input/TDTextArea";
+import { Form } from "@/components/ui/form";
+
+import TDButton from "../../shared/td-button";
+import { reviewSchema, TReviewFormValues } from "./review-schema";
 
 type AddEditReviewFormProps = {
-    defaultValues?: TReviewFormData | undefined;
-    onSubmit: (values: TReviewFormData) => Promise<void> | void;
+    defaultValues?: TReviewFormValues | undefined;
+    onSubmit: (values: TReviewFormValues) => Promise<void> | void;
     isSubmitting?: boolean;
     userName?: string;
     readonly?: boolean;
     onSuccess?: () => void;
     readOnlyFields?: {
-        [key in keyof TReviewFormData]?: boolean;
+        [key in keyof TReviewFormValues]?: boolean;
     };
 };
 export default function ReviewForm({
@@ -33,7 +35,7 @@ export default function ReviewForm({
         },
     });
 
-    const handleReviewSubmit = (values: TReviewFormData) => {
+    const handleReviewSubmit = (values: TReviewFormValues) => {
         onSubmit(values);
         onSuccess?.();
     };

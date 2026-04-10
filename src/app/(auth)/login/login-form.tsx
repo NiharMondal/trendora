@@ -1,16 +1,17 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getSession, signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
 import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { loginSchema, TLoginValues } from "./login-schema";
-import { useRouter } from "next/navigation";
-import { getSession, signIn } from "next-auth/react";
 import { EnumUserRole } from "@/global/user-role";
+
+import { loginSchema, TLoginValues } from "./login-schema";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -46,7 +47,7 @@ export default function LoginForm() {
             toast.error(error?.message || "Something went wrong");
         }
     };
-    
+
     return (
         <div className="border border-muted rounded-md p-10">
             <Form {...form}>
@@ -82,7 +83,7 @@ export default function LoginForm() {
                 </form>
             </Form>
             <div className="mt-10 text-center">
-                Don't have an account?{" "}
+                Don&apos;t have an account?
                 <Link
                     href={"/register"}
                     className="font-semibold text-accent hover:underline"

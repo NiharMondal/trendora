@@ -1,16 +1,17 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import {
 	Carousel,
 	CarouselApi,
 	CarouselContent,
 	CarouselItem,
 } from "@/components/ui/carousel";
-import { useAllSlideQuery } from "@/redux/api/slideApi";
-import Link from "next/link";
-
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useAllSlideQuery } from "@/redux/api/slideApi";
+
 import SpinnerLoading from "../common/loading/spinner-loading";
 import TDButton from "../common/shared/td-button";
 

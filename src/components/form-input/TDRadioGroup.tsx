@@ -1,3 +1,5 @@
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+
 import {
 	FormControl,
 	FormField,
@@ -8,7 +10,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 type Option = {
 	label: string;

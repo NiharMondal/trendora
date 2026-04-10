@@ -1,4 +1,3 @@
-import TextWithIcon from "@/components/common/@ui/text-with-icon";
 import {
     Ambulance,
     CircleQuestionMark,
@@ -7,6 +6,8 @@ import {
     RotateCcw,
     Share2,
 } from "lucide-react";
+
+import TextWithIcon from "@/components/common/@ui/text-with-icon";
 
 export default function DeliveryDetails() {
     return (

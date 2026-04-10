@@ -1,5 +1,6 @@
-import { Input } from "@/components/ui/input";
 import React, { SetStateAction } from "react";
+
+import { Input } from "@/components/ui/input";
 type Props = {
 	min: string;
 	max: string;

@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "motion/react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import {
     Table,
@@ -10,7 +12,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
 
 interface TableLoadingProps {
     columnCount?: number;

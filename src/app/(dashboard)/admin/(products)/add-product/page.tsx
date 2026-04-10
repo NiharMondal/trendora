@@ -1,4 +1,5 @@
 import Headline from "@/components/common/dashboard/headline";
+
 import CreateProduct from "./create-product";
 
 export default function AddProduct() {

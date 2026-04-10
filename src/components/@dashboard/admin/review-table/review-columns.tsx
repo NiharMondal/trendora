@@ -1,9 +1,10 @@
+import { Edit } from "lucide-react";
+import moment from "moment";
+
 import { TReview } from "@/components/types/review.types";
 import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Edit } from "lucide-react";
-import moment from "moment";
 
 export const reviewColumns = (
 	handleAction: (review: TReview) => void,

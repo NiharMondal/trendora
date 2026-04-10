@@ -9,6 +9,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+
 import TableLoading from "./table-loading";
 
 export default function TableData<T>({

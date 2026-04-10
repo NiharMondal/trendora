@@ -1,5 +1,6 @@
 import { TServerResponse } from "@/components/types/common.types";
 import { TSlide } from "@/components/types/slide.types";
+
 import { baseApi } from "./baseApi";
 
 export const slideApi = baseApi.injectEndpoints({

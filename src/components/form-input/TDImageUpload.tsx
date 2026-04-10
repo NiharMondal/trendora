@@ -1,11 +1,13 @@
 "use client";
 
-import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
+
+import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
+
 import { Button } from "../ui/button";
 
 type Props<T extends FieldValues> = {

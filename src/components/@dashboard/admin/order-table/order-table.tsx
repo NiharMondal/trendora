@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
+import { useDebounce } from "use-debounce";
+
 import {
 	DataTable,
 	Pagination,
 	TableToolbar,
 } from "@/components/common/shared/table";
 import { useAllOrderQuery } from "@/redux/api/orderApi";
-import { useState } from "react";
-import { useDebounce } from "use-debounce";
+
 import { orderColumns } from "./order-columns";
 
 export default function OrderTable() {

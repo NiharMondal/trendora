@@ -1,5 +1,6 @@
-import { customerDashboardCardOptions } from "@/components/layout/dashboard/dashboard-navlink";
 import Link from "next/link";
+
+import { customerDashboardCardOptions } from "@/components/layout/dashboard/dashboard-navlink";
 
 export default function UserDashboardPage() {
     return (

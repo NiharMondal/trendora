@@ -1,13 +1,15 @@
 "use client";
+import Image from "next/image";
+import { use, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import Container from "@/components/common/shared/container";
 import RelatedProducts from "@/components/common/shared/related-product";
 import { TProductImage } from "@/components/types/product.types";
 import { cn } from "@/lib/utils";
 import { useProductBySlugQuery } from "@/redux/api/productApi";
-import Image from "next/image";
-import { use, useState } from "react";
-import { PhotoProvider, PhotoView } from "react-photo-view";
+
 import ProductDetails from "./product-details";
 
 export default function ProductDetailsPage({

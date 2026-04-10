@@ -1,4 +1,8 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+
 import TDSeparator from "@/components/common/@ui/td-separator";
 import TDCheckbox from "@/components/form-input/TDCheckbox";
 import TDCombobox from "@/components/form-input/TDCombobox";
@@ -7,19 +11,16 @@ import TDSelect from "@/components/form-input/TDSelect";
 import TDTextArea from "@/components/form-input/TDTextArea";
 import { genderOptions } from "@/components/helpers/product/gender-options";
 import { Form } from "@/components/ui/form";
-
 import { useAllBrandQuery } from "@/redux/api/brandApi";
 import {
 	useAllCategoryQuery,
 	useCategoryByIdQuery,
 } from "@/redux/api/productCategoryApi";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+
 import TDButton from "../../shared/td-button";
 import ImageVariant from "./image-variant";
-import ProductVariant from "./product-variant";
 import { productSchema, TProductFormValues } from "./product-form-schema";
+import ProductVariant from "./product-variant";
 
 type ProductFormProps = {
 	productId?: string;

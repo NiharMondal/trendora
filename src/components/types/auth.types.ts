@@ -6,8 +6,7 @@ export type TAuthRegisterResponse = {
     role: string;
     createdAt: string;
     updatedAt: string;
-}
-
+};
 
 export type TAuthLoginResponse = {
     accessToken: string;
@@ -16,5 +15,5 @@ export type TAuthLoginResponse = {
         name: string;
         email: string;
         role: string;
-    }
-}
+    };
+};
