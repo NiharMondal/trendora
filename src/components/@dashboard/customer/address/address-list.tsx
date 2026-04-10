@@ -2,35 +2,46 @@
 
 import { Edit, Trash } from "lucide-react";
 
-import { TAddressFormValues } from "@/components/common/form/address-form/address-form-schema";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import TDButton from "@/components/common/shared/td-button";
 import TDSheet from "@/components/common/shared/td-sheet";
 import { TAddress } from "@/components/types/address.types";
 import {
+    useDeleteAddressMutation,
     useMyAddressQuery,
-    useUpdateAddressMutation,
 } from "@/redux/api/addressApi";
 import { useState } from "react";
 import { toast } from "sonner";
 import EditAddress from "./edit-address";
 
 export default function AddressList() {
-    const [openEdit, setOpenEdit] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [selectedAddress, setSelectedAddress] = useState<TAddress | null>(
         null,
     );
+    const [deleteAddress] = useDeleteAddressMutation();
     const { data: addresses, isLoading } = useMyAddressQuery(undefined);
 
     if (isLoading) return <SpinnerLoading />;
 
     const handleCloseDrawer = () => {
-        setOpenEdit(false);
+        setSelectedAddress(null);
     };
 
     const onEditClick = (address: TAddress) => {
-        setOpenEdit(true);
         setSelectedAddress(address);
+    };
+
+    const handleDelete = async (id: string) => {
+        try {
+            setDeletingId(id);
+            await deleteAddress(id).unwrap();
+            toast.success("Address deleted successfully");
+        } catch (error) {
+            toast.error("Failed to delete address");
+        } finally {
+            setDeletingId(null);
+        }
     };
 
     return (
@@ -42,8 +53,10 @@ export default function AddressList() {
                         key={address.id}
                     >
                         <div className="flex items-center gap-x-4">
-                            <p>{address.fullName}</p>,<p>{address.street}</p>,
-                            <p>{address.country}</p>
+                            <p>
+                                {address.fullName}, {address.street},{" "}
+                                {address.country}
+                            </p>
                             {address.isDefault && (
                                 <p className="text-primary text-sm bg-primary/10 px-2 py-1 rounded-md">
                                     Default
@@ -58,7 +71,12 @@ export default function AddressList() {
                             >
                                 <Edit />
                             </TDButton>
-                            <TDButton variant="destructive" size="icon">
+                            <TDButton
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => handleDelete(address.id)}
+                                isLoading={deletingId === address.id}
+                            >
                                 <Trash />
                             </TDButton>
                         </div>
@@ -68,10 +86,17 @@ export default function AddressList() {
 
             <TDSheet
                 title="Edit Address"
-                isOpen={openEdit}
-                setIsOpen={setOpenEdit}
+                isOpen={!!selectedAddress}
+                setIsOpen={(open) => {
+                    if (!open) handleCloseDrawer();
+                }}
             >
-                <EditAddress handleCloseDrawer={handleCloseDrawer} selectedAddress={selectedAddress} />
+                {selectedAddress && (
+                    <EditAddress
+                        handleCloseDrawer={handleCloseDrawer}
+                        selectedAddress={selectedAddress}
+                    />
+                )}
             </TDSheet>
         </>
     );
