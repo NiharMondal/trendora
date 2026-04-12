@@ -1,14 +1,24 @@
 "use client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { getSession, signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
 import TDInput from "@/components/form-input/TDInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { loginSchema, TLoginSchemaType } from "@/form-schema/auth-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import { EnumUserRole } from "@/global/user-role";
 
-import { useForm } from "react-hook-form";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { loginSchema, TLoginValues } from "./login-schema";
 
 export default function LoginForm() {
+    const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -17,15 +27,36 @@ export default function LoginForm() {
         },
     });
 
-    const handleLogin = (data: TLoginSchemaType) => {
-        console.log(data);
+    const handleLogin = async (data: TLoginValues) => {
+        try {
+            const res = await signIn("credentials", {
+                email: data.email,
+                password: data.password,
+                redirect: false,
+            });
+
+            if (res?.error) {
+                toast.error(res.error);
+                return;
+            }
+
+            toast.success("Logged in successfully");
+
+            const session = await getSession();
+            const role = (session as any)?.user?.role;
+            if (role === EnumUserRole.ADMIN) router.push("/admin");
+            else router.push("/dashboard");
+        } catch (error: any) {
+            toast.error(error?.message || "Something went wrong");
+        }
     };
+
     return (
-        <div className="border border-muted rounded-md  p-10">
+        <div className="border border-muted rounded-md p-10">
             <Form {...form}>
                 <form
-                    className="space-y-5"
                     onSubmit={form.handleSubmit(handleLogin)}
+                    className="space-y-5"
                 >
                     <TDInput
                         form={form}
@@ -36,10 +67,23 @@ export default function LoginForm() {
                     />
                     <TDInput
                         form={form}
-                        type="password"
                         label="Password"
+                        type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="Enter your password"
+                        ornament={
+                            <button
+                                type="button"
+                                className="mt-1.5 cursor-pointer"
+                                onClick={() => setShowPassword((prev) => !prev)}
+                            >
+                                {showPassword ? (
+                                    <EyeOff className="text-gray-500" />
+                                ) : (
+                                    <Eye className="text-gray-500" />
+                                )}
+                            </button>
+                        }
                     />
                     <div>
                         <Link
@@ -54,16 +98,14 @@ export default function LoginForm() {
                     </Button>
                 </form>
             </Form>
-            <div className="mt-10">
-                <p className="text-center">
-                    Don't have an account?{" "}
-                    <Link
-                        href={"/register"}
-                        className="font-semibold text-accent hover:underline "
-                    >
-                        Sign Up
-                    </Link>{" "}
-                </p>
+            <div className="mt-10 text-center">
+                Don&apos;t have an account?
+                <Link
+                    href={"/register"}
+                    className="font-semibold text-accent hover:underline ml-1"
+                >
+                    Sign Up
+                </Link>
             </div>
         </div>
     );

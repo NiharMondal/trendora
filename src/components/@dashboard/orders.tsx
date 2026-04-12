@@ -1,16 +1,14 @@
+import Image from "next/image";
 import React from "react";
 
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
 import { productsImage } from "@/helping-data/image";
 
 const invoices = [

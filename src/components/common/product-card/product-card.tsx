@@ -1,8 +1,10 @@
+import Link from "next/link";
+import { toast } from "sonner";
+
 import { TProduct } from "@/components/types/product.types";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
-import Link from "next/link";
-import { toast } from "sonner";
+
 import { Button } from "../../ui/button";
 import CardUtility from "./card-utility";
 import ProductPrice from "./product-price";

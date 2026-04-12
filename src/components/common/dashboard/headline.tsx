@@ -1,11 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { ArrowBigLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type THeadlineProps = {
     title: string;
@@ -13,6 +14,7 @@ type THeadlineProps = {
     showBackButton?: boolean;
     href?: string;
     buttonText?: string;
+    children?: React.ReactNode;
 };
 export default function Headline({
     title,
@@ -20,6 +22,7 @@ export default function Headline({
     showBackButton = false,
     href,
     buttonText,
+    children
 }: THeadlineProps) {
     const router = useRouter();
     const handleBack = () => {
@@ -59,6 +62,7 @@ export default function Headline({
                     </Link>
                 )}
             </div>
+            {children}
         </div>
     );
 }

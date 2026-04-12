@@ -1,56 +1,60 @@
-import NoDataFound from "@/components/common/shared/no-data-found";
-import { Pagination } from "@/components/common/shared/table";
-import TableToolbar from "@/components/common/shared/table/table-toolbar";
-import TableLoadingSkeleton from "@/components/common/table-loading-skeleton";
-import { DataTable } from "@/components/common/td-table";
-import { useAllUserQuery } from "@/redux/api/userApi";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
+
+import NoDataFound from "@/components/common/shared/no-data-found";
+import {
+    DataTable,
+    Pagination,
+    TableLoading,
+} from "@/components/common/shared/table";
+import TableToolbar from "@/components/common/shared/table/table-toolbar";
+import { useAllUserQuery } from "@/redux/api/userApi";
+
 import { userManagementColumns } from "./user-management-columns";
 
 export default function UserManagementTable() {
-	const [search, setSearch] = useState("");
-	const [limit, setLimit] = useState("10");
-	const [currentPage, setCurrentPage] = useState(1);
+    const [search, setSearch] = useState("");
+    const [limit, setLimit] = useState("10");
+    const [currentPage, setCurrentPage] = useState(1);
 
-	const [value] = useDebounce(search, 1000);
-	const { data: users, isLoading } = useAllUserQuery({
-		search: value,
-		limit: limit,
-		page: currentPage.toString(),
-	});
+    const [value] = useDebounce(search, 1000);
+    const { data: users, isLoading } = useAllUserQuery({
+        search: value,
+        limit: limit,
+        page: currentPage.toString(),
+    });
 
-	if (isLoading) return <TableLoadingSkeleton />;
+    if (isLoading) return <TableLoading />;
 
-	if (!users?.result.length) {
-		return <NoDataFound />;
-	}
-	return (
-		<div className="space-y-4">
-			<div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
-				<TableToolbar
-					search={search}
-					setSearch={setSearch}
-					limit={limit}
-					setLimit={(val) => setLimit(val)}
-				/>
-			</div>
-			<DataTable
-				columns={userManagementColumns}
-				data={users.result}
-				rowKey={(row) => row.id}
-			/>
-			{users?.meta?.totalPages && users?.meta?.totalPages > 1 && (
-				<Pagination
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					totalPages={users?.meta?.totalPages || 0}
-					hasNextPage={users?.meta?.hasNextPage}
-					hasPreviousPage={users?.meta?.hasPreviousPage}
-					limit={Number(limit)}
-					totalData={users?.meta?.totalData || 0}
-				/>
-			)}
-		</div>
-	);
+    if (!users?.result.length) {
+        return <NoDataFound />;
+    }
+    return (
+        <div className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
+                <TableToolbar
+                    search={search}
+                    setSearch={setSearch}
+                    limit={limit}
+                    setLimit={(val) => setLimit(val)}
+                />
+            </div>
+            <DataTable
+                columns={userManagementColumns}
+                data={users.result}
+                rowKey={(row) => row.id}
+            />
+            {users?.meta?.totalPages && users?.meta?.totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={users?.meta?.totalPages || 0}
+                    hasNextPage={users?.meta?.hasNextPage}
+                    hasPreviousPage={users?.meta?.hasPreviousPage}
+                    limit={Number(limit)}
+                    totalData={users?.meta?.totalData || 0}
+                />
+            )}
+        </div>
+    );
 }

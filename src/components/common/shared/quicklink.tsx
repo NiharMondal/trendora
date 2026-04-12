@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
 	Breadcrumb,
@@ -9,8 +10,8 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+
 import Container from "./container";
-import { usePathname } from "next/navigation";
 
 function formatSegment(segment: string) {
 	return segment

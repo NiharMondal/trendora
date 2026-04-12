@@ -1,5 +1,10 @@
 "use client";
 
+import { Heart, RefreshCw, ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import { ReactSmartRating } from "react-smart-rating";
+import { toast } from "sonner";
+
 import { TProduct, TProductVariant } from "@/components/types/product.types";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +16,6 @@ import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
-import { Heart, RefreshCw, ShoppingBag } from "lucide-react";
-import { useState } from "react";
-import { ReactSmartRating } from "react-smart-rating";
-import { toast } from "sonner";
 import ProductPrice from "../product-card/product-price";
 import ProductQuantity from "../shared/product-quantity";
 

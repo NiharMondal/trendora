@@ -1,7 +1,8 @@
-import React from "react";
-import Container from "../common/container";
 import Image from "next/image";
+import React from "react";
+
 import { image } from "@/helping-data/image";
+
 import { Button } from "../ui/button";
 
 export default function OfferSection() {

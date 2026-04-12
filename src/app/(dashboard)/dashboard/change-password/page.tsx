@@ -1,10 +1,9 @@
-import React from "react";
-import PasswordForm from "./password-form";
+import ChangePasswordForm from "@/components/@dashboard/customer/change-password/change-password-form";
 
 export default function ChangePassword() {
-	return (
-		<div>
-			<PasswordForm />
-		</div>
-	);
+    return (
+        <div>
+            <ChangePasswordForm />
+        </div>
+    );
 }

@@ -1,11 +1,11 @@
+import { Plus, X } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+
 import TDInput from "@/components/form-input/TDInput";
 import TDSelect from "@/components/form-input/TDSelect";
 import { Button } from "@/components/ui/button";
-import { TProductFormValues } from "@/form-schema/product-schema";
 
-import { productSizeOptions } from "@/helping-data/products";
-import { Plus, X } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { TProductFormValues } from "./product-form-schema";
 type ProductVariantProps = {
     options: {
         label: string;

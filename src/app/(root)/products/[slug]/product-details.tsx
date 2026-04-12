@@ -1,5 +1,6 @@
 import ProductCommonDetails from "@/components/common/@ui/product-common-details";
 import { TProduct } from "@/components/types/product.types";
+
 import DeliveryDetails from "./delivery-details";
 
 type Props = {

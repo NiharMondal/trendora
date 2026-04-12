@@ -1,6 +1,3 @@
-import { RootState } from "../store";
-
-import { envConfig } from "@/config/env-config";
 import {
     BaseQueryFn,
     createApi,
@@ -8,7 +5,11 @@ import {
     fetchBaseQuery,
     FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+
+import { envConfig } from "@/config/env-config";
+
 import { logout, setCredentials } from "../slice/authSlice";
+import { RootState } from "../store";
 
 // Explicitly type the refreshResult data
 type RefreshResponse = {
@@ -76,6 +77,7 @@ export const baseApi = createApi({
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
     tagTypes: [
+        "auth",
         "products",
         "users",
         "categories",

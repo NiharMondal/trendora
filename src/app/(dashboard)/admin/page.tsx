@@ -1,10 +1,11 @@
+import { ShoppingBag } from "lucide-react";
+
 import NewComments from "@/components/@dashboard/admin/dashboard/new-comments";
 import RecentOrdersTable from "@/components/@dashboard/admin/dashboard/recent-orders/recent-orders-table";
 import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
 import OrderChart from "@/components/charts/order-chart";
 import { cn } from "@/lib/utils";
-import { ShoppingBag } from "lucide-react";
 
 export default function AdminHomePage() {
     return (
@@ -17,10 +18,8 @@ export default function AdminHomePage() {
                         "#d45f87",
                         "#e560f8",
                     ];
-                    const randomColor =
-                        colorsList[
-                            Math.floor(Math.random() * colorsList.length)
-                        ];
+                    const randomColor = colorsList[index % colorsList.length];
+
                     return (
                         <div
                             className={cn(

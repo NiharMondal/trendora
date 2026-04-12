@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 import {
     Dialog,
     DialogContent,
@@ -7,7 +9,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
 
 type TTDModalProps = {
     children: ReactNode;

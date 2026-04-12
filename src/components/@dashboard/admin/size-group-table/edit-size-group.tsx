@@ -1,3 +1,7 @@
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { toast } from "sonner";
+
 import SizeGroupForm from "@/components/common/form/size-group-form/size-group-form";
 import { TSizeGroupFormValues } from "@/components/common/form/size-group-form/size-group-schema";
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
@@ -5,9 +9,6 @@ import {
 	useSizeGroupByIdQuery,
 	useUpdateSizeGroupMutation,
 } from "@/redux/api/sizeGroupApi";
-import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
-import { toast } from "sonner";
 
 type EditSizeGroupProps = {
 	onClose: () => void;
