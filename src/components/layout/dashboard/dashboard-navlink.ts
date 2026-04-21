@@ -22,7 +22,7 @@ type TChildren = {
     url: string;
     index?: boolean;
 };
-type TSidebarLink = {
+export type TSidebarLink = {
     title: string;
     url?: string;
     icon?: LucideIcon;

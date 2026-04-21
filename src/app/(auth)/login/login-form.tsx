@@ -14,10 +14,13 @@ import { EnumUserRole } from "@/global/user-role";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
+import { useAppDispatch } from "@/redux/redux.hooks";
+import { setCredentials } from "@/redux/slice/authSlice";
 
 export default function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const dispatch = useAppDispatch()
+    const [showPassword, setShowPassword] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(loginSchema),
@@ -41,9 +44,9 @@ export default function LoginForm() {
             }
 
             toast.success("Logged in successfully");
-
-            const session = await getSession();
-            const role = (session as any)?.user?.role;
+            const session: any = await getSession();
+            dispatch(setCredentials({user: session?.user, token: session?.accessToken}))
+            const role = (session)?.user?.role;
             if (role === EnumUserRole.ADMIN) router.push("/admin");
             else router.push("/dashboard");
         } catch (error: any) {

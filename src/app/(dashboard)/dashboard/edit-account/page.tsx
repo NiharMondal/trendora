@@ -1,8 +1,12 @@
+"use client";
 import React from "react";
 
 import AccountForm from "./account-form";
+import { useMyProfileQuery } from "@/redux/api/userApi";
 
 export default function EditAccount() {
+	const {data} = useMyProfileQuery(undefined);
+	console.log(data)
 	return (
 		<div className="space-y-5">
 			<div className="space-y-0.5">
@@ -13,7 +17,7 @@ export default function EditAccount() {
 			</div>
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 xl:gap-8">
 				<AccountForm />
-				<div className="order-first lg:order-last h-[300px] bg-gray-400 rounded shadow col-span-full lg:col-span-1 "></div>
+				
 			</div>
 		</div>
 	);

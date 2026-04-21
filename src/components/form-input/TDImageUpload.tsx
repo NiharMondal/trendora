@@ -14,12 +14,16 @@ type Props<T extends FieldValues> = {
 	form: UseFormReturn<T>;
 	urlName: Path<T>;
 	publicIdName: Path<T>;
+	className?: string;
+	folderName?:string
 };
 
 export default function TDImageUploadField<T extends FieldValues>({
 	form,
 	urlName,
 	publicIdName,
+	className,
+	folderName=""
 }: Props<T>) {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const [loading, setLoading] = useState(false);
@@ -31,7 +35,7 @@ export default function TDImageUploadField<T extends FieldValues>({
 			setLoading(true);
 			const uploaded = await uploadToCloudinary(
 				file,
-				"trendora/temp/products",
+				folderName
 			);
 
 			form.setValue(urlName, uploaded.url);
