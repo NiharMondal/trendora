@@ -20,17 +20,18 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar";
+import { EnumUserRole } from "@/global/user-role";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { logout } from "@/redux/slice/authSlice";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { EnumUserRole } from "@/global/user-role";
 type TNavUserProps = {
     user: TUserSession | undefined;
     role: EnumUserRole;
-}
-export function NavUser({ user, role }: TNavUserProps) {
+    userImage: string;
+};
+export function NavUser({ user, role, userImage }: TNavUserProps) {
     const router = useRouter();
     const dispatch = useAppDispatch();
 
@@ -53,7 +54,7 @@ export function NavUser({ user, role }: TNavUserProps) {
                         >
                             <Avatar className="h-8 w-8 rounded-full">
                                 <AvatarImage
-                                    src={user?.image}
+                                    src={user?.image || userImage}
                                     alt={user?.name}
                                 />
                                 <AvatarFallback className="rounded-lg">
@@ -81,7 +82,7 @@ export function NavUser({ user, role }: TNavUserProps) {
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-full">
                                     <AvatarImage
-                                        src={user?.image}
+                                        src={user?.image || userImage}
                                         alt={user?.name}
                                     />
                                     <AvatarFallback className="rounded-lg">
@@ -101,8 +102,15 @@ export function NavUser({ user, role }: TNavUserProps) {
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
-                                <Link href={role === EnumUserRole.ADMIN ? "/admin/profile" : "/dashboard/profile"} className="w-full cursor-pointer">
-                                    <BadgeCheck />
+                                <Link
+                                    href={
+                                        role === EnumUserRole.ADMIN
+                                            ? "/admin/profile"
+                                            : "/dashboard/profile"
+                                    }
+                                    className="w-full cursor-pointer group"
+                                >
+                                    <BadgeCheck className="group-hover:text-gray-50" />
                                     Profile
                                 </Link>
                             </DropdownMenuItem>
