@@ -1,9 +1,24 @@
 import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/authOptions";
+import { EnumUserRole } from "@/global/user-role";
 
 import GoogleLoginButton from "@/components/common/@ui/google-login-button";
 import LoginForm from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+    const session = await getServerSession(authOptions);
+
+    if (session?.user) {
+        const role = (session.user as any).role;
+        if (role === EnumUserRole.ADMIN || role === EnumUserRole.SUPER_ADMIN) {
+            redirect("/admin");
+        } else {
+            redirect("/dashboard");
+        }
+    }
+
     return (
         <div
             className={`min-h-[calc(100vh-${AUTH_NAV_HEIGHT})] flex flex-col items-center py-20 space-y-5`}

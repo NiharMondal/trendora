@@ -10,12 +10,12 @@ export default function ProfileComponent() {
         name: data?.result?.name ?? "",
         phone: data?.result?.phone ?? "",
         avatar:
-            data?.result?.avatar && data?.result?.avatarPublicId
+            data?.result?.avatar
                 ? {
                       url: data?.result?.avatar,
-                      publicId: data?.result?.avatarPublicId,
+                      publicId: data?.result?.avatarPublicId || "",
                   }
-                : {  },
+                : {},
     };
 
     return (
