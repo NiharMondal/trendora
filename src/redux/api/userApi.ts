@@ -1,8 +1,8 @@
 import { TServerResponse } from "@/components/types/common.types";
 import { TUser } from "@/components/types/user.types";
 
+import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
 import { baseApi } from "./baseApi";
-import { TAccountFormValues } from "@/app/(dashboard)/dashboard/edit-account/account-form-schema";
 
 export const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -38,9 +38,9 @@ export const userApi = baseApi.injectEndpoints({
         }),
 
         // update user
-        updateUser: builder.mutation<
+        updateMyProfile: builder.mutation<
             TServerResponse<TUser>,
-            { payload: Partial<TAccountFormValues> }
+            { payload:TProfileFormValues }
         >({
             query: ({ payload }) => ({
                 url: `/users/my-profile-update`,
@@ -62,8 +62,8 @@ export const userApi = baseApi.injectEndpoints({
 });
 
 export const {
-	useAllUserQuery,
-	useMyProfileQuery,
-	useUpdateUserMutation,
-	useDeleteUserMutation,
+    useAllUserQuery,
+    useMyProfileQuery,
+    useUpdateMyProfileMutation,
+    useDeleteUserMutation,
 } = userApi;

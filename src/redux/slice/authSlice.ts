@@ -13,7 +13,7 @@ export type TUserState = {
     name: string;
     email: string;
     role: string;
-    // image?: string;
+    image?: string;
 };
 
 export type TAuthState = {

@@ -115,9 +115,4 @@ export const customerDashboardCardOptions: TSidebarLink[] = [
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
-    {
-        title: "Edit Account",
-        url: "/dashboard/edit-account",
-        icon: UserRoundPen,
-    },
 ];

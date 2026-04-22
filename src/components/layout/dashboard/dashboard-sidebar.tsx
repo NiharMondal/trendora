@@ -13,8 +13,14 @@ import {
 } from "./dashboard-navlink";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
+import { TSessionResponse } from "@/components/types/session.types";
 
-export function DashboardSidebar({ role }: { role: EnumUserRole }) {
+type TProps = {
+    session: TSessionResponse | null;
+    role: EnumUserRole;
+}
+
+export function DashboardSidebar({ session, role }: TProps) {
     const label =
         role === EnumUserRole.ADMIN ? "Admin Dashboard" : "Customer Dashboard";
 
@@ -23,19 +29,13 @@ export function DashboardSidebar({ role }: { role: EnumUserRole }) {
             ? adminNavlink
             : customerDashboardCardOptions;
 
-    const user = {
-        name: "Nihar",
-        email: "[EMAIL_ADDRESS]",
-        avatar: "https://github.com/shadcn.png",
-    };
-
     return (
         <Sidebar>
             <SidebarContent>
                 <NavMain label={label} navLink={navLink} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={user} />
+                <NavUser user={session?.user} role={role} />
             </SidebarFooter>
         </Sidebar>
     );

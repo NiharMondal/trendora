@@ -16,6 +16,7 @@ import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { setCredentials } from "@/redux/slice/authSlice";
+import { TSessionResponse } from "@/components/types/session.types";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -44,9 +45,9 @@ export default function LoginForm() {
             }
 
             toast.success("Logged in successfully");
-            const session: any = await getSession();
-            dispatch(setCredentials({user: session?.user, token: session?.accessToken}))
-            const role = (session)?.user?.role;
+            const session = await getSession();
+            dispatch(setCredentials({user: (session as TSessionResponse)?.user, token: (session as TSessionResponse)?.accessToken}))
+            const role = (session as TSessionResponse)?.user?.role;
             if (role === EnumUserRole.ADMIN) router.push("/admin");
             else router.push("/dashboard");
         } catch (error: any) {
