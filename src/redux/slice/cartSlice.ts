@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TCartProduct } from "@/components/types/cart.types";
+
 
 import { RootState } from "../store";
+import { TCartItem } from "@/components/types/cart.types";
 
 type InitialStateType = {
-	cartItems: TCartProduct[];
+	cartItems: TCartItem[];
 };
 
 const initialState: InitialStateType = {
@@ -20,7 +21,7 @@ export const cartSlice = createSlice({
 			state.cartItems = [];
 		},
 
-		addItemToCart: (state, action: PayloadAction<TCartProduct>) => {
+		addItemToCart: (state, action: PayloadAction<TCartItem>) => {
 			const { productId, variantId, quantity = 1 } = action.payload;
 			const existingItem = state.cartItems.find(
 				(item) =>
