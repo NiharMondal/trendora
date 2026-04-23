@@ -54,6 +54,7 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                         >
                             <Avatar className="h-8 w-8 rounded-full">
                                 <AvatarImage
+                                    className="object-center object-cover"
                                     src={user?.image || userImage}
                                     alt={user?.name}
                                 />
@@ -82,6 +83,7 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-full">
                                     <AvatarImage
+                                        className="object-center object-cover"
                                         src={user?.image || userImage}
                                         alt={user?.name}
                                     />

@@ -82,7 +82,7 @@ export default function ImageVariant() {
                         )}
                         <TDImageUploadField
                             form={form}
-                            folderName="trendora/temp/products" // save image in temp folder
+                            folderName="temp/products" // save image in temp folder
                             urlName={`images.${index}.url`}
                             publicIdName={`images.${index}.publicId`}
                         />

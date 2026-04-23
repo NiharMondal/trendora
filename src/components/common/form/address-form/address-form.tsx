@@ -51,7 +51,7 @@ export default function AddressForm({
                 <div className="grid sm:grid-cols-2 gap-x-4 sm:gap-y-1.5">
                     <TDInput
                         name="fullName"
-                        label="Fullname"
+                        label="Full Name"
                         form={hookForm}
                         required
                     />

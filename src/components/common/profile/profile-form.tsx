@@ -49,7 +49,7 @@ export default function ProfileForm({ defaultValues }: TProfileFormProps) {
                 <div className="max-w-[200px] mb-3">
                     <TDImageUploadField
                         form={form}
-                        folderName="trendora/temp/avatar"
+                        folderName="temp/avatar"
                         urlName={`avatar.url`}
                         publicIdName={`avatar.publicId`}
                     />
