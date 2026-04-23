@@ -28,6 +28,7 @@ export default function TDSheet({
     sheetWidth,
     sheetHeight,
     children,
+    className,
 }: TDSheetProps) {
     const isDesktop = useIsDesktop();
 
@@ -38,9 +39,10 @@ export default function TDSheet({
                 className={cn(
                     "[&>button]:hidden",
                     { "min-w-2xl": isDesktop },
-                    { "min-h-4/5 rounded-t-lg": !isDesktop },
+                    { "min-h-[90%] max-h-[95%] overflow-y-scroll pb-5 rounded-t-lg": !isDesktop },
                     isDesktop && sheetWidth && `w-${sheetWidth}`,
                     !isDesktop && sheetHeight && `h-${sheetHeight}`,
+                    className,
                 )}
             >
                 <SheetHeader className="flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
