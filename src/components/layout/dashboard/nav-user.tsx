@@ -1,6 +1,12 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import {
+    BadgeCheck,
+    ChevronsUpDown,
+    Home,
+    LogOut,
+    ShoppingCart,
+} from "lucide-react";
 
 import TDButton from "@/components/common/shared/td-button";
 import { TUserSession } from "@/components/types/session.types";
@@ -103,6 +109,24 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={"/"}
+                                    className="w-full cursor-pointer group"
+                                >
+                                    <Home className="group-hover:text-gray-50" />
+                                    Home
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={"/cart"}
+                                    className="w-full cursor-pointer group"
+                                >
+                                    <ShoppingCart className="group-hover:text-gray-50" />
+                                    Cart
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link
                                     href={

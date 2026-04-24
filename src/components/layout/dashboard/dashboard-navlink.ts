@@ -8,14 +8,15 @@ import {
     Home,
     Key,
     Layers,
+    LayoutDashboard,
     type LucideIcon,
     MapPinHouse,
     Scaling,
     ScrollText,
     ShoppingCart,
     Star,
+    Stars,
     User2,
-    UserRoundPen,
 } from "lucide-react";
 type TChildren = {
     title: string;
@@ -29,7 +30,8 @@ export type TSidebarLink = {
     children?: TChildren[];
 };
 export const adminNavlink: TSidebarLink[] = [
-    { title: "Dashboard", url: "/admin", icon: Home },
+    { title: "Home", url: "/", icon: Home },
+    { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
     {
         title: "Size Group",
         icon: Boxes,
@@ -109,9 +111,11 @@ export const adminNavlink: TSidebarLink[] = [
 ];
 
 export const customerDashboardCardOptions: TSidebarLink[] = [
-    { title: "Dashboard", url: "/dashboard", icon: Home },
+    { title: "Home", url: "/", icon: Home },
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { title: "Cart", url: "/cart", icon: ShoppingCart },
     { title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
-
+    { title: "My Reviews", url: "/dashboard/my-reviews", icon: Stars },
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
