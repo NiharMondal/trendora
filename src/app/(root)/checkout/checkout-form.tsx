@@ -6,10 +6,11 @@ import { toast } from "sonner";
 import TDButton from "@/components/common/shared/td-button";
 import { Form } from "@/components/ui/form";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
-import { useAppSelector } from "@/redux/redux.hooks";
-import { selectCartItems } from "@/redux/slice/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
+import { clearCart, selectCartItems } from "@/redux/slice/cartSlice";
 
 import TDRadioGroup from "@/components/form-input/TDRadioGroup";
+import { useRouter } from "next/navigation";
 import {
     checkoutFormSchema,
     TCheckoutFormValues,
@@ -18,12 +19,13 @@ import CustomerInformation from "./customer-information";
 import { paymentMethodOptions } from "./payment-method-options";
 
 export default function CheckoutForm() {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     const [createOrder, { isLoading }] = useCreateOrderMutation();
     const cartItems = useAppSelector(selectCartItems);
     const form = useForm<TCheckoutFormValues>({
         resolver: zodResolver(checkoutFormSchema),
         defaultValues: {
-            userId: "",
             shippingAddressId: "",
             paymentMethod: "",
             notes: "",
@@ -31,7 +33,6 @@ export default function CheckoutForm() {
     });
     const handleCreateOrder = async (values: TCheckoutFormValues) => {
         const payload = {
-            userId: "7c99679d-412f-4819-93a0-08861f270c8e",
             items: cartItems.map((item) => ({
                 productId: item.productId,
                 variantId: item?.variantId || undefined,
@@ -56,11 +57,11 @@ export default function CheckoutForm() {
         try {
             await createOrder(payload as any).unwrap();
             toast.success("Order placed successfully");
+            dispatch(clearCart());
+            router.push("/");
         } catch (error: any) {
             toast.error(error?.data?.message);
         }
-
-        console.log(payload);
     };
 
     return (
@@ -94,7 +95,7 @@ export default function CheckoutForm() {
                             Order Overview
                         </p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-3 md:gap-5">
                             {cartItems.map((item) => (
                                 <div
                                     key={`${item.productId}-${item.variantId}`}

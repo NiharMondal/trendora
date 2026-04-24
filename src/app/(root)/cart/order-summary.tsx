@@ -1,14 +1,14 @@
-"use client"
+"use client";
 import { useAppSelector } from "@/redux/redux.hooks";
 import { selectCartItems } from "@/redux/slice/cartSlice";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
+import { envConfig } from "@/config/env-config";
 import {
     calculateOrderTotals,
     currencyFormatter,
 } from "@/utils/calculate-order-total";
-import { envConfig } from "@/config/env-config";
 import Link from "next/link";
 
 export default function OrderSummary() {
@@ -19,7 +19,7 @@ export default function OrderSummary() {
 
     const FREE_SHIPPING_THRESHOLD = Number(envConfig.free_shipping_threshold);
     const SHIPPING_COST = Number(envConfig.shipping_cost);
-    console.log(FREE_SHIPPING_THRESHOLD, SHIPPING_COST)
+    console.log(FREE_SHIPPING_THRESHOLD, SHIPPING_COST);
     const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
     const freeShippingGap = FREE_SHIPPING_THRESHOLD - subtotal;
     const progressPct = Math.min(
@@ -28,8 +28,8 @@ export default function OrderSummary() {
     );
 
     return (
-        <div className="col-span-full lg:col-span-1 space-y-4">
-            <h5 className="border-b-2 border-black uppercase text-sm tracking-wide pb-2">
+        <div className="col-span-full xl:col-span-1 space-y-4 bg-white p-5 rounded-md">
+            <h5 className="border-b-2 border-border uppercase text-sm tracking-wide pb-2">
                 Order Summary
             </h5>
 
@@ -60,8 +60,15 @@ export default function OrderSummary() {
 
             {/* Price rows */}
             <div className="divide-y border rounded-md text-sm">
-                <SummaryRow label="Subtotal" value={currencyFormatter(subtotal)} />
-                <SummaryRow label="Tax (5%)" value={currencyFormatter(tax)} muted />
+                <SummaryRow
+                    label="Subtotal"
+                    value={currencyFormatter(subtotal)}
+                />
+                <SummaryRow
+                    label="Tax (5%)"
+                    value={currencyFormatter(tax)}
+                    muted
+                />
                 <SummaryRow
                     label="Shipping"
                     value={
@@ -79,7 +86,12 @@ export default function OrderSummary() {
                         )
                     }
                 />
-                <SummaryRow label="Total" value={currencyFormatter(totalAmount)} bold muted />
+                <SummaryRow
+                    label="Total"
+                    value={currencyFormatter(totalAmount)}
+                    bold
+                    muted
+                />
             </div>
 
             <Link href={"/checkout"}>

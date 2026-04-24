@@ -28,7 +28,7 @@ export default function CartComponent() {
     }
     return (
         <div className="py-10">
-            <Container className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <Container className="grid grid-cols-1 xl:grid-cols-3 gap-10">
                 <ProductSection />
                 <OrderSummary />
             </Container>

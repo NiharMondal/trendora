@@ -7,8 +7,6 @@ import Link from "next/link";
 import Container from "@/components/common/shared/container";
 import ProductQuantity from "@/components/common/shared/product-quantity";
 import TDButton from "@/components/common/shared/td-button";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { productsImage } from "@/helping-data/image";
 import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
 import {
     decreaseQuantity,
@@ -39,114 +37,78 @@ export default function ProductSection() {
         );
     }
     return (
-        <div className="col-span-full lg:col-span-2">
-            <Table>
-                <TableBody>
-                    {cartItems.map((item, index) => (
-                        <TableRow key={index}>
-                            <TableCell className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-2 md:gap-4">
-                                <div className="flex items-center gap-x-4">
-                                    <Image
-                                        src={
-                                            item.productImage ||
-                                            productsImage.black
-                                        }
-                                        width={100}
-                                        height={70}
-                                        alt="Image"
-                                        className="size-[45px] sm:size-[50px] md:size-[60px] rounded overflow-hidden hover:object-bottom object-top object-cover duration-200"
-                                    />
-                                    <div className="sm:space-y-0.5">
-                                        <p className="text-nowrap flex items-center gap-x-2 text-xs sm:text-base">
-                                            {item.productName}
-                                            {item.variantId ? (
-                                                <small className="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-xs font-medium italic">
-                                                    Variant
-                                                </small>
-                                            ) : (
-                                                <small className="bg-accent/20 text-accent px-2 py-0.5 rounded-full text-xs font-medium italic">
-                                                    Normal
-                                                </small>
-                                            )}
-                                        </p>
-                                        <p className="text-muted-foreground font-medium text-sm">
-                                            ${item.price.toFixed(2)} x{" "}
-                                            {item.quantity}
-                                        </p>
-                                    </div>
+        <div className="col-span-full xl:col-span-2">
+            <div className="space-y-8 bg-white p-5 rounded-md">
+                {cartItems.map((item, index) => (
+                    <div
+                        key={index}
+                        className="grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-border pt-4 first:border-none first:pt-0"
+                    >
+                        <div className="flex gap-3">
+                            <div className="flex gap-2">
+                                <Image
+                                    src={item.productImage || ""}
+                                    alt="Image"
+                                    width={200}
+                                    height={200}
+                                    className="rounded-md  object-cover size-[50px]"
+                                />
+                                <div className="text-sm">
+                                    <p className="">{item.productName}</p>
+                                    <p className="flex items-center gap-x-2">
+                                        ${item.price.toFixed(2)} x{" "}
+                                        {item.quantity}
+                                        {item?.variantId && (
+                                            <span className="text-xs font-medium italic bg-blue-300/20 text-primary px-2 py-0.5 rounded-full">
+                                                Variant
+                                            </span>
+                                        )}
+                                    </p>
                                 </div>
-                                <div className="sm:hidden">
-                                    <ProductQuantity
-                                        quantity={item.quantity}
-                                        onIncrease={() =>
-                                            dispatch(
-                                                increaseQuantity({
-                                                    productId: item.productId,
-                                                    variantId: item.variantId,
-                                                }),
-                                            )
-                                        }
-                                        onDecrease={() =>
-                                            dispatch(
-                                                decreaseQuantity({
-                                                    productId: item.productId,
-                                                    variantId: item.variantId,
-                                                }),
-                                            )
-                                        }
-                                    />
-                                </div>
-                            </TableCell>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <ProductQuantity
+                                className="h-[30px] sm:h-auto px-2 max-w-[120px] sm:w-auto"
+                                quantity={item.quantity}
+                                onIncrease={() =>
+                                    dispatch(
+                                        increaseQuantity({
+                                            productId: item.productId,
+                                            variantId: item.variantId,
+                                        }),
+                                    )
+                                }
+                                onDecrease={() =>
+                                    dispatch(
+                                        decreaseQuantity({
+                                            productId: item.productId,
+                                            variantId: item.variantId,
+                                        }),
+                                    )
+                                }
+                            />
 
-                            <TableCell>
-                                <div className="hidden sm:block">
-                                    <ProductQuantity
-                                        quantity={item.quantity}
-                                        onIncrease={() =>
-                                            dispatch(
-                                                increaseQuantity({
-                                                    productId: item.productId,
-                                                    variantId: item.variantId,
-                                                }),
-                                            )
-                                        }
-                                        onDecrease={() =>
-                                            dispatch(
-                                                decreaseQuantity({
-                                                    productId: item.productId,
-                                                    variantId: item.variantId,
-                                                }),
-                                            )
-                                        }
-                                    />
-                                </div>
-                            </TableCell>
-
-                            <TableCell>
-                                ${(item.price * item.quantity).toFixed(2)}
-                            </TableCell>
-                            <TableCell></TableCell>
-
-                            <TableCell>
-                                <TDButton
-                                    className="bg-none text-destructive hover:bg-destructive"
-                                    variant="ghost"
-                                    onClick={() =>
-                                        dispatch(
-                                            removeCartItem({
-                                                productId: item.productId,
-                                                variantId: item.variantId,
-                                            }),
-                                        )
-                                    }
-                                >
-                                    <Trash />
-                                </TDButton>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                            <p>${(item.price * item.quantity).toFixed(2)}</p>
+                            <TDButton
+                                className="bg-none text-destructive hover:bg-destructive"
+                                variant="ghost"
+                                size="icon-sm"
+                                onClick={() =>
+                                    dispatch(
+                                        removeCartItem({
+                                            productId: item.productId,
+                                            variantId: item.variantId,
+                                        }),
+                                    )
+                                }
+                            >
+                                <Trash />
+                            </TDButton>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
