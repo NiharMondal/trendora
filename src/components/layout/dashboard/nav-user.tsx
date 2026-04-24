@@ -146,7 +146,7 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                             <TDButton
                                 onClick={handleSignOut}
                                 variant="outline"
-                                className="group w-full hover:bg-destructive! hover:text-destructive-foreground! cursor-pointer"
+                                className="group w-full text-white bg-destructive/90! hover:bg-destructive! hover:text-destructive-foreground! cursor-pointer"
                             >
                                 <LogOut className="group-hover:text-destructive-foreground!" />
                                 Log out

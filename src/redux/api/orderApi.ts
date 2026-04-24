@@ -40,6 +40,13 @@ export const orderApi = baseApi.injectEndpoints({
 			providesTags: ["orders"],
 		}),
 
+		getMyOrders: builder.query<TServerResponse<TOrder[]>, void>({
+			query: () => ({
+				url: "/orders/my-orders",
+				method: "GET",
+			}),
+			providesTags: ["orders"],
+		}),
 		//get order by id
 		orderById: builder.query<TServerResponse<TOrder>, string>({
 			query: (id) => ({
@@ -78,6 +85,7 @@ export const orderApi = baseApi.injectEndpoints({
 export const {
 	useAllOrderQuery,
 	useCreateOrderMutation,
+	useGetMyOrdersQuery,
 	useOrderByIdQuery,
 	useDeleteOrderMutation,
 	useUpdateOrderMutation,
