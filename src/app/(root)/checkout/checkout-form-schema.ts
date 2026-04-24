@@ -23,7 +23,6 @@ export const checkoutFormSchema = z
 				"phone",
 				"street",
 				"city",
-				"state",
 				"postalCode",
 				"country",
 			];

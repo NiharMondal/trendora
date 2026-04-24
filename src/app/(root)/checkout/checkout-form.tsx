@@ -86,6 +86,7 @@ export default function CheckoutForm() {
                             form={form}
                             options={paymentMethodOptions}
                             valueType="string"
+                            required
                         />
                     </div>
                     <div className="space-y-7">
