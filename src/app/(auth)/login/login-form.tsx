@@ -14,11 +14,16 @@ import { EnumUserRole } from "@/global/user-role";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
+import { useAppDispatch } from "@/redux/redux.hooks";
+import { setCredentials } from "@/redux/slice/authSlice";
+import { TSessionResponse } from "@/components/types/session.types";
+import TDButton from "@/components/common/shared/td-button";
 
 export default function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
-
+    const dispatch = useAppDispatch();
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -29,6 +34,7 @@ export default function LoginForm() {
 
     const handleLogin = async (data: TLoginValues) => {
         try {
+            setIsLoading(true);
             const res = await signIn("credentials", {
                 email: data.email,
                 password: data.password,
@@ -41,13 +47,24 @@ export default function LoginForm() {
             }
 
             toast.success("Logged in successfully");
-
             const session = await getSession();
-            const role = (session as any)?.user?.role;
-            if (role === EnumUserRole.ADMIN) router.push("/admin");
-            else router.push("/dashboard");
+            dispatch(
+                setCredentials({
+                    user: (session as TSessionResponse)?.user,
+                    token: (session as TSessionResponse)?.accessToken,
+                }),
+            );
+            
+            const role = (session as TSessionResponse)?.user?.role;
+            if (role === EnumUserRole.ADMIN || role === EnumUserRole.SUPER_ADMIN) {
+                router.push("/admin");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
+        }finally{
+            setIsLoading(false);
         }
     };
 
@@ -93,9 +110,9 @@ export default function LoginForm() {
                             Forgot your password?
                         </Link>
                     </div>
-                    <Button type="submit" className="w-full cursor-pointer">
-                        Sign In
-                    </Button>
+                    <TDButton type="submit" isLoading={isLoading} className="w-full cursor-pointer">
+                        {isLoading ? "Signing in..." : "Sign In"}
+                    </TDButton>
                 </form>
             </Form>
             <div className="mt-10 text-center">

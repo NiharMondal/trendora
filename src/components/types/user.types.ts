@@ -5,6 +5,7 @@ export type TUser = {
 	phone: string;
 	role: string;
 	avatar: string;
+	avatarPublicId: string;
 	createdAt: string;
 	updatedAt: string;
 };

@@ -1,6 +1,9 @@
 import { TLoginValues } from "@/app/(auth)/login/login-schema";
 import { TRegisterValues } from "@/app/(auth)/register/register-schema";
-import { TAuthLoginResponse, TAuthRegisterResponse } from "@/components/types/auth.types";
+import {
+    TAuthLoginResponse,
+    TAuthRegisterResponse,
+} from "@/components/types/auth.types";
 import { TServerResponse } from "@/components/types/common.types";
 
 import { baseApi } from "./baseApi";
@@ -39,6 +42,14 @@ export const authApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["auth"],
         }),
+        changePassword: builder.mutation({
+            query: (payload) => ({
+                url: `/auth/change-password`,
+                method: "POST",
+                body: payload,
+            }),
+            invalidatesTags: ["auth"],
+        }),
     }),
 });
 
@@ -46,4 +57,5 @@ export const {
     useRegisterUserMutation,
     useLoginUserMutation,
     useOAuthLoginMutation,
+    useChangePasswordMutation,
 } = authApi;
