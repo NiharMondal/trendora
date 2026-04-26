@@ -29,7 +29,7 @@ export default function TableData<T>({
 					<Table>
 						<TableHeader>
 							<TableRow className="bg-gray-50/50 h-16 hover:bg-gray-50/50">
-								{columns.map((col) => (
+								{columns?.map((col) => (
 									<TableHead
 										key={col.key as string}
 										className={cn(
@@ -44,7 +44,7 @@ export default function TableData<T>({
 						</TableHeader>
 
 						<TableBody>
-							{data.map((row) => (
+							{data?.map((row) => (
 								<TableRow
 									key={rowKey(row)}
 									className={cn(

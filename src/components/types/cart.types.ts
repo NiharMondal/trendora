@@ -1,8 +1,8 @@
-export type TCartProduct = {
+export type TCartItem = {
     productId: string;
+    variantId?: string;
     productName: string;
-    productImage?: string | undefined;
-    variantId?: string | null;
+    productImage?: string;
     quantity: number;
     price: number;
 };

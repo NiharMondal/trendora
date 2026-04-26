@@ -1,6 +1,12 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import {
+    BadgeCheck,
+    ChevronsUpDown,
+    Home,
+    LogOut,
+    ShoppingCart,
+} from "lucide-react";
 
 import TDButton from "@/components/common/shared/td-button";
 import { TUserSession } from "@/components/types/session.types";
@@ -105,6 +111,24 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                         <DropdownMenuGroup>
                             <DropdownMenuItem asChild>
                                 <Link
+                                    href={"/"}
+                                    className="w-full cursor-pointer group"
+                                >
+                                    <Home className="group-hover:text-gray-50" />
+                                    Home
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    href={"/cart"}
+                                    className="w-full cursor-pointer group"
+                                >
+                                    <ShoppingCart className="group-hover:text-gray-50" />
+                                    Cart
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link
                                     href={
                                         role === EnumUserRole.ADMIN
                                             ? "/admin/profile"
@@ -122,7 +146,7 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                             <TDButton
                                 onClick={handleSignOut}
                                 variant="outline"
-                                className="group w-full hover:bg-destructive! hover:text-destructive-foreground! cursor-pointer"
+                                className="group w-full text-white bg-destructive/90! hover:bg-destructive! hover:text-destructive-foreground! cursor-pointer"
                             >
                                 <LogOut className="group-hover:text-destructive-foreground!" />
                                 Log out

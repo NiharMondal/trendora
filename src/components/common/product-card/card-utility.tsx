@@ -7,6 +7,7 @@ import { TProduct } from "@/components/types/product.types";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 import ProductCommonDetails from "../@ui/product-common-details";
 import TDSheet from "../shared/td-sheet";
+import Image from "next/image";
 
 type Props = {
 	product: TProduct;
@@ -57,12 +58,14 @@ const QuickViewDetails = ({ product }: Props) => {
 			<div className="quick-view-image-scroll">
 				<div className="lg:grid-cols-1 flex flex-row lg:flex-col  items-center justify-between gap-5 h-[300px] lg:h-[850px]">
 					{product.images?.map((img) => (
-						<img
+						<Image
 							src={img.url}
 							alt={product.name}
-							className="h-full w-full object-cover rounded-md object-center"
+							className="h-full lg:h-[200px] w-full object-cover rounded-md object-center"
 							key={img.id}
 							loading="lazy"
+							width={200}
+							height={300}
 						/>
 					))}
 				</div>
