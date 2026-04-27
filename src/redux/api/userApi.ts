@@ -2,6 +2,7 @@ import { TServerResponse } from "@/components/types/common.types";
 import { TUser } from "@/components/types/user.types";
 
 import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
+import { buildQueryParams } from "@/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const userApi = baseApi.injectEndpoints({
@@ -12,17 +13,10 @@ export const userApi = baseApi.injectEndpoints({
             Record<string, string>
         >({
             query: (query) => {
-                const params = new URLSearchParams();
-
-                Object.entries(query).forEach(([Key, value]) => {
-                    if (value?.trim().length > 0) {
-                        params.append(Key, value);
-                    }
-                });
                 return {
                     url: "/users",
                     method: "GET",
-                    params,
+                    params: buildQueryParams(query),
                 };
             },
             providesTags: ["users"],
@@ -40,7 +34,7 @@ export const userApi = baseApi.injectEndpoints({
         // update user
         updateMyProfile: builder.mutation<
             TServerResponse<TUser>,
-            { payload:TProfileFormValues }
+            { payload: TProfileFormValues }
         >({
             query: ({ payload }) => ({
                 url: `/users/my-profile-update`,

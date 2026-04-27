@@ -24,17 +24,26 @@ import {
 
 import { categoryColumns } from "./category-columns";
 import EditCategory from "./edit-category";
+import { useTableFilters } from "@/hooks/use-table-filters";
 
 export default function CategoryTable() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const categoryId = searchParams.get("categoryId");
 	// filter section
-	const [currentPage, setCurrentPage] = useState(1);
-	const [limit, setLimit] = useState("10");
-	const [search, setSearch] = useState("");
-	const [value] = useDebounce(search, 1000);
-	const [sortBy, setSortBy] = useState("createdAt:desc");
+
+	const {
+    currentPage,
+    limit,
+    search,
+    sortBy,
+    queryParams,
+    setCurrentPage,
+    setSearch,
+    setSortBy,
+    handleLimitChange,
+    handleResetFilters,
+} = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
 	const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(
 		null,
@@ -46,12 +55,7 @@ export default function CategoryTable() {
 		data: categories,
 		isLoading,
 		isFetching,
-	} = useAllCategoryQuery({
-		search: value,
-		limit: limit,
-		page: currentPage.toString(),
-		sortBy: sortBy,
-	});
+	} = useAllCategoryQuery(queryParams as Record<string, string>);
 
 	const handleEdit = (category: TCategory) => {
 		router.push(`?categoryId=${category.id}`, { scroll: false });
@@ -80,10 +84,11 @@ export default function CategoryTable() {
 				search={search}
 				limit={limit}
 				sortBy={sortBy}
-				setLimit={setLimit}
+				setLimit={handleLimitChange}	
 				setSortBy={setSortBy}
 				setSearch={setSearch}
 				sortByOptions={categorySortOptions}
+				onReset={handleResetFilters}
 				placeholder="Search by name"
 			/>
 

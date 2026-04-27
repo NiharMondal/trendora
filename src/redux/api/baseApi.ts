@@ -88,6 +88,6 @@ export const baseApi = createApi({
         "slides",
         "reviews",
         "sizeGroups",
-        "sizes"
+        "sizes",
     ],
 });

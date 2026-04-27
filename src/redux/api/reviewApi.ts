@@ -2,6 +2,7 @@ import { TServerResponse } from "@/components/types/common.types";
 import { TReview } from "@/components/types/review.types";
 
 import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
+import { buildQueryParams } from "@/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const reviewApi = baseApi.injectEndpoints({
@@ -20,18 +21,10 @@ export const reviewApi = baseApi.injectEndpoints({
             Record<string, string>
         >({
             query: (query) => {
-                const params = new URLSearchParams();
-
-                Object.entries(query).forEach(([Key, value]) => {
-                    if (value?.trim().length > 0) {
-                        params.append(Key, value);
-                    }
-                });
-
                 return {
                     url: "/reviews",
                     method: "GET",
-                    params,
+                    params: buildQueryParams(query),
                 };
             },
             providesTags: ["reviews"],

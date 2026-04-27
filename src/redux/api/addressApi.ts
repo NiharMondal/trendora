@@ -48,7 +48,10 @@ export const addressApi = baseApi.injectEndpoints({
         }),
 
         // update address
-        updateAddress: builder.mutation<TServerResponse<TAddress>, { payload: TAddressFormValues; id: string }>({
+        updateAddress: builder.mutation<
+            TServerResponse<TAddress>,
+            { payload: TAddressFormValues; id: string }
+        >({
             query: ({ payload, id }) => {
                 return {
                     url: `/address/${id}`,
