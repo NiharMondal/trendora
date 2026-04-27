@@ -2,7 +2,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useDebounce } from "use-debounce";
 
 import {
     DataTable,
@@ -18,6 +17,7 @@ import { TSize } from "@/components/types/size.types";
 import { Button } from "@/components/ui/button";
 import { useAllSizesQuery, useDeleteSizeMutation } from "@/redux/api/sizeApi";
 
+import { useTableFilters } from "@/hooks/use-table-filters";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";
 
@@ -26,11 +26,18 @@ export default function SizeTable() {
     const searchParams = useSearchParams();
     const categoryId = searchParams.get("id");
     // filter section
-    const [currentPage, setCurrentPage] = useState(1);
-    const [limit, setLimit] = useState("10");
-    const [search, setSearch] = useState("");
-    const [value] = useDebounce(search, 1000);
-    const [sortBy, setSortBy] = useState("createdAt:desc");
+    const {
+        currentPage,
+        limit,
+        search,
+        sortBy,
+        queryParams,
+        setCurrentPage,
+        setSearch,
+        setSortBy,
+        handleLimitChange,
+        handleResetFilters,
+    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
     const [deleteSizeId, setDeleteSizeId] = useState<string | null>(null);
     const [deleteSize, { isLoading: isDeleting }] = useDeleteSizeMutation();
@@ -39,12 +46,7 @@ export default function SizeTable() {
         data: sizes,
         isLoading,
         isFetching,
-    } = useAllSizesQuery({
-        search: value,
-        limit: limit,
-        page: currentPage.toString(),
-        sortBy: sortBy,
-    });
+    } = useAllSizesQuery(queryParams as Record<string, string>);
 
     const handleEdit = (size: TSize) => {
         router.push(`?id=${size.id}`, { scroll: false });
@@ -73,10 +75,11 @@ export default function SizeTable() {
                 search={search}
                 limit={limit}
                 sortBy={sortBy}
-                setLimit={setLimit}
+                setLimit={handleLimitChange}
                 setSortBy={setSortBy}
                 setSearch={setSearch}
                 sortByOptions={categorySortOptions}
+                onReset={handleResetFilters}
                 placeholder="Search by name"
             />
 
