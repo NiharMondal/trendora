@@ -30,7 +30,7 @@ export const addressApi = baseApi.injectEndpoints({
             providesTags: ["address"],
         }),
         // my address
-        myAddress: builder.query<TServerResponse<TAddress[]>, undefined>({
+        myAddress: builder.query<TServerResponse<TAddress[]>, void>({
             query: () => ({
                 url: `/address/my-address`,
                 method: "GET",

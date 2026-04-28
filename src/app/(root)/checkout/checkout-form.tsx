@@ -11,11 +11,11 @@ import { clearCart, selectCartItems } from "@/redux/slice/cartSlice";
 
 import TDRadioGroup from "@/components/form-input/TDRadioGroup";
 import { useRouter } from "next/navigation";
+import BillingInformation from "./billing-information";
 import {
     checkoutFormSchema,
     TCheckoutFormValues,
 } from "./checkout-form-schema";
-import CustomerInformation from "./customer-information";
 import { paymentMethodOptions } from "./payment-method-options";
 
 export default function CheckoutForm() {
@@ -39,12 +39,13 @@ export default function CheckoutForm() {
                 quantity: item.quantity,
             })),
             paymentMethod: values.paymentMethod,
-            note: values.notes,
+            notes: values.notes,
             ...(values.shippingAddressId
                 ? { shippingAddressId: values.shippingAddressId }
                 : {
                       address: {
                           fullName: values.fullName,
+                          email: values.email,
                           phone: values.phone,
                           street: values.street,
                           city: values.city,
@@ -55,7 +56,7 @@ export default function CheckoutForm() {
                   }),
         };
         try {
-            await createOrder(payload as any).unwrap();
+            await createOrder(payload).unwrap();
             toast.success("Order placed successfully");
             dispatch(clearCart());
             router.push("/");
@@ -72,9 +73,9 @@ export default function CheckoutForm() {
             >
                 <div className="bg-white rounded-md p-5 space-y-7 lg:col-span-1">
                     <p className="text-lg font-medium pb-2 border-b">
-                        Billing Information
+                        Shipping Information
                     </p>
-                    <CustomerInformation />
+                    <BillingInformation />
                 </div>
                 <div className="bg-white rounded-md p-5 space-y-5">
                     <div className="space-y-7">

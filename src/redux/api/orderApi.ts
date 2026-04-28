@@ -1,5 +1,5 @@
 import { TServerResponse } from "@/components/types/common.types";
-import { CreateOrderPayload, TOrder } from "@/components/types/order.types";
+import { TCreateOrderPayload, TOrder } from "@/components/types/order.types";
 
 import { buildQueryParams } from "@/utils/build-query-params";
 import { baseApi } from "./baseApi";
@@ -8,7 +8,7 @@ export const orderApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         createOrder: builder.mutation<
             TServerResponse<TOrder>,
-            CreateOrderPayload
+            TCreateOrderPayload
         >({
             query: (payload) => ({
                 url: "/orders",

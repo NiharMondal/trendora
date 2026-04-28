@@ -8,10 +8,9 @@ import { toast } from "sonner";
 
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
-import { Button } from "../ui/button";
+import { deleteTempImage } from "@/lib/delete-temp-image";
 import { cn } from "@/lib/utils";
-import { envConfig } from "@/config/env-config";
-import { deleteTempImage } from "../helpers/delete-temp-image";
+import { Button } from "../ui/button";
 
 type Props<T extends FieldValues> = {
     form: UseFormReturn<T>;
@@ -68,7 +67,6 @@ export default function TDImageUploadField<T extends FieldValues>({
         }
         handleUpload(file);
     };
-
 
     const handleRemove = async () => {
         const currentPublicId = form.getValues(publicIdName);
@@ -132,7 +130,13 @@ export default function TDImageUploadField<T extends FieldValues>({
                 disabled={loading}
                 className="w-full flex items-center gap-2"
             >
-                {loading ? "Uploading..." : <><CloudUpload /> <span>Upload Image</span></>}
+                {loading ? (
+                    "Uploading..."
+                ) : (
+                    <>
+                        <CloudUpload /> <span>Upload Image</span>
+                    </>
+                )}
             </Button>
 
             <input

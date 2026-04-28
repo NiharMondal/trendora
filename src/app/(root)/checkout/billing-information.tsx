@@ -8,15 +8,15 @@ import TDButton from "@/components/common/shared/td-button";
 import TDInput from "@/components/form-input/TDInput";
 import TDTextArea from "@/components/form-input/TDTextArea";
 import { cn } from "@/lib/utils";
-import { useAllAddressQuery } from "@/redux/api/addressApi";
+import { useMyAddressQuery } from "@/redux/api/addressApi";
 
 import { TCheckoutFormValues } from "./checkout-form-schema";
 
 type AddressMode = "SELECT" | "CREATE";
 
-export default function CustomerInformation() {
+export default function BillingInformation() {
     const [mode, setMode] = useState<AddressMode>("SELECT");
-    const { data, isLoading } = useAllAddressQuery(undefined);
+    const { data, isLoading } = useMyAddressQuery(undefined);
 
     const form = useFormContext<TCheckoutFormValues>();
     const {
@@ -94,11 +94,12 @@ export default function CustomerInformation() {
             )}
 
             {mode === "CREATE" && (
-                <div className="space-y-3">
+                <div className="space-y-1.5">
                     <TDInput name="fullName" label="Full Name" form={form} />
+                    <TDInput name="email" label="Email" type="email" form={form} />
                     <TDInput name="phone" label="Phone" form={form} />
                     <TDInput name="street" label="Street" form={form} />
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
                         <TDInput
                             name="postalCode"
                             label="Postal Code"

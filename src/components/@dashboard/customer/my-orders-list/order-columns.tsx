@@ -1,5 +1,11 @@
+import {
+    orderStatusMap,
+    paymentStatusMap,
+} from "@/components/helpers/status-maps";
 import { TOrder } from "@/components/types/order.types";
 import { DataTableColumn } from "@/components/types/table.types";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMonthDateYear } from "@/lib/format-date-time";
 
 export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
@@ -8,15 +14,42 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             key: "orderNumber",
             header: "Order ID",
         },
-
+        {
+            key: "createdAt",
+            header: "Date",
+            cell: (row) => <span>{formatMonthDateYear(row?.createdAt)}</span>,
+        },
+        {
+            key: "paymentStatus",
+            header: "Payment",
+            cell: (row) => (
+                <StatusBadge
+                    statusMap={paymentStatusMap}
+                    status={row?.paymentStatus}
+                />
+            ),
+        },
+        {
+            key: "paymentMethod",
+            header: "Method",
+            cell: (row) => (
+                <span>{row?.paymentMethod?.split("_")?.join(" ")}</span>
+            ),
+        },
         {
             key: "totalAmount",
-            header: "Total Amount",
+            header: "Total",
             cell: (row) => <span>${row?.totalAmount}</span>,
         },
         {
             key: "orderStatus",
             header: "Status",
+            cell: (row) => (
+                <StatusBadge
+                    statusMap={orderStatusMap}
+                    status={row?.orderStatus}
+                />
+            ),
         },
         {
             key: "items",
@@ -24,9 +57,17 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             cell: (row) => <span>{row?.items?.length}</span>,
         },
         {
-            key: "createdAt",
-            header: "Order Date",
-            cell: (row) => <span>{formatMonthDateYear(row?.createdAt)}</span>,
+            key: "actions",
+            header: "Actions",
+            cell: (row) => (
+                <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => console.log(row)}
+                >
+                    View
+                </Button>
+            ),
         },
     ];
 };

@@ -81,9 +81,6 @@ export type TOrder = {
 };
 
 
-
-
-
 type OrderItemInput = {
 	productId: string;
 	variantId?: string;
@@ -93,6 +90,7 @@ type OrderItemInput = {
 type NewShippingAddressInput = {
 	fullName: string;
 	phone: string;
+	email:string;
 	street: string;
 	city: string;
 	state: string;
@@ -100,18 +98,16 @@ type NewShippingAddressInput = {
 	country: string;
 };
 
-export type CreateOrderPayload =
+export type TCreateOrderPayload =
 	| {
-			userId: string;
 			items: OrderItemInput[];
 			paymentMethod: string;
-			note?: string;
+			notes?: string;
 			shippingAddressId?: string;
 	  }
 	| {
-			userId: string;
 			items: OrderItemInput[];
 			paymentMethod: string;
-			note?: string;
-			address?: NewShippingAddressInput;
+			notes?: string;
+			address: NewShippingAddressInput;
 	  };
