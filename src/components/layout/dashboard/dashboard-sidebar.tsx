@@ -31,7 +31,7 @@ export function DashboardSidebar({ session, role }: TProps) {
             ? adminNavlink
             : customerDashboardCardOptions;
 
-    const userImage = data?.result.avatar || "";
+    const userImage = data?.result?.avatar || "";
     return (
         <Sidebar>
             <SidebarContent>

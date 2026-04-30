@@ -5,30 +5,19 @@ import {
     fetchBaseQuery,
     FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import { getSession, signOut } from "next-auth/react";
 
 import { envConfig } from "@/config/env-config";
 
-import { logout, setCredentials } from "../slice/authSlice";
-import { RootState } from "../store";
-
-// Explicitly type the refreshResult data
-type RefreshResponse = {
-    success: true;
-    result: {
-        accessToken: string;
-    };
-};
-
-const baseUrl = envConfig.backend_url; // backend url
+const baseUrl = envConfig.backend_url;
 
 const baseQuery = fetchBaseQuery({
     baseUrl,
     credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-        const token = (getState() as RootState).auth.token;
-
-        if (token) {
-            headers.set("authorization", token);
+    prepareHeaders: async (headers) => {
+        const session = await getSession();
+        if (session?.accessToken) {
+            headers.set("authorization", session.accessToken);
         }
         return headers;
     },
@@ -41,33 +30,20 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result?.error && result?.error.status === 401) {
-        const refreshResponse = await fetch("/api/auth/refresh", {
-            method: "POST",
-            credentials: "include",
-        });
+    if (result?.error && result.error.status === 401) {
+        // getSession() always re-runs the NextAuth jwt callback, which will
+        // refresh the access token if it has expired.
+        const session = await getSession();
 
-        const refreshData = (await refreshResponse
-            .json()
-            .catch(() => undefined)) as RefreshResponse | undefined;
-
-        const user = (api.getState() as RootState).auth.user;
-
-        if (refreshResponse.ok && refreshData?.result?.accessToken) {
-            // set 20 minutes expiry for new access token
-            const expiryTime = new Date(Date.now() + 20 * 60 * 1000);
-            api.dispatch(
-                setCredentials({
-                    user: user,
-                    token: refreshData?.result?.accessToken,
-                    expires: expiryTime.toISOString(),
-                }),
-            );
-
-            result = await baseQuery(args, api, extraOptions);
-        } else {
-            api.dispatch(logout());
+        if (
+            !session?.accessToken ||
+            session.error === "RefreshAccessTokenError"
+        ) {
+            await signOut({ callbackUrl: "/login" });
+            return result;
         }
+
+        result = await baseQuery(args, api, extraOptions);
     }
 
     return result;

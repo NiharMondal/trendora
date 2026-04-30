@@ -1,61 +1,34 @@
 "use client";
 
-import { EnumUserRole } from "@/global/user-role";
-import { setCredentials, TUserState } from "@/redux/slice/authSlice";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { useAppDispatch } from "@/redux/redux.hooks";
+import { useEffect } from "react";
+
+import { EnumUserRole } from "@/global/user-role";
+
+const PUBLIC_AUTH_PATHS = ["/login", "/register", "/forgot-password"];
 
 export default function AuthSync({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const { data: session, status } = useSession();
-    const dispatch = useAppDispatch();
-    const hasSynced = useRef(false);
-
-    const publicPaths = ["/login", "/register", "/forgot-password"];
-    const isPublicPath = publicPaths.includes(pathname);
 
     useEffect(() => {
         if (
             status === "authenticated" &&
-            (session as any)?.accessToken &&
-            !hasSynced.current
+            PUBLIC_AUTH_PATHS.includes(pathname)
         ) {
-            hasSynced.current = true;
-
-            const expiryTime = new Date(Date.now() + 20 * 60 * 1000);
-            dispatch(
-                setCredentials({
-                    user: session.user as TUserState,
-                    token: (session as any).accessToken,
-                    expires: expiryTime.toISOString(),
-                }),
-            );
-        }
-
-        // Redirect authenticated users away from public auth pages
-        if (status === "authenticated" && isPublicPath) {
-            const role = (session as any)?.user?.role;
-            if (role === EnumUserRole.ADMIN || role === EnumUserRole.SUPER_ADMIN) {
-                router.push("/admin");
+            const role = session?.user?.role;
+            if (
+                role === EnumUserRole.ADMIN ||
+                role === EnumUserRole.SUPER_ADMIN
+            ) {
+                router.replace("/admin");
             } else {
-                router.push("/dashboard");
+                router.replace("/dashboard");
             }
         }
-
-        if (status === "unauthenticated") {
-            hasSynced.current = false;
-
-            dispatch(setCredentials({ user: null, token: null, expires: null }));
-
-            // Only redirect to login if they are not already on a public path
-            if (!isPublicPath) {
-                router.push("/login");
-            }
-        }
-    }, [session, status, dispatch, router, pathname, isPublicPath]);
+    }, [session, status, pathname, router]);
 
     return <>{children}</>;
 }

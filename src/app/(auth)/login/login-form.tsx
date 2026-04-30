@@ -11,16 +11,12 @@ import { EnumUserRole } from "@/global/user-role";
 
 import TDButton from "@/components/common/shared/td-button";
 import TDInput from "@/components/form-input/TDInput";
-import { TSessionResponse } from "@/components/types/session.types";
-import { useAppDispatch } from "@/redux/redux.hooks";
-import { setCredentials } from "@/redux/slice/authSlice";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
 
 export default function LoginForm() {
     const router = useRouter();
-    const dispatch = useAppDispatch();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const form = useForm({
@@ -47,15 +43,7 @@ export default function LoginForm() {
 
             toast.success("Logged in successfully");
             const session = await getSession();
-            dispatch(
-                setCredentials({
-                    user: (session as TSessionResponse)?.user,
-                    token: (session as TSessionResponse)?.accessToken,
-                    expires: (session as TSessionResponse)?.expires,
-                }),
-            );
-
-            const role = (session as TSessionResponse)?.user?.role;
+            const role = session?.user?.role;
             if (
                 role === EnumUserRole.ADMIN ||
                 role === EnumUserRole.SUPER_ADMIN

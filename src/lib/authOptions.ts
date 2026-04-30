@@ -1,14 +1,57 @@
 import { NextAuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { envConfig } from "@/config/env-config";
-import { cookies } from "next/headers";
+import { EnumUserRole } from "@/global/user-role";
+
+const ACCESS_TOKEN_TTL_MS = 20 * 60 * 1000;
+const SESSION_MAX_AGE_S = 60 * 60 * 24 * 30;
+const REFRESH_SKEW_MS = 30 * 1000;
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+    try {
+        if (!token.refreshToken) {
+            throw new Error("No refresh token on session");
+        }
+
+        const res = await fetch(`${envConfig.backend_url}/auth/refresh-token`, {
+            method: "POST",
+            headers: {
+                Cookie: `td_refresh_token=${token.refreshToken}`,
+            },
+        });
+
+        const data = await res.json().catch(() => ({}));
+        const payload = data?.result;
+        const newAccessToken = payload?.accessToken;
+
+        if (!res.ok || !newAccessToken) {
+            console.error("[next-auth] refresh failed", {
+                status: res.status,
+                body: data,
+            });
+            throw new Error(
+                data?.message || `Refresh failed with status ${res.status}`,
+            );
+        }
+
+        return {
+            ...token,
+            accessToken: newAccessToken,
+            accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+            refreshToken: payload?.refreshToken ?? token.refreshToken,
+            error: undefined,
+        };
+    } catch (error) {
+        console.error("[next-auth] refreshAccessToken error", error);
+        return { ...token, error: "RefreshAccessTokenError" };
+    }
+}
 
 export const authOptions: NextAuthOptions = {
-    session: {
-        strategy: "jwt",
-    },
+    session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_S },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -25,130 +68,113 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Missing email or password");
                 }
 
-                try {
-                    const res = await fetch(
-                        `${envConfig.backend_url}/auth/login`,
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                email: credentials.email,
-                                password: credentials.password,
-                            }),
-                        },
-                    );
+                const res = await fetch(
+                    `${envConfig.backend_url}/auth/login`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            email: credentials.email,
+                            password: credentials.password,
+                        }),
+                    },
+                );
 
-                    const data = await res.json();
-                    if (!res.ok) {
-                        throw new Error(data?.message || "Invalid credentials");
-                    }
-                    const cookieStore = await cookies();
-                    if (data?.success && data?.result) {
-                        cookieStore.set(
-                            "td_refresh_token",
-                            data.result.refreshToken,
-                            {
-                                httpOnly: true,
-                                secure: process.env.NODE_ENV === "production",
-                                sameSite: "lax",
-                                path: "/",
-                                maxAge: 60 * 60 * 24 * 30,
-                            },
-                        );
-                        return {
-                            id: data.result.user.id,
-                            name: data.result.user.name,
-                            email: data.result.user.email,
-                            role: data.result.user.role,
-                            accessToken: data.result.accessToken,
-                        };
-                    }
-
-                    return null;
-                } catch (error: any) {
-                    throw new Error(error.message);
+                const data = await res.json().catch(() => ({}));
+                const payload = data?.result;
+                if (!res.ok || !payload?.accessToken || !payload?.user) {
+                    throw new Error(data?.message || "Invalid credentials");
                 }
+
+                return {
+                    id: payload.user.id,
+                    name: payload.user.name,
+                    email: payload.user.email,
+                    image: payload.user.avatar ?? null,
+                    role: payload.user.role as EnumUserRole,
+                    accessToken: payload.accessToken,
+                    refreshToken: payload.refreshToken,
+                };
             },
         }),
     ],
     callbacks: {
         async jwt({ token, user, account }) {
-            // 1. Credentials login (already correct)
             if (user && account?.provider === "credentials") {
-                token.id = user.id;
-                token.role = (user as any).role;
-                token.accessToken = (user as any).accessToken;
-                return token;
+                return {
+                    ...token,
+                    id: user.id,
+                    role: user.role,
+                    accessToken: user.accessToken,
+                    refreshToken: user.refreshToken,
+                    accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+                    provider: "credentials",
+                };
             }
 
-            if (account?.provider === "google") {
+            if (account?.provider === "google" && user) {
                 try {
                     const res = await fetch(
                         `${envConfig.backend_url}/auth/oauth-login`,
                         {
                             method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
+                            headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                email: token.email || user?.email,
-                                name: token.name || user?.name,
-                                avatar: token.picture || user?.image,
+                                email: user.email,
+                                name: user.name,
+                                avatar: user.image,
                                 provider: "google",
                                 providerId: account.providerAccountId,
                             }),
                         },
                     );
 
-                    const data = await res.json();
-
-                    if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    const payload = data?.result ?? data?.data ?? data;
+                    if (!res.ok || !payload?.accessToken || !payload?.user) {
                         throw new Error(data?.message || "OAuth login failed");
                     }
 
-                    const result = data?.result;
-
-                    if (result?.refreshToken) {
-                        const cookieStore = await cookies();
-                        cookieStore.set(
-                            "td_refresh_token",
-                            result.refreshToken,
-                            {
-                                httpOnly: true,
-                                secure: process.env.NODE_ENV === "production",
-                                sameSite: "lax",
-                                path: "/",
-                                maxAge: 60 * 60 * 24 * 30,
-                            },
-                        );
-                    }
-
-                    token.id = result?.user?.id;
-                    token.role = result?.user?.role;
-                    token.accessToken = result?.accessToken;
-                    token.provider = "google";
+                    return {
+                        ...token,
+                        id: payload.user.id,
+                        role: payload.user.role as EnumUserRole,
+                        accessToken: payload.accessToken,
+                        refreshToken: payload.refreshToken,
+                        accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+                        provider: "google",
+                    };
                 } catch (error) {
-                    console.error("OAuth error:", error);
+                    console.error("[next-auth] oauth-login error", error);
+                    return { ...token, error: "RefreshAccessTokenError" };
                 }
             }
 
-            return token;
+            if (
+                token.accessTokenExpires &&
+                Date.now() < token.accessTokenExpires - REFRESH_SKEW_MS
+            ) {
+                return token;
+            }
+
+            if (!token.refreshToken) {
+                return { ...token, error: "RefreshAccessTokenError" };
+            }
+
+            return refreshAccessToken(token);
         },
 
         async session({ session, token }) {
-            if (session.user) {
-                (session.user as any).id = token.id;
-                (session.user as any).role = token.role;
-                (session as any).accessToken = token.accessToken;
-                (session as any).provider = token.provider;
-            }
+            session.user = {
+                ...session.user,
+                id: token.id,
+                role: token.role,
+            };
+            session.accessToken = token.accessToken;
+            session.error = token.error;
             return session;
         },
     },
-    pages: {
-        signIn: "/login",
-    },
+    pages: { signIn: "/login" },
     secret: process.env.NEXT_AUTH_SECRET,
 };

@@ -27,26 +27,18 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
-import { useAppDispatch } from "@/redux/redux.hooks";
-import { logout } from "@/redux/slice/authSlice";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 type TNavUserProps = {
     user: TUserSession | undefined;
     role: EnumUserRole;
     userImage: string;
 };
 export function NavUser({ user, role, userImage }: TNavUserProps) {
-    const router = useRouter();
-    const dispatch = useAppDispatch();
-
     const { isMobile } = useSidebar();
 
     const handleSignOut = async () => {
-        await signOut();
-        dispatch(logout());
-        router.push("/login");
+        await signOut({ callbackUrl: "/login" });
     };
 
     return (
