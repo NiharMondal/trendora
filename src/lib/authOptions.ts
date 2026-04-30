@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { envConfig } from "@/config/env-config";
+import { cookies } from "next/headers";
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -40,12 +41,22 @@ export const authOptions: NextAuthOptions = {
                     );
 
                     const data = await res.json();
-
                     if (!res.ok) {
                         throw new Error(data?.message || "Invalid credentials");
                     }
-
+                    const cookieStore = await cookies();
                     if (data?.success && data?.result) {
+                        cookieStore.set(
+                            "td_refresh_token",
+                            data.result.refreshToken,
+                            {
+                                httpOnly: true,
+                                secure: process.env.NODE_ENV === "production",
+                                sameSite: "lax",
+                                path: "/",
+                                maxAge: 60 * 60 * 24 * 30,
+                            },
+                        );
                         return {
                             id: data.result.user.id,
                             name: data.result.user.name,
@@ -99,6 +110,21 @@ export const authOptions: NextAuthOptions = {
 
                     const result = data?.result;
 
+                    if (result?.refreshToken) {
+                        const cookieStore = await cookies();
+                        cookieStore.set(
+                            "td_refresh_token",
+                            result.refreshToken,
+                            {
+                                httpOnly: true,
+                                secure: process.env.NODE_ENV === "production",
+                                sameSite: "lax",
+                                path: "/",
+                                maxAge: 60 * 60 * 24 * 30,
+                            },
+                        );
+                    }
+
                     token.id = result?.user?.id;
                     token.role = result?.user?.role;
                     token.accessToken = result?.accessToken;
@@ -124,5 +150,5 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: "/login",
     },
-    secret: process.env.NEXT_PUBLIC_NEXT_AUTH_SECRET,
+    secret: process.env.NEXT_AUTH_SECRET,
 };

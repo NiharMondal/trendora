@@ -42,24 +42,25 @@ const baseQueryWithReauth: BaseQueryFn<
     let result = await baseQuery(args, api, extraOptions);
 
     if (result?.error && result?.error.status === 401) {
-        const refreshResult = await baseQuery(
-            {
-                url: "/auth/refresh-token",
-                method: "POST",
-            },
-            api,
-            extraOptions,
-        );
+        const refreshResponse = await fetch("/api/auth/refresh", {
+            method: "POST",
+            credentials: "include",
+        });
+
+        const refreshData = (await refreshResponse
+            .json()
+            .catch(() => undefined)) as RefreshResponse | undefined;
 
         const user = (api.getState() as RootState).auth.user;
 
-        const refreshData = refreshResult?.data as RefreshResponse | undefined;
-
-        if (refreshData?.result?.accessToken) {
+        if (refreshResponse.ok && refreshData?.result?.accessToken) {
+            // set 20 minutes expiry for new access token
+            const expiryTime = new Date(Date.now() + 20 * 60 * 1000);
             api.dispatch(
                 setCredentials({
                     user: user,
                     token: refreshData?.result?.accessToken,
+                    expires: expiryTime.toISOString(),
                 }),
             );
 

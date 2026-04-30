@@ -25,10 +25,12 @@ export default function AuthSync({ children }: { children: React.ReactNode }) {
         ) {
             hasSynced.current = true;
 
+            const expiryTime = new Date(Date.now() + 20 * 60 * 1000);
             dispatch(
                 setCredentials({
                     user: session.user as TUserState,
                     token: (session as any).accessToken,
+                    expires: expiryTime.toISOString(),
                 }),
             );
         }
@@ -46,7 +48,7 @@ export default function AuthSync({ children }: { children: React.ReactNode }) {
         if (status === "unauthenticated") {
             hasSynced.current = false;
 
-            dispatch(setCredentials({ user: null, token: null }));
+            dispatch(setCredentials({ user: null, token: null, expires: null }));
 
             // Only redirect to login if they are not already on a public path
             if (!isPublicPath) {

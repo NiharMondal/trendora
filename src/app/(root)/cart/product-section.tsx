@@ -59,7 +59,7 @@ export default function ProductSection() {
                                         ${item.price.toFixed(2)} x{" "}
                                         {item.quantity}
                                         {item?.variantId && (
-                                            <span className="text-xs font-medium italic bg-blue-300/20 text-primary px-2 py-0.5 rounded-full">
+                                            <span className="bg-success/10 text-success rounded-full px-2 py-0.5 text-xs">
                                                 Variant
                                             </span>
                                         )}

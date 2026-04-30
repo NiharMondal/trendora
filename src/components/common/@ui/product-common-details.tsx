@@ -58,7 +58,7 @@ export default function ProductCommonDetails({
             productImage: product?.images[0].url,
             variantId: variantInfo?.id,
             quantity: quantity,
-            price: Number(variantInfo.price) || Number(productPrice),
+            price: variantInfo?.id ? Number(variantInfo.price) : Number(productPrice),
         };
         dispatch(addItemToCart(productData as TCartItem));
         toast.success("Product added to cart");

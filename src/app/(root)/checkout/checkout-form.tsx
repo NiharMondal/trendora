@@ -112,7 +112,7 @@ export default function CheckoutForm() {
                                             {item.productName}
                                         </p>
                                         <p className="text-sm text-gray-500">
-                                            {item.quantity} x ${item.price}
+                                            {item.quantity} x ${item.price} {item?.variantId && <span className="bg-success/10 text-success rounded-full px-1 py-0.5 text-[8px] ">Variant</span>}
                                         </p>
                                     </div>
                                 </div>

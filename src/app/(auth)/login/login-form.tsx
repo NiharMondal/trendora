@@ -6,18 +6,17 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import TDInput from "@/components/form-input/TDInput";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { EnumUserRole } from "@/global/user-role";
 
+import TDButton from "@/components/common/shared/td-button";
+import TDInput from "@/components/form-input/TDInput";
+import { TSessionResponse } from "@/components/types/session.types";
+import { useAppDispatch } from "@/redux/redux.hooks";
+import { setCredentials } from "@/redux/slice/authSlice";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
-import { useAppDispatch } from "@/redux/redux.hooks";
-import { setCredentials } from "@/redux/slice/authSlice";
-import { TSessionResponse } from "@/components/types/session.types";
-import TDButton from "@/components/common/shared/td-button";
 
 export default function LoginForm() {
     const router = useRouter();
@@ -52,18 +51,22 @@ export default function LoginForm() {
                 setCredentials({
                     user: (session as TSessionResponse)?.user,
                     token: (session as TSessionResponse)?.accessToken,
+                    expires: (session as TSessionResponse)?.expires,
                 }),
             );
-            
+
             const role = (session as TSessionResponse)?.user?.role;
-            if (role === EnumUserRole.ADMIN || role === EnumUserRole.SUPER_ADMIN) {
+            if (
+                role === EnumUserRole.ADMIN ||
+                role === EnumUserRole.SUPER_ADMIN
+            ) {
                 router.push("/admin");
             } else {
                 router.push("/dashboard");
             }
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
-        }finally{
+        } finally {
             setIsLoading(false);
         }
     };
@@ -110,7 +113,11 @@ export default function LoginForm() {
                             Forgot your password?
                         </Link>
                     </div>
-                    <TDButton type="submit" isLoading={isLoading} className="w-full cursor-pointer">
+                    <TDButton
+                        type="submit"
+                        isLoading={isLoading}
+                        className="w-full cursor-pointer"
+                    >
                         {isLoading ? "Signing in..." : "Sign In"}
                     </TDButton>
                 </form>
