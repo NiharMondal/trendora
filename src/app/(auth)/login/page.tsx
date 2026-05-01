@@ -10,8 +10,8 @@ import LoginForm from "./login-form";
 export default async function LoginPage() {
     const session = await getServerSession(authOptions);
 
-    if (session?.user) {
-        const role = (session.user as any).role;
+    if (session?.user && !session.error) {
+        const role = session.user.role;
         if (role === EnumUserRole.ADMIN || role === EnumUserRole.SUPER_ADMIN) {
             redirect("/admin");
         } else {

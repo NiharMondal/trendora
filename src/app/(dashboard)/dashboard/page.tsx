@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-import { customerDashboardCardOptions } from "@/components/layout/dashboard/dashboard-navlink";
+import { customerDashboardLinks } from "@/components/layout/dashboard/dashboard-navlink";
 
 export default function UserDashboardPage() {
     return (
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-8">
-            {customerDashboardCardOptions?.map((item) => (
+            {customerDashboardLinks?.map((item) => (
                 <div
                     key={item.url}
                     className="border bg-white rounded-lg hover:border hover:border-primary duration-200 h-[180px] md:h-[200px] shadow"

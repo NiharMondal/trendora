@@ -19,7 +19,7 @@ export default function LoginForm() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const form = useForm({
+    const form = useForm<TLoginValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",

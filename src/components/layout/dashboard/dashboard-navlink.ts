@@ -18,18 +18,21 @@ import {
     Stars,
     User2,
 } from "lucide-react";
+
 type TChildren = {
     title: string;
     url: string;
     index?: boolean;
 };
+
 export type TSidebarLink = {
     title: string;
     url?: string;
     icon?: LucideIcon;
     children?: TChildren[];
 };
-export const adminNavlink: TSidebarLink[] = [
+
+export const adminDashboardLinks: TSidebarLink[] = [
     { title: "Home", url: "/", icon: Home },
     { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
     {
@@ -110,7 +113,7 @@ export const adminNavlink: TSidebarLink[] = [
     { title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
 ];
 
-export const customerDashboardCardOptions: TSidebarLink[] = [
+export const customerDashboardLinks: TSidebarLink[] = [
     { title: "Home", url: "/", icon: Home },
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Cart", url: "/cart", icon: ShoppingCart },

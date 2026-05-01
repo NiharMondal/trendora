@@ -9,9 +9,10 @@ import { EnumUserRole } from "@/global/user-role";
 
 import { TSessionResponse } from "@/components/types/session.types";
 import { useMyProfileQuery } from "@/redux/api/userApi";
+
 import {
-    adminNavlink,
-    customerDashboardCardOptions,
+    adminDashboardLinks,
+    customerDashboardLinks,
 } from "./dashboard-navlink";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -28,8 +29,8 @@ export function DashboardSidebar({ session, role }: TProps) {
 
     const navLink =
         role === EnumUserRole.ADMIN
-            ? adminNavlink
-            : customerDashboardCardOptions;
+            ? adminDashboardLinks
+            : customerDashboardLinks;
 
     const userImage = data?.result?.avatar || "";
     return (
@@ -38,7 +39,11 @@ export function DashboardSidebar({ session, role }: TProps) {
                 <NavMain label={label} navLink={navLink} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={session?.user} role={role} userImage={userImage} />
+                <NavUser
+                    user={session?.user}
+                    role={role}
+                    userImage={userImage}
+                />
             </SidebarFooter>
         </Sidebar>
     );

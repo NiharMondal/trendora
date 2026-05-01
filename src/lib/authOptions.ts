@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { envConfig } from "@/config/env-config";
 import { EnumUserRole } from "@/global/user-role";
 
-const ACCESS_TOKEN_TTL_MS = 20 * 60 * 1000;
+const ACCESS_TOKEN_TTL_MS = 60 * 1000;
 const SESSION_MAX_AGE_S = 60 * 60 * 24 * 30;
 const REFRESH_SKEW_MS = 30 * 1000;
 
@@ -18,9 +18,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
         const res = await fetch(`${envConfig.backend_url}/auth/refresh-token`, {
             method: "POST",
-            headers: {
-                Cookie: `td_refresh_token=${token.refreshToken}`,
-            },
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken: token.refreshToken }),
         });
 
         const data = await res.json().catch(() => ({}));
