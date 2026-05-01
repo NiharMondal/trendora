@@ -1,9 +1,9 @@
+import { DataTableColumn } from "@/components/common/shared/table/table-types";
 import {
     orderStatusMap,
     paymentStatusMap,
 } from "@/components/helpers/status-maps";
 import { TOrder } from "@/components/types/order.types";
-import { DataTableColumn } from "@/components/types/table.types";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMonthDateYear } from "@/lib/format-date-time";
@@ -37,10 +37,11 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             ),
         },
         {
-            key: "totalAmount",
-            header: "Total",
-            cell: (row) => <span>${row?.totalAmount}</span>,
+            key: "items",
+            header: "Items",
+            cell: (row) => <span>{row?.items?.length}</span>,
         },
+
         {
             key: "orderStatus",
             header: "Status",
@@ -52,9 +53,17 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             ),
         },
         {
-            key: "items",
-            header: "Items",
-            cell: (row) => <span>{row?.items?.length}</span>,
+            key: "shippingCost",
+            header: "Shipping Cost",
+        },
+        {
+            key: "tax",
+            header: "Tax",
+        },
+        {
+            key: "totalAmount",
+            header: "Total",
+            cell: (row) => <span>${row?.totalAmount}</span>,
         },
         {
             key: "actions",

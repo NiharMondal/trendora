@@ -3,6 +3,7 @@ import { DataTable, TableLoading } from "@/components/common/shared/table";
 import { useGetMyOrdersQuery } from "@/redux/api/orderApi";
 import { myOrderColumns } from "./order-columns";
 import { DownloadButton, PrintButton } from "./pdf-download-print";
+import { TOrder, TOrderItemResponse } from "@/components/types/order.types";
 
 
 export default function MyOrdersList() {
@@ -32,11 +33,35 @@ export default function MyOrdersList() {
                 </div>
             )}
 
-            <DataTable
-                columns={myOrderColumns()}
+            <DataTable<TOrder, TOrderItemResponse>
                 data={orderList}
-                rowKey={(row) => row.id}
+                rowKey={(o) => o.id}
+                columns={myOrderColumns()}
                 isFetching={isFetching}
+                expandable={{
+                    getSubRows: (o) => o.items,
+                    subRowKey: (item, o) => `${o.id}-${item.id}`,
+                    subColumns: [
+                        { key: "productName", header: "Product" },
+                        {
+                            key: "quantity",
+                            header: "Qty",
+                            className: "text-center",
+                        },
+                        {
+                            key: "priceAtPurchase",
+                            header: "Price",
+                            cell: (i) => `$${i.priceAtPurchase}`,
+                        },
+                        {
+                            key: "subtotal",
+                            header: "Subtotal",
+                            cell: (i) => `$${i.subtotal}`,
+                        },
+                    ],
+                    title: (o) => `Items in #${o.orderNumber}`,
+                    defaultExpanded: true,
+                }}
             />
         </div>
     );
