@@ -6,9 +6,22 @@ import GoogleProvider from "next-auth/providers/google";
 import { envConfig } from "@/config/env-config";
 import { EnumUserRole } from "@/global/user-role";
 
-const ACCESS_TOKEN_TTL_MS = 60 * 1000;
-const SESSION_MAX_AGE_S = 60 * 60 * 24 * 30;
-const REFRESH_SKEW_MS = 30 * 1000;
+const REFRESH_SKEW_MS = 30 * 1000; // 30 seconds
+const SESSION_MAX_AGE_S = 60 * 60 * 24 * 30; // 30 days
+
+// Read the `exp` claim from a JWT (seconds since epoch) and convert to ms.
+// Falls back to a 15-minute default if the token is malformed.
+function getAccessTokenExpiry(accessToken: string): number {
+    try {
+        const [, payloadB64] = accessToken.split(".");
+        const json = Buffer.from(payloadB64, "base64url").toString("utf-8");
+        const { exp } = JSON.parse(json) as { exp?: number };
+        if (typeof exp === "number") return exp * 1000;
+    } catch {
+        // ignore — fall through
+    }
+    return Date.now() + 15 * 60 * 1000;
+}
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
     try {
@@ -39,7 +52,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         return {
             ...token,
             accessToken: newAccessToken,
-            accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+            accessTokenExpires: getAccessTokenExpiry(newAccessToken),
             refreshToken: payload?.refreshToken ?? token.refreshToken,
             error: undefined,
         };
@@ -53,8 +66,8 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_S },
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || "",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+            clientId: envConfig.GOOGLE_CLIENT_ID ?? "",
+            clientSecret: envConfig.GOOGLE_CLIENT_SECRET ?? "",
         }),
         CredentialsProvider({
             name: "Credentials",
@@ -67,17 +80,14 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Missing email or password");
                 }
 
-                const res = await fetch(
-                    `${envConfig.backend_url}/auth/login`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            email: credentials.email,
-                            password: credentials.password,
-                        }),
-                    },
-                );
+                const res = await fetch(`${envConfig.backend_url}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: credentials.email,
+                        password: credentials.password,
+                    }),
+                });
 
                 const data = await res.json().catch(() => ({}));
                 const payload = data?.result;
@@ -106,7 +116,7 @@ export const authOptions: NextAuthOptions = {
                     role: user.role,
                     accessToken: user.accessToken,
                     refreshToken: user.refreshToken,
-                    accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+                    accessTokenExpires: getAccessTokenExpiry(user.accessToken),
                     provider: "credentials",
                 };
             }
@@ -129,7 +139,7 @@ export const authOptions: NextAuthOptions = {
                     );
 
                     const data = await res.json().catch(() => ({}));
-                    const payload = data?.result ?? data?.data ?? data;
+                    const payload = data?.result;
                     if (!res.ok || !payload?.accessToken || !payload?.user) {
                         throw new Error(data?.message || "OAuth login failed");
                     }
@@ -140,7 +150,7 @@ export const authOptions: NextAuthOptions = {
                         role: payload.user.role as EnumUserRole,
                         accessToken: payload.accessToken,
                         refreshToken: payload.refreshToken,
-                        accessTokenExpires: Date.now() + ACCESS_TOKEN_TTL_MS,
+                        accessTokenExpires: getAccessTokenExpiry(payload.accessToken),
                         provider: "google",
                     };
                 } catch (error) {

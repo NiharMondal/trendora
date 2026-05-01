@@ -4,6 +4,7 @@ import {
     BadgeCheck,
     ChevronsUpDown,
     Home,
+    LayoutDashboard,
     LogOut,
     ShoppingCart,
 } from "lucide-react";
@@ -111,13 +112,23 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                                <Link
-                                    href={"/cart"}
-                                    className="w-full cursor-pointer group"
-                                >
-                                    <ShoppingCart className="group-hover:text-gray-50" />
-                                    Cart
-                                </Link>
+                                {role === EnumUserRole.CUSTOMER ? (
+                                    <Link
+                                        href={"/cart"}
+                                        className="w-full cursor-pointer group"
+                                    >
+                                        <ShoppingCart className="group-hover:text-gray-50" />
+                                        Cart
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href={"/admin"}
+                                        className="w-full cursor-pointer group"
+                                    >
+                                        <LayoutDashboard className="group-hover:text-gray-50" />
+                                        Dashboard
+                                    </Link>
+                                )}
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link
