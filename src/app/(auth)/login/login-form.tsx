@@ -6,20 +6,20 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import TDInput from "@/components/form-input/TDInput";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { EnumUserRole } from "@/global/user-role";
 
+import TDButton from "@/components/common/shared/td-button";
+import TDInput from "@/components/form-input/TDInput";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";
 
 export default function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
-
-    const form = useForm({
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const form = useForm<TLoginValues>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
@@ -29,6 +29,7 @@ export default function LoginForm() {
 
     const handleLogin = async (data: TLoginValues) => {
         try {
+            setIsLoading(true);
             const res = await signIn("credentials", {
                 email: data.email,
                 password: data.password,
@@ -41,13 +42,20 @@ export default function LoginForm() {
             }
 
             toast.success("Logged in successfully");
-
             const session = await getSession();
-            const role = (session as any)?.user?.role;
-            if (role === EnumUserRole.ADMIN) router.push("/admin");
-            else router.push("/dashboard");
+            const role = session?.user?.role;
+            if (
+                role === EnumUserRole.ADMIN ||
+                role === EnumUserRole.SUPER_ADMIN
+            ) {
+                router.push("/admin");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -93,9 +101,13 @@ export default function LoginForm() {
                             Forgot your password?
                         </Link>
                     </div>
-                    <Button type="submit" className="w-full cursor-pointer">
-                        Sign In
-                    </Button>
+                    <TDButton
+                        type="submit"
+                        isLoading={isLoading}
+                        className="w-full cursor-pointer"
+                    >
+                        {isLoading ? "Signing in..." : "Sign In"}
+                    </TDButton>
                 </form>
             </Form>
             <div className="mt-10 text-center">

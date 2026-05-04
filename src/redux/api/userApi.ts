@@ -1,67 +1,63 @@
 import { TServerResponse } from "@/components/types/common.types";
 import { TUser } from "@/components/types/user.types";
 
+import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
+import { buildQueryParams } from "@/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const userApi = baseApi.injectEndpoints({
-	endpoints: (builder) => ({
-		// get all user
-		allUser: builder.query<
-			TServerResponse<TUser[]>,
-			Record<string, string>
-		>({
-			query: (query) => {
-				const params = new URLSearchParams();
+    endpoints: (builder) => ({
+        // get all user
+        allUser: builder.query<
+            TServerResponse<TUser[]>,
+            Record<string, string>
+        >({
+            query: (query) => {
+                return {
+                    url: "/users",
+                    method: "GET",
+                    params: buildQueryParams(query),
+                };
+            },
+            providesTags: ["users"],
+        }),
 
-				Object.entries(query).forEach(([Key, value]) => {
-					if (value?.trim().length > 0) {
-						params.append(Key, value);
-					}
-				});
-				return {
-					url: "/users",
-					method: "GET",
-					params,
-				};
-			},
-			providesTags: ["users"],
-		}),
+        //get user profile
+        myProfile: builder.query<TServerResponse<TUser>, void>({
+            query: () => ({
+                url: `/users/my-profile`,
+                method: "GET",
+            }),
+            providesTags: ["users"],
+        }),
 
-		//get user by ID
-		myProfile: builder.query<TServerResponse<TUser>, string>({
-			query: (id) => ({
-				url: `/users/${id}`,
-				method: "GET",
-			}),
-			providesTags: ["users"],
-		}),
+        // update user
+        updateMyProfile: builder.mutation<
+            TServerResponse<TUser>,
+            { payload: TProfileFormValues }
+        >({
+            query: ({ payload }) => ({
+                url: `/users/my-profile-update`,
+                method: "PATCH",
+                body: payload,
+            }),
+            invalidatesTags: ["users"],
+        }),
 
-		// update user
-		updateUser: builder.mutation<
-			TServerResponse<TUser>,
-			{ payload: Partial<TUser>; id: string }
-		>({
-			query: ({ payload, id }) => ({
-				url: `/users/${id}`,
-				method: "PATCH",
-				body: payload,
-			}),
-			invalidatesTags: ["users"],
-		}),
-		// delete category
-		deleteUser: builder.mutation<TServerResponse<TUser>, string>({
-			query: (id) => ({
-				url: `/users/${id}`,
-				method: "DELETE",
-			}),
-			invalidatesTags: ["users"],
-		}),
-	}),
+        // delete category
+        deleteUser: builder.mutation<TServerResponse<TUser>, string>({
+            query: (id) => ({
+                url: `/users/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["users"],
+        }),
+    }),
 });
 
 export const {
-	useAllUserQuery,
-	useMyProfileQuery,
-	useUpdateUserMutation,
-	useDeleteUserMutation,
+    useAllUserQuery,
+    useMyProfileQuery,
+    useUpdateMyProfileMutation,
+    useDeleteUserMutation,
 } = userApi;

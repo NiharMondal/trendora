@@ -13,7 +13,17 @@ import {
     TChangePasswordValues,
 } from "./change-password-schema";
 
-export default function ChangePasswordForm() {
+
+type TChangePasswordProps = {
+    onSubmit: (values: TChangePasswordValues) => void;
+    isLoading: boolean;
+}
+
+
+export default function ChangePasswordForm({
+    onSubmit,
+    isLoading
+}: TChangePasswordProps) {
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const form = useForm<TChangePasswordValues>({
@@ -26,7 +36,7 @@ export default function ChangePasswordForm() {
     });
 
     const handleChangePassword = async (values: TChangePasswordValues) => {
-        console.log(values);
+        onSubmit(values);
     };
     return (
         <Form {...form}>
@@ -98,7 +108,7 @@ export default function ChangePasswordForm() {
                         </button>
                     }
                 />
-                <TDButton type="submit">Change Password</TDButton>
+                <TDButton type="submit" isLoading={isLoading}>Change Password</TDButton>
             </form>
         </Form>
     );

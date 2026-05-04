@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import SizeForm from "@/components/common/form/size-form/size-form";
 import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
-import { useCreateSizeMutation } from "@/redux/api/size";
+import { useCreateSizeMutation } from "@/redux/api/sizeApi";
 
 export default function AddSize() {
     const [createSize, { isLoading }] = useCreateSizeMutation();

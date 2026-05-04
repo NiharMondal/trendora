@@ -3,13 +3,15 @@
 import { signIn } from "next-auth/react";
 
 import TDButton from "@/components/common/shared/td-button";
+import { useClientSession } from "@/hooks/use-client-session";
 
 export default function GoogleLoginButton() {
+    const session = useClientSession();
     return (
         <TDButton
             variant="outline"
             className="w-full flex items-center justify-center p-4 border border-muted rounded-md bg-transparent"
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            onClick={() => signIn("google")}
         >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path

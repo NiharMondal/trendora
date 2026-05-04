@@ -12,7 +12,7 @@ import TextWithIcon from "@/components/common/@ui/text-with-icon";
 export default function DeliveryDetails() {
     return (
         <div className="space-y-2  text-sm">
-            <div className="flex items-center gap-x-3 divide-x ">
+            <div className="flex items-center gap-3 divide-x flex-wrap">
                 <TextWithIcon
                     icon={<Ambulance className="size-5" />}
                     text="Delivery & Return"

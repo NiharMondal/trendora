@@ -8,6 +8,7 @@ import { addItemToCart } from "@/redux/slice/cartSlice";
 import { Button } from "../../ui/button";
 import CardUtility from "./card-utility";
 import ProductPrice from "./product-price";
+import Image from "next/image";
 
 type Props = {
 	product: TProduct;
@@ -37,7 +38,7 @@ export default function ProductCard({ product }: Props) {
 
 				<Link href={`/products/${product.slug}`}>
 					{product?.images?.length && (
-						<img
+						<Image
 							src={isMainPhoto?.url || product.images[0].url}
 							alt="image"
 							height={300}

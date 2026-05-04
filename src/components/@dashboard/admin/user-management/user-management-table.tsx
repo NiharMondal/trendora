@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { useDebounce } from "use-debounce";
-
-import NoDataFound from "@/components/common/shared/no-data-found";
 import {
     DataTable,
     Pagination,
@@ -10,25 +6,32 @@ import {
 import TableToolbar from "@/components/common/shared/table/table-toolbar";
 import { useAllUserQuery } from "@/redux/api/userApi";
 
+import { userSortOptions } from "@/components/helpers/sort-options";
+import { useTableFilters } from "@/hooks/use-table-filters";
 import { userManagementColumns } from "./user-management-columns";
 
 export default function UserManagementTable() {
-    const [search, setSearch] = useState("");
-    const [limit, setLimit] = useState("10");
-    const [currentPage, setCurrentPage] = useState(1);
+    const {
+        currentPage,
+        limit,
+        search,
+        sortBy,
+        queryParams,
+        setCurrentPage,
+        setSearch,
+        setSortBy,
+        handleLimitChange,
+        handleResetFilters,
+    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
-    const [value] = useDebounce(search, 1000);
-    const { data: users, isLoading } = useAllUserQuery({
-        search: value,
-        limit: limit,
-        page: currentPage.toString(),
-    });
+    const {
+        data: users,
+        isLoading,
+        isFetching,
+    } = useAllUserQuery(queryParams as Record<string, string>);
 
     if (isLoading) return <TableLoading />;
 
-    if (!users?.result.length) {
-        return <NoDataFound />;
-    }
     return (
         <div className="space-y-4">
             <div className="flex flex-col md:flex-row items-center justify-between gap-3 bg-white border border-muted p-2 rounded-md">
@@ -36,13 +39,19 @@ export default function UserManagementTable() {
                     search={search}
                     setSearch={setSearch}
                     limit={limit}
-                    setLimit={(val) => setLimit(val)}
+                    setLimit={handleLimitChange}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    onReset={handleResetFilters}
+                    placeholder="Search by name, email..."
+                    sortByOptions={userSortOptions}
                 />
             </div>
             <DataTable
                 columns={userManagementColumns}
-                data={users.result}
+                data={users?.result || []}
                 rowKey={(row) => row.id}
+                isFetching={isFetching}
             />
             {users?.meta?.totalPages && users?.meta?.totalPages > 1 && (
                 <Pagination

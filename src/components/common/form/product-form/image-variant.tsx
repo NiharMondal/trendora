@@ -68,20 +68,21 @@ export default function ImageVariant() {
                         key={field.id}
                         className="border p-5 rounded-lg space-y-1 relative grid grid-cols-2 gap-3"
                     >
-                        <Button
-                            size={"icon-sm"}
-                            className="absolute top-1.5 right-2 size-8"
-                            type="button"
-                            variant="destructive"
-                            onClick={() => removeImage(index)}
-                            title="Remove Image"
-                            disabled={imageFields.length === 1}
-                        >
-                            <X />
-                        </Button>
-
+                        {index !== 0 && (
+                            <Button
+                                size={"icon-sm"}
+                                className="absolute top-1.5 right-2 size-8"
+                                type="button"
+                                variant="destructive"
+                                onClick={() => removeImage(index)}
+                                title="Remove Image"
+                            >
+                                <X />
+                            </Button>
+                        )}
                         <TDImageUploadField
                             form={form}
+                            folderName="temp/products" // save image in temp folder
                             urlName={`images.${index}.url`}
                             publicIdName={`images.${index}.publicId`}
                         />

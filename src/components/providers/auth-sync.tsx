@@ -1,43 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-import { useAppDispatch } from "@/redux/redux.hooks";
-import { setCredentials, TUserState } from "@/redux/slice/authSlice";
+import { EnumUserRole } from "@/global/user-role";
+
+const PUBLIC_AUTH_PATHS = ["/login", "/register", "/forgot-password"];
 
 export default function AuthSync({ children }: { children: React.ReactNode }) {
     const router = useRouter();
+    const pathname = usePathname();
     const { data: session, status } = useSession();
-    const dispatch = useAppDispatch();
-    const hasSynced = useRef(false);
 
     useEffect(() => {
         if (
             status === "authenticated" &&
-            (session as any)?.accessToken &&
-            !hasSynced.current
+            PUBLIC_AUTH_PATHS.includes(pathname)
         ) {
-            hasSynced.current = true;
-
-            dispatch(
-                setCredentials({
-                    user: session.user as TUserState,
-                    token: (session as any).accessToken,
-                }),
-            );
+            const role = session?.user?.role;
+            if (
+                role === EnumUserRole.ADMIN ||
+                role === EnumUserRole.SUPER_ADMIN
+            ) {
+                router.replace("/admin");
+            } else {
+                router.replace("/dashboard");
+            }
         }
-
-        if (status === "unauthenticated") {
-            hasSynced.current = false;
-
-            dispatch(setCredentials({ user: null, token: null }));
-
-            // Redirect to login
-            router.push("/login");
-        }
-    }, [session, status, dispatch, router]);
+    }, [session, status, pathname, router]);
 
     return <>{children}</>;
 }

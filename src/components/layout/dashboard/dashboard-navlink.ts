@@ -8,28 +8,32 @@ import {
     Home,
     Key,
     Layers,
+    LayoutDashboard,
     type LucideIcon,
     MapPinHouse,
     Scaling,
     ScrollText,
     ShoppingCart,
     Star,
+    Stars,
     User2,
-    UserRoundPen,
 } from "lucide-react";
+
 type TChildren = {
     title: string;
     url: string;
     index?: boolean;
 };
-type TSidebarLink = {
+
+export type TSidebarLink = {
     title: string;
     url?: string;
     icon?: LucideIcon;
     children?: TChildren[];
 };
-export const adminNavlink: TSidebarLink[] = [
-    { title: "Dashboard", url: "/admin", icon: Home },
+
+export const adminDashboardLinks: TSidebarLink[] = [
+    { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
     {
         title: "Size Group",
         icon: Boxes,
@@ -106,18 +110,16 @@ export const adminNavlink: TSidebarLink[] = [
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
     { title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
+    { title: "Home", url: "/", icon: Home },
 ];
 
-export const customerDashboardCardOptions: TSidebarLink[] = [
-    { title: "Dashboard", url: "/dashboard", icon: Home },
+export const customerDashboardLinks: TSidebarLink[] = [
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { title: "Cart", url: "/cart", icon: ShoppingCart },
     { title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
-
+    { title: "My Reviews", url: "/dashboard/my-reviews", icon: Stars },
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
-    {
-        title: "Edit Account",
-        url: "/dashboard/edit-account",
-        icon: UserRoundPen,
-    },
+    { title: "Home", url: "/", icon: Home },
 ];
