@@ -1,0 +1,216 @@
+import { StyleSheet } from "@react-pdf/renderer";
+
+export const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+    DELIVERED: { bg: "#EAF3DE", text: "#3B6D11" },
+    PROCESSING: { bg: "#E6F1FB", text: "#185FA5" },
+    PENDING: { bg: "#FAEEDA", text: "#854F0B" },
+    CANCELLED: { bg: "#FCEBEB", text: "#A32D2D" },
+    SHIPPED: { bg: "#EEEDFE", text: "#534AB7" },
+};
+
+export const fmt = (n: number) =>
+    "$" + (n ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 });
+
+export const ORDER_TABLE_HEADERS = ["#", "ORDER ID", "DATE", "STATUS", "PAYMENT", "TOTAL"];
+export const ORDER_TABLE_WIDTHS = [
+    { width: "4%" },
+    { width: "22%" },
+    { width: "15%" },
+    { width: "15%" },
+    { width: "34%" },
+    { width: "10%" },
+];
+
+export const s = StyleSheet.create({
+    page: {
+        fontFamily: "Helvetica",
+        fontSize: 10,
+        paddingTop: 44,
+        paddingBottom: 48,
+        paddingHorizontal: 20,
+        backgroundColor: "#FFFFFF",
+        color: "#111111",
+    },
+    accentBar: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 4,
+        backgroundColor: "#111111",
+    },
+    // Header
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        marginBottom: 24,
+        paddingBottom: 14,
+        borderBottomWidth: 1,
+        borderBottomColor: "#111111",
+    },
+    brand: { fontSize: 18, fontFamily: "Helvetica-Bold", letterSpacing: 1 },
+    brandSub: { fontSize: 8, color: "#999999", marginTop: 2 },
+    docTitle: { fontSize: 11, fontFamily: "Helvetica-Bold", textAlign: "right" },
+    docMeta: { fontSize: 8, color: "#888888", marginTop: 3 },
+    // Summary
+    summaryRow: { flexDirection: "row", gap: 10, marginBottom: 20 },
+    summaryCard: {
+        flex: 1,
+        backgroundColor: "#F7F7F5",
+        borderRadius: 5,
+        padding: 10,
+    },
+    summaryLabel: {
+        fontSize: 7.5,
+        color: "#999999",
+        letterSpacing: 0.5,
+        marginBottom: 4,
+    },
+    summaryValue: { fontSize: 15, fontFamily: "Helvetica-Bold" },
+    summaryNote: { fontSize: 8, color: "#999999", marginTop: 2 },
+    // Order table
+    tableHead: {
+        flexDirection: "row",
+        backgroundColor: "#111111",
+        borderRadius: 4,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        marginBottom: 1,
+    },
+    thText: {
+        fontSize: 8,
+        fontFamily: "Helvetica-Bold",
+        color: "#FFFFFF",
+        letterSpacing: 0.5,
+    },
+    tableRow: {
+        flexDirection: "row",
+        paddingVertical: 9,
+        paddingHorizontal: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: "#EEEEEE",
+        alignItems: "center",
+    },
+    tableRowAlt: { backgroundColor: "#FAFAFA" },
+    cell: { fontSize: 9.5, color: "#111111" },
+    cellMuted: { fontSize: 9.5, color: "#666666" },
+    cellMono: { fontSize: 9, fontFamily: "Courier", color: "#333333" },
+    statusBadge: {
+        borderRadius: 99,
+        paddingVertical: 2,
+        paddingHorizontal: 7,
+        alignSelf: "flex-start",
+    },
+    statusText: { fontSize: 8, fontFamily: "Helvetica-Bold" },
+    colNo: { width: "4%" },
+    colId: { width: "22%" },
+    colDate: { width: "15%" },
+    colStatus: { width: "15%" },
+    colPay: { width: "34%" },
+    colTotal: { width: "10%", alignItems: "flex-end" },
+    // Grand total bar
+    totalBar: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        borderTopWidth: 1,
+        borderTopColor: "#111111",
+        paddingTop: 10,
+        marginTop: 4,
+        gap: 24,
+    },
+    totalLabel: { fontSize: 10, color: "#666666" },
+    totalValue: { fontSize: 10, fontFamily: "Helvetica-Bold" },
+    // Footer
+    footer: {
+        position: "absolute",
+        bottom: 24,
+        left: 40,
+        right: 40,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderTopWidth: 0.5,
+        borderTopColor: "#DDDDDD",
+        paddingTop: 8,
+    },
+    footerText: { fontSize: 8, color: "#AAAAAA" },
+    footerBrand: { fontSize: 8, fontFamily: "Helvetica-Bold", color: "#999999" },
+    // Items sub-table
+    itemsWrap: {
+        marginLeft: 24,
+        marginRight: 10,
+        marginTop: 6,
+        marginBottom: 10,
+        borderLeftWidth: 2,
+        borderLeftColor: "#111111",
+        paddingLeft: 10,
+    },
+    itemsLabel: {
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
+        color: "#999999",
+        letterSpacing: 0.6,
+        marginBottom: 4,
+    },
+    itemsHead: {
+        flexDirection: "row",
+        backgroundColor: "#F2F2EF",
+        paddingVertical: 5,
+        paddingHorizontal: 8,
+        borderTopLeftRadius: 3,
+        borderTopRightRadius: 3,
+    },
+    itemsHeadText: {
+        fontSize: 7.5,
+        fontFamily: "Helvetica-Bold",
+        color: "#666666",
+        letterSpacing: 0.5,
+    },
+    itemRow: {
+        flexDirection: "row",
+        paddingVertical: 6,
+        paddingHorizontal: 8,
+        borderBottomWidth: 0.5,
+        borderBottomColor: "#EEEEEE",
+        alignItems: "flex-start",
+    },
+    itemCell: { fontSize: 9, color: "#222222" },
+    itemCellMuted: { fontSize: 8.5, color: "#777777", marginTop: 1 },
+    itemColName: { width: "46%", paddingRight: 6 },
+    itemColQty: { width: "12%", textAlign: "center" },
+    itemColPrice: { width: "20%", textAlign: "right" },
+    itemColTotal: { width: "22%", textAlign: "right" },
+    itemName: { fontSize: 9, fontFamily: "Helvetica-Bold", color: "#111111" },
+    // Order totals
+    totalsBlock: {
+        marginTop: 8,
+        alignSelf: "flex-end",
+        width: "55%",
+    },
+    totalsRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingVertical: 2,
+    },
+    totalsLabel: { fontSize: 9, color: "#666666" },
+    totalsValue: { fontSize: 9, color: "#222222" },
+    totalsGrand: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingTop: 4,
+        borderTopWidth: 1,
+        borderTopColor: "#111111",
+        marginTop: 2,
+    },
+    totalsGrandLabel: {
+        fontSize: 10,
+        fontFamily: "Helvetica-Bold",
+        color: "#111111",
+        letterSpacing: 0.3,
+    },
+    totalsGrandValue: {
+        fontSize: 10,
+        fontFamily: "Helvetica-Bold",
+        color: "#111111",
+    },
+});

@@ -30,7 +30,7 @@ export const addressApi = baseApi.injectEndpoints({
             providesTags: ["address"],
         }),
         // my address
-        myAddress: builder.query<TServerResponse<TAddress[]>, undefined>({
+        myAddress: builder.query<TServerResponse<TAddress[]>, void>({
             query: () => ({
                 url: `/address/my-address`,
                 method: "GET",
@@ -48,7 +48,10 @@ export const addressApi = baseApi.injectEndpoints({
         }),
 
         // update address
-        updateAddress: builder.mutation<TServerResponse<TAddress>, { payload: TAddressFormValues; id: string }>({
+        updateAddress: builder.mutation<
+            TServerResponse<TAddress>,
+            { payload: TAddressFormValues; id: string }
+        >({
             query: ({ payload, id }) => {
                 return {
                     url: `/address/${id}`,

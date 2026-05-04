@@ -4,6 +4,7 @@ import {
     BadgeCheck,
     ChevronsUpDown,
     Home,
+    LayoutDashboard,
     LogOut,
     ShoppingCart,
 } from "lucide-react";
@@ -27,26 +28,18 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
-import { useAppDispatch } from "@/redux/redux.hooks";
-import { logout } from "@/redux/slice/authSlice";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 type TNavUserProps = {
     user: TUserSession | undefined;
     role: EnumUserRole;
     userImage: string;
 };
 export function NavUser({ user, role, userImage }: TNavUserProps) {
-    const router = useRouter();
-    const dispatch = useAppDispatch();
-
     const { isMobile } = useSidebar();
 
     const handleSignOut = async () => {
-        await signOut();
-        dispatch(logout());
-        router.push("/login");
+        await signOut({ callbackUrl: "/login" });
     };
 
     return (
@@ -65,7 +58,7 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                                     alt={user?.name}
                                 />
                                 <AvatarFallback className="rounded-lg">
-                                    {user?.name.slice(0, 1)}
+                                    {user?.name?.slice(0, 1)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -119,13 +112,23 @@ export function NavUser({ user, role, userImage }: TNavUserProps) {
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                                <Link
-                                    href={"/cart"}
-                                    className="w-full cursor-pointer group"
-                                >
-                                    <ShoppingCart className="group-hover:text-gray-50" />
-                                    Cart
-                                </Link>
+                                {role === EnumUserRole.CUSTOMER ? (
+                                    <Link
+                                        href={"/cart"}
+                                        className="w-full cursor-pointer group"
+                                    >
+                                        <ShoppingCart className="group-hover:text-gray-50" />
+                                        Cart
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href={"/admin"}
+                                        className="w-full cursor-pointer group"
+                                    >
+                                        <LayoutDashboard className="group-hover:text-gray-50" />
+                                        Dashboard
+                                    </Link>
+                                )}
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link

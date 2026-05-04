@@ -1,71 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import { useDebounce } from "use-debounce";
-
 import {
-	DataTable,
-	Pagination,
-	TableToolbar,
+    DataTable,
+    Pagination,
+    TableToolbar,
 } from "@/components/common/shared/table";
 import { useAllOrderQuery } from "@/redux/api/orderApi";
 
+import { useTableFilters } from "@/hooks/use-table-filters";
 import { orderColumns } from "./order-columns";
 
 export default function OrderTable() {
-	// filter section
-	const [currentPage, setCurrentPage] = useState(1);
-	const [limit, setLimit] = useState("10");
-	const [search, setSearch] = useState("");
-	const [value] = useDebounce(search, 1000);
-	const [sortBy, setSortBy] = useState("createdAt:desc");
-	const { data: orders, isLoading } = useAllOrderQuery({
-		page: currentPage.toString(),
-		limit: limit,
-		search: value,
-		sortBy: sortBy,
-	});
+    const {
+        currentPage,
+        limit,
+        search,
+        sortBy,
+        queryParams,
+        setCurrentPage,
+        setSearch,
+        setSortBy,
+        handleLimitChange,
+        handleResetFilters,
+    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
-	const handleLimitChange = (value: string) => {
-		setLimit(value);
-		setCurrentPage(1);
-	};
+    const { data: orders, isLoading } = useAllOrderQuery(
+        queryParams as Record<string, string>,
+    );
 
-	const handleResetFilters = () => {
-		setCurrentPage(1);
-	};
+    return (
+        <div className="space-y-5 bg-white p-5 rounded-md">
+            <TableToolbar
+                search={search}
+                limit={limit}
+                sortBy={sortBy}
+                setLimit={handleLimitChange}
+                setSortBy={setSortBy}
+                setSearch={setSearch}
+                onReset={handleResetFilters}
+                placeholder="Search by name"
+            />
 
-	return (
-		<div className="space-y-5 bg-white p-5 rounded-md">
-			<TableToolbar
-				search={search}
-				limit={limit}
-				sortBy={sortBy}
-				setLimit={handleLimitChange}
-				setSortBy={setSortBy}
-				setSearch={setSearch}
-				onReset={handleResetFilters}
-				placeholder="Search by name"
-			/>
+            <DataTable
+                columns={orderColumns}
+                data={orders?.result || []}
+                rowKey={(row) => row.id}
+                isFetching={isLoading}
+            />
 
-			<DataTable
-				columns={orderColumns}
-				data={orders?.result || []}
-				rowKey={(row) => row.id}
-				isFetching={isLoading}
-			/>
-
-			{orders?.meta?.totalPages && orders?.meta?.totalPages > 1 && (
-				<Pagination
-					currentPage={currentPage}
-					onPageChange={setCurrentPage}
-					totalPages={orders?.meta?.totalPages}
-					hasNextPage={orders?.meta?.hasNextPage}
-					hasPreviousPage={orders?.meta?.hasPreviousPage}
-					limit={Number(limit)}
-					totalData={orders?.meta?.totalData || 0}
-				/>
-			)}
-		</div>
-	);
+            {orders?.meta?.totalPages && orders?.meta?.totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    totalPages={orders?.meta?.totalPages}
+                    hasNextPage={orders?.meta?.hasNextPage}
+                    hasPreviousPage={orders?.meta?.hasPreviousPage}
+                    limit={Number(limit)}
+                    totalData={orders?.meta?.totalData || 0}
+                />
+            )}
+        </div>
+    );
 }

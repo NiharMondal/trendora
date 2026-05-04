@@ -1,26 +1,27 @@
-
 import { Bell } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 
 import { DashboardSidebar } from "@/components/layout/dashboard/dashboard-sidebar";
+import { TSessionResponse } from "@/components/types/session.types";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 import { authOptions } from "@/lib/authOptions";
-import { TSessionResponse } from "@/components/types/session.types";
 export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const session = await getServerSession(authOptions);
 
-	const session = await getServerSession(authOptions)
-
-	const role: EnumUserRole = (session as any)?.user?.role;
+    const role = (session as TSessionResponse)?.user?.role;
 
     return (
         <SidebarProvider>
-            <DashboardSidebar session={session as TSessionResponse} role={role} />
+            <DashboardSidebar
+                session={session as TSessionResponse}
+                role={role as EnumUserRole}
+            />
             <section className="w-full">
                 <div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
                     <SidebarTrigger className="cursor-pointer" />

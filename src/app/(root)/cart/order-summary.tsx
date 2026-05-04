@@ -19,9 +19,11 @@ export default function OrderSummary() {
 
     const FREE_SHIPPING_THRESHOLD = Number(envConfig.free_shipping_threshold);
     const SHIPPING_COST = Number(envConfig.shipping_cost);
-    console.log(FREE_SHIPPING_THRESHOLD, SHIPPING_COST);
+
     const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+
     const freeShippingGap = FREE_SHIPPING_THRESHOLD - subtotal;
+
     const progressPct = Math.min(
         (subtotal / FREE_SHIPPING_THRESHOLD) * 100,
         100,

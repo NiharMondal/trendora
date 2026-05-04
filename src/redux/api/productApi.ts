@@ -2,6 +2,7 @@ import { TServerResponse } from "@/components/types/common.types";
 import { TProduct } from "@/components/types/product.types";
 
 import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
+import { buildQueryParams } from "@/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const productApi = baseApi.injectEndpoints({
@@ -27,18 +28,10 @@ export const productApi = baseApi.injectEndpoints({
             Record<string, string>
         >({
             query: (query) => {
-                const params = new URLSearchParams();
-
-                Object.entries(query).forEach(([Key, value]) => {
-                    if (value?.trim().length > 0) {
-                        params.append(Key, value);
-                    }
-                });
-
                 return {
                     url: "/products",
                     method: "GET",
-                    params,
+                    params: buildQueryParams(query),
                 };
             },
             providesTags: ["products"],

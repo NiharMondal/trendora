@@ -18,19 +18,21 @@ import {
     Stars,
     User2,
 } from "lucide-react";
+
 type TChildren = {
     title: string;
     url: string;
     index?: boolean;
 };
+
 export type TSidebarLink = {
     title: string;
     url?: string;
     icon?: LucideIcon;
     children?: TChildren[];
 };
-export const adminNavlink: TSidebarLink[] = [
-    { title: "Home", url: "/", icon: Home },
+
+export const adminDashboardLinks: TSidebarLink[] = [
     { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
     {
         title: "Size Group",
@@ -108,10 +110,10 @@ export const adminNavlink: TSidebarLink[] = [
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
     { title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
+    { title: "Home", url: "/", icon: Home },
 ];
 
-export const customerDashboardCardOptions: TSidebarLink[] = [
-    { title: "Home", url: "/", icon: Home },
+export const customerDashboardLinks: TSidebarLink[] = [
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Cart", url: "/cart", icon: ShoppingCart },
     { title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
@@ -119,4 +121,5 @@ export const customerDashboardCardOptions: TSidebarLink[] = [
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
+    { title: "Home", url: "/", icon: Home },
 ];
