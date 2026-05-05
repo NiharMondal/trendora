@@ -1,5 +1,5 @@
-import { formatMonthDateYear } from "@/lib/format-date-time";
 import { Text, View } from "@react-pdf/renderer";
+import moment from "moment";
 import { s } from "./pdf-styles";
 
 export function PDFHeader() {
@@ -12,7 +12,7 @@ export function PDFHeader() {
             <View>
                 <Text style={s.docTitle}>ORDER LIST</Text>
                 <Text style={s.docMeta}>
-                    Generated: {formatMonthDateYear(new Date().toString())}
+                    Generated: {moment().format("ll")}
                 </Text>
             </View>
         </View>

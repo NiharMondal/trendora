@@ -40,7 +40,7 @@ export default function NavMain({ label, navLink }: TProps) {
                                             asChild
                                             className={cn(
                                                 nav.url === pathname
-                                                    ? "bg-primary-50 text-primary-500"
+                                                    ? "bg-primary-50 text-primary"
                                                     : "",
                                             )}
                                         >

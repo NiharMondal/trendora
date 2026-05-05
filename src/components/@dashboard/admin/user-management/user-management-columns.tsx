@@ -1,4 +1,4 @@
-import { DataTableColumn } from "@/components/types/table.types";
+import { DataTableColumn } from "@/components/common/shared/table/table-types";
 import { TUser } from "@/components/types/user.types";
 import { Button } from "@/components/ui/button";
 
