@@ -6,9 +6,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { DataTableColumn } from "@/components/types/table.types";
+
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import { DataTableColumn } from "./table-types";
 
 interface Props<S> {
     rows: S[];
@@ -26,7 +27,7 @@ export default function DataTableSubRows<S>({
     emptyMessage = "No items",
 }: Props<S>) {
     return (
-        <div className="px-6 py-4 bg-gray-50/40 border-l-2 border-gray-900">
+        <div className="px-6 py-4 bg-gray-50/40 border-l-2 border-primary/50">
             {title ? (
                 <div className="text-xs font-semibold tracking-wide text-gray-500 uppercase mb-2">
                     {title}

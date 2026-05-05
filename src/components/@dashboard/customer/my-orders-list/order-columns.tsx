@@ -53,6 +53,10 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             ),
         },
         {
+            key: "subtotal",
+            header: "Sub Total",
+        },
+        {
             key: "shippingCost",
             header: "Shipping Cost",
         },
