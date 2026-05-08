@@ -24,7 +24,7 @@ export default function UpdateProduct({ productId }: { productId: string }) {
         () => (product ? mapProductToFormValues(product.result) : undefined),
         [product],
     );
-    console.log({ defaultValues });
+
     const handleUpdateProduct = async (values: TProductFormValues) => {
         try {
             await updateProduct({

@@ -40,7 +40,7 @@ export default function NavMain({ label, navLink }: TProps) {
                                             asChild
                                             className={cn(
                                                 nav.url === pathname
-                                                    ? "bg-primary-50 text-primary"
+                                                    ? "bg-accent text-accent-foreground"
                                                     : "",
                                             )}
                                         >
@@ -55,7 +55,7 @@ export default function NavMain({ label, navLink }: TProps) {
                                         <SidebarMenuButton
                                             className={cn(
                                                 nav.url === pathname
-                                                    ? "bg-primary-100"
+                                                    ? "bg-accent text-accent-foreground"
                                                     : "",
                                             )}
                                         >

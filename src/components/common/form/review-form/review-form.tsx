@@ -5,6 +5,7 @@ import TDInput from "@/components/form-input/TDInput";
 import TDTextArea from "@/components/form-input/TDTextArea";
 import { Form } from "@/components/ui/form";
 
+import TDRating from "@/components/form-input/TDRating";
 import TDButton from "../../shared/td-button";
 import { reviewSchema, TReviewFormValues } from "./review-schema";
 
@@ -54,13 +55,13 @@ export default function ReviewForm({
                     />
                 )}
 
-                <TDInput
+                <TDRating form={hookForm} name="rating" label="Your Rating:" />
+                <TDTextArea
                     form={hookForm}
-                    name="rating"
-                    label="Rating"
-                    type="number"
+                    name="comment"
+                    label="Comment"
+                    placeholder="Share your thoughts and experiences..."
                 />
-                <TDTextArea form={hookForm} name="comment" label="Comment" />
 
                 <TDButton
                     type="submit"
