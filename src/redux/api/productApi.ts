@@ -77,6 +77,15 @@ export const productApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["products"],
         }),
+
+        // get related products
+        relatedProducts: builder.query<TServerResponse<TProduct[]>, string>({
+            query: (id) => ({
+                url: `/products/related-products/${id}`,
+                method: "GET",
+            }),
+            providesTags: ["products"],
+        }),
     }),
 });
 
@@ -87,4 +96,5 @@ export const {
     useProductByIdQuery,
     useProductBySlugQuery,
     useUpdateProductMutation,
+    useRelatedProductsQuery,
 } = productApi;

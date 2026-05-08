@@ -5,8 +5,8 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 
 import SpinnerLoading from "@/components/common/loading/spinner-loading";
 import Container from "@/components/common/shared/container";
-import RelatedProducts from "@/components/common/shared/related-product";
 import ProductDetails from "@/components/home/product-details/details/product-details";
+import RelatedProducts from "@/components/home/product-details/related-products";
 import ReviewSection from "@/components/home/product-details/review-section/review-section";
 import { TProductImage } from "@/components/types/product.types";
 import { cn } from "@/lib/utils";
@@ -25,20 +25,21 @@ export default function ProductDetailsPage({
 
     return (
         <Container className="py-10 space-y-5">
-            <section className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Photo section  */}
                 <ProductPhotoView images={product?.images} />
                 {/* details section  */}
                 <ProductDetails product={product} />
             </section>
 
+            {/* review section */}
             <ReviewSection
-                productId={product?.id || ""}
+                productId={product?.id ?? ""}
                 averageRating={product?.averageRating ?? 0}
             />
 
             {/* related products  */}
-            <RelatedProducts />
+            <RelatedProducts productId={product?.id ?? ""} />
         </Container>
     );
 }

@@ -20,7 +20,7 @@ export default function CardUtility({ product }: Props) {
 				<div className="flex flex-col gap-y-2 pr-3 pt-3 translate-x-12 group-hover:translate-x-0 duration-300 ">
 					<Tooltip>
 						<TooltipTrigger className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80">
-							<Heart />
+							<Heart className="text-secondary" />
 						</TooltipTrigger>
 						<TooltipContent side="left">
 							<p>Add to Wishlist</p>
@@ -31,7 +31,7 @@ export default function CardUtility({ product }: Props) {
 							className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80"
 							onClick={() => setIsOpen(true)}
 						>
-							<Eye />
+							<Eye className="text-secondary" />
 						</TooltipTrigger>
 						<TooltipContent side="left">
 							<p>Quick View</p>

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type PaginationProps = {
 	currentPage: number;
@@ -34,48 +35,47 @@ export default function Pagination({
 
 	const pageNumbers = getPageNumbers();
 	return (
-		<div className="flex items-center justify-between px-2 w-full">
-			<p className="max-w-fit text-xs text-muted-foreground tracking-wide">
-				Showing {Math.min((currentPage - 1) * limit + 1, totalData)}-
-				{Math.min(currentPage * limit, totalData)} of {totalData} items
-			</p>
+        <div className="flex items-center justify-between px-2 w-full">
+            <p className="max-w-fit text-xs text-muted-foreground tracking-wide">
+                Showing {Math.min((currentPage - 1) * limit + 1, totalData)}-
+                {Math.min(currentPage * limit, totalData)} of {totalData} items
+            </p>
 
-			<div className="flex items-center justify-end gap-x-3">
-				{/* Previous Button */}
-				<Button
-					onClick={() => onPageChange(currentPage - 1)}
-					disabled={!hasPreviousPage}
-					variant={"ghost"}
-					className="cursor-pointer"
-				>
-					Prev
-				</Button>
+            <div className="flex items-center justify-end gap-x-3">
+                {/* Previous Button */}
+                <Button
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={!hasPreviousPage}
+                    className="border border-primary-300 bg-white text-primary hover:bg-primary-400 hover:text-white cursor-pointer"
+                >
+                    Prev
+                </Button>
 
-				<div className="flex items-center gap-x-3">
-					{pageNumbers.map((page) => (
-						<Button
-							key={page}
-							onClick={() => onPageChange(page)}
-							variant={
-								page === currentPage ? "default" : "outline"
-							}
-							className="gap-x-5 cursor-pointer"
-						>
-							{page}
-						</Button>
-					))}
-				</div>
+                <div className="flex items-center gap-x-3">
+                    {pageNumbers.map((page) => (
+                        <Button
+                            key={page}
+                            onClick={() => onPageChange(page)}
+                            className={cn(
+                                page === currentPage
+                                    ? "bg-primary-400 hover:bg-primary-500"
+                                    : "border border-primary-300 bg-white text-primary hover:bg-primary-400 hover:text-white",
+                            )}
+                        >
+                            {page}
+                        </Button>
+                    ))}
+                </div>
 
-				{/* Next Button */}
-				<Button
-					onClick={() => onPageChange(currentPage + 1)}
-					disabled={!hasNextPage}
-					variant={"ghost"}
-					className="cursor-pointer"
-				>
-					Next
-				</Button>
-			</div>
-		</div>
-	);
+                {/* Next Button */}
+                <Button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={!hasNextPage}
+                    className="border border-primary-300 bg-white text-primary hover:bg-primary-400 hover:text-white cursor-pointer"
+                >
+                    Next
+                </Button>
+            </div>
+        </div>
+    );
 }

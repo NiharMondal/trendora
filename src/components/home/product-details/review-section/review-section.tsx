@@ -37,10 +37,10 @@ export default function ReviewSection({
     }));
 
     return (
-        <section className="space-y-8 py-8">
+        <section className="space-y-4 py-4">
             <SectionHeader title="Customer Reviews" />
 
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <ReviewSummary
                     average={averageRating}
                     total={total}
@@ -60,7 +60,7 @@ export default function ReviewSection({
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
                 {isLoading ? (
                     <ReviewListSkeleton />
                 ) : reviews.length === 0 ? (

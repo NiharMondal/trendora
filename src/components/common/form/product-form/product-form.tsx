@@ -38,7 +38,7 @@ export default function ProductForm({
         defaultValues?.categoryId || "",
     );
 
-    const { data: categories } = useAllCategoryQuery({});
+    const { data: categories } = useAllCategoryQuery({ limit: "100" });
     const { data: brands } = useAllBrandQuery({ limit: "100" });
     const categoryOption = categories?.result?.map((category) => ({
         label: category.name,
