@@ -6,6 +6,7 @@ import TDPopover from "@/components/common/shared/td-popover";
 import { TProduct } from "@/components/types/product.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export const productColumns = (
     handleDeleteProduct: (id: string) => void,
@@ -17,12 +18,14 @@ export const productColumns = (
             const isMain = row?.images?.find((image) => image.isMain);
             return (
                 <div className="flex items-center gap-x-2">
-                    <div className="size-16 flex items-center justify-center bg-gray-100 rounded-md">
-                        <img
+                    <div className="size-12 flex items-center justify-center bg-gray-100 rounded-md">
+                        <Image
                             src={isMain?.url || ""}
                             alt={row.name}
                             className="size-full rounded-md"
                             loading="lazy"
+                            width={60}
+                            height={60}
                         />
                     </div>
                     <Link

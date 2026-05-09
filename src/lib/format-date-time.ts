@@ -14,20 +14,15 @@ export type TFormatDateTime =
     | "DD Month YYYY"
     | "DD-MM-YYYY";
 
-
-
 export const formatDate = (
     dateString: string,
-    format: TFormatDateTime = "ll",
+    format: TFormatDateTime = "DD/MM/YYYY",
 ): string => {
     if (!dateString || !moment(dateString).isValid()) return "-";
     return moment(dateString).format(format);
 };
 
-
-export const dateFromNow = (
-    dateString: string,
-): string => {
+export const dateFromNow = (dateString: string): string => {
     if (!dateString || !moment(dateString).isValid()) return "-";
     return moment(dateString).fromNow();
 };

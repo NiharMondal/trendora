@@ -5,6 +5,7 @@ import { DataTableColumn } from "@/components/common/shared/table/table-types";
 import TDPopover from "@/components/common/shared/td-popover";
 import { TCategory } from "@/components/types/category.types";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format-date-time";
 
 type Props = {
     handleEdit: (category: TCategory) => void;
@@ -23,7 +24,7 @@ export const categoryColumns = ({
         header: "Size Group",
         cell: (row) => {
             const category = row;
-            return <span>{category.sizeGroup?.name}</span>;
+            return <span>{category.sizeGroup?.name ?? "N/A"}</span>;
         },
     },
     {
@@ -31,7 +32,7 @@ export const categoryColumns = ({
         header: "Parent Category",
         cell: (row) => {
             const category = row;
-            return <span>{category.parent?.name || "N/A"}</span>;
+            return <span>{category.parent?.name ?? "N/A"}</span>;
         },
     },
     {
@@ -39,7 +40,7 @@ export const categoryColumns = ({
         header: "Created At",
         cell: (row) => {
             const category = row;
-            return <span>{moment(category.createdAt).format("ll")}</span>;
+            return <span>{formatDate(category.createdAt, "ll")}</span>;
         },
     },
     {
@@ -47,7 +48,7 @@ export const categoryColumns = ({
         header: "Updated At",
         cell: (row) => {
             const category = row;
-            return <span>{moment(category.updatedAt).format("ll")}</span>;
+            return <span>{formatDate(category.updatedAt, "ll")}</span>;
         },
     },
     {
