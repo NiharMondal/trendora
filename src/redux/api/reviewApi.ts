@@ -7,7 +7,10 @@ import { baseApi } from "./baseApi";
 
 export const reviewApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        createReview: builder.mutation<TServerResponse<TReview>, TReview>({
+        createReview: builder.mutation<
+            TServerResponse<TReview>,
+            TReviewFormValues
+        >({
             query: (payload) => ({
                 url: "/reviews",
                 method: "POST",
@@ -27,6 +30,14 @@ export const reviewApi = baseApi.injectEndpoints({
                     params: buildQueryParams(query),
                 };
             },
+            providesTags: ["reviews"],
+        }),
+
+        reviewsByProductId: builder.query<TServerResponse<TReview[]>, string>({
+            query: (productId) => ({
+                url: `/reviews/product/${productId}`,
+                method: "GET",
+            }),
             providesTags: ["reviews"],
         }),
 
@@ -71,4 +82,5 @@ export const {
     useReviewByIdQuery,
     useDeleteReviewMutation,
     useUpdateReviewMutation,
+    useReviewsByProductIdQuery,
 } = reviewApi;

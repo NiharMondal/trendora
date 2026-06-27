@@ -1,7 +1,7 @@
 import { TOrder } from "@/components/types/order.types";
-import { formatMonthDateYear } from "@/lib/format-date-time";
 import { Text, View } from "@react-pdf/renderer";
 import { fmt, s, STATUS_COLORS } from "./pdf-styles";
+import { formatDate } from "@/lib/format-date-time";
 
 interface Props {
     order: TOrder;
@@ -103,9 +103,7 @@ export function PDFOrderRow({ order, index }: Props) {
                 <Text style={[s.cellMuted, s.colNo]}>{index + 1}</Text>
                 <Text style={[s.cellMono, s.colId]}>{order.orderNumber}</Text>
                 <Text style={[s.cellMuted, s.colDate]}>
-                    {order.createdAt
-                        ? formatMonthDateYear(order.createdAt)
-                        : "—"}
+                    {formatDate(order.createdAt, "ll")}
                 </Text>
                 <View style={s.colStatus}>
                     <View

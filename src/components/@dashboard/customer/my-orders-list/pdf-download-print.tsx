@@ -21,8 +21,8 @@ export function DownloadButton({ orders }: { orders: TOrder[] }) {
         >
             {({ loading }) => (
                 <Button variant="outline" disabled={loading}>
-                    <Download className="mr-2 h-4 w-4" />
-                    {loading ? "Preparing..." : "Print"}
+                    <Download className="h-4 w-4" />
+                    {loading ? "Preparing..." : "Download"}
                 </Button>
             )}
         </PDFDownloadLink>
@@ -61,7 +61,7 @@ export function PrintButton({ orders }: { orders: TOrder[] }) {
                         disabled={loading}
                         onClick={()=>handlePrint(blob)}
                     >
-                        <Printer className="mr-2 h-4 w-4" />
+                        <Printer className="h-4 w-4" />
                         {loading ? "Preparing..." : "Print"}
                     </Button>
                 );

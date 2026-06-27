@@ -11,7 +11,7 @@ export default function AddBrand() {
     const handleCreateBrand = async (values: TBrandFormValues) => {
         try {
             await createBrand(values).unwrap();
-            toast.success("Brand created successfully");
+            toast.success("Brand added successfully");
         } catch (error: any) {
             toast.error(error?.data.message);
         }

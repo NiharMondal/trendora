@@ -6,7 +6,7 @@ import {
 import { TOrder } from "@/components/types/order.types";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { formatMonthDateYear } from "@/lib/format-date-time";
+import { formatDate } from "@/lib/format-date-time";
 
 export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
     return [
@@ -17,7 +17,7 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
         {
             key: "createdAt",
             header: "Date",
-            cell: (row) => <span>{formatMonthDateYear(row?.createdAt)}</span>,
+            cell: (row) => <span>{formatDate(row?.createdAt, "ll")}</span>,
         },
         {
             key: "paymentStatus",
@@ -51,6 +51,10 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
                     status={row?.orderStatus}
                 />
             ),
+        },
+        {
+            key: "subtotal",
+            header: "Sub Total",
         },
         {
             key: "shippingCost",

@@ -32,13 +32,13 @@ export const brandApi = baseApi.injectEndpoints({
             providesTags: ["brands"],
         }),
 
-        //get product by id
+        //get brand by id
         brandById: builder.query<TServerResponse<TBrand>, string>({
             query: (id) => ({
                 url: `/brands/${id}`,
                 method: "GET",
             }),
-            providesTags: ["products"],
+            providesTags: ["brands"],
         }),
 
         // update brand

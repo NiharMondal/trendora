@@ -14,7 +14,7 @@ import { Textarea } from "../ui/textarea";
 type TDTextAreaProps<T extends FieldValues> = {
     form: UseFormReturn<T>;
     name: Path<T>;
-    label: string;
+    label?: string;
     placeholder?: string;
     className?: string;
     required?: boolean;
@@ -34,15 +34,17 @@ export default function TDTextArea<T extends FieldValues>({
             name={name}
             render={({ field }) => (
                 <FormItem className="-space-y-1">
-                    <FormLabel className="text-muted-foreground font-inter text-sm">
-                        <span
-                            className={cn({
-                                "relative required-label": required,
-                            })}
-                        >
-                            {label}
-                        </span>
-                    </FormLabel>
+                    {label && (
+                        <FormLabel className="text-muted-foreground font-inter text-sm">
+                            <span
+                                className={cn({
+                                    "relative required-label": required,
+                                })}
+                            >
+                                {label}
+                            </span>
+                        </FormLabel>
+                    )}
                     <FormControl>
                         <Textarea
                             {...field}

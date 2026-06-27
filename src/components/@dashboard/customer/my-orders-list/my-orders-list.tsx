@@ -16,7 +16,7 @@ export default function MyOrdersList() {
     const orderList = orders?.result ?? [];
     const hasOrders = orderList.length > 0;
 
-    console.log(orderList)
+
     return (
         <div className="space-y-4">
             {/* Toolbar — only shown when there is data */}
@@ -60,7 +60,7 @@ export default function MyOrdersList() {
                         },
                     ],
                     title: (o) => `Items in #${o.orderNumber}`,
-                    defaultExpanded: true,
+                    defaultExpanded: false,
                 }}
             />
         </div>
