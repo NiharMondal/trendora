@@ -41,6 +41,15 @@ export const reviewApi = baseApi.injectEndpoints({
             providesTags: ["reviews"],
         }),
 
+        // reviews written by the currently authenticated customer
+        getMyReviews: builder.query<TServerResponse<TReview[]>, void>({
+            query: () => ({
+                url: "/reviews/my-reviews",
+                method: "GET",
+            }),
+            providesTags: ["reviews"],
+        }),
+
         //get review by id
         reviewById: builder.query<TServerResponse<TReview>, string>({
             query: (id) => ({
@@ -83,4 +92,5 @@ export const {
     useDeleteReviewMutation,
     useUpdateReviewMutation,
     useReviewsByProductIdQuery,
+    useGetMyReviewsQuery,
 } = reviewApi;

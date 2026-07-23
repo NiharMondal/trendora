@@ -1,3 +1,4 @@
+import { TProduct } from "./product.types";
 import { TUser } from "./user.types";
 
 export type TReview = {
@@ -10,4 +11,5 @@ export type TReview = {
     createdAt: string;
     updatedAt: string;
     user: Pick<TUser, "name" | "avatar">;
+    product?: Pick<TProduct, "id" | "name" | "slug" | "images">;
 };
