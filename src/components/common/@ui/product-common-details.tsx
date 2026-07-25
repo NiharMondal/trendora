@@ -12,6 +12,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
 import { cn } from "@/lib/utils";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
@@ -30,6 +31,11 @@ export default function ProductCommonDetails({
 }: Props) {
     const tooltipSide = quickView ? "left" : "top";
     const dispatch = useAppDispatch();
+    const {
+        isWishlisted,
+        toggle: toggleWishlist,
+        isLoading: isWishlistLoading,
+    } = useWishlistToggle(product?.id ?? "");
     const [quantity, setQuantity] = useState(1);
     const [variantInfo, setVariantInfo] = useState<{
         id: null | string;
@@ -147,12 +153,26 @@ export default function ProductCommonDetails({
                 </Button>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="outline">
-                            <Heart />
+                        <Button
+                            variant="outline"
+                            className="hover:bg-destructive/10"
+                            onClick={toggleWishlist}
+                            disabled={isWishlistLoading || !product?.id}
+                        >
+                            <Heart
+                                className={cn({
+                                    "fill-destructive text-destructive":
+                                        isWishlisted,
+                                })}
+                            />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent side={tooltipSide}>
-                        <p>Add to Wishlist</p>
+                        <p>
+                            {isWishlisted
+                                ? "Remove from Wishlist"
+                                : "Add to Wishlist"}
+                        </p>
                     </TooltipContent>
                 </Tooltip>
             </div>

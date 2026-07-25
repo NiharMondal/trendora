@@ -66,5 +66,6 @@ export const baseApi = createApi({
         "reviews",
         "sizeGroups",
         "sizes",
+        "wishlist",
     ],
 });

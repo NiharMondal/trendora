@@ -3,6 +3,8 @@ import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 
 import { TProduct } from "@/components/types/product.types";
+import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
+import { cn } from "@/lib/utils";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 import ProductCommonDetails from "../@ui/product-common-details";
@@ -14,16 +16,29 @@ type Props = {
 };
 export default function CardUtility({ product }: Props) {
 	const [isOpen, setIsOpen] = useState(false);
+	const { isWishlisted, toggle, isLoading } = useWishlistToggle(product.id);
 	return (
 		<>
 			<div className="absolute right-0 top-0 overflow-hidden">
 				<div className="flex flex-col gap-y-2 pr-3 pt-3 translate-x-12 group-hover:translate-x-0 duration-300 ">
 					<Tooltip>
-						<TooltipTrigger className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80">
-							<Heart className="text-secondary" />
+						<TooltipTrigger
+							className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80 disabled:opacity-60"
+							onClick={toggle}
+							disabled={isLoading}
+						>
+							<Heart
+								className={cn("text-secondary", {
+									"fill-secondary": isWishlisted,
+								})}
+							/>
 						</TooltipTrigger>
 						<TooltipContent side="left">
-							<p>Add to Wishlist</p>
+							<p>
+								{isWishlisted
+									? "Remove from Wishlist"
+									: "Add to Wishlist"}
+							</p>
 						</TooltipContent>
 					</Tooltip>
 					<Tooltip>
