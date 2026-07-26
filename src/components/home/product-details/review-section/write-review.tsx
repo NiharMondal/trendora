@@ -11,6 +11,7 @@ import { Form } from "@/components/ui/form";
 import { useCreateReviewMutation } from "@/redux/api/reviewApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type WriteReviewProps = {
     productId: string;
@@ -29,13 +30,12 @@ export default function WriteReview({ productId }: WriteReviewProps) {
     const [createReview, { isLoading }] = useCreateReviewMutation();
 
     const onSubmit = async (data: TReviewFormValues) => {
-        // try {
-        //     await createReview({ ...data, productId }).unwrap();
-        //     toast.success("Review added successfully");
-        // } catch (error: any) {
-        //     toast.error(error.data.message);
-        // }
-        console.log(data);
+        try {
+            await createReview({ ...data, productId }).unwrap();
+            toast.success("Review added successfully");
+        } catch (error: any) {
+            toast.error(error.data.message);
+        }
     };
 
     return (
