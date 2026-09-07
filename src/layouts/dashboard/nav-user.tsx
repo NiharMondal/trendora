@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import TDButton from "@/shared/components/td-button";
-import { TUserSession } from "@/components/types/session.types";
+import { TUserSession } from "@/features/auth/types/session.types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import {
     DropdownMenu,
@@ -27,7 +27,7 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/shared/ui/sidebar";
-import { EnumUserRole } from "@/global/user-role";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 type TNavUserProps = {

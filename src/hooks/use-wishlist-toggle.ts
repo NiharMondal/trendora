@@ -8,7 +8,7 @@ import {
     useMyWishlistQuery,
     useRemoveFromWishlistMutation,
 } from "@/redux/api/wishlistApi";
-import { useUserInfoClient } from "@/utils/user-info";
+import { useUserInfoClient } from "@/features/auth/utils/user-info";
 
 /**
  * Encapsulates the "add / remove product from wishlist" toggle so the heart

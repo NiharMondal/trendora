@@ -6,7 +6,7 @@ import ReviewListSkeleton from "@/components/home/product-details/review-section
 import ReviewSummary from "@/components/home/product-details/review-section/review-summary";
 import WriteReview from "@/components/home/product-details/review-section/write-review";
 import { useReviewsByProductIdQuery } from "@/redux/api/reviewApi";
-import { useUserInfoClient } from "@/utils/user-info";
+import { useUserInfoClient } from "@/features/auth/utils/user-info";
 import Link from "next/link";
 
 type Props = {

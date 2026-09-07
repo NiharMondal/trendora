@@ -1,9 +1,9 @@
-import { TLoginValues } from "@/app/(auth)/login/login-schema";
-import { TRegisterValues } from "@/app/(auth)/register/register-schema";
+import { TLoginValues } from "@/features/auth/schemas/login.schema";
+import { TRegisterValues } from "@/features/auth/schemas/register.schema";
 import {
     TAuthLoginResponse,
     TAuthRegisterResponse,
-} from "@/components/types/auth.types";
+} from "@/features/auth/types/auth.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
 import { baseApi } from "@/store/api/base-api";

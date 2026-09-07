@@ -3,7 +3,7 @@ import Link from "next/link";
 import Container from "@/shared/components/container";
 import { cn } from "@/shared/lib/utils";
 
-import { AUTH_NAV_HEIGHT } from "./constant";
+import { AUTH_NAV_HEIGHT } from "@/features/auth/constants/auth-nav";
 
 export default function AuthNavbar() {
     return (

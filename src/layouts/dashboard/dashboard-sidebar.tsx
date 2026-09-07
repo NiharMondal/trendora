@@ -5,9 +5,9 @@ import {
     SidebarContent,
     SidebarFooter,
 } from "@/shared/ui/sidebar";
-import { EnumUserRole } from "@/global/user-role";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 
-import { TSessionResponse } from "@/components/types/session.types";
+import { TSessionResponse } from "@/features/auth/types/session.types";
 import { useMyProfileQuery } from "@/redux/api/userApi";
 
 import {

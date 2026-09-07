@@ -7,13 +7,13 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Form } from "@/shared/ui/form";
-import { EnumUserRole } from "@/global/user-role";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 
 import TDButton from "@/shared/components/td-button";
 import TDInput from "@/shared/form/TDInput";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { loginSchema, TLoginValues } from "./login-schema";
+import { loginSchema, TLoginValues } from "@/features/auth/schemas/login.schema";
 
 export default function LoginForm() {
     const router = useRouter();

@@ -8,11 +8,11 @@ import { toast } from "sonner";
 import TDButton from "@/shared/components/td-button";
 import TDInput from "@/shared/form/TDInput";
 import { Form } from "@/shared/ui/form";
-import { useRegisterUserMutation } from "@/redux/api/authApi";
+import { useRegisterUserMutation } from "@/features/auth/api/auth.api";
 
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { registerSchema, TRegisterValues } from "./register-schema";
+import { registerSchema, TRegisterValues } from "@/features/auth/schemas/register.schema";
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);

@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 
-import { authOptions } from "@/lib/authOptions";
+import { authOptions } from "@/features/auth/lib/auth-options";
 
 export const useUserInfoClient = () => {
     const { data: session } = useSession();

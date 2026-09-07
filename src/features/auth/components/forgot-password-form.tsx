@@ -10,7 +10,7 @@ import { Form } from "@/shared/ui/form";
 import {
     forgotPasswordSchema,
     TForgotPasswordValues,
-} from "./forgot-password-schema";
+} from "@/features/auth/schemas/forgot-password.schema";
 
 export default function ForgotPasswordForm() {
     const form = useForm<TForgotPasswordValues>({

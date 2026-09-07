@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { EnumUserRole } from "@/global/user-role";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 
 const PUBLIC_AUTH_PATHS = ["/login", "/register", "/forgot-password"];
 

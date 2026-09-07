@@ -1,6 +1,6 @@
 import { DefaultSession } from "next-auth";
 
-import { EnumUserRole } from "@/global/user-role";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 
 declare module "next-auth" {
     interface User {

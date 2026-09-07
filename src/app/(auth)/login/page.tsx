@@ -1,11 +1,11 @@
-import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
+import { AUTH_NAV_HEIGHT } from "@/features/auth/constants/auth-nav";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/authOptions";
-import { EnumUserRole } from "@/global/user-role";
+import { authOptions } from "@/features/auth/lib/auth-options";
+import { EnumUserRole } from "@/features/auth/constants/user-role";
 
-import GoogleLoginButton from "@/components/common/@ui/google-login-button";
-import LoginForm from "./login-form";
+import GoogleLoginButton from "@/features/auth/components/google-login-button";
+import LoginForm from "@/features/auth/components/login-form";
 
 export default async function LoginPage() {
     const session = await getServerSession(authOptions);

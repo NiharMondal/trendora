@@ -1,5 +1,5 @@
 import Container from "@/shared/components/container";
-import AuthNavbar from "@/components/layout/auth/auth-navbar";
+import AuthNavbar from "@/features/auth/components/auth-navbar";
 
 export default function AuthLayout({
     children,
