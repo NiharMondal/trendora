@@ -8,12 +8,12 @@ import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
 import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
-import { TWishlist } from "@/components/types/wishlist.types";
+import { TWishlist } from "@/features/wishlist/types/wishlist.types";
 import { Button } from "@/shared/ui/button";
 import {
     useMyWishlistQuery,
     useRemoveFromWishlistMutation,
-} from "@/redux/api/wishlistApi";
+} from "@/features/wishlist/api/wishlist.api";
 
 import WishlistCard from "./wishlist-card";
 

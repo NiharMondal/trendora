@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import TDButton from "@/shared/components/td-button";
 import { TCartItem } from "@/features/cart/types/cart.types";
-import { TWishlist } from "@/components/types/wishlist.types";
+import { TWishlist } from "@/features/wishlist/types/wishlist.types";
 import { Button } from "@/shared/ui/button";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";

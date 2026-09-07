@@ -3,7 +3,7 @@ import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 
 import { TProduct } from "@/features/products/types/product.types";
-import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
+import { useWishlistToggle } from "@/features/wishlist/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";

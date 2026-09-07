@@ -12,7 +12,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/shared/ui/tooltip";
-import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
+import { useWishlistToggle } from "@/features/wishlist/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";

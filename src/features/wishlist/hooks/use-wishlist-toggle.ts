@@ -7,7 +7,7 @@ import {
     useAddToWishlistMutation,
     useMyWishlistQuery,
     useRemoveFromWishlistMutation,
-} from "@/redux/api/wishlistApi";
+} from "@/features/wishlist/api/wishlist.api";
 import { useUserInfoClient } from "@/features/auth/utils/user-info";
 
 /**

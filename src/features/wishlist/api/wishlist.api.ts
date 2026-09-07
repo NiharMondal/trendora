@@ -1,5 +1,5 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TWishlist } from "@/components/types/wishlist.types";
+import { TWishlist } from "@/features/wishlist/types/wishlist.types";
 
 import { baseApi } from "@/store/api/base-api";
 
