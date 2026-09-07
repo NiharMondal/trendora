@@ -11,7 +11,7 @@ import TDButton from "@/shared/components/td-button";
 import {
     changePasswordSchema,
     TChangePasswordValues,
-} from "./change-password-schema";
+} from "@/features/users/schemas/change-password.schema";
 
 
 type TChangePasswordProps = {

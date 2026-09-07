@@ -1,5 +1,5 @@
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { TUser } from "@/components/types/user.types";
+import { TUser } from "@/features/users/types/user.types";
 import { Button } from "@/shared/ui/button";
 
 export const userManagementColumns: DataTableColumn<TUser>[] = [

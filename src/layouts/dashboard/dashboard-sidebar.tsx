@@ -8,7 +8,7 @@ import {
 import { EnumUserRole } from "@/features/auth/constants/user-role";
 
 import { TSessionResponse } from "@/features/auth/types/session.types";
-import { useMyProfileQuery } from "@/redux/api/userApi";
+import { useMyProfileQuery } from "@/features/users/api/user.api";
 
 import {
     adminDashboardLinks,

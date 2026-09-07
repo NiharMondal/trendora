@@ -2,7 +2,7 @@
 import { useChangePasswordMutation } from "@/features/auth/api/auth.api";
 import { toast } from "sonner";
 import ChangePasswordForm from "./change-password-form";
-import { TChangePasswordValues } from "./change-password-schema";
+import { TChangePasswordValues } from "@/features/users/schemas/change-password.schema";
 
 export default function ChangePasswordComponent() {
     const [changePassword, { isLoading }] = useChangePasswordMutation();

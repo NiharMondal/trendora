@@ -1,5 +1,5 @@
 import { TProduct } from "@/features/products/types/product.types";
-import { TUser } from "@/components/types/user.types";
+import { TUser } from "@/features/users/types/user.types";
 
 export type TReview = {
     id: string;

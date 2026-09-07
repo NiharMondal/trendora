@@ -1,7 +1,7 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TUser } from "@/components/types/user.types";
+import { TUser } from "@/features/users/types/user.types";
 
-import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
+import { TProfileFormValues } from "@/features/users/schemas/profile-form.schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";
 

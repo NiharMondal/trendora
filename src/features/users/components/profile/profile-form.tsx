@@ -9,8 +9,8 @@ import TDButton from "@/shared/components/td-button";
 import {
     profileFormSchema,
     TProfileFormValues,
-} from "./profile-form-validation";
-import { useUpdateMyProfileMutation } from "@/redux/api/userApi";
+} from "@/features/users/schemas/profile-form.schema";
+import { useUpdateMyProfileMutation } from "@/features/users/api/user.api";
 import { toast } from "sonner";
 type TProfileFormProps = {
     defaultValues: TProfileFormValues | undefined;

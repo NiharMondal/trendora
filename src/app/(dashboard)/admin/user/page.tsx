@@ -24,7 +24,7 @@ import {
     TableRow,
 } from "@/shared/ui/table";
 import { productsImage } from "@/shared/constants/images";
-import { useAllUserQuery } from "@/redux/api/userApi";
+import { useAllUserQuery } from "@/features/users/api/user.api";
 
 export default function UserPage() {
     const [search, setSearch] = useState("");

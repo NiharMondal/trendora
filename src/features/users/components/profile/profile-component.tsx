@@ -1,7 +1,7 @@
 "use client";
-import { useMyProfileQuery } from "@/redux/api/userApi";
+import { useMyProfileQuery } from "@/features/users/api/user.api";
 import ProfileForm from "./profile-form";
-import { TProfileFormValues } from "./profile-form-validation";
+import { TProfileFormValues } from "@/features/users/schemas/profile-form.schema";
 
 export default function ProfileComponent() {
     const { data } = useMyProfileQuery(undefined);

@@ -1,5 +1,5 @@
 import { DataTable, TableLoading } from "@/shared/components/table";
-import { useAllUserQuery } from "@/redux/api/userApi";
+import { useAllUserQuery } from "@/features/users/api/user.api";
 
 import { userSortOptions } from "@/shared/constants/sort-options";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
