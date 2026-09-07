@@ -9,12 +9,12 @@ import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
 import { categorySortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
-import { TCategory } from "@/components/types/category.types";
+import { TCategory } from "@/features/categories/types/category.types";
 import { Button } from "@/shared/ui/button";
 import {
     useAllCategoryQuery,
     useDeleteCategoryMutation,
-} from "@/redux/api/productCategoryApi";
+} from "@/features/categories/api/category.api";
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { categoryColumns } from "./category-columns";

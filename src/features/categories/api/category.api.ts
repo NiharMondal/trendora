@@ -1,5 +1,5 @@
-import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
-import { TCategory } from "@/components/types/category.types";
+import { TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";
+import { TCategory } from "@/features/categories/types/category.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";

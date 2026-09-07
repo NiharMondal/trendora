@@ -9,7 +9,7 @@ import { Form } from "@/shared/ui/form";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
 
 import TDButton from "@/shared/components/td-button";
-import { categorySchema, TCategoryFormValues } from "./category-schema";
+import { categorySchema, TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";
 
 type Props = {
     defaultValues?: TCategoryFormValues | undefined;

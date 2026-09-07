@@ -2,14 +2,14 @@ import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
-import CategoryForm from "@/components/common/form/category-form/category-form";
-import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
+import CategoryForm from "@/features/categories/components/category-form";
+import { TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
-import { TCategory } from "@/components/types/category.types";
+import { TCategory } from "@/features/categories/types/category.types";
 import {
 	useCategoryByIdQuery,
 	useUpdateCategoryMutation,
-} from "@/redux/api/productCategoryApi";
+} from "@/features/categories/api/category.api";
 type EditCategoryProps = {
 	onClose: () => void;
 	categories: TCategory[];

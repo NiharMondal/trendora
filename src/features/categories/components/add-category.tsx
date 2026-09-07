@@ -1,12 +1,12 @@
 "use client";
 import { toast } from "sonner";
 
-import CategoryForm from "@/components/common/form/category-form/category-form";
-import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
+import CategoryForm from "@/features/categories/components/category-form";
+import { TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";
 import {
     useAllCategoryQuery,
     useCreateCategoryMutation,
-} from "@/redux/api/productCategoryApi";
+} from "@/features/categories/api/category.api";
 
 export default function AddCategory() {
     const [addCategory, { isLoading }] = useCreateCategoryMutation();

@@ -14,7 +14,7 @@ import { useAllBrandQuery } from "@/features/brands/api/brand.api";
 import {
     useAllCategoryQuery,
     useCategoryByIdQuery,
-} from "@/redux/api/productCategoryApi";
+} from "@/features/categories/api/category.api";
 
 import { productGenderOptions } from "@/shared/constants/mock-products";
 import TDButton from "@/shared/components/td-button";

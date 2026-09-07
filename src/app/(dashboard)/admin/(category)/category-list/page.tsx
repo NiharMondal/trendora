@@ -1,4 +1,4 @@
-import CategoryTable from "@/components/@dashboard/admin/category-table/category-table";
+import CategoryTable from "@/features/categories/components/category-table";
 import Headline from "@/shared/components/headline";
 
 export default function CategoryList() {

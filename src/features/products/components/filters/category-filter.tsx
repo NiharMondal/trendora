@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
-import { useAllCategoryQuery } from "@/redux/api/productCategoryApi";
+import { useAllCategoryQuery } from "@/features/categories/api/category.api";
 
 export default function CategoryFilter() {
 	const { data: categories, isLoading } = useAllCategoryQuery({});
