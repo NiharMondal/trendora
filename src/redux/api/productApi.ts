@@ -3,7 +3,7 @@ import { TProduct } from "@/components/types/product.types";
 
 import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const productApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

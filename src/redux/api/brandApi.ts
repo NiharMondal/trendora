@@ -3,7 +3,7 @@ import { TBrand } from "@/components/types/brand.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const brandApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

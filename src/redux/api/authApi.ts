@@ -6,7 +6,7 @@ import {
 } from "@/components/types/auth.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

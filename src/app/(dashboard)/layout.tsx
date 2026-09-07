@@ -2,7 +2,7 @@ import { Bell } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 
-import { DashboardSidebar } from "@/components/layout/dashboard/dashboard-sidebar";
+import { DashboardSidebar } from "@/layouts/dashboard/dashboard-sidebar";
 import { TSessionResponse } from "@/components/types/session.types";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";

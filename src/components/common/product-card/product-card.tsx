@@ -2,7 +2,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 import { TProduct } from "@/components/types/product.types";
-import { useAppDispatch } from "@/redux/redux.hooks";
+import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 import { Button } from "@/shared/ui/button";

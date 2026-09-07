@@ -1,7 +1,7 @@
 import { TServerResponse } from "@/shared/types/common.types";
 import { TWishlist } from "@/components/types/wishlist.types";
 
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const wishlistApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

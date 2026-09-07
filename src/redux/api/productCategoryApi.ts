@@ -3,7 +3,7 @@ import { TCategory } from "@/components/types/category.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 type TCategoryInput = {
     name: string;
     parentId?: string | null;

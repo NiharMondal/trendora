@@ -3,7 +3,7 @@ import { TUser } from "@/components/types/user.types";
 
 import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

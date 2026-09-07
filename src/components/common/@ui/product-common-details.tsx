@@ -14,7 +14,7 @@ import {
 } from "@/shared/ui/tooltip";
 import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
-import { useAppDispatch } from "@/redux/redux.hooks";
+import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 import { TCartItem } from "@/components/types/cart.types";

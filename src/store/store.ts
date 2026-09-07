@@ -10,7 +10,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { baseApi } from "@/redux/api/baseApi";
+import { baseApi } from "@/store/api/base-api";
 import cartReducer from "@/redux/slice/cartSlice";
 
 const cartConfig = {

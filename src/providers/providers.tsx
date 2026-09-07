@@ -5,8 +5,8 @@ import { Provider } from "react-redux";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 
-import { store } from "@/redux/store";
-import AuthSync from "./auth-sync";
+import { store } from "@/store/store";
+import AuthSync from "@/components/providers/auth-sync";
 const persistor = persistStore(store);
 export default function Providers({ children }: { children: React.ReactNode }) {
 

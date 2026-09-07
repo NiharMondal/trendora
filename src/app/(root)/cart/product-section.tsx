@@ -7,7 +7,7 @@ import Link from "next/link";
 import Container from "@/shared/components/container";
 import ProductQuantity from "@/shared/components/product-quantity";
 import TDButton from "@/shared/components/td-button";
-import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
+import { useAppDispatch, useAppSelector } from "@/store/redux.hooks";
 import {
 	decreaseQuantity,
 	increaseQuantity,

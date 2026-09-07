@@ -3,7 +3,7 @@ import { TReview } from "@/components/types/review.types";
 
 import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const reviewApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

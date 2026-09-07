@@ -3,7 +3,7 @@ import { TServerResponse } from "@/shared/types/common.types";
 import { TSizeGroup } from "@/components/types/size-group.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
-import { baseApi } from "./baseApi";
+import { baseApi } from "@/store/api/base-api";
 
 export const sizeGroupApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({

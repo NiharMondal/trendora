@@ -1,6 +1,6 @@
 "use client";
 import Container from "@/shared/components/container";
-import { useAppSelector } from "@/redux/redux.hooks";
+import { useAppSelector } from "@/store/redux.hooks";
 import { selectCartItems } from "@/redux/slice/cartSlice";
 import Link from "next/link";
 import OrderSummary from "./order-summary";

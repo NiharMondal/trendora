@@ -10,7 +10,7 @@ import TDButton from "@/shared/components/td-button";
 import { TCartItem } from "@/components/types/cart.types";
 import { TWishlist } from "@/components/types/wishlist.types";
 import { Button } from "@/shared/ui/button";
-import { useAppDispatch } from "@/redux/redux.hooks";
+import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 type Props = {
