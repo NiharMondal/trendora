@@ -3,7 +3,7 @@ import Image from "next/image";
 import { use, useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
-import { useProductByIdQuery } from "@/redux/api/productApi";
+import { useProductByIdQuery } from "@/features/products/api/product.api";
 
 export default function ProductDetailsPage({
     params,

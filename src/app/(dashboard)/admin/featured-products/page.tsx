@@ -1,6 +1,6 @@
 import Headline from "@/shared/components/headline";
 
-import FeaturedTable from "./featured-table";
+import FeaturedTable from "@/features/products/components/featured-table";
 
 export default function FeaturedProductPage() {
     return (

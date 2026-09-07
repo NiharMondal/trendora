@@ -1,5 +1,5 @@
-import ProductCommonDetails from "@/components/common/@ui/product-common-details";
-import { TProduct } from "@/components/types/product.types";
+import ProductCommonDetails from "@/features/products/components/product-common-details";
+import { TProduct } from "@/features/products/types/product.types";
 
 import DeliveryDetails from "./delivery-details";
 

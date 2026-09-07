@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { toast } from "sonner";
 
-import { TProduct } from "@/components/types/product.types";
+import { TProduct } from "@/features/products/types/product.types";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 

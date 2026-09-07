@@ -1,7 +1,7 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TProduct } from "@/components/types/product.types";
+import { TProduct } from "@/features/products/types/product.types";
 
-import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
+import { TProductFormValues } from "@/features/products/schemas/product-form.schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";
 

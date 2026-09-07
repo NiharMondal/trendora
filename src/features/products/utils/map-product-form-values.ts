@@ -1,5 +1,5 @@
-import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
-import type { TProduct } from "@/components/types/product.types";
+import { TProductFormValues } from "@/features/products/schemas/product-form.schema";
+import type { TProduct } from "@/features/products/types/product.types";
 
 export const mapProductToFormValues = (
     product: TProduct,

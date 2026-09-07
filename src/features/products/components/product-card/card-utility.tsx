@@ -2,12 +2,12 @@
 import { Eye, Heart } from "lucide-react";
 import { useState } from "react";
 
-import { TProduct } from "@/components/types/product.types";
+import { TProduct } from "@/features/products/types/product.types";
 import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import ProductCommonDetails from "@/components/common/@ui/product-common-details";
+import ProductCommonDetails from "@/features/products/components/product-common-details";
 import TDSheet from "@/shared/components/td-sheet";
 import Image from "next/image";
 

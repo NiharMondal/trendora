@@ -1,5 +1,5 @@
-import { TBrand } from "./brand.types";
-import { TCategory } from "./category.types";
+import { TBrand } from "@/components/types/brand.types";
+import { TCategory } from "@/components/types/category.types";
 
 export type TProductVariant = {
     id: string;

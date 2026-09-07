@@ -2,7 +2,7 @@ import { use } from "react";
 
 import Headline from "@/shared/components/headline";
 
-import UpdateProductForm from "./update-product";
+import UpdateProductForm from "@/features/products/components/update-product";
 
 export default function UpdateProductPage({
     params,

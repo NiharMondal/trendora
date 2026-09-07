@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import ProductCard from "@/components/common/product-card/product-card";
+import ProductCard from "@/features/products/components/product-card/product-card";
 import SectionHeader from "@/shared/components/section-header";
 import { Button } from "@/shared/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/shared/ui/carousel";
-import { useRelatedProductsQuery } from "@/redux/api/productApi";
+import { useRelatedProductsQuery } from "@/features/products/api/product.api";
 
 export default function RelatedProducts({ productId }: { productId: string }) {
     const [api, setApi] = useState<CarouselApi>();

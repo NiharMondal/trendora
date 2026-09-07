@@ -1,7 +1,7 @@
 "use client";
-import ProductCard from "@/components/common/product-card/product-card";
+import ProductCard from "@/features/products/components/product-card/product-card";
 import Container from "@/shared/components/container";
-import { useAllProductsQuery } from "@/redux/api/productApi";
+import { useAllProductsQuery } from "@/features/products/api/product.api";
 
 export default function ProductWrapper() {
 	const { data, isLoading } = useAllProductsQuery({});

@@ -5,12 +5,12 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import Container from "@/shared/components/container";
-import ProductDetails from "@/components/home/product-details/details/product-details";
-import RelatedProducts from "@/components/home/product-details/related-products";
+import ProductDetails from "@/features/products/components/product-details/product-details";
+import RelatedProducts from "@/features/products/components/product-details/related-products";
 import ReviewSection from "@/components/home/product-details/review-section/review-section";
-import { TProductImage } from "@/components/types/product.types";
+import { TProductImage } from "@/features/products/types/product.types";
 import { cn } from "@/shared/lib/utils";
-import { useProductBySlugQuery } from "@/redux/api/productApi";
+import { useProductBySlugQuery } from "@/features/products/api/product.api";
 
 export default function ProductDetailsPage({
     params,

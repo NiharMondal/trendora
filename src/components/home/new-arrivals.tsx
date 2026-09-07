@@ -1,7 +1,7 @@
-import { TProduct } from "@/components/types/product.types";
+import { TProduct } from "@/features/products/types/product.types";
 import { envConfig } from "@/shared/config/env-config";
 
-import ProductCard from "@/components/common/product-card/product-card";
+import ProductCard from "@/features/products/components/product-card/product-card";
 import Container from "@/shared/components/container";
 import SectionHeader from "@/shared/components/section-header";
 

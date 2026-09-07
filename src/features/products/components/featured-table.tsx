@@ -26,7 +26,7 @@ import {
     TableRow,
 } from "@/shared/ui/table";
 import { cn } from "@/shared/lib/utils";
-import { useAllProductsQuery } from "@/redux/api/productApi";
+import { useAllProductsQuery } from "@/features/products/api/product.api";
 
 export default function FeaturedTable() {
     const [currentPage, setCurrentPage] = useState(1);

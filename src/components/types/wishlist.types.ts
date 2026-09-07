@@ -1,4 +1,4 @@
-import { TProduct } from "./product.types";
+import { TProduct } from "@/features/products/types/product.types";
 
 export type TWishlist = {
     id: string;

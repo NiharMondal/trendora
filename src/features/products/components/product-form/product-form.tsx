@@ -19,7 +19,7 @@ import {
 import { productGenderOptions } from "@/shared/constants/mock-products";
 import TDButton from "@/shared/components/td-button";
 import ImageVariant from "./image-variant";
-import { productSchema, TProductFormValues } from "./product-form-schema";
+import { productSchema, TProductFormValues } from "@/features/products/schemas/product-form.schema";
 import ProductVariant from "./product-variant";
 
 type ProductFormProps = {

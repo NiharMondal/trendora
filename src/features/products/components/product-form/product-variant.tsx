@@ -5,7 +5,7 @@ import TDInput from "@/shared/form/TDInput";
 import TDSelect from "@/shared/form/TDSelect";
 import { Button } from "@/shared/ui/button";
 
-import { TProductFormValues } from "./product-form-schema";
+import { TProductFormValues } from "@/features/products/schemas/product-form.schema";
 type ProductVariantProps = {
     options: {
         label: string;

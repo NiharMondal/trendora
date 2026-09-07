@@ -7,7 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Label } from "@/shared/ui/label";
 
-import { TProductFormValues, TProductImage } from "./product-form-schema";
+import { TProductFormValues, TProductImage } from "@/features/products/schemas/product-form.schema";
 
 export default function ImageVariant() {
     const form = useFormContext<TProductFormValues>();

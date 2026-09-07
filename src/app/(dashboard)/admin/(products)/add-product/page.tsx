@@ -1,6 +1,6 @@
 import Headline from "@/shared/components/headline";
 
-import CreateProduct from "./create-product";
+import CreateProduct from "@/features/products/components/create-product";
 
 export default function AddProduct() {
     return (

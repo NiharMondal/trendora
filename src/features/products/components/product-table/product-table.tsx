@@ -11,7 +11,7 @@ import { Button } from "@/shared/ui/button";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
-} from "@/redux/api/productApi";
+} from "@/features/products/api/product.api";
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { productColumns } from "./product-columns";

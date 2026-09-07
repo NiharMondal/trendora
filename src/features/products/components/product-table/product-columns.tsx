@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import TDPopover from "@/shared/components/td-popover";
-import { TProduct } from "@/components/types/product.types";
+import { TProduct } from "@/features/products/types/product.types";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
 import Image from "next/image";

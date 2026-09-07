@@ -1,4 +1,4 @@
-import { TProduct } from "./product.types";
+import { TProduct } from "@/features/products/types/product.types";
 import { TUser } from "./user.types";
 
 export type TReview = {

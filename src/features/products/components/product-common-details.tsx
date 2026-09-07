@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ReactSmartRating } from "react-smart-rating";
 import { toast } from "sonner";
 
-import { TProduct, TProductVariant } from "@/components/types/product.types";
+import { TProduct, TProductVariant } from "@/features/products/types/product.types";
 import { Button } from "@/shared/ui/button";
 import {
     Tooltip,
@@ -18,7 +18,7 @@ import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 import { TCartItem } from "@/components/types/cart.types";
-import ProductPrice from "@/components/common/product-card/product-price";
+import ProductPrice from "@/features/products/components/product-card/product-price";
 import ProductQuantity from "@/shared/components/product-quantity";
 
 type Props = {
