@@ -3,7 +3,7 @@ import moment from "moment";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import TDPopover from "@/shared/components/td-popover";
-import { TSizeGroup } from "@/components/types/size-group.types";
+import { TSizeGroup } from "@/features/size-groups/types/size-group.types";
 import { Button } from "@/shared/ui/button";
 
 type Props = {

@@ -8,12 +8,12 @@ import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
 import { categorySortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
-import { TSizeGroup } from "@/components/types/size-group.types";
+import { TSizeGroup } from "@/features/size-groups/types/size-group.types";
 import { Button } from "@/shared/ui/button";
 import {
     useAllSizeGroupsQuery,
     useDeleteSizeGroupMutation,
-} from "@/redux/api/sizeGroupApi";
+} from "@/features/size-groups/api/size-group.api";
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSizeGroup from "./edit-size-group";

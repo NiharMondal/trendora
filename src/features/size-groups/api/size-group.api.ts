@@ -1,6 +1,6 @@
-import { TSizeGroupFormValues } from "@/components/common/form/size-group-form/size-group-schema";
+import { TSizeGroupFormValues } from "@/features/size-groups/schemas/size-group-form.schema";
 import { TServerResponse } from "@/shared/types/common.types";
-import { TSizeGroup } from "@/components/types/size-group.types";
+import { TSizeGroup } from "@/features/size-groups/types/size-group.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";

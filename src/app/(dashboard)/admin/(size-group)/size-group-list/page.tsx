@@ -1,4 +1,4 @@
-import SizeGroupTable from "@/components/@dashboard/admin/size-group-table/size-group-table";
+import SizeGroupTable from "@/features/size-groups/components/size-group-table";
 import Headline from "@/shared/components/headline";
 
 export default function SizeGroupList() {

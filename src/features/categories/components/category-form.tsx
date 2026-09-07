@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import TDCombobox from "@/shared/form/TDCombobox";
 import TDInput from "@/shared/form/TDInput";
 import { Form } from "@/shared/ui/form";
-import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
+import { useAllSizeGroupsQuery } from "@/features/size-groups/api/size-group.api";
 
 import TDButton from "@/shared/components/td-button";
 import { categorySchema, TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";

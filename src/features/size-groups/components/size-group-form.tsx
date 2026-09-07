@@ -5,7 +5,7 @@ import TDInput from "@/shared/form/TDInput";
 import { Form } from "@/shared/ui/form";
 
 import TDButton from "@/shared/components/td-button";
-import { sizeGroupSchema, TSizeGroupFormValues } from "./size-group-schema";
+import { sizeGroupSchema, TSizeGroupFormValues } from "@/features/size-groups/schemas/size-group-form.schema";
 
 type Props = {
 	defaultValues?: TSizeGroupFormValues | undefined;

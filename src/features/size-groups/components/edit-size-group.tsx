@@ -2,13 +2,13 @@ import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
-import SizeGroupForm from "@/components/common/form/size-group-form/size-group-form";
-import { TSizeGroupFormValues } from "@/components/common/form/size-group-form/size-group-schema";
+import SizeGroupForm from "@/features/size-groups/components/size-group-form";
+import { TSizeGroupFormValues } from "@/features/size-groups/schemas/size-group-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import {
 	useSizeGroupByIdQuery,
 	useUpdateSizeGroupMutation,
-} from "@/redux/api/sizeGroupApi";
+} from "@/features/size-groups/api/size-group.api";
 
 type EditSizeGroupProps = {
 	onClose: () => void;

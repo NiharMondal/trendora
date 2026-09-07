@@ -1,9 +1,9 @@
 "use client";
 import { toast } from "sonner";
 
-import SizeGroupForm from "@/components/common/form/size-group-form/size-group-form";
-import { TSizeGroupFormValues } from "@/components/common/form/size-group-form/size-group-schema";
-import { useCreateSizeGroupMutation } from "@/redux/api/sizeGroupApi";
+import SizeGroupForm from "@/features/size-groups/components/size-group-form";
+import { TSizeGroupFormValues } from "@/features/size-groups/schemas/size-group-form.schema";
+import { useCreateSizeGroupMutation } from "@/features/size-groups/api/size-group.api";
 
 export default function AddSizeGroup() {
     const [addSizeGroup, { isLoading }] = useCreateSizeGroupMutation();
