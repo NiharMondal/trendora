@@ -15,12 +15,15 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-**`pnpm lint` currently fails**: `eslint-config-next/core-web-vitals` references
-`eslint-plugin-react-hooks`, which pnpm does not hoist into `node_modules`. Add it as a
-devDependency to fix. Also note `eslint.config.mjs` puts `"@typescript-eslint/no-explicit-any", "warn"`
-as bare strings in the flat-config array rather than inside a `rules` object — so that rule is
-**not** actually configured, and `any` is used freely across the codebase (`error: any` in catch
-blocks, `(row as any)[col.key]` in the table renderer).
+`pnpm lint` passes (exit 0) with **56 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`
+(42), plus `@next/next/no-img-element` (8) and a few `no-unused-vars`. `any` is used freely across the
+codebase (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
+warning count as a baseline: don't add to it, and don't expect a clean run.
+
+`eslint.config.mjs` needs both of its non-`extends` entries to stay shaped as flat-config **objects** —
+a bare `"rule-name", "warn"` pair in the array makes ESLint 9 abort with
+`TypeError: Unexpected non-object config`, and without the leading `ignores` entry ESLint lints the
+whole `.next/` build output (tens of thousands of issues in generated chunks).
 
 ## Architecture
 
@@ -54,7 +57,7 @@ src/
 ├── assets/  types/ (ambient only)  middleware.ts
 ```
 
-The 16 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
+The 15 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
 `categories`, `checkout`, `home` (storefront landing sections), `orders`, `products`, `reviews`,
 `size-groups`, `sizes`, `users`, `wishlist`. Each uses the same subfolders, all optional:
 
@@ -69,7 +72,10 @@ features/<feature>/
 
 Dependency rules:
 - `app/` imports from `features/`, `layouts/`, `shared/` — never the reverse.
-- `shared/` and `layouts/` **never** import from `features/`.
+- `shared/` **never** imports from `features/` — keep it that way. `layouts/`, `store/` and
+  `providers/` do reach into a few features by necessity (navbar → `cart` selectors, dashboard
+  sidebar/nav-user → `auth` role+session types and `useMyProfileQuery`, `store.ts` → the cart slice,
+  `providers.tsx` → `AuthSync`); add to that list only when a layout genuinely needs feature state.
 - Cross-feature imports are allowed but should stay few; they are listed by
   `grep -rn '@/features/' src/features` and today form a DAG except `products` ↔ `wishlist`
   (product cards use `useWishlistToggle`, wishlist cards use `ProductPrice`).
@@ -108,7 +114,9 @@ upload and `deleteTempImage`).
   refresh) before retrying — or calls `signOut()` if refresh failed.
 - Feature APIs (`features/products/api/product.api.ts`, `features/orders/api/order.api.ts`, …) use `baseApi.injectEndpoints({...})` and export
   the generated hooks. **Add endpoints by injecting into `baseApi`; never create a second
-  `createApi`.** New tag types must be registered in `baseApi.ts`.
+  `createApi`.** New tag types must be registered in `baseApi.ts`. The file name does not always
+  match the feature: `features/home`'s endpoints live in `api/slide.api.ts` (hero slides, tag
+  `slides`).
 - Cache invalidation is coarse: `providesTags` / `invalidatesTags` against whole tag names
   (`["brands"]`), not per-id tags.
 - List endpoints take `Record<string, string>` and build their query string with `buildQueryParams`
@@ -150,6 +158,9 @@ const { data, isFetching } = useAllBrandQuery(filters.queryParams as Record<stri
 Sort dropdown options are shared presets in `src/shared/constants/sort-options.ts`. Row-level
 edit is commonly driven by a URL param (`?id=…`) opening a `TDSheet`, and delete by local state
 opening a `TDModal`.
+
+`ahooks` / `@ahooks.js/use-url-state` are in `package.json` but **unused** — URL state is hand-rolled
+in `useTableFilters` with `next/navigation` + `use-debounce`. Don't introduce a second mechanism.
 
 ### Redux store
 `src/store/store.ts` combines `baseApi.reducer` with a `cart` slice that is **persisted to
