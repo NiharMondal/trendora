@@ -7,7 +7,7 @@ import { Form } from "@/shared/ui/form";
 
 import TDRating from "@/shared/form/TDRating";
 import TDButton from "@/shared/components/td-button";
-import { reviewSchema, TReviewFormValues } from "./review-schema";
+import { reviewSchema, TReviewFormValues } from "@/features/reviews/schemas/review-form.schema";
 
 type AddEditReviewFormProps = {
     defaultValues?: TReviewFormValues | undefined;

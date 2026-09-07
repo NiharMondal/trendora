@@ -1,7 +1,7 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TReview } from "@/components/types/review.types";
+import { TReview } from "@/features/reviews/types/review.types";
 
-import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
+import { TReviewFormValues } from "@/features/reviews/schemas/review-form.schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";
 

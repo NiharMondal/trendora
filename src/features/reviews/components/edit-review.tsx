@@ -1,13 +1,13 @@
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import ReviewForm from "@/components/common/form/review-form/review-form";
-import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
+import ReviewForm from "@/features/reviews/components/review-form";
+import { TReviewFormValues } from "@/features/reviews/schemas/review-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import {
     useReviewByIdQuery,
     useUpdateReviewMutation,
-} from "@/redux/api/reviewApi";
+} from "@/features/reviews/api/review.api";
 type EditReviewProps = {
     onClose?: () => void;
 };

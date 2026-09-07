@@ -2,7 +2,7 @@ import { Edit } from "lucide-react";
 import moment from "moment";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { TReview } from "@/components/types/review.types";
+import { TReview } from "@/features/reviews/types/review.types";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
 

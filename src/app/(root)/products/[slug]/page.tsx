@@ -7,7 +7,7 @@ import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import Container from "@/shared/components/container";
 import ProductDetails from "@/features/products/components/product-details/product-details";
 import RelatedProducts from "@/features/products/components/product-details/related-products";
-import ReviewSection from "@/components/home/product-details/review-section/review-section";
+import ReviewSection from "@/features/reviews/components/review-section/review-section";
 import { TProductImage } from "@/features/products/types/product.types";
 import { cn } from "@/shared/lib/utils";
 import { useProductBySlugQuery } from "@/features/products/api/product.api";

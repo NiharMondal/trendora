@@ -6,8 +6,8 @@ import React from "react";
 import { DataTable } from "@/shared/components/table";
 import TableLoading from "@/shared/components/table/table-loading";
 import TDSheet from "@/shared/components/td-sheet";
-import { TReview } from "@/components/types/review.types";
-import { useAllReviewQuery } from "@/redux/api/reviewApi";
+import { TReview } from "@/features/reviews/types/review.types";
+import { useAllReviewQuery } from "@/features/reviews/api/review.api";
 
 import { reviewSortOptions } from "@/shared/constants/sort-options";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";

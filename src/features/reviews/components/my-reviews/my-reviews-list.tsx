@@ -3,20 +3,20 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import ReviewForm from "@/components/common/form/review-form/review-form";
-import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
+import ReviewForm from "@/features/reviews/components/review-form";
+import { TReviewFormValues } from "@/features/reviews/schemas/review-form.schema";
 import { DataTable, TableLoading } from "@/shared/components/table";
 import NoDataFound from "@/shared/components/no-data-found";
 import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
 import { TDModal } from "@/shared/components/td-modal";
-import { TReview } from "@/components/types/review.types";
+import { TReview } from "@/features/reviews/types/review.types";
 import { Button } from "@/shared/ui/button";
 import {
 	useDeleteReviewMutation,
 	useGetMyReviewsQuery,
 	useUpdateReviewMutation,
-} from "@/redux/api/reviewApi";
+} from "@/features/reviews/api/review.api";
 
 import { myReviewColumns } from "./my-reviews-columns";
 

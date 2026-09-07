@@ -1,11 +1,11 @@
 "use client";
 
 import SectionHeader from "@/shared/components/section-header";
-import ReviewItem from "@/components/home/product-details/review-section/review-item";
-import ReviewListSkeleton from "@/components/home/product-details/review-section/review-list-skeleton";
-import ReviewSummary from "@/components/home/product-details/review-section/review-summary";
-import WriteReview from "@/components/home/product-details/review-section/write-review";
-import { useReviewsByProductIdQuery } from "@/redux/api/reviewApi";
+import ReviewItem from "@/features/reviews/components/review-section/review-item";
+import ReviewListSkeleton from "@/features/reviews/components/review-section/review-list-skeleton";
+import ReviewSummary from "@/features/reviews/components/review-section/review-summary";
+import WriteReview from "@/features/reviews/components/review-section/write-review";
+import { useReviewsByProductIdQuery } from "@/features/reviews/api/review.api";
 import { useUserInfoClient } from "@/features/auth/utils/user-info";
 import Link from "next/link";
 

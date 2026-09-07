@@ -1,5 +1,5 @@
 import TdAvatar from "@/shared/components/td-avatar";
-import { TReview } from "@/components/types/review.types";
+import { TReview } from "@/features/reviews/types/review.types";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { ReactSmartRating } from "react-smart-rating";
 

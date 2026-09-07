@@ -1,4 +1,4 @@
-import MyReviewsList from "@/components/@dashboard/customer/my-reviews-list/my-reviews-list";
+import MyReviewsList from "@/features/reviews/components/my-reviews/my-reviews-list";
 
 export default function MyReviewsPage() {
     return (

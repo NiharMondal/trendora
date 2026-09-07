@@ -3,12 +3,12 @@
 import {
     reviewSchema,
     TReviewFormValues,
-} from "@/components/common/form/review-form/review-schema";
+} from "@/features/reviews/schemas/review-form.schema";
 import TDButton from "@/shared/components/td-button";
 import TDRating from "@/shared/form/TDRating";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { Form } from "@/shared/ui/form";
-import { useCreateReviewMutation } from "@/redux/api/reviewApi";
+import { useCreateReviewMutation } from "@/features/reviews/api/review.api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

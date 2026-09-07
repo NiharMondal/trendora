@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ReactSmartRating } from "react-smart-rating";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { TReview } from "@/components/types/review.types";
+import { TReview } from "@/features/reviews/types/review.types";
 import { Button } from "@/shared/ui/button";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { cn } from "@/shared/lib/utils";

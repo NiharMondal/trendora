@@ -2,7 +2,7 @@
 import { ReactSmartRating } from "react-smart-rating";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
-import { useAllReviewQuery } from "@/redux/api/reviewApi";
+import { useAllReviewQuery } from "@/features/reviews/api/review.api";
 
 export default function NewComments() {
     const { data } = useAllReviewQuery({
