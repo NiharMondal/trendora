@@ -1,8 +1,8 @@
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TProduct } from "@/components/types/product.types";
 
 import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const productApi = baseApi.injectEndpoints({

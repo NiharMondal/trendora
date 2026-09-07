@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import TDInput from "@/components/form-input/TDInput";
-import TDTextArea from "@/components/form-input/TDTextArea";
-import { Form } from "@/components/ui/form";
+import TDInput from "@/shared/form/TDInput";
+import TDTextArea from "@/shared/form/TDTextArea";
+import { Form } from "@/shared/ui/form";
 
-import TDRating from "@/components/form-input/TDRating";
-import TDButton from "@/components/common/shared/td-button";
+import TDRating from "@/shared/form/TDRating";
+import TDButton from "@/shared/components/td-button";
 import { reviewSchema, TReviewFormValues } from "./review-schema";
 
 type AddEditReviewFormProps = {

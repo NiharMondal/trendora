@@ -1,5 +1,5 @@
 import ChangePasswordComponent from "@/components/@dashboard/customer/change-password/change-password-component";
-import Headline from "@/components/common/dashboard/headline";
+import Headline from "@/shared/components/headline";
 
 export default function ChangePasswordPage() {
     return (

@@ -1,5 +1,5 @@
 import { TCartItem } from "@/components/types/cart.types";
-import { envConfig } from "@/config/env-config";
+import { envConfig } from "@/shared/config/env-config";
 
 type TOrderCalculation = {
     subtotal: number;

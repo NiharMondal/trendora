@@ -6,20 +6,20 @@ import { ReactSmartRating } from "react-smart-rating";
 import { toast } from "sonner";
 
 import { TProduct, TProductVariant } from "@/components/types/product.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/shared/ui/tooltip";
 import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 import { TCartItem } from "@/components/types/cart.types";
 import ProductPrice from "@/components/common/product-card/product-price";
-import ProductQuantity from "@/components/common/shared/product-quantity";
+import ProductQuantity from "@/shared/components/product-quantity";
 
 type Props = {
     product: TProduct | undefined;

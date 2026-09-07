@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import { Checkbox } from "@/shared/ui/checkbox";
+import { Label } from "@/shared/ui/label";
 import { useAllBrandQuery } from "@/redux/api/brandApi";
 
 export default function Brand() {

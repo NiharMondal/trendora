@@ -6,10 +6,10 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 import ProductPrice from "@/components/common/product-card/product-price";
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import { TCartItem } from "@/components/types/cart.types";
 import { TWishlist } from "@/components/types/wishlist.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 

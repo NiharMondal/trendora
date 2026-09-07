@@ -4,12 +4,12 @@ import { HeartOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import NoDataFound from "@/components/common/shared/no-data-found";
-import TDButton from "@/components/common/shared/td-button";
-import { TDModal } from "@/components/package/TDModal";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import NoDataFound from "@/shared/components/no-data-found";
+import TDButton from "@/shared/components/td-button";
+import { TDModal } from "@/shared/components/td-modal";
 import { TWishlist } from "@/components/types/wishlist.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
     useMyWishlistQuery,
     useRemoveFromWishlistMutation,

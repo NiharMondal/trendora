@@ -1,9 +1,9 @@
 import Image from "next/image";
 import React from "react";
 
-import { image } from "@/helping-data/image";
+import { image } from "@/shared/constants/images";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 export default function OfferSection() {
 	return (

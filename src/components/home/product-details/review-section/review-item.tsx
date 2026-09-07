@@ -1,6 +1,6 @@
-import TdAvatar from "@/components/common/@ui/td-avatar";
+import TdAvatar from "@/shared/components/td-avatar";
 import { TReview } from "@/components/types/review.types";
-import { formatDate } from "@/lib/format-date-time";
+import { formatDate } from "@/shared/lib/format-date-time";
 import { ReactSmartRating } from "react-smart-rating";
 
 export default function ReviewItem({ review }: { review: TReview }) {

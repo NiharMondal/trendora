@@ -1,11 +1,11 @@
 import { Plus, X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
-import TDImageUploadField from "@/components/form-input/TDImageUpload";
-import TDInput from "@/components/form-input/TDInput";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import TDImageUploadField from "@/shared/form/TDImageUpload";
+import TDInput from "@/shared/form/TDInput";
+import { Button } from "@/shared/ui/button";
+import { Checkbox } from "@/shared/ui/checkbox";
+import { Label } from "@/shared/ui/label";
 
 import { TProductFormValues, TProductImage } from "./product-form-schema";
 

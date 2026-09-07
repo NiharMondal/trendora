@@ -8,12 +8,12 @@ import {
 	CarouselApi,
 	CarouselContent,
 	CarouselItem,
-} from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/carousel";
+import { cn } from "@/shared/lib/utils";
 import { useAllSlideQuery } from "@/redux/api/slideApi";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import TDButton from "@/components/common/shared/td-button";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import TDButton from "@/shared/components/td-button";
 
 export function HeroSlider() {
 	const { data, isLoading } = useAllSlideQuery({ limit: "5" });

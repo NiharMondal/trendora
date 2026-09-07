@@ -3,14 +3,14 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
-import { DataTable } from "@/components/common/shared/table";
-import TableLoading from "@/components/common/shared/table/table-loading";
-import TDSheet from "@/components/common/shared/td-sheet";
+import { DataTable } from "@/shared/components/table";
+import TableLoading from "@/shared/components/table/table-loading";
+import TDSheet from "@/shared/components/td-sheet";
 import { TReview } from "@/components/types/review.types";
 import { useAllReviewQuery } from "@/redux/api/reviewApi";
 
-import { reviewSortOptions } from "@/components/helpers/sort-options";
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { reviewSortOptions } from "@/shared/constants/sort-options";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditReview from "./edit-review";
 import { reviewColumns } from "./review-columns";
 

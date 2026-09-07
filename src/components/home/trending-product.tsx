@@ -8,12 +8,12 @@ import {
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from "@/components/ui/carousel";
-import { products } from "@/helping-data/products";
+} from "@/shared/ui/carousel";
+import { products } from "@/shared/constants/mock-products";
 
-import Container from "@/components/common/shared/container";
-import SectionHeader from "@/components/common/shared/section-header";
-import { Button } from "@/components/ui/button";
+import Container from "@/shared/components/container";
+import SectionHeader from "@/shared/components/section-header";
+import { Button } from "@/shared/ui/button";
 
 export default function TrendingProduct() {
     const [api, setApi] = useState<CarouselApi>();

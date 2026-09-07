@@ -3,12 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import TDCombobox from "@/components/form-input/TDCombobox";
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDCombobox from "@/shared/form/TDCombobox";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
 
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import { categorySchema, TCategoryFormValues } from "./category-schema";
 
 type Props = {

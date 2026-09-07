@@ -5,7 +5,7 @@ import { TProduct } from "@/components/types/product.types";
 import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import CardUtility from "./card-utility";
 import ProductPrice from "./product-price";
 import Image from "next/image";

@@ -3,8 +3,8 @@ import { useAppSelector } from "@/redux/redux.hooks";
 import { selectCartItems } from "@/redux/slice/cartSlice";
 import React from "react";
 
-import { Button } from "@/components/ui/button";
-import { envConfig } from "@/config/env-config";
+import { Button } from "@/shared/ui/button";
+import { envConfig } from "@/shared/config/env-config";
 import {
     calculateOrderTotals,
     currencyFormatter,

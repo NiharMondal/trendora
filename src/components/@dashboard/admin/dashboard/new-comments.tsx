@@ -1,7 +1,7 @@
 "use client";
 import { ReactSmartRating } from "react-smart-rating";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { useAllReviewQuery } from "@/redux/api/reviewApi";
 
 export default function NewComments() {

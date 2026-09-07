@@ -2,10 +2,10 @@ import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { footerInfo, order, ourPolicies } from "@/helping-data/footer";
-import { socialIcon } from "@/helping-data/image";
+import { footerInfo, order, ourPolicies } from "@/shared/constants/footer";
+import { socialIcon } from "@/shared/constants/images";
 
-import Container from "./container";
+import Container from "@/shared/components/container";
 export default function Footer() {
     return (
         <footer className="py-10 bg-gray-700 text-white">

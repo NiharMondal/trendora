@@ -1,4 +1,4 @@
-import Headline from "@/components/common/dashboard/headline";
+import Headline from "@/shared/components/headline";
 
 import FeaturedTable from "./featured-table";
 

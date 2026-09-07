@@ -3,16 +3,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { DataTable, TableLoading } from "@/components/common/shared/table";
-import TDButton from "@/components/common/shared/td-button";
-import TDSheet from "@/components/common/shared/td-sheet";
-import { categorySortOptions } from "@/components/helpers/sort-options";
-import { TDModal } from "@/components/package/TDModal";
+import { DataTable, TableLoading } from "@/shared/components/table";
+import TDButton from "@/shared/components/td-button";
+import TDSheet from "@/shared/components/td-sheet";
+import { categorySortOptions } from "@/shared/constants/sort-options";
+import { TDModal } from "@/shared/components/td-modal";
 import { TSize } from "@/components/types/size.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useAllSizesQuery, useDeleteSizeMutation } from "@/redux/api/sizeApi";
 
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";
 

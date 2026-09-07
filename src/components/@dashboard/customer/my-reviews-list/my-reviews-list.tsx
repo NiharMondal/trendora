@@ -5,13 +5,13 @@ import { toast } from "sonner";
 
 import ReviewForm from "@/components/common/form/review-form/review-form";
 import { TReviewFormValues } from "@/components/common/form/review-form/review-schema";
-import { DataTable, TableLoading } from "@/components/common/shared/table";
-import NoDataFound from "@/components/common/shared/no-data-found";
-import TDButton from "@/components/common/shared/td-button";
-import TDSheet from "@/components/common/shared/td-sheet";
-import { TDModal } from "@/components/package/TDModal";
+import { DataTable, TableLoading } from "@/shared/components/table";
+import NoDataFound from "@/shared/components/no-data-found";
+import TDButton from "@/shared/components/td-button";
+import TDSheet from "@/shared/components/td-sheet";
+import { TDModal } from "@/shared/components/td-modal";
 import { TReview } from "@/components/types/review.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
 	useDeleteReviewMutation,
 	useGetMyReviewsQuery,

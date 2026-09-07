@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 
 export default function GoogleLoginButton() {
     return (

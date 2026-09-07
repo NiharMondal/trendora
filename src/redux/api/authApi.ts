@@ -4,7 +4,7 @@ import {
     TAuthLoginResponse,
     TAuthRegisterResponse,
 } from "@/components/types/auth.types";
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 
 import { baseApi } from "./baseApi";
 

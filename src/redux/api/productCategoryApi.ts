@@ -1,8 +1,8 @@
 import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
 import { TCategory } from "@/components/types/category.types";
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 type TCategoryInput = {
     name: string;

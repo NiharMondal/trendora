@@ -1,9 +1,9 @@
 import { TProduct } from "@/components/types/product.types";
-import { envConfig } from "@/config/env-config";
+import { envConfig } from "@/shared/config/env-config";
 
 import ProductCard from "@/components/common/product-card/product-card";
-import Container from "@/components/common/shared/container";
-import SectionHeader from "@/components/common/shared/section-header";
+import Container from "@/shared/components/container";
+import SectionHeader from "@/shared/components/section-header";
 
 const newArrivals = async () => {
     try {

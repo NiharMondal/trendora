@@ -1,5 +1,5 @@
 "use client";
-import { DataTable, TableLoading } from "@/components/common/shared/table";
+import { DataTable, TableLoading } from "@/shared/components/table";
 import { useGetMyOrdersQuery } from "@/redux/api/orderApi";
 import { myOrderColumns } from "./order-columns";
 import { DownloadButton, PrintButton } from "./pdf-download-print";

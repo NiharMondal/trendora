@@ -12,8 +12,8 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
-} from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/sidebar";
+import { cn } from "@/shared/lib/utils";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";

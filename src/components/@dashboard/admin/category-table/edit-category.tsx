@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import CategoryForm from "@/components/common/form/category-form/category-form";
 import { TCategoryFormValues } from "@/components/common/form/category-form/category-schema";
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { TCategory } from "@/components/types/category.types";
 import {
 	useCategoryByIdQuery,

@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 import ProductCard from "@/components/common/product-card/product-card";
-import SectionHeader from "@/components/common/shared/section-header";
-import { Button } from "@/components/ui/button";
+import SectionHeader from "@/shared/components/section-header";
+import { Button } from "@/shared/ui/button";
 import {
     Carousel,
     CarouselApi,
@@ -11,7 +11,7 @@ import {
     CarouselItem,
     CarouselNext,
     CarouselPrevious,
-} from "@/components/ui/carousel";
+} from "@/shared/ui/carousel";
 import { useRelatedProductsQuery } from "@/redux/api/productApi";
 
 export default function RelatedProducts({ productId }: { productId: string }) {

@@ -7,7 +7,7 @@ import {
     Share2,
 } from "lucide-react";
 
-import TextWithIcon from "@/components/common/@ui/text-with-icon";
+import TextWithIcon from "@/shared/components/text-with-icon";
 
 export default function DeliveryDetails() {
     return (

@@ -4,7 +4,7 @@ import React from "react";
 
 import { DashboardSidebar } from "@/components/layout/dashboard/dashboard-sidebar";
 import { TSessionResponse } from "@/components/types/session.types";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 import { authOptions } from "@/lib/authOptions";
 export default async function DashboardLayout({

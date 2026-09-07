@@ -1,4 +1,4 @@
-import Container from "@/components/common/shared/container";
+import Container from "@/shared/components/container";
 
 export default function WishList() {
     return (

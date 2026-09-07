@@ -2,11 +2,11 @@ import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { ReactSmartRating } from "react-smart-rating";
 
-import { DataTableColumn } from "@/components/common/shared/table/table-types";
+import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TReview } from "@/components/types/review.types";
-import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/format-date-time";
-import { cn } from "@/lib/utils";
+import { Button } from "@/shared/ui/button";
+import { formatDate } from "@/shared/lib/format-date-time";
+import { cn } from "@/shared/lib/utils";
 
 type MyReviewColumnActions = {
     handleEdit: (review: TReview) => void;

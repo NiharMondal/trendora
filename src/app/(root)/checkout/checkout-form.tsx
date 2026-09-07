@@ -3,13 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import TDButton from "@/components/common/shared/td-button";
-import { Form } from "@/components/ui/form";
+import TDButton from "@/shared/components/td-button";
+import { Form } from "@/shared/ui/form";
 import { useCreateOrderMutation } from "@/redux/api/orderApi";
 import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
 import { clearCart, selectCartItems } from "@/redux/slice/cartSlice";
 
-import TDRadioGroup from "@/components/form-input/TDRadioGroup";
+import TDRadioGroup from "@/shared/form/TDRadioGroup";
 import { useRouter } from "next/navigation";
 import BillingInformation from "./billing-information";
 import {

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 
 import Providers from "@/components/providers/providers";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/shared/ui/sonner";
 
 const inter = Inter({
     variable: "--font-inter",

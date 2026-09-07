@@ -1,5 +1,5 @@
 "use client";
-import { useIsDesktop } from "@/hooks/use-mobile";
+import { useIsDesktop } from "@/shared/hooks/use-mobile";
 import { useAppSelector } from "@/redux/redux.hooks";
 import { selectCartQuantity } from "@/redux/slice/cartSlice";
 

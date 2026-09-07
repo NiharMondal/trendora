@@ -3,21 +3,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import TDSeparator from "@/components/common/@ui/td-separator";
-import TDCheckbox from "@/components/form-input/TDCheckbox";
-import TDCombobox from "@/components/form-input/TDCombobox";
-import TDInput from "@/components/form-input/TDInput";
-import TDSelect from "@/components/form-input/TDSelect";
-import TDTextArea from "@/components/form-input/TDTextArea";
-import { Form } from "@/components/ui/form";
+import TDSeparator from "@/shared/components/td-separator";
+import TDCheckbox from "@/shared/form/TDCheckbox";
+import TDCombobox from "@/shared/form/TDCombobox";
+import TDInput from "@/shared/form/TDInput";
+import TDSelect from "@/shared/form/TDSelect";
+import TDTextArea from "@/shared/form/TDTextArea";
+import { Form } from "@/shared/ui/form";
 import { useAllBrandQuery } from "@/redux/api/brandApi";
 import {
     useAllCategoryQuery,
     useCategoryByIdQuery,
 } from "@/redux/api/productCategoryApi";
 
-import { productGenderOptions } from "@/helping-data/products";
-import TDButton from "@/components/common/shared/td-button";
+import { productGenderOptions } from "@/shared/constants/mock-products";
+import TDButton from "@/shared/components/td-button";
 import ImageVariant from "./image-variant";
 import { productSchema, TProductFormValues } from "./product-form-schema";
 import ProductVariant from "./product-variant";

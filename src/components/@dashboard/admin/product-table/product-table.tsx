@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { DataTable, TableLoading } from "@/components/common/shared/table";
-import TDButton from "@/components/common/shared/td-button";
-import { allSortOptions } from "@/components/helpers/sort-options";
-import { TDModal } from "@/components/package/TDModal";
-import { Button } from "@/components/ui/button";
+import { DataTable, TableLoading } from "@/shared/components/table";
+import TDButton from "@/shared/components/td-button";
+import { allSortOptions } from "@/shared/constants/sort-options";
+import { TDModal } from "@/shared/components/td-modal";
+import { Button } from "@/shared/ui/button";
 import {
     useAllProductsQuery,
     useDeleteProductMutation,
 } from "@/redux/api/productApi";
 
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { productColumns } from "./product-columns";
 
 export default function ProductTable() {

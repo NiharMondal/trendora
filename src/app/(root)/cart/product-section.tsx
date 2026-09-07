@@ -4,9 +4,9 @@ import { Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import Container from "@/components/common/shared/container";
-import ProductQuantity from "@/components/common/shared/product-quantity";
-import TDButton from "@/components/common/shared/td-button";
+import Container from "@/shared/components/container";
+import ProductQuantity from "@/shared/components/product-quantity";
+import TDButton from "@/shared/components/td-button";
 import { useAppDispatch, useAppSelector } from "@/redux/redux.hooks";
 import {
 	decreaseQuantity,

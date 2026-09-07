@@ -1,5 +1,5 @@
 "use client";
-import Container from "@/components/common/shared/container";
+import Container from "@/shared/components/container";
 import { useAppSelector } from "@/redux/redux.hooks";
 import { selectCartItems } from "@/redux/slice/cartSlice";
 import Link from "next/link";

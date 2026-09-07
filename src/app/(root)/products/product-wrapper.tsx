@@ -1,6 +1,6 @@
 "use client";
 import ProductCard from "@/components/common/product-card/product-card";
-import Container from "@/components/common/shared/container";
+import Container from "@/shared/components/container";
 import { useAllProductsQuery } from "@/redux/api/productApi";
 
 export default function ProductWrapper() {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import Container from "@/components/common/shared/container";
-import { cn } from "@/lib/utils";
+import Container from "@/shared/components/container";
+import { cn } from "@/shared/lib/utils";
 
 import { AUTH_NAV_HEIGHT } from "./constant";
 

@@ -2,9 +2,9 @@ import { FileSearch } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 
-import { DataTableColumn } from "@/components/common/shared/table/table-types";
+import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TOrder } from "@/components/types/order.types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { EnumOrderStatus, getOrderStatusStyles } from "@/utils/order-status";
 import {
     EnumPaymentStatus,

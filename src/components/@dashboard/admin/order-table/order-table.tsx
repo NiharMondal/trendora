@@ -1,9 +1,9 @@
 "use client";
 
-import { DataTable } from "@/components/common/shared/table";
+import { DataTable } from "@/shared/components/table";
 import { useAllOrderQuery } from "@/redux/api/orderApi";
 
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { orderColumns } from "./order-columns";
 
 export default function OrderTable() {

@@ -1,8 +1,8 @@
 import { TSizeGroupFormValues } from "@/components/common/form/size-group-form/size-group-schema";
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TSizeGroup } from "@/components/types/size-group.types";
 
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const sizeGroupApi = baseApi.injectEndpoints({

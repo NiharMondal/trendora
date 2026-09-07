@@ -4,7 +4,7 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-} from "@/components/ui/sidebar";
+} from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 
 import { TSessionResponse } from "@/components/types/session.types";

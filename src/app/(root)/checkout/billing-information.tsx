@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import TDButton from "@/components/common/shared/td-button";
-import TDInput from "@/components/form-input/TDInput";
-import TDTextArea from "@/components/form-input/TDTextArea";
-import { cn } from "@/lib/utils";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import TDButton from "@/shared/components/td-button";
+import TDInput from "@/shared/form/TDInput";
+import TDTextArea from "@/shared/form/TDTextArea";
+import { cn } from "@/shared/lib/utils";
 import { useMyAddressQuery } from "@/redux/api/addressApi";
 
 import { TCheckoutFormValues } from "./checkout-form-schema";

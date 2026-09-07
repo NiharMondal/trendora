@@ -1,11 +1,11 @@
 "use client";
 import { useForm } from "react-hook-form";
 
-import TDImageUploadField from "@/components/form-input/TDImageUpload";
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDImageUploadField from "@/shared/form/TDImageUpload";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import {
     profileFormSchema,
     TProfileFormValues,

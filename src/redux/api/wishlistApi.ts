@@ -1,4 +1,4 @@
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TWishlist } from "@/components/types/wishlist.types";
 
 import { baseApi } from "./baseApi";

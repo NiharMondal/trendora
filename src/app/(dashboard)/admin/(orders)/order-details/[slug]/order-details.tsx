@@ -1,9 +1,9 @@
 "use client";
-import RowText from "@/components/common/@ui/row-text";
-import TDSeparator from "@/components/common/@ui/td-separator";
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import { Stepper } from "@/components/ui/stepper";
-import { cn } from "@/lib/utils";
+import RowText from "@/shared/components/row-text";
+import TDSeparator from "@/shared/components/td-separator";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import { Stepper } from "@/shared/ui/stepper";
+import { cn } from "@/shared/lib/utils";
 import { useOrderByIdQuery } from "@/redux/api/orderApi";
 import { EnumOrderStatus, getOrderStatusStyles } from "@/utils/order-status";
 const steps = [

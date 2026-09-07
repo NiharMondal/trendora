@@ -9,9 +9,9 @@ import {
     ShoppingCart,
 } from "lucide-react";
 
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import { TUserSession } from "@/components/types/session.types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,13 +20,13 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/shared/ui/dropdown-menu";
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/global/user-role";
 import { signOut } from "next-auth/react";
 import Link from "next/link";

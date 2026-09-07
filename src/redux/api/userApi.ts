@@ -1,8 +1,8 @@
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TUser } from "@/components/types/user.types";
 
 import { TProfileFormValues } from "@/components/common/profile/profile-form-validation";
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const userApi = baseApi.injectEndpoints({

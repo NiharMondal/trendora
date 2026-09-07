@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import TDButton from "@/components/common/shared/td-button";
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDButton from "@/shared/components/td-button";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 import { useRegisterUserMutation } from "@/redux/api/authApi";
 
 import { Eye, EyeOff } from "lucide-react";

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { heroSlideImage } from "@/helping-data/image";
-import Container from "@/components/common/shared/container";
+import { heroSlideImage } from "@/shared/constants/images";
+import Container from "@/shared/components/container";
 
 export default function Showcase() {
     return (

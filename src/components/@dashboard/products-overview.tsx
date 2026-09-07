@@ -7,8 +7,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { productsImage } from "@/helping-data/image";
+} from "@/shared/ui/table";
+import { productsImage } from "@/shared/constants/images";
 
 const invoices = [
     {

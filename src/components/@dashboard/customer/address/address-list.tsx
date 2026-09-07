@@ -2,10 +2,10 @@
 
 import { Edit, Trash } from "lucide-react";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import NoDataFound from "@/components/common/shared/no-data-found";
-import TDButton from "@/components/common/shared/td-button";
-import TDSheet from "@/components/common/shared/td-sheet";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import NoDataFound from "@/shared/components/no-data-found";
+import TDButton from "@/shared/components/td-button";
+import TDSheet from "@/shared/components/td-sheet";
 import { TAddress } from "@/components/types/address.types";
 import {
 	useDeleteAddressMutation,

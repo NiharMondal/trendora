@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { getSession, signOut } from "next-auth/react";
 
-import { envConfig } from "@/config/env-config";
+import { envConfig } from "@/shared/config/env-config";
 
 const baseUrl = envConfig.backend_url;
 

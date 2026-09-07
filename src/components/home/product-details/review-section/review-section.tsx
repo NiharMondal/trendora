@@ -1,6 +1,6 @@
 "use client";
 
-import SectionHeader from "@/components/common/shared/section-header";
+import SectionHeader from "@/shared/components/section-header";
 import ReviewItem from "@/components/home/product-details/review-section/review-item";
 import ReviewListSkeleton from "@/components/home/product-details/review-section/review-list-skeleton";
 import ReviewSummary from "@/components/home/product-details/review-section/review-summary";

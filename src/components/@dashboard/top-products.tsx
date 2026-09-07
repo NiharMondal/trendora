@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { productsImage } from "@/helping-data/image";
+import { Table, TableBody, TableCell, TableRow } from "@/shared/ui/table";
+import { productsImage } from "@/shared/constants/images";
 
 const invoices = [
     {

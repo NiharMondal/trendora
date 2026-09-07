@@ -1,5 +1,5 @@
 import { TAddress } from "@/components/types/address.types";
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 
 import { TAddressFormValues } from "@/components/common/form/address-form/address-form-schema";
 import { baseApi } from "./baseApi";

@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import { brandSchema, TBrandFormValues } from "./brand-form-schema";
 
 type Props = {

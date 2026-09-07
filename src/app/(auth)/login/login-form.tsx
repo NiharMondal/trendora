@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Form } from "@/components/ui/form";
+import { Form } from "@/shared/ui/form";
 import { EnumUserRole } from "@/global/user-role";
 
-import TDButton from "@/components/common/shared/td-button";
-import TDInput from "@/components/form-input/TDInput";
+import TDButton from "@/shared/components/td-button";
+import TDInput from "@/shared/form/TDInput";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { loginSchema, TLoginValues } from "./login-schema";

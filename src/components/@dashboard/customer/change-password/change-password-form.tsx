@@ -4,10 +4,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 
-import TDButton from "@/components/common/shared/td-button";
+import TDButton from "@/shared/components/td-button";
 import {
     changePasswordSchema,
     TChangePasswordValues,

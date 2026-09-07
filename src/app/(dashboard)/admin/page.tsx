@@ -5,7 +5,7 @@ import RecentOrdersTable from "@/components/@dashboard/admin/dashboard/recent-or
 import ProductsOverview from "@/components/@dashboard/products-overview";
 import TopProducts from "@/components/@dashboard/top-products";
 import OrderChart from "@/components/charts/order-chart";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 export default function AdminHomePage() {
     return (

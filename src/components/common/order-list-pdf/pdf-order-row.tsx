@@ -1,7 +1,7 @@
 import { TOrder } from "@/components/types/order.types";
 import { Text, View } from "@react-pdf/renderer";
 import { fmt, s, STATUS_COLORS } from "./pdf-styles";
-import { formatDate } from "@/lib/format-date-time";
+import { formatDate } from "@/shared/lib/format-date-time";
 
 interface Props {
     order: TOrder;

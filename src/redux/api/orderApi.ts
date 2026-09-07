@@ -1,7 +1,7 @@
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TCreateOrderPayload, TOrder } from "@/components/types/order.types";
 
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const orderApi = baseApi.injectEndpoints({

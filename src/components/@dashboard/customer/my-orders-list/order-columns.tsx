@@ -1,12 +1,12 @@
-import { DataTableColumn } from "@/components/common/shared/table/table-types";
+import { DataTableColumn } from "@/shared/components/table/table-types";
 import {
     orderStatusMap,
     paymentStatusMap,
 } from "@/components/helpers/status-maps";
 import { TOrder } from "@/components/types/order.types";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { formatDate } from "@/lib/format-date-time";
+import { Button } from "@/shared/ui/button";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import { formatDate } from "@/shared/lib/format-date-time";
 
 export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
     return [

@@ -3,9 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
-import TDButton from "@/components/common/shared/td-button";
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDButton from "@/shared/components/td-button";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 
 import {
     forgotPasswordSchema,

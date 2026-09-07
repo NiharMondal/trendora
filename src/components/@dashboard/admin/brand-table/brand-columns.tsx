@@ -1,10 +1,10 @@
 import { Edit, EllipsisVertical, Trash } from "lucide-react";
 
-import { DataTableColumn } from "@/components/common/shared/table/table-types";
-import TDPopover from "@/components/common/shared/td-popover";
+import { DataTableColumn } from "@/shared/components/table/table-types";
+import TDPopover from "@/shared/components/td-popover";
 import { TBrand } from "@/components/types/brand.types";
-import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/format-date-time";
+import { Button } from "@/shared/ui/button";
+import { formatDate } from "@/shared/lib/format-date-time";
 
 type Props = {
     handleEdit: (category: TBrand) => void;

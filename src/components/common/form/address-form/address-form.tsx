@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import TDInput from "@/components/form-input/TDInput";
-import { Form } from "@/components/ui/form";
+import TDInput from "@/shared/form/TDInput";
+import { Form } from "@/shared/ui/form";
 
-import TDRadioGroup from "@/components/form-input/TDRadioGroup";
-import TDButton from "@/components/common/shared/td-button";
+import TDRadioGroup from "@/shared/form/TDRadioGroup";
+import TDButton from "@/shared/components/td-button";
 import { addressSchema, TAddressFormValues } from "./address-form-schema";
 
 type Props = {

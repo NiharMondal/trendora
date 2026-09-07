@@ -1,8 +1,8 @@
 import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
-import { TServerResponse } from "@/components/types/common.types";
+import { TServerResponse } from "@/shared/types/common.types";
 import { TSize } from "@/components/types/size.types";
 
-import { buildQueryParams } from "@/utils/build-query-params";
+import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "./baseApi";
 
 export const sizeApi = baseApi.injectEndpoints({

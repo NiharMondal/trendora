@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import ProductForm from "@/components/common/form/product-form/product-form";
 import { TProductFormValues } from "@/components/common/form/product-form/product-form-schema";
-import GeneralLoading from "@/components/common/loading/general-loading";
+import GeneralLoading from "@/shared/components/loading/general-loading";
 import { mapProductToFormValues } from "@/components/helpers/product/map-product-form-values";
 import {
     useProductByIdQuery,

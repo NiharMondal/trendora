@@ -1,8 +1,8 @@
-import { DataTable, TableLoading } from "@/components/common/shared/table";
+import { DataTable, TableLoading } from "@/shared/components/table";
 import { useAllUserQuery } from "@/redux/api/userApi";
 
-import { userSortOptions } from "@/components/helpers/sort-options";
-import { useTableFilters } from "@/hooks/use-table-filters";
+import { userSortOptions } from "@/shared/constants/sort-options";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { userManagementColumns } from "./user-management-columns";
 
 export default function UserManagementTable() {

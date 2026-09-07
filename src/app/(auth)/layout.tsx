@@ -1,4 +1,4 @@
-import Container from "@/components/common/shared/container";
+import Container from "@/shared/components/container";
 import AuthNavbar from "@/components/layout/auth/auth-navbar";
 
 export default function AuthLayout({

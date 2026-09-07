@@ -4,10 +4,10 @@ import {
     reviewSchema,
     TReviewFormValues,
 } from "@/components/common/form/review-form/review-schema";
-import TDButton from "@/components/common/shared/td-button";
-import TDRating from "@/components/form-input/TDRating";
-import TDTextArea from "@/components/form-input/TDTextArea";
-import { Form } from "@/components/ui/form";
+import TDButton from "@/shared/components/td-button";
+import TDRating from "@/shared/form/TDRating";
+import TDTextArea from "@/shared/form/TDTextArea";
+import { Form } from "@/shared/ui/form";
 import { useCreateReviewMutation } from "@/redux/api/reviewApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

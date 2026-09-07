@@ -3,7 +3,7 @@ import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-import { envConfig } from "@/config/env-config";
+import { envConfig } from "@/shared/config/env-config";
 import { EnumUserRole } from "@/global/user-role";
 
 const REFRESH_SKEW_MS = 30 * 1000; // 30 seconds
