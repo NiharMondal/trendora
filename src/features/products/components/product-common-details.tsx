@@ -15,9 +15,9 @@ import {
 import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
 import { useAppDispatch } from "@/store/redux.hooks";
-import { addItemToCart } from "@/redux/slice/cartSlice";
+import { addItemToCart } from "@/features/cart/store/cart.slice";
 
-import { TCartItem } from "@/components/types/cart.types";
+import { TCartItem } from "@/features/cart/types/cart.types";
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import ProductQuantity from "@/shared/components/product-quantity";
 

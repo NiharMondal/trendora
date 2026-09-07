@@ -1,6 +1,6 @@
 "use client";
 import { useAppSelector } from "@/store/redux.hooks";
-import { selectCartItems } from "@/redux/slice/cartSlice";
+import { selectCartItems } from "@/features/cart/store/cart.slice";
 import React from "react";
 
 import { Button } from "@/shared/ui/button";
@@ -8,7 +8,7 @@ import { envConfig } from "@/shared/config/env-config";
 import {
     calculateOrderTotals,
     currencyFormatter,
-} from "@/utils/calculate-order-total";
+} from "@/features/cart/utils/calculate-order-total";
 import Link from "next/link";
 
 export default function OrderSummary() {

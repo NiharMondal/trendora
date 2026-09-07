@@ -11,7 +11,7 @@ import {
 import storage from "redux-persist/lib/storage";
 
 import { baseApi } from "@/store/api/base-api";
-import cartReducer from "@/redux/slice/cartSlice";
+import cartReducer from "@/features/cart/store/cart.slice";
 
 const cartConfig = {
     key: "cart",

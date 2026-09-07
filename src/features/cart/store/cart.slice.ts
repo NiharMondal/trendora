@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 
 import { RootState } from "@/store/store";
-import { TCartItem } from "@/components/types/cart.types";
+import { TCartItem } from "@/features/cart/types/cart.types";
 
 type InitialStateType = {
 	cartItems: TCartItem[];

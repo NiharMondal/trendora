@@ -1,7 +1,7 @@
 "use client";
 import { useIsDesktop } from "@/shared/hooks/use-mobile";
 import { useAppSelector } from "@/store/redux.hooks";
-import { selectCartQuantity } from "@/redux/slice/cartSlice";
+import { selectCartQuantity } from "@/features/cart/store/cart.slice";
 
 import DesktopNavbar from "./desktop-navbar";
 import MobileNavbar from "./mobile-navbar";

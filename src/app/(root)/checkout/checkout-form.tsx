@@ -7,7 +7,7 @@ import TDButton from "@/shared/components/td-button";
 import { Form } from "@/shared/ui/form";
 import { useCreateOrderMutation } from "@/features/orders/api/order.api";
 import { useAppDispatch, useAppSelector } from "@/store/redux.hooks";
-import { clearCart, selectCartItems } from "@/redux/slice/cartSlice";
+import { clearCart, selectCartItems } from "@/features/cart/store/cart.slice";
 
 import TDRadioGroup from "@/shared/form/TDRadioGroup";
 import { useRouter } from "next/navigation";

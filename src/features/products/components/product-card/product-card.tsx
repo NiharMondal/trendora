@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { TProduct } from "@/features/products/types/product.types";
 import { useAppDispatch } from "@/store/redux.hooks";
-import { addItemToCart } from "@/redux/slice/cartSlice";
+import { addItemToCart } from "@/features/cart/store/cart.slice";
 
 import { Button } from "@/shared/ui/button";
 import CardUtility from "./card-utility";

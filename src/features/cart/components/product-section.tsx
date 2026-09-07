@@ -13,7 +13,7 @@ import {
 	increaseQuantity,
 	removeCartItem,
 	selectCartItems,
-} from "@/redux/slice/cartSlice";
+} from "@/features/cart/store/cart.slice";
 
 export default function ProductSection() {
 	const dispatch = useAppDispatch();
