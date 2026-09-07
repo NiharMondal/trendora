@@ -15,8 +15,8 @@ import BillingInformation from "./billing-information";
 import {
     checkoutFormSchema,
     TCheckoutFormValues,
-} from "./checkout-form-schema";
-import { paymentMethodOptions } from "./payment-method-options";
+} from "@/features/checkout/schemas/checkout-form.schema";
+import { paymentMethodOptions } from "@/features/checkout/constants/payment-method-options";
 
 export default function CheckoutForm() {
     const dispatch = useAppDispatch();

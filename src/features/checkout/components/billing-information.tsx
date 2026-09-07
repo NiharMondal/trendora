@@ -10,7 +10,7 @@ import TDTextArea from "@/shared/form/TDTextArea";
 import { cn } from "@/shared/lib/utils";
 import { useMyAddressQuery } from "@/redux/api/addressApi";
 
-import { TCheckoutFormValues } from "./checkout-form-schema";
+import { TCheckoutFormValues } from "@/features/checkout/schemas/checkout-form.schema";
 
 type AddressMode = "SELECT" | "CREATE";
 
