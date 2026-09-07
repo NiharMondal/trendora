@@ -2,8 +2,8 @@ import { DataTableColumn } from "@/shared/components/table/table-types";
 import {
     orderStatusMap,
     paymentStatusMap,
-} from "@/components/helpers/status-maps";
-import { TOrder } from "@/components/types/order.types";
+} from "@/features/orders/constants/status-maps";
+import { TOrder } from "@/features/orders/types/order.types";
 import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { formatDate } from "@/shared/lib/format-date-time";

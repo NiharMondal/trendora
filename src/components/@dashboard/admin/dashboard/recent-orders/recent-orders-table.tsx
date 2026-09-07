@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "@/shared/components/table";
-import { useAllOrderQuery } from "@/redux/api/orderApi";
+import { useAllOrderQuery } from "@/features/orders/api/order.api";
 
 import { orderColumns } from "./order-columns";
 

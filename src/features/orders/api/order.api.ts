@@ -1,5 +1,5 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TCreateOrderPayload, TOrder } from "@/components/types/order.types";
+import { TCreateOrderPayload, TOrder } from "@/features/orders/types/order.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";

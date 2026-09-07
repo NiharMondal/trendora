@@ -1,4 +1,4 @@
-import OrderTable from "@/components/@dashboard/admin/order-table/order-table";
+import OrderTable from "@/features/orders/components/order-table/order-table";
 import Headline from "@/shared/components/headline";
 
 export default function OrderList() {

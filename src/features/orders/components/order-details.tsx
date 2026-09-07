@@ -4,8 +4,8 @@ import TDSeparator from "@/shared/components/td-separator";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { Stepper } from "@/shared/ui/stepper";
 import { cn } from "@/shared/lib/utils";
-import { useOrderByIdQuery } from "@/redux/api/orderApi";
-import { EnumOrderStatus, getOrderStatusStyles } from "@/utils/order-status";
+import { useOrderByIdQuery } from "@/features/orders/api/order.api";
+import { EnumOrderStatus, getOrderStatusStyles } from "@/features/orders/utils/order-status";
 const steps = [
     { id: "1", title: "First" },
     { id: "2", title: "Second" },

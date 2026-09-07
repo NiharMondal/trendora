@@ -1,9 +1,9 @@
 "use client";
 import { DataTable, TableLoading } from "@/shared/components/table";
-import { useGetMyOrdersQuery } from "@/redux/api/orderApi";
-import { myOrderColumns } from "./order-columns";
+import { useGetMyOrdersQuery } from "@/features/orders/api/order.api";
+import { myOrderColumns } from "./my-order-columns";
 import { DownloadButton, PrintButton } from "./pdf-download-print";
-import { TOrder, TOrderItemResponse } from "@/components/types/order.types";
+import { TOrder, TOrderItemResponse } from "@/features/orders/types/order.types";
 
 
 export default function MyOrdersList() {

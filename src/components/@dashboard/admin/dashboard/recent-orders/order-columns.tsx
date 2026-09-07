@@ -1,5 +1,5 @@
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { TOrder } from "@/components/types/order.types";
+import { TOrder } from "@/features/orders/types/order.types";
 import { cn } from "@/shared/lib/utils";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [

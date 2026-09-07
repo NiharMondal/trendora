@@ -1,6 +1,6 @@
 "use client";
-import { OrderListPDF } from "@/components/common/order-list-pdf/order-list-pdf";
-import { TOrder } from "@/components/types/order.types";
+import { OrderListPDF } from "@/features/orders/components/order-pdf/order-list-pdf";
+import { TOrder } from "@/features/orders/types/order.types";
 import { Button } from "@/shared/ui/button";
 import { BlobProvider } from "@react-pdf/renderer";
 import { Download, Printer } from "lucide-react";

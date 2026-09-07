@@ -1,4 +1,4 @@
-import type { TPaymentStatus, TOrderStatus } from "@/components/types/status.types";
+import type { TPaymentStatus, TOrderStatus } from "@/features/orders/types/status.types";
 
 type BadgeConfig = {
     label: string;

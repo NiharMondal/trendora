@@ -1,4 +1,4 @@
-import { TOrder } from "@/components/types/order.types";
+import { TOrder } from "@/features/orders/types/order.types";
 import { Text, View } from "@react-pdf/renderer";
 import { fmt, s, STATUS_COLORS } from "./pdf-styles";
 import { formatDate } from "@/shared/lib/format-date-time";

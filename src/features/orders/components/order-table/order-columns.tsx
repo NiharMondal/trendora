@@ -3,13 +3,13 @@ import moment from "moment";
 import Link from "next/link";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { TOrder } from "@/components/types/order.types";
+import { TOrder } from "@/features/orders/types/order.types";
 import { Button } from "@/shared/ui/button";
-import { EnumOrderStatus, getOrderStatusStyles } from "@/utils/order-status";
+import { EnumOrderStatus, getOrderStatusStyles } from "@/features/orders/utils/order-status";
 import {
     EnumPaymentStatus,
     getPaymentStatusStyles,
-} from "@/utils/payment-status";
+} from "@/features/orders/utils/payment-status";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
     {

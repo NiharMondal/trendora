@@ -1,4 +1,4 @@
-import { TOrder } from "@/components/types/order.types";
+import { TOrder } from "@/features/orders/types/order.types";
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { PDFFooter } from "./pdf-footer";
 import { PDFHeader } from "./pdf-header";

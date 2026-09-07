@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import TDButton from "@/shared/components/td-button";
 import { Form } from "@/shared/ui/form";
-import { useCreateOrderMutation } from "@/redux/api/orderApi";
+import { useCreateOrderMutation } from "@/features/orders/api/order.api";
 import { useAppDispatch, useAppSelector } from "@/store/redux.hooks";
 import { clearCart, selectCartItems } from "@/redux/slice/cartSlice";
 
