@@ -9,7 +9,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
 
 type TDRatingProps<T extends FieldValues> = {
     form: UseFormReturn<T>;

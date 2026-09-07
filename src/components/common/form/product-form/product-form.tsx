@@ -17,7 +17,7 @@ import {
 } from "@/redux/api/productCategoryApi";
 
 import { productGenderOptions } from "@/helping-data/products";
-import TDButton from "../../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import ImageVariant from "./image-variant";
 import { productSchema, TProductFormValues } from "./product-form-schema";
 import ProductVariant from "./product-variant";

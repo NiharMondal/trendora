@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { heroSlideImage } from "@/helping-data/image";
-import Container from "../common/shared/container";
+import Container from "@/components/common/shared/container";
 
 export default function Showcase() {
     return (

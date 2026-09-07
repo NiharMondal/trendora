@@ -18,8 +18,8 @@ import { useAppDispatch } from "@/redux/redux.hooks";
 import { addItemToCart } from "@/redux/slice/cartSlice";
 
 import { TCartItem } from "@/components/types/cart.types";
-import ProductPrice from "../product-card/product-price";
-import ProductQuantity from "../shared/product-quantity";
+import ProductPrice from "@/components/common/product-card/product-price";
+import ProductQuantity from "@/components/common/shared/product-quantity";
 
 type Props = {
     product: TProduct | undefined;

@@ -5,7 +5,7 @@ import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 
 import TDRadioGroup from "@/components/form-input/TDRadioGroup";
-import TDButton from "../../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { addressSchema, TAddressFormValues } from "./address-form-schema";
 
 type Props = {

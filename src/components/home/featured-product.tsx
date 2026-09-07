@@ -1,5 +1,5 @@
-import Container from "../common/shared/container";
-import SectionHeader from "../common/shared/section-header";
+import Container from "@/components/common/shared/container";
+import SectionHeader from "@/components/common/shared/section-header";
 
 export default function FeaturedProduct() {
     return (

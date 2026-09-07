@@ -6,7 +6,7 @@ import TDTextArea from "@/components/form-input/TDTextArea";
 import { Form } from "@/components/ui/form";
 
 import TDRating from "@/components/form-input/TDRating";
-import TDButton from "../../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { reviewSchema, TReviewFormValues } from "./review-schema";
 
 type AddEditReviewFormProps = {

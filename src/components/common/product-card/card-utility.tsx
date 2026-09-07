@@ -6,9 +6,9 @@ import { TProduct } from "@/components/types/product.types";
 import { useWishlistToggle } from "@/hooks/use-wishlist-toggle";
 import { cn } from "@/lib/utils";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
-import ProductCommonDetails from "../@ui/product-common-details";
-import TDSheet from "../shared/td-sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import ProductCommonDetails from "@/components/common/@ui/product-common-details";
+import TDSheet from "@/components/common/shared/td-sheet";
 import Image from "next/image";
 
 type Props = {

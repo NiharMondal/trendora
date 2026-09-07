@@ -12,8 +12,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useAllSlideQuery } from "@/redux/api/slideApi";
 
-import SpinnerLoading from "../common/loading/spinner-loading";
-import TDButton from "../common/shared/td-button";
+import SpinnerLoading from "@/components/common/loading/spinner-loading";
+import TDButton from "@/components/common/shared/td-button";
 
 export function HeroSlider() {
 	const { data, isLoading } = useAllSlideQuery({ limit: "5" });

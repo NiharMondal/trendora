@@ -3,7 +3,7 @@ import React from "react";
 
 import { image } from "@/helping-data/image";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function OfferSection() {
 	return (

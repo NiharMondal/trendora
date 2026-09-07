@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 
-import TDButton from "../../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { sizeGroupSchema, TSizeGroupFormValues } from "./size-group-schema";
 
 type Props = {

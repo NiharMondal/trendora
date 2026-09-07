@@ -5,7 +5,7 @@ import TDImageUploadField from "@/components/form-input/TDImageUpload";
 import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TDButton from "../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import {
     profileFormSchema,
     TProfileFormValues,

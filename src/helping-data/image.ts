@@ -8,16 +8,16 @@ import white from "@/assets/images/products/white-lg.jpg";
 import whiteSm from "@/assets/images/products/white-sm.jpg";
 import yellow from "@/assets/images/products/yellow-xl.jpg";
 
-import facebook from "../assets/icons/facebook.svg";
-import instagram from "../assets/icons/instagram.svg";
-import secureLogin from "../assets/icons/secure-login.svg";
-import signUp from "../assets/icons/sign-up.svg";
-import twitter from "../assets/icons/x.svg";
-import youtube from "../assets/icons/youtube.svg";
-import kidsCollection from "../assets/images/kids.webp";
-import menCollection from "../assets/images/men.webp";
-import winterCollection from "../assets/images/winter.webp";
-import womenCollection from "../assets/images/women.webp";
+import facebook from "@/assets/icons/facebook.svg";
+import instagram from "@/assets/icons/instagram.svg";
+import secureLogin from "@/assets/icons/secure-login.svg";
+import signUp from "@/assets/icons/sign-up.svg";
+import twitter from "@/assets/icons/x.svg";
+import youtube from "@/assets/icons/youtube.svg";
+import kidsCollection from "@/assets/images/kids.webp";
+import menCollection from "@/assets/images/men.webp";
+import winterCollection from "@/assets/images/winter.webp";
+import womenCollection from "@/assets/images/women.webp";
 export const productsImage = {
 	black,
 	gray,

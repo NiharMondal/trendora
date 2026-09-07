@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/carousel";
 import { products } from "@/helping-data/products";
 
-import Container from "../common/shared/container";
-import SectionHeader from "../common/shared/section-header";
-import { Button } from "../ui/button";
+import Container from "@/components/common/shared/container";
+import SectionHeader from "@/components/common/shared/section-header";
+import { Button } from "@/components/ui/button";
 
 export default function TrendingProduct() {
     const [api, setApi] = useState<CarouselApi>();

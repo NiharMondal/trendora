@@ -2,7 +2,7 @@ import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     FormControl,
     FormDescription,
@@ -10,7 +10,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
 
 type TDCheckboxProps<T extends FieldValues> = {
     form: UseFormReturn<T>;

@@ -7,7 +7,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-import TDButton from "../td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { SortByOption } from "./table-types";
 
 type TableToolbarProps = {

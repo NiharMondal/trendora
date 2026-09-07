@@ -8,7 +8,7 @@ import TDInput from "@/components/form-input/TDInput";
 import { Form } from "@/components/ui/form";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
 
-import TDButton from "../../shared/td-button";
+import TDButton from "@/components/common/shared/td-button";
 import { categorySchema, TCategoryFormValues } from "./category-schema";
 
 type Props = {

@@ -10,7 +10,7 @@ import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
 import { deleteTempImage } from "@/lib/delete-temp-image";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 type Props<T extends FieldValues> = {
     form: UseFormReturn<T>;
