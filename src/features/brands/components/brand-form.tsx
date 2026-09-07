@@ -5,7 +5,7 @@ import TDInput from "@/shared/form/TDInput";
 import { Form } from "@/shared/ui/form";
 
 import TDButton from "@/shared/components/td-button";
-import { brandSchema, TBrandFormValues } from "./brand-form-schema";
+import { brandSchema, TBrandFormValues } from "@/features/brands/schemas/brand-form.schema";
 
 type Props = {
 	defaultValues?: TBrandFormValues | undefined;

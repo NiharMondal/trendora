@@ -8,9 +8,9 @@ import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
 import { categorySortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
-import { TBrand } from "@/components/types/brand.types";
+import { TBrand } from "@/features/brands/types/brand.types";
 import { Button } from "@/shared/ui/button";
-import { useAllBrandQuery, useDeleteBrandMutation } from "@/redux/api/brandApi";
+import { useAllBrandQuery, useDeleteBrandMutation } from "@/features/brands/api/brand.api";
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { brandColumns } from "./brand-columns";

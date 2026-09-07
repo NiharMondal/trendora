@@ -1,4 +1,4 @@
-import { TBrand } from "@/components/types/brand.types";
+import { TBrand } from "@/features/brands/types/brand.types";
 import { TCategory } from "@/components/types/category.types";
 
 export type TProductVariant = {

@@ -2,7 +2,7 @@ import { Edit, EllipsisVertical, Trash } from "lucide-react";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import TDPopover from "@/shared/components/td-popover";
-import { TBrand } from "@/components/types/brand.types";
+import { TBrand } from "@/features/brands/types/brand.types";
 import { Button } from "@/shared/ui/button";
 import { formatDate } from "@/shared/lib/format-date-time";
 

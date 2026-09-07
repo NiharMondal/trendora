@@ -1,5 +1,5 @@
-import { TBrandFormValues } from "@/components/common/form/brand-form/brand-form-schema";
-import { TBrand } from "@/components/types/brand.types";
+import { TBrandFormValues } from "@/features/brands/schemas/brand-form.schema";
+import { TBrand } from "@/features/brands/types/brand.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";

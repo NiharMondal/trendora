@@ -1,4 +1,4 @@
-import BrandTable from "@/components/@dashboard/admin/brand-table/brand-table";
+import BrandTable from "@/features/brands/components/brand-table";
 import Headline from "@/shared/components/headline";
 
 export default function BrandListPage() {

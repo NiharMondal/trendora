@@ -10,7 +10,7 @@ import TDInput from "@/shared/form/TDInput";
 import TDSelect from "@/shared/form/TDSelect";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { Form } from "@/shared/ui/form";
-import { useAllBrandQuery } from "@/redux/api/brandApi";
+import { useAllBrandQuery } from "@/features/brands/api/brand.api";
 import {
     useAllCategoryQuery,
     useCategoryByIdQuery,
