@@ -2,7 +2,7 @@
 import { DataTable } from "@/shared/components/table";
 import { useAllOrderQuery } from "@/features/orders/api/order.api";
 
-import { orderColumns } from "./order-columns";
+import { orderColumns } from "./recent-order-columns";
 
 export default function RecentOrdersTable() {
 	const { data: orders } = useAllOrderQuery({

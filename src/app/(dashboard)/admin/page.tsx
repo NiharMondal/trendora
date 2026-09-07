@@ -1,10 +1,10 @@
 import { ShoppingBag } from "lucide-react";
 
-import NewComments from "@/components/@dashboard/admin/dashboard/new-comments";
-import RecentOrdersTable from "@/components/@dashboard/admin/dashboard/recent-orders/recent-orders-table";
-import ProductsOverview from "@/components/@dashboard/products-overview";
-import TopProducts from "@/components/@dashboard/top-products";
-import OrderChart from "@/components/charts/order-chart";
+import NewComments from "@/features/analytics/components/new-comments";
+import RecentOrdersTable from "@/features/analytics/components/recent-orders/recent-orders-table";
+import ProductsOverview from "@/features/analytics/components/products-overview";
+import TopProducts from "@/features/analytics/components/top-products";
+import OrderChart from "@/features/analytics/components/order-chart";
 import { cn } from "@/shared/lib/utils";
 
 export default function AdminHomePage() {
