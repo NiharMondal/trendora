@@ -6,7 +6,7 @@ import { Form } from "@/shared/ui/form";
 
 import TDRadioGroup from "@/shared/form/TDRadioGroup";
 import TDButton from "@/shared/components/td-button";
-import { addressSchema, TAddressFormValues } from "./address-form-schema";
+import { addressSchema, TAddressFormValues } from "@/features/addresses/schemas/address-form.schema";
 
 type Props = {
     defaultValues?: TAddressFormValues | null;

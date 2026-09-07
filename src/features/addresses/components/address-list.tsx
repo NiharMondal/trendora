@@ -6,11 +6,11 @@ import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
 import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
-import { TAddress } from "@/components/types/address.types";
+import { TAddress } from "@/features/addresses/types/address.types";
 import {
 	useDeleteAddressMutation,
 	useMyAddressQuery,
-} from "@/redux/api/addressApi";
+} from "@/features/addresses/api/address.api";
 import React, { useState } from "react";
 import { toast } from "sonner";
 import EditAddress from "./edit-address";

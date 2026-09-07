@@ -1,20 +1,17 @@
-import AddressForm from "@/components/common/form/address-form/address-form";
-import { TAddressFormValues } from "@/components/common/form/address-form/address-form-schema";
-import { TAddress } from "@/components/types/address.types";
-import { useUpdateAddressMutation } from "@/redux/api/addressApi";
+import AddressForm from "@/features/addresses/components/address-form";
+import { TAddressFormValues } from "@/features/addresses/schemas/address-form.schema";
+import { useCreateAddressMutation } from "@/features/addresses/api/address.api";
 import { toast } from "sonner";
 
-export default function EditAddress({
+export default function AddNewAddress({
     handleCloseDrawer,
-    selectedAddress,
 }: {
     handleCloseDrawer: () => void;
-    selectedAddress: TAddress | null;
 }) {
-    const [updateAddress, { isLoading }] = useUpdateAddressMutation();
+    const [createAddress, { isLoading }] = useCreateAddressMutation();
     const onSubmit = async (data: TAddressFormValues) => {
         try {
-            const res = await updateAddress({ payload: data, id: selectedAddress?.id as string }).unwrap();
+            const res = await createAddress(data).unwrap();
             if (res?.success) {
                 toast.success(res?.message);
                 return true;
@@ -33,7 +30,6 @@ export default function EditAddress({
                 onSubmit={onSubmit}
                 isSubmitting={isLoading}
                 onSuccess={handleSuccess}
-                defaultValues={selectedAddress}
             />
         </div>
     );

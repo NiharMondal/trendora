@@ -1,7 +1,7 @@
-import { TAddress } from "@/components/types/address.types";
+import { TAddress } from "@/features/addresses/types/address.types";
 import { TServerResponse } from "@/shared/types/common.types";
 
-import { TAddressFormValues } from "@/components/common/form/address-form/address-form-schema";
+import { TAddressFormValues } from "@/features/addresses/schemas/address-form.schema";
 import { baseApi } from "@/store/api/base-api";
 
 export const addressApi = baseApi.injectEndpoints({

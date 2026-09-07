@@ -8,7 +8,7 @@ import TDButton from "@/shared/components/td-button";
 import TDInput from "@/shared/form/TDInput";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { cn } from "@/shared/lib/utils";
-import { useMyAddressQuery } from "@/redux/api/addressApi";
+import { useMyAddressQuery } from "@/features/addresses/api/address.api";
 
 import { TCheckoutFormValues } from "@/features/checkout/schemas/checkout-form.schema";
 
