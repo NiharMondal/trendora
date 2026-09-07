@@ -10,7 +10,7 @@ import {
 	CarouselItem,
 } from "@/shared/ui/carousel";
 import { cn } from "@/shared/lib/utils";
-import { useAllSlideQuery } from "@/redux/api/slideApi";
+import { useAllSlideQuery } from "@/features/home/api/slide.api";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import TDButton from "@/shared/components/td-button";

@@ -1,4 +1,4 @@
-import { HeroSlider } from "@/components/home/hero-slider";
+import { HeroSlider } from "@/features/home/components/hero-slider";
 
 export default function Home() {
     return (

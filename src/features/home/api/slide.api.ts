@@ -1,5 +1,5 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TSlide } from "@/components/types/slide.types";
+import { TSlide } from "@/features/home/types/slide.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";
