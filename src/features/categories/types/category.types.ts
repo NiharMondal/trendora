@@ -1,4 +1,4 @@
-import { TSize } from "@/components/types/size.types";
+import { TSize } from "@/features/sizes/types/size.types";
 
 export type TCategory = {
 	id: string;

@@ -1,6 +1,6 @@
-import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
+import { TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
 import { TServerResponse } from "@/shared/types/common.types";
-import { TSize } from "@/components/types/size.types";
+import { TSize } from "@/features/sizes/types/size.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";

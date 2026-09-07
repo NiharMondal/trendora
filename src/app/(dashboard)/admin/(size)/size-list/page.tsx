@@ -1,4 +1,4 @@
-import SizeTable from "@/components/@dashboard/admin/size-table/size-table";
+import SizeTable from "@/features/sizes/components/size-table";
 import Headline from "@/shared/components/headline";
 
 export default function SizeListPage() {

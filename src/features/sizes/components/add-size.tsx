@@ -1,9 +1,9 @@
 "use client";
 import { toast } from "sonner";
 
-import SizeForm from "@/components/common/form/size-form/size-form";
-import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
-import { useCreateSizeMutation } from "@/redux/api/sizeApi";
+import SizeForm from "@/features/sizes/components/size-form";
+import { TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
+import { useCreateSizeMutation } from "@/features/sizes/api/size.api";
 
 export default function AddSize() {
     const [createSize, { isLoading }] = useCreateSizeMutation();

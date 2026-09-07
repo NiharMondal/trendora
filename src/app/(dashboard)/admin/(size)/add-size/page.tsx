@@ -1,6 +1,6 @@
 import Headline from "@/shared/components/headline";
 
-import AddSize from "./add-size";
+import AddSize from "@/features/sizes/components/add-size";
 
 export default function AddSizePage() {
     return (

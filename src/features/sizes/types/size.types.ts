@@ -1,4 +1,4 @@
-import { TSizeGroup } from "./size-group.types";
+import { TSizeGroup } from "@/components/types/size-group.types";
 
 export type TSize = {
 	id: string;

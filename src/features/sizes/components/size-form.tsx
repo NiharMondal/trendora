@@ -8,7 +8,7 @@ import { Form } from "@/shared/ui/form";
 import { useAllSizeGroupsQuery } from "@/redux/api/sizeGroupApi";
 
 import TDButton from "@/shared/components/td-button";
-import { sizeFormSchema, TSizeFormValues } from "./size-form-schema";
+import { sizeFormSchema, TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
 
 type Props = {
 	defaultValues?: TSizeFormValues | undefined;

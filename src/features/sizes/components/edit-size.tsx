@@ -2,10 +2,10 @@ import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
-import SizeForm from "@/components/common/form/size-form/size-form";
-import { TSizeFormValues } from "@/components/common/form/size-form/size-form-schema";
+import SizeForm from "@/features/sizes/components/size-form";
+import { TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
-import { useSizeByIdQuery, useUpdateSizeMutation } from "@/redux/api/sizeApi";
+import { useSizeByIdQuery, useUpdateSizeMutation } from "@/features/sizes/api/size.api";
 type EditSizeProps = {
     onClose: () => void;
 };

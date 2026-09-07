@@ -8,9 +8,9 @@ import TDButton from "@/shared/components/td-button";
 import TDSheet from "@/shared/components/td-sheet";
 import { categorySortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
-import { TSize } from "@/components/types/size.types";
+import { TSize } from "@/features/sizes/types/size.types";
 import { Button } from "@/shared/ui/button";
-import { useAllSizesQuery, useDeleteSizeMutation } from "@/redux/api/sizeApi";
+import { useAllSizesQuery, useDeleteSizeMutation } from "@/features/sizes/api/size.api";
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSize from "./edit-size";
