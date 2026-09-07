@@ -3,12 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import {
-    DataTable,
-    Pagination,
-    TableLoading,
-    TableToolbar,
-} from "@/components/common/shared/table";
+import { DataTable, TableLoading } from "@/components/common/shared/table";
 import TDButton from "@/components/common/shared/td-button";
 import { allSortOptions } from "@/components/helpers/sort-options";
 import { TDModal } from "@/components/package/TDModal";
@@ -22,18 +17,7 @@ import { useTableFilters } from "@/hooks/use-table-filters";
 import { productColumns } from "./product-columns";
 
 export default function ProductTable() {
-    const {
-        currentPage,
-        limit,
-        search,
-        sortBy,
-        queryParams,
-        setCurrentPage,
-        setSearch,
-        setSortBy,
-        handleLimitChange,
-        handleResetFilters,
-    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
+    const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
@@ -44,7 +28,7 @@ export default function ProductTable() {
         data: products,
         isLoading,
         isFetching,
-    } = useAllProductsQuery(queryParams as Record<string, string>);
+    } = useAllProductsQuery(filters.queryParams as Record<string, string>);
 
     const confirmDelete = async () => {
         if (!deleteProductId) return;
@@ -64,35 +48,16 @@ export default function ProductTable() {
 
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
-            <TableToolbar
-                search={search}
-                limit={limit}
-                sortBy={sortBy}
-                setLimit={handleLimitChange}
-                setSortBy={setSortBy}
-                setSearch={setSearch}
-                sortByOptions={allSortOptions}
-                onReset={handleResetFilters}
-                placeholder="Search by product name..."
-            />
-
             <DataTable
                 columns={productColumns(handleDeleteProduct)}
                 data={products?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}
+                filters={filters}
+                meta={products?.meta}
+                sortByOptions={allSortOptions}
+                placeholder="Search by product name..."
             />
-            {products?.meta?.totalPages && products?.meta?.totalPages > 1 && (
-                <Pagination
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    totalPages={products?.meta?.totalPages}
-                    hasNextPage={products?.meta?.hasNextPage}
-                    hasPreviousPage={products?.meta?.hasPreviousPage}
-                    limit={Number(limit)}
-                    totalData={products?.meta?.totalData || 0}
-                />
-            )}
 
             <TDModal
                 open={!!deleteProductId}

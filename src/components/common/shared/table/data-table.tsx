@@ -1,6 +1,7 @@
 "use client";
 
 import NoDataFound from "@/components/common/shared/no-data-found";
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -14,17 +15,23 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useState } from "react";
 
 import DataTableSubRows from "./data-table-sub-rows";
+import Pagination from "./pagination";
 import TableLoading from "./table-loading";
+import TableToolbar from "./table-toolbar";
 import { DataTableProps } from "./table-types";
-import { Button } from "@/components/ui/button";
 
-export default function TableData<T, S = unknown>({
+export default function DataTable<T, S = unknown>({
     data,
     columns,
     rowKey,
     rowClassName,
     isFetching,
     expandable,
+    filters,
+    meta,
+    sortByOptions,
+    placeholder,
+    className,
 }: DataTableProps<T, S>) {
     const initialExpanded = () => {
         if (!expandable?.defaultExpanded || !data) return new Set<string>();
@@ -50,14 +57,29 @@ export default function TableData<T, S = unknown>({
         });
     };
 
-    if (isFetching) return <TableLoading />;
-
     const totalCols = columns.length + (expandable ? 1 : 0);
+    const showPagination = !!filters && !!meta && meta.totalPages > 1;
 
     return (
-        <div className="space-y-4">
+        <div className={cn("space-y-5", className)}>
+            {filters ? (
+                <TableToolbar
+                    search={filters.search}
+                    limit={filters.limit}
+                    sortBy={filters.sortBy}
+                    setSearch={filters.setSearch}
+                    setLimit={filters.handleLimitChange}
+                    setSortBy={filters.setSortBy}
+                    onReset={filters.handleResetFilters}
+                    sortByOptions={sortByOptions}
+                    placeholder={placeholder}
+                />
+            ) : null}
+
             <div className="bg-white rounded-md overflow-hidden">
-                {!data || data.length === 0 ? (
+                {isFetching ? (
+                    <TableLoading columnCount={totalCols} />
+                ) : !data || data.length === 0 ? (
                     <NoDataFound />
                 ) : (
                     <Table>
@@ -171,6 +193,18 @@ export default function TableData<T, S = unknown>({
                     </Table>
                 )}
             </div>
+
+            {showPagination ? (
+                <Pagination
+                    currentPage={filters.currentPage}
+                    onPageChange={filters.setCurrentPage}
+                    totalPages={meta.totalPages}
+                    hasNextPage={meta.hasNextPage}
+                    hasPreviousPage={meta.hasPreviousPage}
+                    limit={Number(filters.limit)}
+                    totalData={meta.totalData}
+                />
+            ) : null}
         </div>
     );
 }

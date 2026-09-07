@@ -8,11 +8,8 @@ import {
 } from "@/components/ui/select";
 
 import TDButton from "../td-button";
+import { SortByOption } from "./table-types";
 
-type SortByOption = {
-	label: string;
-	value: string;
-};
 type TableToolbarProps = {
 	search?: string;
 	placeholder?: string;
@@ -40,10 +37,15 @@ export default function TableToolbar({
 	],
 }: TableToolbarProps) {
 	const handleResetFilters = () => {
+		// `onReset` resets every filter in a single update, so avoid also
+		// firing the individual setters (which would queue extra updates).
+		if (onReset) {
+			onReset();
+			return;
+		}
 		if (setSearch) setSearch("");
 		if (setLimit) setLimit("10");
 		if (setSortBy) setSortBy("createdAt:desc");
-		if (onReset) onReset?.();
 	};
 	const isButtonDisabled =
 		(!search || search.trim() === "") &&

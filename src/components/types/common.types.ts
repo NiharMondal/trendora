@@ -1,4 +1,4 @@
-type TMetaData = {
+export type TMetaData = {
 	currentPage: number;
 	totalPages: number;
 	totalData: number;

@@ -3,12 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import {
-    DataTable,
-    Pagination,
-    TableLoading,
-    TableToolbar,
-} from "@/components/common/shared/table";
+import { DataTable, TableLoading } from "@/components/common/shared/table";
 import TDButton from "@/components/common/shared/td-button";
 import TDSheet from "@/components/common/shared/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
@@ -29,18 +24,7 @@ export default function CategoryTable() {
     const searchParams = useSearchParams();
     const sizeGroupId = searchParams.get("id");
     // filter section
-    const {
-        currentPage,
-        limit,
-        search,
-        sortBy,
-        queryParams,
-        setCurrentPage,
-        setSearch,
-        setSortBy,
-        handleLimitChange,
-        handleResetFilters,
-    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
+    const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
     const [deleteSizeGroupId, setDeleteSizeGroupId] = useState<string | null>(
         null,
@@ -51,7 +35,7 @@ export default function CategoryTable() {
         data: sizeGroups,
         isLoading,
         isFetching,
-    } = useAllSizeGroupsQuery(queryParams as Record<string, string>);
+    } = useAllSizeGroupsQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (sizeGroup: TSizeGroup) => {
         router.push(`?id=${sizeGroup.id}`, { scroll: false });
@@ -76,36 +60,16 @@ export default function CategoryTable() {
     if (isLoading) return <TableLoading />;
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
-            <TableToolbar
-                search={search}
-                limit={limit}
-                sortBy={sortBy}
-                setLimit={handleLimitChange}
-                setSortBy={setSortBy}
-                setSearch={setSearch}
-                sortByOptions={categorySortOptions}
-                onReset={handleResetFilters}
-                placeholder="Search by name"
-            />
-
             <DataTable
                 columns={sizeGroupColumns({ handleEdit, handleDelete })}
                 data={sizeGroups?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}
+                filters={filters}
+                meta={sizeGroups?.meta}
+                sortByOptions={categorySortOptions}
+                placeholder="Search by name"
             />
-            {sizeGroups?.meta?.totalPages &&
-                sizeGroups?.meta?.totalPages > 1 && (
-                    <Pagination
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        totalPages={sizeGroups?.meta?.totalPages}
-                        hasNextPage={sizeGroups?.meta?.hasNextPage}
-                        hasPreviousPage={sizeGroups?.meta?.hasPreviousPage}
-                        limit={Number(limit)}
-                        totalData={sizeGroups?.meta?.totalData || 0}
-                    />
-                )}
 
             <TDSheet
                 isOpen={!!sizeGroupId}

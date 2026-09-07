@@ -4,12 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import {
-    DataTable,
-    Pagination,
-    TableLoading,
-    TableToolbar,
-} from "@/components/common/shared/table";
+import { DataTable, TableLoading } from "@/components/common/shared/table";
 import TDButton from "@/components/common/shared/td-button";
 import TDSheet from "@/components/common/shared/td-sheet";
 import { categorySortOptions } from "@/components/helpers/sort-options";
@@ -31,18 +26,7 @@ export default function CategoryTable() {
     const categoryId = searchParams.get("categoryId");
 
     // filter section
-    const {
-        currentPage,
-        limit,
-        search,
-        sortBy,
-        queryParams,
-        setCurrentPage,
-        setSearch,
-        setSortBy,
-        handleLimitChange,
-        handleResetFilters,
-    } = useTableFilters({ defaultSortBy: "createdAt:desc" });
+    const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
     const [deleteCategoryId, setDeleteCategoryId] = useState<string | null>(
         null,
@@ -54,7 +38,7 @@ export default function CategoryTable() {
         data: categories,
         isLoading,
         isFetching,
-    } = useAllCategoryQuery(queryParams as Record<string, string>);
+    } = useAllCategoryQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TCategory) => {
         router.push(`?categoryId=${category.id}`, { scroll: false });
@@ -79,37 +63,16 @@ export default function CategoryTable() {
     if (isLoading) return <TableLoading />;
     return (
         <div className="space-y-5 bg-white p-5 rounded-md">
-            <TableToolbar
-                search={search}
-                limit={limit}
-                sortBy={sortBy}
-                setLimit={handleLimitChange}
-                setSortBy={setSortBy}
-                setSearch={setSearch}
-                sortByOptions={categorySortOptions}
-                onReset={handleResetFilters}
-                placeholder="Search by name"
-            />
-
             <DataTable
                 columns={categoryColumns({ handleEdit, handleDelete })}
                 data={categories?.result || []}
                 rowKey={(row) => row.id}
                 isFetching={isFetching}
+                filters={filters}
+                meta={categories?.meta}
+                sortByOptions={categorySortOptions}
+                placeholder="Search by name"
             />
-
-            {categories?.meta?.totalPages &&
-                categories?.meta?.totalPages > 1 && (
-                    <Pagination
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        totalPages={categories?.meta?.totalPages}
-                        hasNextPage={categories?.meta?.hasNextPage}
-                        hasPreviousPage={categories?.meta?.hasPreviousPage}
-                        limit={Number(limit)}
-                        totalData={categories?.meta?.totalData || 0}
-                    />
-                )}
 
             <TDSheet
                 isOpen={!!categoryId}
