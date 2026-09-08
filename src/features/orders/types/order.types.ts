@@ -1,4 +1,5 @@
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
+import { TRefund } from "@/features/refunds/types/refund.types";
 import { TOrderStatus, TPaymentStatus } from "@/features/orders/types/status.types";
 
 export type ShippingSnapshot = {
@@ -85,6 +86,8 @@ export type TOrder = {
 	shippingSnapshot: ShippingSnapshot;
 	/** One per store on the order. */
 	vendorOrders?: TVendorOrder[];
+	/** Refund ledger for this order — one row per attempt to return money. */
+	refunds?: TRefund[];
 	/**
 	 * Flat item list. Still returned on some reads, but prefer
 	 * `vendorOrders[].items` so items stay attached to the store shipping them.

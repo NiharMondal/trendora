@@ -72,5 +72,6 @@ export const baseApi = createApi({
         "vendorOrders",
         "payouts",
         "vendorReviews",
+        "refunds",
     ],
 });

@@ -4,7 +4,10 @@ import { useGetMyOrdersQuery } from "@/features/orders/api/order.api";
 import { TOrder } from "@/features/orders/types/order.types";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
-import { orderStatusMap } from "@/features/orders/constants/status-maps";
+import {
+    orderStatusMap,
+    refundStatusMap,
+} from "@/features/orders/constants/status-maps";
 import { StatusBadge } from "@/shared/ui/status-badge";
 
 import { myOrderColumns } from "./my-order-columns";
@@ -93,10 +96,28 @@ export default function MyOrdersList() {
                             key: "orderStatus",
                             header: "Status",
                             cell: (slice) => (
-                                <StatusBadge
-                                    statusMap={orderStatusMap}
-                                    status={slice.orderStatus}
-                                />
+                                <div className="space-y-1">
+                                    <StatusBadge
+                                        statusMap={orderStatusMap}
+                                        status={slice.orderStatus}
+                                    />
+                                    {/* A cancelled parcel is refunded
+                                        automatically — show the buyer where
+                                        their money is rather than leaving
+                                        "cancelled" to mean nothing. */}
+                                    {slice.refund && (
+                                        <div className="flex items-center gap-1">
+                                            <span className="text-[10px] text-muted-foreground">
+                                                Refund
+                                            </span>
+                                            <StatusBadge
+                                                statusMap={refundStatusMap}
+                                                status={slice.refund.status}
+                                                className="text-[10px] px-1.5 py-0"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             ),
                         },
                         {

@@ -4,6 +4,7 @@ import type {
     TProductModerationStatus,
     TVendorStatus,
     TPayoutStatus,
+    TRefundStatus,
 } from "@/features/orders/types/status.types";
 
 type BadgeConfig = {
@@ -27,6 +28,11 @@ export const paymentStatusMap: StatusMap<TPaymentStatus> = {
     FAILED: {
         label: "Failed",
         className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    },
+    PARTIALLY_REFUNDED: {
+        label: "Part refunded",
+        className:
+            "bg-indigo-100 text-indigo-800 hover:bg-indigo-100 border-indigo-200",
     },
     REFUNDED: {
         label: "Refunded",
@@ -130,5 +136,37 @@ export const payoutStatusMap: StatusMap<TPayoutStatus> = {
     FAILED: {
         label: "Failed",
         className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    },
+};
+
+/**
+ * State of the money going back, not of the cancellation. A parcel can be
+ * cancelled while its refund is still FAILED — that gap is the thing an
+ * operator has to chase, so FAILED is styled as loudly as a payment failure.
+ */
+export const refundStatusMap: StatusMap<TRefundStatus> = {
+    PENDING: {
+        label: "Owed",
+        className:
+            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
+    },
+    PROCESSING: {
+        label: "Sending",
+        className:
+            "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
+    },
+    SUCCEEDED: {
+        label: "Refunded",
+        className:
+            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
+    },
+    FAILED: {
+        label: "Failed",
+        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    },
+    CANCELED: {
+        label: "Abandoned",
+        className:
+            "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
     },
 };

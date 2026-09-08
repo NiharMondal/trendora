@@ -9,6 +9,8 @@ import {
     paymentStatusMap,
 } from "@/features/orders/constants/status-maps";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
+import { refundStatusMap } from "@/features/orders/constants/status-maps";
+import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { formatDate } from "@/shared/lib/format-date-time";
 import Link from "next/link";
@@ -179,12 +181,70 @@ export default function OrderDetails({ slug }: { slug: string }) {
                         </div>
                         {order?.payment?.refundAmount && (
                             <p className="text-xs text-muted-foreground">
-                                Accrued from cancelled parcels. Bookkeeping
-                                only — the transfer back to the buyer is not
-                                automated yet.
+                                Money actually returned to the buyer
+                                {order.payment.refundedAt
+                                    ? `, first on ${formatDate(order.payment.refundedAt, "ll")}`
+                                    : ""}
+                                .
                             </p>
                         )}
                     </div>
+
+                    {/* The refund ledger: one row per attempt to return money.
+                        A cancelled parcel with a FAILED refund is a buyer who
+                        has not been paid back. */}
+                    {!!order?.refunds?.length && (
+                        <div className="bg-white padding border-radius space-y-3">
+                            <div className="flex items-center justify-between">
+                                <p className="font-medium">Refunds</p>
+                                <Link
+                                    href="/admin/refunds"
+                                    className="text-xs text-primary hover:underline"
+                                >
+                                    Manage
+                                </Link>
+                            </div>
+                            <div className="space-y-3">
+                                {order.refunds.map((refund) => (
+                                    <div
+                                        key={refund.id}
+                                        className="space-y-1 border-b last:border-b-0 pb-2 last:pb-0"
+                                    >
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-sm font-medium">
+                                                {currencyFormatter(
+                                                    Number(refund.amount),
+                                                )}
+                                            </span>
+                                            <StatusBadge
+                                                statusMap={refundStatusMap}
+                                                status={refund.status}
+                                            />
+                                        </div>
+                                        {refund.vendorOrder && (
+                                            <p className="text-xs text-muted-foreground">
+                                                {
+                                                    refund.vendorOrder
+                                                        .vendorOrderNumber
+                                                }
+                                            </p>
+                                        )}
+                                        {refund.failureReason && (
+                                            <p className="text-xs text-red-600">
+                                                {refund.failureReason}
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-muted-foreground">
+                                            via {refund.gateway ?? "manual"}
+                                            {refund.gatewayRefundId
+                                                ? ` · ${refund.gatewayRefundId}`
+                                                : ""}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {order?.notes && (
                         <div className="bg-white padding border-radius space-y-1">
@@ -239,9 +299,27 @@ function VendorOrderCard({ vendorOrder }: { vendorOrder: TVendorOrder }) {
             </div>
 
             {vendorOrder.cancelReason && (
-                <p className="text-xs text-red-600">
-                    Cancelled: {vendorOrder.cancelReason}
-                </p>
+                <div className="space-y-1">
+                    <p className="text-xs text-red-600">
+                        Cancelled: {vendorOrder.cancelReason}
+                    </p>
+                    {/* Cancelling a paid parcel refunds it automatically; this
+                        says whether that actually landed. */}
+                    {vendorOrder.refund && (
+                        <p className="text-xs flex items-center gap-1.5">
+                            <span className="text-muted-foreground">
+                                Refund{" "}
+                                {currencyFormatter(
+                                    Number(vendorOrder.refund.amount),
+                                )}
+                            </span>
+                            <StatusBadge
+                                statusMap={refundStatusMap}
+                                status={vendorOrder.refund.status}
+                            />
+                        </p>
+                    )}
+                </div>
             )}
 
             <div className="border border-muted border-radius">

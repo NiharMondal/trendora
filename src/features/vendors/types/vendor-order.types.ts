@@ -1,5 +1,6 @@
 import { TVendorCard } from "@/features/vendors/types/vendor.types";
 import { TOrderStatus } from "@/features/orders/types/status.types";
+import { TRefund } from "@/features/refunds/types/refund.types";
 
 /**
  * One vendor's slice of an order — the unit of fulfilment and payout.
@@ -65,6 +66,12 @@ export type TVendorOrder = {
     payoutId?: string | null;
     createdAt: string;
     updatedAt: string;
+    /**
+     * The refund raised when this parcel was cancelled. Its `status` is the
+     * state of the MONEY — a cancelled parcel whose refund is still FAILED
+     * means the buyer has not been paid back yet.
+     */
+    refund?: TRefund | null;
     vendor?: TVendorCard;
     items?: TVendorOrderItem[];
     statusHistory?: TVendorOrderStatusHistory[];

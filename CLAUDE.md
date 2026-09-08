@@ -175,6 +175,19 @@ delete-and-recreate that breaks live image URLs.
 `totalRevenue` in the admin analytics is gross merchandise value, most of which belongs to sellers,
 and `platformCommission` is what Trendora actually earns. Don't label GMV as revenue.
 
+**Refunds are automatic, and their status is about the MONEY, not the parcel.** Cancelling a paid
+parcel issues a real Stripe refund, so `features/refunds` has no "create refund" call for the happy
+path. Two consequences for the UI:
+
+- A parcel can be `CANCELED` while its `refund.status` is still `FAILED` — that is a buyer who has
+  not been paid back. Never present "cancelled" as if the money is settled; render
+  `slice.refund.status` with `refundStatusMap` beside it (see `my-orders-list.tsx`).
+- `payment.refundAmount` is money that **actually went back**, not what is owed. `PaymentStatus`
+  gained `PARTIALLY_REFUNDED` for the one-parcel-of-three case.
+
+`/admin/refunds` is a failure queue: its normal state is empty, and anything in it is money owed. Only
+a `gateway === "stripe"` refund can be retried — a manual one never had a gateway to call.
+
 ### Data layer (RTK Query)
 All server data flows through **RTK Query**, never manual fetch (the two exceptions are Cloudinary
 upload and `deleteTempImage`).

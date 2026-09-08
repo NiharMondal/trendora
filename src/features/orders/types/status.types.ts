@@ -9,6 +9,8 @@ export type TPaymentStatus =
     | "PENDING"
     | "PAID"
     | "FAILED"
+    /** Some parcels of a multi-vendor order refunded, others not. */
+    | "PARTIALLY_REFUNDED"
     | "REFUNDED";
 
 export type TUserStatus =
@@ -45,3 +47,11 @@ export type TCouponStatus =
     | "ACTIVE"
     | "EXPIRED"
     | "INACTIVE";
+
+/** State of one attempt to move money back to a buyer (backend `RefundStatus`). */
+export type TRefundStatus =
+    | "PENDING"
+    | "PROCESSING"
+    | "SUCCEEDED"
+    | "FAILED"
+    | "CANCELED";

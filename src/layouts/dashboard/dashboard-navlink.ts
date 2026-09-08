@@ -116,11 +116,13 @@ export const adminDashboardLinks: TSidebarLink[] = [
         icon: BadgeCheck,
     },
     {
-        title: "Payouts",
+        title: "Money",
         icon: Banknote,
         children: [
-            { title: "Outstanding", url: "/admin/payouts", index: true },
+            { title: "Payouts Outstanding", url: "/admin/payouts", index: true },
             { title: "Payout History", url: "/admin/payout-history" },
+            // Refunds go out automatically; this is the failure queue.
+            { title: "Refunds", url: "/admin/refunds" },
         ],
     },
     {
