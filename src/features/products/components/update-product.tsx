@@ -7,14 +7,16 @@ import { TProductFormValues } from "@/features/products/schemas/product-form.sch
 import GeneralLoading from "@/shared/components/loading/general-loading";
 import { mapProductToFormValues } from "@/features/products/utils/map-product-form-values";
 import {
-    useProductByIdQuery,
+    useMyVendorProductByIdQuery,
     useUpdateProductMutation,
 } from "@/features/products/api/product.api";
 
 export default function UpdateProduct({ productId }: { productId: string }) {
-    // get product by id
+    // Read through the vendor/admin endpoint, not the public one: an ADMIN
+    // gets any product from it, whereas `/products/:id` applies the storefront
+    // visibility filter and 404s on a DRAFT, PENDING or REJECTED listing.
     const { data: product, isLoading: fetchLoading } =
-        useProductByIdQuery(productId);
+        useMyVendorProductByIdQuery(productId);
 
     // update product mutation
     const [updateProduct, { isLoading: updateLoading }] =

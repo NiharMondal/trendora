@@ -8,6 +8,10 @@ import { Form } from "@/shared/ui/form";
 import { useCreateOrderMutation } from "@/features/orders/api/order.api";
 import { useAppDispatch, useAppSelector } from "@/store/redux.hooks";
 import { clearCart, selectCartItems } from "@/features/cart/store/cart.slice";
+import {
+    calculateOrderTotals,
+    currencyFormatter,
+} from "@/features/cart/utils/calculate-order-total";
 
 import TDRadioGroup from "@/shared/form/TDRadioGroup";
 import { useRouter } from "next/navigation";
@@ -23,6 +27,10 @@ export default function CheckoutForm() {
     const router = useRouter();
     const [createOrder, { isLoading }] = useCreateOrderMutation();
     const cartItems = useAppSelector(selectCartItems);
+    // Grouped by store: each store ships separately and charges its own
+    // shipping, so the review step is laid out the same way.
+    const { vendors, subtotal, tax, shippingCost, totalAmount } =
+        calculateOrderTotals(cartItems);
     const form = useForm<TCheckoutFormValues>({
         resolver: zodResolver(checkoutFormSchema),
         defaultValues: {
@@ -105,28 +113,90 @@ export default function CheckoutForm() {
                             Order Overview
                         </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-3 md:gap-5">
-                            {cartItems.map((item) => (
+                        {vendors.length > 1 && (
+                            <p className="text-xs text-muted-foreground -mt-4">
+                                {vendors.length} stores — each ships separately
+                                and you can track each parcel on its own.
+                            </p>
+                        )}
+
+                        <div className="space-y-5">
+                            {vendors.map((group) => (
                                 <div
-                                    key={`${item.productId}-${item.variantId}`}
-                                    className="flex items-center gap-3 border border-muted rounded-md p-3"
+                                    key={group.vendorId}
+                                    className="border border-muted rounded-md overflow-hidden"
                                 >
-                                    <img
-                                        src={item.productImage}
-                                        alt={item.productName}
-                                        className="size-16 object-cover rounded"
-                                    />
-                                    <div>
-                                        <p className="font-medium">
-                                            {item.productName}
+                                    <div className="flex items-center justify-between bg-gray-50 px-3 py-2">
+                                        <p className="text-sm font-medium">
+                                            {group.storeName}
                                         </p>
-                                        <p className="text-sm text-gray-500">
-                                            {item.quantity} x ${item.price} {item?.variantId && <span className="bg-success/10 text-success rounded-full px-1 py-0.5 text-[8px] ">Variant</span>}
+                                        <p className="text-xs text-muted-foreground">
+                                            {group.shippingCost === 0
+                                                ? "Free shipping"
+                                                : `+ ${currencyFormatter(group.shippingCost)} shipping`}
                                         </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2 gap-3 p-3">
+                                        {group.items.map((item) => (
+                                            <div
+                                                key={`${item.productId}-${item.variantId}`}
+                                                className="flex items-center gap-3 border border-muted rounded-md p-3"
+                                            >
+                                                <img
+                                                    src={item.productImage}
+                                                    alt={item.productName}
+                                                    className="size-16 object-cover rounded"
+                                                />
+                                                <div>
+                                                    <p className="font-medium">
+                                                        {item.productName}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        {item.quantity} x $
+                                                        {item.price}{" "}
+                                                        {item?.variantId && (
+                                                            <span className="bg-success/10 text-success rounded-full px-1 py-0.5 text-[8px] ">
+                                                                Variant
+                                                            </span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             ))}
                         </div>
+
+                        <div className="divide-y border rounded-md text-sm">
+                            <SummaryLine
+                                label="Subtotal"
+                                value={currencyFormatter(subtotal)}
+                            />
+                            <SummaryLine
+                                label="Tax"
+                                value={currencyFormatter(tax)}
+                            />
+                            <SummaryLine
+                                label={
+                                    vendors.length > 1
+                                        ? `Shipping (${vendors.length} stores)`
+                                        : "Shipping"
+                                }
+                                value={
+                                    shippingCost === 0
+                                        ? "Free"
+                                        : currencyFormatter(shippingCost)
+                                }
+                            />
+                            <SummaryLine
+                                label="Total"
+                                value={currencyFormatter(totalAmount)}
+                                bold
+                            />
+                        </div>
+
                         <TDButton
                             type="submit"
                             className="w-full font-bold"
@@ -138,5 +208,24 @@ export default function CheckoutForm() {
                 </div>
             </form>
         </Form>
+    );
+}
+
+function SummaryLine({
+    label,
+    value,
+    bold,
+}: {
+    label: string;
+    value: string;
+    bold?: boolean;
+}) {
+    return (
+        <div className="flex items-center justify-between px-3 py-2.5">
+            <span className={bold ? "font-bold" : "text-gray-600"}>
+                {label}
+            </span>
+            <span className={bold ? "font-bold" : "font-medium"}>{value}</span>
+        </div>
     );
 }

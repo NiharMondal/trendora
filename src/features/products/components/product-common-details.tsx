@@ -16,8 +16,9 @@ import { useWishlistToggle } from "@/features/wishlist/hooks/use-wishlist-toggle
 import { cn } from "@/shared/lib/utils";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";
+import StoreBadge from "@/features/vendors/components/store-badge";
+import { toCartItem } from "@/features/cart/utils/to-cart-item";
 
-import { TCartItem } from "@/features/cart/types/cart.types";
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import ProductQuantity from "@/shared/components/product-quantity";
 
@@ -53,20 +54,16 @@ export default function ProductCommonDetails({
     const handleResetVariantInfo = () => {
         setVariantInfo({ id: null, price: null });
     };
-    const productPrice = product?.discountPrice
-        ? product?.discountPrice
-        : product?.basePrice;
-
     const handleAddToCart = (product: TProduct | undefined) => {
-        const productData = {
-            productId: product?.id ?? "",
-            productName: product?.name ?? "",
-            productImage: product?.images[0].url,
-            variantId: variantInfo?.id,
-            quantity: quantity,
-            price: variantInfo?.id ? Number(variantInfo.price) : Number(productPrice),
-        };
-        dispatch(addItemToCart(productData as TCartItem));
+        dispatch(
+            addItemToCart(
+                toCartItem(product, {
+                    quantity,
+                    variantId: variantInfo?.id,
+                    variantPrice: variantInfo?.price,
+                }),
+            ),
+        );
         toast.success("Product added to cart");
     };
     return (
@@ -87,6 +84,7 @@ export default function ProductCommonDetails({
                 Brand:{" "}
                 <span className="font-medium">{product?.brand?.name}</span>
             </p>
+            <StoreBadge vendor={product?.vendor} className="text-sm" />
             <p className="text-muted-foreground">{product?.description}</p>
             <hr className="border-t border-muted my-5" />
 

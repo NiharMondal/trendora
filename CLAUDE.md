@@ -15,10 +15,16 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **56 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`
-(42), plus `@next/next/no-img-element` (8) and a few `no-unused-vars`. `any` is used freely across the
-codebase (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
-warning count as a baseline: don't add to it, and don't expect a clean run.
+`pnpm lint` passes (exit 0) with **55 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
+code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
+warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
+uses `(error as { data?: { message?: string } })?.data?.message` instead of `error: any` — prefer
+that in new code.
+
+**`pnpm build` must be run as the script (`next build --turbopack`).** A bare `next build` uses
+webpack and fails on `@react-pdf/renderer`'s ESM-only package in
+`features/orders/components/my-orders/pdf-download-print.tsx`.
 
 `eslint.config.mjs` needs both of its non-`extends` entries to stay shaped as flat-config **objects** —
 a bare `"rule-name", "warn"` pair in the array makes ESLint 9 abort with
@@ -27,16 +33,22 @@ whole `.next/` build output (tens of thousands of issues in generated chunks).
 
 ## Architecture
 
-Trendora is the **frontend** for an e-commerce app. It talks to a separate backend API
+Trendora is the **frontend** for a **multi-vendor marketplace**. It talks to a separate backend API
 (`NEXT_PUBLIC_BACKEND_URL`); this repo contains no server-side business logic beyond NextAuth and
 the NextAuth route handler. `@/*` is aliased to `src/*`.
 
+Many sellers list products, buyers check out once across several stores, and the platform takes a
+commission. Read **The marketplace model** below before touching cart, checkout, order or product
+code — those flows changed shape, and `backend/CLAUDE.md` has the server-side half.
+
 ### Route groups (`src/app`)
-- `(root)` — public storefront (products, categories, cart, checkout, wish-list, about-us).
+- `(root)` — public storefront (products, categories, cart, checkout, wish-list, about-us, plus
+  `stores` / `stores/[slug]` — the seller directory and storefronts).
 - `(auth)` — login, register, forgot-password.
-- `(dashboard)` — authenticated area split into `admin` (ADMIN/SUPER_ADMIN) and `dashboard`
-  (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side via
-  `getServerSession(authOptions)` and renders the role-appropriate sidebar.
+- `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
+  seller portal) and `dashboard` (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side
+  via `getServerSession(authOptions)` and renders the role-appropriate sidebar (the three link sets
+  are in `layouts/dashboard/dashboard-navlink.ts`).
 - `api/auth/[...nextauth]` — NextAuth handler.
 
 Admin routes use parenthesised **non-URL grouping folders** to bundle a resource's pages, e.g.
@@ -57,9 +69,10 @@ src/
 ├── assets/  types/ (ambient only)  middleware.ts
 ```
 
-The 15 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
-`categories`, `checkout`, `home` (storefront landing sections), `orders`, `products`, `reviews`,
-`size-groups`, `sizes`, `users`, `wishlist`. Each uses the same subfolders, all optional:
+The 17 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
+`categories`, `checkout`, `home` (storefront landing sections), `orders`, `payouts`, `products`,
+`reviews`, `size-groups`, `sizes`, `users`, `vendors`, `wishlist`. Each uses the same subfolders,
+all optional:
 
 ```
 features/<feature>/
@@ -97,18 +110,76 @@ JWT-strategy NextAuth defined in `src/features/auth/lib/auth-options.ts`, wrappi
 - Providers: `Credentials` (posts to `/auth/login`) and `Google` (posts to `/auth/oauth-login`).
 - The `jwt` callback stores the backend tokens and refreshes via `/auth/refresh-token` when the
   access token nears expiry (`REFRESH_SKEW_MS`). On failure it sets `token.error = "RefreshAccessTokenError"`.
-- Roles: `EnumUserRole` in `src/features/auth/constants/user-role.ts` (SUPER_ADMIN / ADMIN / CUSTOMER).
-- `src/middleware.ts` gates `/admin/*` and `/dashboard/*` (`authorized: !!token && !token.error`);
-  non-admins hitting `/admin` are redirected to `/dashboard`.
+- Roles: `EnumUserRole` in `src/features/auth/constants/user-role.ts`
+  (SUPER_ADMIN / ADMIN / **VENDOR** / CUSTOMER). `SUPER_ADMIN` does not exist on the backend — no
+  JWT will carry it — but existing checks reference it, so it is kept and treated as an admin.
+- **Where a role belongs is centralised in `src/features/auth/utils/role-home.ts`**
+  (`roleHomePath`, `isAdminRole`, `isVendorRole`, `isShopperRole`). That ternary used to be
+  copy-pasted into the middleware, `AuthSync`, the login form and the login page; adding a fourth
+  role to four copies is how one gets missed. Use the helpers.
+- `src/middleware.ts` gates `/admin/*`, `/vendor/*` and `/dashboard/*`
+  (`authorized: !!token && !token.error`); anyone reaching an area their role does not own is sent
+  to `roleHomePath(role)`. **`/vendor/apply` is the deliberate exception** — a CUSTOMER must be able
+  to reach it, since that is how they become a seller.
 - `src/features/auth/components/auth-sync.tsx` redirects already-authenticated users away from public
   auth pages to their role home.
 - Session/token typing is augmented in `src/types/next-auth.d.ts`; read the current user with
   `useUserInfoClient()` / `useUserInfoServer()` (`src/features/auth/utils/user-info.ts`).
 
+### The marketplace model
+
+**A VENDOR is still a shopper.** They have their own cart, addresses, orders and wishlist, so every
+buyer-facing route guards with all three roles. Writing `authGuard(Role.CUSTOMER)`-style checks —
+or `role === "CUSTOMER"` — locks sellers out of their own checkout. Use `isShopperRole`.
+
+**Cart lines carry their store, and shipping is charged PER STORE.** This is the part most likely
+to be broken by accident:
+
+- `TCartItem` snapshots `vendorId` / `storeName` / `vendorShippingFee` /
+  `vendorFreeShippingThreshold` when the item is added. Product payloads carry those on
+  `product.vendor` for exactly this reason.
+- **Build cart lines only through `toCartItem()`** (`features/cart/utils/to-cart-item.ts`). Three
+  call sites used to assemble the object by hand; any one of them omitting the store snapshot
+  silently produces a wrong total.
+- `calculateOrderTotals()` groups by store, evaluates each store's own free-shipping threshold and
+  sums. A two-store cart pays **two** shipping fees. `NEXT_PUBLIC_SHIPPING_COST` /
+  `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` are now only fallbacks for a cart persisted before stores
+  existed — real values come from the item. `NEXT_PUBLIC_TAX_RATE` is still platform-wide and must
+  match the backend's `TAX_RATE`.
+
+**Orders nest per-store parcels.** `TOrder.orderStatus` is a *rollup*; the authoritative fulfilment
+state, tracking number and carrier live on each `TVendorOrder` in `order.vendorOrders`. Render
+per-store detail from those, and note there is no whole-order status endpoint — fulfilment is
+`useUpdateVendorOrderStatusMutation` against one parcel
+(`features/vendors/api/vendor-order.api.ts`). `VENDOR_TRANSITIONS` in
+`vendor-order-status-modal.tsx` mirrors the backend state machine so the UI cannot offer a move
+that will be rejected (a vendor cannot cancel a shipped parcel — that is admin-only).
+
+**Products have two independent gates.** `status` is admin moderation
+(`DRAFT → PENDING → APPROVED/REJECTED`) and `isPublished` is the seller's own switch; a listing is
+on the storefront only when it is APPROVED *and* published *and* its store is approved. Two
+consequences for reads:
+
+- `/products` and `/products/:id` apply that filter, so they **404 on a draft**. Admin and vendor
+  screens must use `useMyVendorProductByIdQuery` / `useMyVendorProductsQuery` /
+  `useAllProductsForAdminQuery` instead.
+- An ADMIN creating a product must send `vendorId` (see `create-product.tsx`, which passes
+  `vendorOptions` to `ProductForm`); a VENDOR sends nothing and gets their own store.
+
+**Editing a product must preserve variant/image `id`s.** The backend keeps the variants and images
+whose ids it receives and deletes the rest — images are destroyed in Cloudinary too. That is why
+`mapProductToFormValues` and the zod schemas carry `id`; dropping it turns every edit into a
+delete-and-recreate that breaks live image URLs.
+
+**Money vocabulary.** `vendorEarning` is what a store is owed (commission and tax already removed);
+`totalRevenue` in the admin analytics is gross merchandise value, most of which belongs to sellers,
+and `platformCommission` is what Trendora actually earns. Don't label GMV as revenue.
+
 ### Data layer (RTK Query)
 All server data flows through **RTK Query**, never manual fetch (the two exceptions are Cloudinary
 upload and `deleteTempImage`).
-- `src/store/api/base-api.ts` is the single `createApi` root. It declares every `tagType` and a
+- `src/store/api/base-api.ts` is the single `createApi` root (marketplace tags: `vendors`,
+  `vendorOrders`, `payouts`, `vendorReviews`). It declares every `tagType` and a
   `baseQueryWithReauth` that injects the NextAuth `accessToken` as the `authorization` header and,
   on a 401, re-runs `getSession()` (which re-triggers the NextAuth `jwt` callback and thus the token
   refresh) before retrying — or calls `signOut()` if refresh failed.
@@ -219,7 +290,11 @@ Required env vars (`.env.local`):
 - `NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — NextAuth.
 - `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_PRESET_NAME` — image uploads
   (read directly from `process.env`, not via `envConfig`).
-- `NEXT_PUBLIC_TAX_RATE`, `NEXT_PUBLIC_SHIPPING_COST`, `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` —
-  checkout math in `src/features/cart/utils/calculate-order-total.ts` (also exports `currencyFormatter`).
+- `NEXT_PUBLIC_TAX_RATE` — checkout math in `src/features/cart/utils/calculate-order-total.ts`
+  (also exports `currencyFormatter`). Must match the backend's `TAX_RATE`.
+- `NEXT_PUBLIC_SHIPPING_COST`, `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` — **fallbacks only.** Shipping
+  is per store now and comes from each cart item's `vendorShippingFee` /
+  `vendorFreeShippingThreshold`; these are used only for a cart persisted before the marketplace
+  conversion, or a product payload missing its vendor.
 
 Other public config is read through `src/shared/config/env-config.ts`.

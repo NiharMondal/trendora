@@ -43,6 +43,28 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
     },
 
     {
+        key: "vendorOrders",
+        header: "Stores",
+        cell: (row) => {
+            const count = row.vendorOrders?.length ?? 0;
+            return (
+                <div className="text-xs">
+                    <p>
+                        {count} {count === 1 ? "store" : "stores"}
+                    </p>
+                    {count > 0 && (
+                        <p className="text-muted-foreground line-clamp-1 max-w-[160px]">
+                            {row.vendorOrders
+                                ?.map((slice) => slice.vendor?.storeName)
+                                .filter(Boolean)
+                                .join(", ")}
+                        </p>
+                    )}
+                </div>
+            );
+        },
+    },
+    {
         key: "subtotal",
         header: "Total Amount",
         cell: (row) => {
@@ -51,8 +73,10 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         },
     },
     {
+        // Rolled up from the per-store parcels; the authoritative per-parcel
+        // state is on the order detail page.
         key: "orderStatus",
-        header: "Order Status",
+        header: "Status (rollup)",
         cell: (row) => {
             const order = row;
             return (

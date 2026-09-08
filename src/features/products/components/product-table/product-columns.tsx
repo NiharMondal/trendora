@@ -1,7 +1,9 @@
 import { Edit, EllipsisVertical, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 
+import { productStatusMap } from "@/features/orders/constants/status-maps";
 import { DataTableColumn } from "@/shared/components/table/table-types";
+import { StatusBadge } from "@/shared/ui/status-badge";
 import TDPopover from "@/shared/components/td-popover";
 import { TProduct } from "@/features/products/types/product.types";
 import { Button } from "@/shared/ui/button";
@@ -37,6 +39,42 @@ export const productColumns = (
                 </div>
             );
         },
+    },
+    {
+        key: "vendor",
+        header: "Store",
+        cell: (row) =>
+            row.vendor ? (
+                <Link
+                    href={`/stores/${row.vendor.slug}`}
+                    className="text-sm hover:underline"
+                >
+                    {row.vendor.storeName}
+                </Link>
+            ) : (
+                <span className="text-sm text-muted-foreground">—</span>
+            ),
+    },
+    {
+        key: "status",
+        header: "Review",
+        cell: (row) => (
+            <StatusBadge statusMap={productStatusMap} status={row.status} />
+        ),
+    },
+    {
+        key: "isPublished",
+        header: "Live",
+        cell: (row) => (
+            <span
+                className={cn(
+                    "px-3 py-0.5 bg-success/10 text-success rounded-full text-xs",
+                    { "bg-warning/5 text-warning": !row.isPublished },
+                )}
+            >
+                {row.isPublished ? "Yes" : "No"}
+            </span>
+        ),
     },
     {
         key: "category",

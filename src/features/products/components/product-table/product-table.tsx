@@ -9,7 +9,7 @@ import { allSortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
 import { Button } from "@/shared/ui/button";
 import {
-    useAllProductsQuery,
+    useAllProductsForAdminQuery,
     useDeleteProductMutation,
 } from "@/features/products/api/product.api";
 
@@ -24,11 +24,15 @@ export default function ProductTable() {
     const [deleteProduct, { isLoading: isDeleting }] =
         useDeleteProductMutation();
 
+    // Admin endpoint: `/products` only returns approved+published listings,
+    // so the admin catalogue would silently hide every draft and rejection.
     const {
         data: products,
         isLoading,
         isFetching,
-    } = useAllProductsQuery(filters.queryParams as Record<string, string>);
+    } = useAllProductsForAdminQuery(
+        filters.queryParams as Record<string, string>,
+    );
 
     const confirmDelete = async () => {
         if (!deleteProductId) return;

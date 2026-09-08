@@ -1,6 +1,12 @@
 import z from "zod";
 //product variant
 export const productVariantSchema = z.object({
+    /**
+     * Present when editing an existing variant. The backend keeps variants
+     * whose id it receives and DELETES the ones it does not, so dropping this
+     * turns every edit into a delete-and-recreate.
+     */
+    id: z.string().optional(),
     sizeId: z
         .string({ error: "Variant size is required" })
         .nonempty({ error: "Variant Size is required" })
@@ -22,6 +28,12 @@ export const productVariantSchema = z.object({
 export type TProductVariant = z.infer<typeof productVariantSchema>;
 //product image
 export const productImageSchema = z.object({
+    /**
+     * Present when editing an existing image. Critical: the backend deletes
+     * any existing image whose id is absent from the payload — including from
+     * Cloudinary — so an edit that omits ids destroys the live assets.
+     */
+    id: z.string().optional(),
     url: z
         .url({ error: "Provide valid URL" })
         .nonempty("Image URL is required")
@@ -70,6 +82,18 @@ export const productSchema = z
         isFeatured: z.boolean().optional(),
         categoryId: z.string().min(1, "Category is required"),
         brandId: z.string().min(1, "Brand is required"),
+        /**
+         * Which store lists this product. Only honoured for an ADMIN creating
+         * on a seller's behalf — a VENDOR's own store always wins and any
+         * value they send is ignored by the backend.
+         */
+        vendorId: z.string().optional(),
+        /**
+         * Send straight to the admin review queue instead of saving a draft.
+         * Create-only: moderation state is otherwise changed through the
+         * /submit and /approve endpoints, never as a side effect of an edit.
+         */
+        submitForReview: z.boolean().optional(),
         variants: z.array(productVariantSchema).optional(),
         images: z
             .array(productImageSchema)

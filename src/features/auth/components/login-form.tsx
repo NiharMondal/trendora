@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Form } from "@/shared/ui/form";
-import { EnumUserRole } from "@/features/auth/constants/user-role";
+import { roleHomePath } from "@/features/auth/utils/role-home";
 
 import TDButton from "@/shared/components/td-button";
 import TDInput from "@/shared/form/TDInput";
@@ -43,15 +43,7 @@ export default function LoginForm() {
 
             toast.success("Logged in successfully");
             const session = await getSession();
-            const role = session?.user?.role;
-            if (
-                role === EnumUserRole.ADMIN ||
-                role === EnumUserRole.SUPER_ADMIN
-            ) {
-                router.push("/admin");
-            } else {
-                router.push("/dashboard");
-            }
+            router.push(roleHomePath(session?.user?.role));
         } catch (error: any) {
             toast.error(error?.message || "Something went wrong");
         } finally {

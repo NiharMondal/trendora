@@ -27,12 +27,22 @@ type ProductFormProps = {
     defaultValues?: TProductFormValues;
     onSubmit: (values: TProductFormValues) => Promise<void> | void;
     isLoading: boolean;
+    /**
+     * Stores to choose from. Passed ONLY by the admin create page — an admin
+     * must name the store a product belongs to, since they do not own one.
+     * A vendor never sees this field: the backend assigns their own store.
+     */
+    vendorOptions?: { label: string; value: string }[];
+    /** Show the "submit for review" checkbox (create flow only). */
+    showSubmitForReview?: boolean;
 };
 export default function ProductForm({
     productId,
     defaultValues,
     onSubmit,
     isLoading,
+    vendorOptions,
+    showSubmitForReview,
 }: ProductFormProps) {
     const [categoryId, setCategoryId] = useState(
         defaultValues?.categoryId || "",
@@ -70,6 +80,8 @@ export default function ProductForm({
             stockQuantity: 200,
             isFeatured: false,
             brandId: "",
+            vendorId: "",
+            submitForReview: true,
             variants: [{ stock: 0, price: 0, color: "", sizeId: "" }],
             images: [{ isMain: true, url: "" }],
         },
@@ -153,6 +165,20 @@ export default function ProductForm({
                             label="Gender"
                             className="w-full"
                         />
+                        {/* Admin-only: a product cannot exist without a store,
+                            and an admin has to say which one. */}
+                        {vendorOptions && (
+                            <TDCombobox
+                                form={form}
+                                label="Store"
+                                name="vendorId"
+                                placeholder="Select store"
+                                searchPlaceholder="Search stores..."
+                                emptyText="No store found."
+                                options={vendorOptions}
+                                required
+                            />
+                        )}
                     </div>
 
                     <TDTextArea
@@ -163,13 +189,21 @@ export default function ProductForm({
                         required
                     />
 
-                    <div className="border p-4 rounded-md">
+                    <div className="border p-4 rounded-md space-y-4">
                         <TDCheckbox
                             form={form}
                             name="isFeatured"
                             label="Featured Product"
                             description="Enable this to mark as a featured item"
                         />
+                        {showSubmitForReview && (
+                            <TDCheckbox
+                                form={form}
+                                name="submitForReview"
+                                label="Submit for review now"
+                                description="Send this listing to the admin review queue. Leave it off to keep it as a draft — either way it is not visible to shoppers until it has been approved and published."
+                            />
+                        )}
                     </div>
                 </div>
 

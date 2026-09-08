@@ -3,7 +3,7 @@ import Image from "next/image";
 import { use, useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
-import { useProductByIdQuery } from "@/features/products/api/product.api";
+import { useMyVendorProductByIdQuery } from "@/features/products/api/product.api";
 
 export default function ProductDetailsPage({
     params,
@@ -11,7 +11,9 @@ export default function ProductDetailsPage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = use(params);
-    const { data: product, isLoading } = useProductByIdQuery(id);
+    // Admin endpoint: the public one hides unapproved listings, which are
+    // exactly the ones being inspected here.
+    const { data: product, isLoading } = useMyVendorProductByIdQuery(id);
     const [selectedImage, setSelectedImage] = useState(0);
 
     if (isLoading) return;

@@ -4,8 +4,10 @@ import { toast } from "sonner";
 import { TProduct } from "@/features/products/types/product.types";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";
+import { toCartItem } from "@/features/cart/utils/to-cart-item";
 
 import { Button } from "@/shared/ui/button";
+import StoreBadge from "@/features/vendors/components/store-badge";
 import CardUtility from "./card-utility";
 import ProductPrice from "./product-price";
 import Image from "next/image";
@@ -17,18 +19,8 @@ type Props = {
 export default function ProductCard({ product }: Props) {
 	const dispatch = useAppDispatch();
 	const isMainPhoto = product?.images?.find((img) => img?.isMain);
-	const productPrice = product?.discountPrice
-		? product?.discountPrice
-		: product?.basePrice;
 	const handleAddToCart = (product: TProduct | undefined) => {
-		const productData = {
-			productId: product?.id ?? "",
-			productName: product?.name ?? "",
-			productImage: product?.images[0].url,
-			quantity: 1,
-			price: Number(productPrice),
-		};
-		dispatch(addItemToCart(productData));
+		dispatch(addItemToCart(toCartItem(product)));
 		toast.success("Product added to cart");
 	};
 	return (
@@ -70,6 +62,7 @@ export default function ProductCard({ product }: Props) {
 					basePrice={product.basePrice}
 					discountPrice={product.discountPrice}
 				/>
+				<StoreBadge vendor={product.vendor} />
 			</div>
 		</div>
 	);

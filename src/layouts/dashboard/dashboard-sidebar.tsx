@@ -13,6 +13,7 @@ import { useMyProfileQuery } from "@/features/users/api/user.api";
 import {
     adminDashboardLinks,
     customerDashboardLinks,
+    vendorDashboardLinks,
 } from "./dashboard-navlink";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -24,13 +25,28 @@ type TProps = {
 
 export function DashboardSidebar({ session, role }: TProps) {
     const { data } = useMyProfileQuery(undefined);
-    const label =
-        role === EnumUserRole.ADMIN ? "Admin Dashboard" : "Customer Dashboard";
 
-    const navLink =
-        role === EnumUserRole.ADMIN
-            ? adminDashboardLinks
-            : customerDashboardLinks;
+    // Three sidebars now, so this is a lookup rather than a ternary.
+    const { label, navLink } = (() => {
+        switch (role) {
+            case EnumUserRole.ADMIN:
+            case EnumUserRole.SUPER_ADMIN:
+                return {
+                    label: "Admin Dashboard",
+                    navLink: adminDashboardLinks,
+                };
+            case EnumUserRole.VENDOR:
+                return {
+                    label: "Seller Dashboard",
+                    navLink: vendorDashboardLinks,
+                };
+            default:
+                return {
+                    label: "Customer Dashboard",
+                    navLink: customerDashboardLinks,
+                };
+        }
+    })();
 
     const userImage = data?.result?.avatar || "";
     return (

@@ -78,6 +78,102 @@ export const productApi = baseApi.injectEndpoints({
             invalidatesTags: ["products"],
         }),
 
+        /** Everything one store currently sells (public storefront). */
+        storeProducts: builder.query<
+            TServerResponse<TProduct[]>,
+            { slug: string; query?: Record<string, string> }
+        >({
+            query: ({ slug, query }) => ({
+                url: `/products/store/${slug}`,
+                method: "GET",
+                params: query ? buildQueryParams(query) : undefined,
+            }),
+            providesTags: ["products"],
+        }),
+
+        /**
+         * The caller's own catalogue in EVERY moderation state — this is the
+         * vendor dashboard's product table. `GET /products` only returns
+         * approved+published listings, so it cannot be used here.
+         */
+        myVendorProducts: builder.query<
+            TServerResponse<TProduct[]>,
+            Record<string, string>
+        >({
+            query: (query) => ({
+                url: "/products/vendor/my-products",
+                method: "GET",
+                params: buildQueryParams(query),
+            }),
+            providesTags: ["products"],
+        }),
+
+        myVendorProductById: builder.query<TServerResponse<TProduct>, string>({
+            query: (id) => ({
+                url: `/products/vendor/my-products/${id}`,
+                method: "GET",
+            }),
+            providesTags: ["products"],
+        }),
+
+        /** Every listing in any state — the admin moderation queue. */
+        allProductsForAdmin: builder.query<
+            TServerResponse<TProduct[]>,
+            Record<string, string>
+        >({
+            query: (query) => ({
+                url: "/products/admin/all",
+                method: "GET",
+                params: buildQueryParams(query),
+            }),
+            providesTags: ["products"],
+        }),
+
+        /** Vendor sends a DRAFT or REJECTED listing to the review queue. */
+        submitProductForReview: builder.mutation<
+            TServerResponse<TProduct>,
+            string
+        >({
+            query: (id) => ({
+                url: `/products/${id}/submit`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["products"],
+        }),
+
+        /** The vendor's own show/hide switch. Only works once APPROVED. */
+        setProductPublished: builder.mutation<
+            TServerResponse<TProduct>,
+            { id: string; isPublished: boolean }
+        >({
+            query: ({ id, isPublished }) => ({
+                url: `/products/${id}/publish`,
+                method: "PATCH",
+                body: { isPublished },
+            }),
+            invalidatesTags: ["products"],
+        }),
+
+        approveProduct: builder.mutation<TServerResponse<TProduct>, string>({
+            query: (id) => ({
+                url: `/products/${id}/approve`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["products"],
+        }),
+
+        rejectProduct: builder.mutation<
+            TServerResponse<TProduct>,
+            { id: string; payload: { reason: string } }
+        >({
+            query: ({ id, payload }) => ({
+                url: `/products/${id}/reject`,
+                method: "PATCH",
+                body: payload,
+            }),
+            invalidatesTags: ["products"],
+        }),
+
         // get related products
         relatedProducts: builder.query<TServerResponse<TProduct[]>, string>({
             query: (id) => ({
@@ -97,4 +193,14 @@ export const {
     useProductBySlugQuery,
     useUpdateProductMutation,
     useRelatedProductsQuery,
+    //
+    useStoreProductsQuery,
+    useMyVendorProductsQuery,
+    useMyVendorProductByIdQuery,
+    useSubmitProductForReviewMutation,
+    useSetProductPublishedMutation,
+    //
+    useAllProductsForAdminQuery,
+    useApproveProductMutation,
+    useRejectProductMutation,
 } = productApi;

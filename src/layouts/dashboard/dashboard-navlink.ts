@@ -1,4 +1,6 @@
 import {
+    BadgeCheck,
+    Banknote,
     Blend,
     Boxes,
     Coffee,
@@ -13,9 +15,11 @@ import {
     MapPinHouse,
     Scaling,
     ScrollText,
+    Settings,
     ShoppingCart,
     Star,
     Stars,
+    Store,
     User2,
 } from "lucide-react";
 
@@ -99,6 +103,27 @@ export const adminDashboardLinks: TSidebarLink[] = [
         ],
     },
     {
+        title: "Vendors",
+        icon: Store,
+        children: [
+            { title: "All Vendors", url: "/admin/vendor-list", index: true },
+            { title: "Applications", url: "/admin/vendor-applications" },
+        ],
+    },
+    {
+        title: "Moderation",
+        url: "/admin/product-moderation",
+        icon: BadgeCheck,
+    },
+    {
+        title: "Payouts",
+        icon: Banknote,
+        children: [
+            { title: "Outstanding", url: "/admin/payouts", index: true },
+            { title: "Payout History", url: "/admin/payout-history" },
+        ],
+    },
+    {
         title: "User Management",
         url: "/admin/user-management",
         icon: User2,
@@ -119,6 +144,32 @@ export const customerDashboardLinks: TSidebarLink[] = [
     { title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
     { title: "My Reviews", url: "/dashboard/my-reviews", icon: Stars },
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
+    { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
+    { title: "Change Password", url: "/dashboard/change-password", icon: Key },
+    // The way a shopper becomes a seller. /vendor/apply is deliberately
+    // reachable by a CUSTOMER — see src/middleware.ts.
+    { title: "Sell on Trendora", url: "/vendor/apply", icon: Store },
+    { title: "Home", url: "/", icon: Home },
+];
+
+/**
+ * The seller area. A vendor is still a shopper, so their own cart, orders and
+ * wishlist stay reachable from here too.
+ */
+export const vendorDashboardLinks: TSidebarLink[] = [
+    { title: "Dashboard", url: "/vendor", icon: LayoutDashboard },
+    {
+        title: "Products",
+        icon: ShoppingCart,
+        children: [
+            { title: "My Products", url: "/vendor/products", index: true },
+            { title: "Add Product", url: "/vendor/products/add" },
+        ],
+    },
+    { title: "Orders", url: "/vendor/orders", icon: ScrollText },
+    { title: "Payouts", url: "/vendor/payouts", icon: Banknote },
+    { title: "Store Settings", url: "/vendor/settings", icon: Settings },
+    { title: "My Orders", url: "/dashboard/my-orders", icon: FilePlus },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
     { title: "Home", url: "/", icon: Home },

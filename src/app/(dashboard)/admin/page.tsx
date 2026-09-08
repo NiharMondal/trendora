@@ -1,48 +1,17 @@
-import { ShoppingBag } from "lucide-react";
-
 import NewComments from "@/features/analytics/components/new-comments";
+import MarketplaceOverview from "@/features/analytics/components/marketplace-overview";
 import RecentOrdersTable from "@/features/analytics/components/recent-orders/recent-orders-table";
 import ProductsOverview from "@/features/analytics/components/products-overview";
 import TopProducts from "@/features/analytics/components/top-products";
 import OrderChart from "@/features/analytics/components/order-chart";
-import { cn } from "@/shared/lib/utils";
 
 export default function AdminHomePage() {
     return (
         <div className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {[...Array(4)].map((item, index) => {
-                    const colorsList = [
-                        "#f24312",
-                        "#c3f98e",
-                        "#d45f87",
-                        "#e560f8",
-                    ];
-                    const randomColor = colorsList[index % colorsList.length];
+            {/* Real marketplace figures. The four tiles here used to be
+                hardcoded "Total Sales 1234" placeholders. */}
+            <MarketplaceOverview />
 
-                    return (
-                        <div
-                            className={cn(
-                                "rounded-2xl p-5 shadow-md flex gap-x-4 items-center bg-white",
-                            )}
-                            key={index}
-                        >
-                            <div
-                                className="size-16 polygon  flex items-center justify-center"
-                                style={{ backgroundColor: randomColor }}
-                            >
-                                <ShoppingBag className="text-white" />
-                            </div>
-                            <div>
-                                <p className="font-normal tracking-wider">
-                                    Total Sales
-                                </p>
-                                <strong>1234</strong>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
                 {/* Recent Orders  */}
                 <OrderChart />

@@ -1,13 +1,31 @@
 "use client";
 import { DataTable, TableLoading } from "@/shared/components/table";
 import { useGetMyOrdersQuery } from "@/features/orders/api/order.api";
+import { TOrder } from "@/features/orders/types/order.types";
+import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
+import { useTableFilters } from "@/shared/hooks/use-table-filters";
+import { orderStatusMap } from "@/features/orders/constants/status-maps";
+import { StatusBadge } from "@/shared/ui/status-badge";
+
 import { myOrderColumns } from "./my-order-columns";
 import { DownloadButton, PrintButton } from "./pdf-download-print";
-import { TOrder, TOrderItemResponse } from "@/features/orders/types/order.types";
+import VendorOrderReviewButton from "./vendor-order-review-button";
 
-
+/**
+ * The buyer's orders.
+ *
+ * Each order expands into one row per STORE, because that is the unit that
+ * ships: one parcel can be delivered while another is still processing, and
+ * each carries its own tracking number. Showing only the order-level rollup
+ * would hide that.
+ */
 export default function MyOrdersList() {
-    const { data: orders, isFetching, isLoading } = useGetMyOrdersQuery();
+    const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
+    const {
+        data: orders,
+        isFetching,
+        isLoading,
+    } = useGetMyOrdersQuery(filters.queryParams as Record<string, string>);
 
     if (isLoading) {
         return <TableLoading />;
@@ -16,15 +34,15 @@ export default function MyOrdersList() {
     const orderList = orders?.result ?? [];
     const hasOrders = orderList.length > 0;
 
-
     return (
         <div className="space-y-4">
-            {/* Toolbar — only shown when there is data */}
             {hasOrders && (
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-gray-500">
-                        {orderList.length} order
-                        {orderList.length !== 1 ? "s" : ""}
+                        {orders?.meta?.totalData ?? orderList.length} order
+                        {(orders?.meta?.totalData ?? orderList.length) !== 1
+                            ? "s"
+                            : ""}
                     </p>
                     <div className="flex items-center gap-2">
                         <PrintButton orders={orderList} />
@@ -33,33 +51,86 @@ export default function MyOrdersList() {
                 </div>
             )}
 
-            <DataTable<TOrder, TOrderItemResponse>
+            <DataTable<TOrder, TVendorOrder>
                 data={orderList}
                 rowKey={(o) => o.id}
                 columns={myOrderColumns()}
                 isFetching={isFetching}
+                filters={filters}
+                meta={orders?.meta}
+                placeholder="Search your orders..."
                 expandable={{
-                    getSubRows: (o) => o.items,
-                    subRowKey: (item, o) => `${o.id}-${item.id}`,
+                    getSubRows: (o) => o.vendorOrders,
+                    subRowKey: (slice, o) => `${o.id}-${slice.id}`,
                     subColumns: [
-                        { key: "productName", header: "Product" },
                         {
-                            key: "quantity",
-                            header: "Qty",
-                            className: "text-center",
+                            key: "storeName",
+                            header: "Store",
+                            cell: (slice) => (
+                                <span className="font-medium">
+                                    {slice.vendor?.storeName ?? "—"}
+                                </span>
+                            ),
                         },
                         {
-                            key: "priceAtPurchase",
-                            header: "Price",
-                            cell: (i) => `$${i.priceAtPurchase}`,
+                            key: "items",
+                            header: "Items",
+                            cell: (slice) => (
+                                <div className="space-y-0.5">
+                                    {slice.items?.map((item) => (
+                                        <p key={item.id} className="text-xs">
+                                            {item.productName}
+                                            {item.variantDetails
+                                                ? ` (${item.variantDetails})`
+                                                : ""}{" "}
+                                            × {item.quantity}
+                                        </p>
+                                    ))}
+                                </div>
+                            ),
                         },
                         {
-                            key: "subtotal",
-                            header: "Subtotal",
-                            cell: (i) => `$${i.subtotal}`,
+                            key: "orderStatus",
+                            header: "Status",
+                            cell: (slice) => (
+                                <StatusBadge
+                                    statusMap={orderStatusMap}
+                                    status={slice.orderStatus}
+                                />
+                            ),
+                        },
+                        {
+                            key: "trackingNumber",
+                            header: "Tracking",
+                            cell: (slice) =>
+                                slice.trackingNumber ? (
+                                    <span className="text-xs">
+                                        {slice.carrier
+                                            ? `${slice.carrier}: `
+                                            : ""}
+                                        {slice.trackingNumber}
+                                    </span>
+                                ) : (
+                                    <span className="text-xs text-muted-foreground">
+                                        —
+                                    </span>
+                                ),
+                        },
+                        {
+                            key: "totalAmount",
+                            header: "Parcel total",
+                            cell: (slice) => <span>${slice.totalAmount}</span>,
+                        },
+                        {
+                            key: "review",
+                            header: "",
+                            cell: (slice) => (
+                                <VendorOrderReviewButton vendorOrder={slice} />
+                            ),
                         },
                     ],
-                    title: (o) => `Items in #${o.orderNumber}`,
+                    title: (o) => `Parcels in #${o.orderNumber}`,
+                    emptyMessage: "No store parcels on this order yet.",
                     defaultExpanded: false,
                 }}
             />

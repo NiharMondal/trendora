@@ -1,33 +1,30 @@
 "use client";
-import { useAppSelector } from "@/store/redux.hooks";
-import { selectCartItems } from "@/features/cart/store/cart.slice";
+import Link from "next/link";
 import React from "react";
 
-import { Button } from "@/shared/ui/button";
-import { envConfig } from "@/shared/config/env-config";
+import { selectCartItems } from "@/features/cart/store/cart.slice";
+import { TCartVendorGroup } from "@/features/cart/types/cart.types";
 import {
     calculateOrderTotals,
     currencyFormatter,
 } from "@/features/cart/utils/calculate-order-total";
-import Link from "next/link";
+import { Button } from "@/shared/ui/button";
+import { useAppSelector } from "@/store/redux.hooks";
 
+/**
+ * Cart totals.
+ *
+ * Shipping is charged per store, so this shows one shipping line (and one
+ * free-shipping nudge) per store rather than a single cart-wide fee — that is
+ * what the backend will actually charge.
+ */
 export default function OrderSummary() {
     const cartItems = useAppSelector(selectCartItems);
 
-    const { subtotal, tax, shippingCost, totalAmount } =
+    const { vendors, subtotal, tax, shippingCost, totalAmount } =
         calculateOrderTotals(cartItems);
 
-    const FREE_SHIPPING_THRESHOLD = Number(envConfig.free_shipping_threshold);
-    const SHIPPING_COST = Number(envConfig.shipping_cost);
-
-    const qualifiesForFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
-
-    const freeShippingGap = FREE_SHIPPING_THRESHOLD - subtotal;
-
-    const progressPct = Math.min(
-        (subtotal / FREE_SHIPPING_THRESHOLD) * 100,
-        100,
-    );
+    const isMultiStore = vendors.length > 1;
 
     return (
         <div className="col-span-full xl:col-span-1 space-y-4 bg-white p-5 rounded-md">
@@ -35,30 +32,23 @@ export default function OrderSummary() {
                 Order Summary
             </h5>
 
-            {/* Free shipping progress bar */}
-            {!qualifiesForFreeShipping ? (
-                <div className="rounded-md bg-amber-50 border border-amber-200 p-3 space-y-2">
-                    <p className="text-xs text-amber-700 font-medium">
-                        Add{" "}
-                        <span className="font-bold">
-                            {currencyFormatter(freeShippingGap)}
-                        </span>{" "}
-                        more for free shipping!
-                    </p>
-                    <div className="h-1.5 rounded-full bg-amber-200 overflow-hidden">
-                        <div
-                            className="h-full rounded-full bg-amber-500 transition-all duration-500"
-                            style={{ width: `${progressPct}%` }}
-                        />
-                    </div>
-                </div>
-            ) : (
-                <div className="rounded-md bg-green-50 border border-green-200 p-3">
-                    <p className="text-xs text-green-700 font-semibold">
-                        🎉 You qualify for free shipping!
-                    </p>
-                </div>
+            {isMultiStore && (
+                <p className="text-xs text-muted-foreground">
+                    Your cart has items from {vendors.length} stores. Each store
+                    ships separately, so shipping is charged per store.
+                </p>
             )}
+
+            {/* Per-store free-shipping progress */}
+            <div className="space-y-2">
+                {vendors.map((group) => (
+                    <FreeShippingNudge
+                        key={group.vendorId}
+                        group={group}
+                        showStoreName={isMultiStore}
+                    />
+                ))}
+            </div>
 
             {/* Price rows */}
             <div className="divide-y border rounded-md text-sm">
@@ -66,28 +56,49 @@ export default function OrderSummary() {
                     label="Subtotal"
                     value={currencyFormatter(subtotal)}
                 />
-                <SummaryRow
-                    label="Tax (5%)"
-                    value={currencyFormatter(tax)}
-                    muted
-                />
-                <SummaryRow
-                    label="Shipping"
-                    value={
-                        qualifiesForFreeShipping ? (
-                            <span className="flex items-center gap-1.5">
-                                <span className="line-through text-gray-400">
-                                    {currencyFormatter(SHIPPING_COST)}
-                                </span>
+                <SummaryRow label="Tax" value={currencyFormatter(tax)} muted />
+
+                {/* One shipping row per store when there are several, so the
+                    buyer can see where the delivery cost comes from. */}
+                {isMultiStore ? (
+                    vendors.map((group) => (
+                        <SummaryRow
+                            key={`ship-${group.vendorId}`}
+                            label={`Shipping — ${group.storeName}`}
+                            value={
+                                group.shippingCost === 0 ? (
+                                    <span className="text-green-600 font-semibold">
+                                        Free
+                                    </span>
+                                ) : (
+                                    currencyFormatter(group.shippingCost)
+                                )
+                            }
+                        />
+                    ))
+                ) : (
+                    <SummaryRow
+                        label="Shipping"
+                        value={
+                            shippingCost === 0 ? (
                                 <span className="text-green-600 font-semibold">
                                     Free
                                 </span>
-                            </span>
-                        ) : (
-                            currencyFormatter(shippingCost)
-                        )
-                    }
-                />
+                            ) : (
+                                currencyFormatter(shippingCost)
+                            )
+                        }
+                    />
+                )}
+
+                {isMultiStore && (
+                    <SummaryRow
+                        label="Total shipping"
+                        value={currencyFormatter(shippingCost)}
+                        muted
+                    />
+                )}
+
                 <SummaryRow
                     label="Total"
                     value={currencyFormatter(totalAmount)}
@@ -101,6 +112,54 @@ export default function OrderSummary() {
                     Proceed to Checkout
                 </Button>
             </Link>
+        </div>
+    );
+}
+
+/** "Spend X more with this store for free shipping." */
+function FreeShippingNudge({
+    group,
+    showStoreName,
+}: {
+    group: TCartVendorGroup;
+    showStoreName: boolean;
+}) {
+    // A store with no threshold configured has nothing to progress towards.
+    if (group.freeShippingThreshold <= 0) return null;
+
+    const progressPct = Math.min(
+        (group.subtotal / group.freeShippingThreshold) * 100,
+        100,
+    );
+
+    if (group.qualifiesForFreeShipping) {
+        return (
+            <div className="rounded-md bg-green-50 border border-green-200 p-3">
+                <p className="text-xs text-green-700 font-semibold">
+                    🎉 Free shipping
+                    {showStoreName ? ` from ${group.storeName}` : ""}!
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="rounded-md bg-amber-50 border border-amber-200 p-3 space-y-2">
+            <p className="text-xs text-amber-700 font-medium">
+                Add{" "}
+                <span className="font-bold">
+                    {currencyFormatter(group.freeShippingGap)}
+                </span>{" "}
+                more
+                {showStoreName ? ` from ${group.storeName}` : ""} for free
+                shipping!
+            </p>
+            <div className="h-1.5 rounded-full bg-amber-200 overflow-hidden">
+                <div
+                    className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                    style={{ width: `${progressPct}%` }}
+                />
+            </div>
         </div>
     );
 }

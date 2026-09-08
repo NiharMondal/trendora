@@ -67,5 +67,10 @@ export const baseApi = createApi({
         "sizeGroups",
         "sizes",
         "wishlist",
+        // marketplace
+        "vendors",
+        "vendorOrders",
+        "payouts",
+        "vendorReviews",
     ],
 });

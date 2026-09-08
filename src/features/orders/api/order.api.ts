@@ -3,6 +3,7 @@ import {
     TCreateOrderPayload,
     TCreateOrderResult,
     TOrder,
+    TOrderAnalytics,
 } from "@/features/orders/types/order.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
@@ -36,10 +37,14 @@ export const orderApi = baseApi.injectEndpoints({
             providesTags: ["orders"],
         }),
 
-        getMyOrders: builder.query<TServerResponse<TOrder[]>, void>({
-            query: () => ({
+        getMyOrders: builder.query<
+            TServerResponse<TOrder[]>,
+            Record<string, string> | void
+        >({
+            query: (query) => ({
                 url: "/orders/my-orders",
                 method: "GET",
+                params: query ? buildQueryParams(query) : undefined,
             }),
             providesTags: ["orders"],
         }),
@@ -52,29 +57,28 @@ export const orderApi = baseApi.injectEndpoints({
             providesTags: ["orders"],
         }),
 
-        // update order
-        updateOrder: builder.mutation<
-            TServerResponse<TOrder>,
-            { payload: TOrder; id: string }
+        /**
+         * Platform-wide analytics (ADMIN). Reports commission separately from
+         * gross merchandise value, since most of GMV belongs to the vendors.
+         */
+        orderAnalytics: builder.query<
+            TServerResponse<TOrderAnalytics>,
+            Record<string, string> | void
         >({
-            query: ({ payload, id }) => {
-                return {
-                    url: `/orders/${id}`,
-                    method: "PATCH",
-                    body: payload,
-                };
-            },
-            invalidatesTags: ["orders"],
+            query: (query) => ({
+                url: "/orders/analytics",
+                method: "GET",
+                params: query ? buildQueryParams(query) : undefined,
+            }),
+            providesTags: ["orders"],
         }),
 
-        // delete order
-        deleteOrder: builder.mutation<TServerResponse<TOrder>, string>({
-            query: (id) => ({
-                url: `/orders/${id}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: ["orders"],
-        }),
+        // NOTE: there is deliberately no updateOrder/deleteOrder here.
+        // `PATCH /orders/:id` and `DELETE /orders/:id` do not exist on the
+        // backend — fulfilment happens per store through
+        // `useUpdateVendorOrderStatusMutation`
+        // (features/vendors/api/vendor-order.api.ts), because an order with
+        // several sellers has no single status to set.
     }),
 });
 
@@ -83,6 +87,5 @@ export const {
     useCreateOrderMutation,
     useGetMyOrdersQuery,
     useOrderByIdQuery,
-    useDeleteOrderMutation,
-    useUpdateOrderMutation,
+    useOrderAnalyticsQuery,
 } = orderApi;

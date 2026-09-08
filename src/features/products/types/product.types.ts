@@ -1,5 +1,17 @@
 import { TBrand } from "@/features/brands/types/brand.types";
 import { TCategory } from "@/features/categories/types/category.types";
+import { TVendorCard } from "@/features/vendors/types/vendor.types";
+
+/**
+ * Admin moderation state, independent of the vendor's own `isPublished`
+ * switch. A listing is only on the storefront when it is APPROVED *and*
+ * published *and* its store is approved.
+ */
+export type TProductModerationStatus =
+    | "DRAFT"
+    | "PENDING"
+    | "APPROVED"
+    | "REJECTED";
 
 export type TProductVariant = {
     id: string;
@@ -35,7 +47,16 @@ export type TProduct = {
     stockQuantity: number;
     isPublished: boolean;
     isFeatured: boolean;
+    /** Admin moderation state — see TProductModerationStatus. */
+    status: TProductModerationStatus;
+    rejectionReason?: string | null;
+    submittedAt?: string | null;
+    approvedAt?: string | null;
+    totalReviews?: number;
     categoryId: string;
+    /** The owning store. Every product belongs to exactly one. */
+    vendorId: string;
+    vendor?: TVendorCard;
     averageRating: number | null;
     brandId: string;
     isDeleted: boolean;

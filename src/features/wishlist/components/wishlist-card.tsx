@@ -7,11 +7,11 @@ import { toast } from "sonner";
 
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import TDButton from "@/shared/components/td-button";
-import { TCartItem } from "@/features/cart/types/cart.types";
 import { TWishlist } from "@/features/wishlist/types/wishlist.types";
 import { Button } from "@/shared/ui/button";
 import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";
+import { toCartItem } from "@/features/cart/utils/to-cart-item";
 
 type Props = {
     item: TWishlist;
@@ -27,20 +27,10 @@ export default function WishlistCard({ item, onRemove, isRemoving }: Props) {
         product?.images?.find((img) => img.isMain)?.url ??
         product?.images?.[0]?.url;
 
-    const productPrice = product?.discountPrice
-        ? product.discountPrice
-        : product?.basePrice;
-
     const handleAddToCart = () => {
-        const productData: TCartItem = {
-            productId: product?.id ?? "",
-            productName: product?.name ?? "",
-            productImage: mainImage,
-            quantity: 1,
-            price: Number(productPrice),
-        };
-
-        dispatch(addItemToCart(productData));
+        dispatch(
+            addItemToCart(toCartItem(product, { productImage: mainImage })),
+        );
         toast.success("Product added to cart");
     };
 

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import { EnumUserRole } from "@/features/auth/constants/user-role";
+import { roleHomePath } from "@/features/auth/utils/role-home";
 
 const PUBLIC_AUTH_PATHS = ["/login", "/register", "/forgot-password"];
 
@@ -18,15 +18,7 @@ export default function AuthSync({ children }: { children: React.ReactNode }) {
             status === "authenticated" &&
             PUBLIC_AUTH_PATHS.includes(pathname)
         ) {
-            const role = session?.user?.role;
-            if (
-                role === EnumUserRole.ADMIN ||
-                role === EnumUserRole.SUPER_ADMIN
-            ) {
-                router.replace("/admin");
-            } else {
-                router.replace("/dashboard");
-            }
+            router.replace(roleHomePath(session?.user?.role));
         }
     }, [session, status, pathname, router]);
 

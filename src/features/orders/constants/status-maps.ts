@@ -1,4 +1,10 @@
-import type { TPaymentStatus, TOrderStatus } from "@/features/orders/types/status.types";
+import type {
+    TPaymentStatus,
+    TOrderStatus,
+    TProductModerationStatus,
+    TVendorStatus,
+    TPayoutStatus,
+} from "@/features/orders/types/status.types";
 
 type BadgeConfig = {
     label: string;
@@ -53,5 +59,76 @@ export const orderStatusMap: StatusMap<TOrderStatus> = {
         label: "Canceled",
         className:
             "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
+    },
+};
+
+/**
+ * Admin moderation state of a listing. DRAFT/PENDING/REJECTED are all
+ * "not on the storefront" — the colours separate "the vendor has not submitted
+ * it" from "we are looking at it" from "we said no".
+ */
+export const productStatusMap: StatusMap<TProductModerationStatus> = {
+    DRAFT: {
+        label: "Draft",
+        className:
+            "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
+    },
+    PENDING: {
+        label: "In review",
+        className:
+            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
+    },
+    APPROVED: {
+        label: "Approved",
+        className:
+            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
+    },
+    REJECTED: {
+        label: "Rejected",
+        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    },
+};
+
+export const vendorStatusMap: StatusMap<TVendorStatus> = {
+    PENDING: {
+        label: "In review",
+        className:
+            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
+    },
+    APPROVED: {
+        label: "Approved",
+        className:
+            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
+    },
+    REJECTED: {
+        label: "Rejected",
+        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
+    },
+    SUSPENDED: {
+        label: "Suspended",
+        className:
+            "bg-orange-100 text-orange-800 hover:bg-orange-100 border-orange-200",
+    },
+};
+
+export const payoutStatusMap: StatusMap<TPayoutStatus> = {
+    PENDING: {
+        label: "Pending",
+        className:
+            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
+    },
+    PROCESSING: {
+        label: "Processing",
+        className:
+            "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
+    },
+    PAID: {
+        label: "Paid",
+        className:
+            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
+    },
+    FAILED: {
+        label: "Failed",
+        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
     },
 };
