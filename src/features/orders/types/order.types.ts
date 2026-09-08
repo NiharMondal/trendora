@@ -81,6 +81,14 @@ export type TOrder = {
 };
 
 
+export type TCreateOrderResult = {
+	// STRIPE: the order is created by the webhook, so only these two come back.
+	paymentUrl: string | null;
+	orderNumber?: string;
+	// CASH_ON_DELIVERY: the order exists immediately.
+	order?: TOrder;
+};
+
 type OrderItemInput = {
 	productId: string;
 	variantId?: string;

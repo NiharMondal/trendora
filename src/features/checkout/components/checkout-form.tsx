@@ -56,7 +56,16 @@ export default function CheckoutForm() {
                   }),
         };
         try {
-            await createOrder(payload).unwrap();
+            const res = await createOrder(payload).unwrap();
+
+            // Stripe: the order is only created by the webhook after the charge,
+            // so hand the browser over to Checkout and let /payment-success (or
+            // /payment-cancel) take it from there — including clearing the cart.
+            if (res.result?.paymentUrl) {
+                window.location.href = res.result.paymentUrl;
+                return;
+            }
+
             toast.success("Order placed successfully");
             dispatch(clearCart());
             router.push("/");
