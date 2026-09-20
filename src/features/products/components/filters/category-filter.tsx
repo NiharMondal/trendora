@@ -1,0 +1,27 @@
+import Link from "next/link";
+
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import { useAllCategoryQuery } from "@/features/categories/api/category.api";
+
+export default function CategoryFilter() {
+	const { data: categories, isLoading } = useAllCategoryQuery({});
+
+	return (
+		<div className="space-y-2">
+			<p className="text-lg border-b max-w-fit">Popular Categories</p>
+			<ul className="text-sm  font-light tracking-wide  space-y-1">
+				{isLoading && <SpinnerLoading />}
+				{categories?.result.map((cat) => (
+					<li key={cat.id}>
+						<Link
+							href={`/categories/${cat.slug}`}
+							className="hover:underline"
+						>
+							{cat.name}
+						</Link>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+}

@@ -1,7 +1,7 @@
 import React from "react";
 
-import Footer from "@/components/common/shared/footer";
-import Navbar from "@/components/layout/navbar/navbar";
+import Footer from "@/layouts/footer";
+import Navbar from "@/layouts/navbar/navbar";
 
 export default function RootPageLayout({
     children,

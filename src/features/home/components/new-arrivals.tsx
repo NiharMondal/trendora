@@ -1,0 +1,36 @@
+import { TProduct } from "@/features/products/types/product.types";
+import { envConfig } from "@/shared/config/env-config";
+
+import ProductCard from "@/features/products/components/product-card/product-card";
+import Container from "@/shared/components/container";
+import SectionHeader from "@/shared/components/section-header";
+
+const newArrivals = async () => {
+    try {
+        const res = await fetch(
+            `${envConfig.backend_url}/products/new-arrival`,
+            { next: { revalidate: 3000 } },
+        );
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.log("Failed to fetch new arrival products", error);
+    }
+};
+export default async function NewArrivals() {
+    const products = await newArrivals();
+
+    return (
+        <div className="py-10">
+            <Container className="space-y-5">
+                <SectionHeader title="New Arrivals" />
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {products?.result?.map((product: TProduct) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+            </Container>
+        </div>
+    );
+}

@@ -1,7 +1,7 @@
-import { AUTH_NAV_HEIGHT } from "@/components/layout/auth/constant";
+import { AUTH_NAV_HEIGHT } from "@/features/auth/constants/auth-nav";
 
-import GoogleLoginButton from "@/components/common/@ui/google-login-button";
-import RegisterForm from "./register-form";
+import GoogleLoginButton from "@/features/auth/components/google-login-button";
+import RegisterForm from "@/features/auth/components/register-form";
 
 export default function RegisterPage() {
     return (

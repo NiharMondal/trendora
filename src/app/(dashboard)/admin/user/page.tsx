@@ -4,17 +4,17 @@ import Image from "next/image";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import NoDataFound from "@/components/common/shared/no-data-found";
-import { Pagination, TableLoading } from "@/components/common/shared/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import NoDataFound from "@/shared/components/no-data-found";
+import { Pagination, TableLoading } from "@/shared/components/table";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 import {
     Table,
     TableBody,
@@ -22,9 +22,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { productsImage } from "@/helping-data/image";
-import { useAllUserQuery } from "@/redux/api/userApi";
+} from "@/shared/ui/table";
+import { productsImage } from "@/shared/constants/images";
+import { useAllUserQuery } from "@/features/users/api/user.api";
 
 export default function UserPage() {
     const [search, setSearch] = useState("");

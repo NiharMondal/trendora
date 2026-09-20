@@ -1,5 +1,5 @@
-import ProductTable from "@/components/@dashboard/admin/product-table/product-table";
-import Headline from "@/components/common/dashboard/headline";
+import ProductTable from "@/features/products/components/product-table/product-table";
+import Headline from "@/shared/components/headline";
 
 export default function ProductListPage() {
     return (

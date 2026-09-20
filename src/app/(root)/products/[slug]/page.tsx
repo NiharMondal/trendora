@@ -3,14 +3,14 @@ import Image from "next/image";
 import { use, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
-import SpinnerLoading from "@/components/common/loading/spinner-loading";
-import Container from "@/components/common/shared/container";
-import ProductDetails from "@/components/home/product-details/details/product-details";
-import RelatedProducts from "@/components/home/product-details/related-products";
-import ReviewSection from "@/components/home/product-details/review-section/review-section";
-import { TProductImage } from "@/components/types/product.types";
-import { cn } from "@/lib/utils";
-import { useProductBySlugQuery } from "@/redux/api/productApi";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import Container from "@/shared/components/container";
+import ProductDetails from "@/features/products/components/product-details/product-details";
+import RelatedProducts from "@/features/products/components/product-details/related-products";
+import ReviewSection from "@/features/reviews/components/review-section/review-section";
+import { TProductImage } from "@/features/products/types/product.types";
+import { cn } from "@/shared/lib/utils";
+import { useProductBySlugQuery } from "@/features/products/api/product.api";
 
 export default function ProductDetailsPage({
     params,
