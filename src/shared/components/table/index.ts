@@ -4,9 +4,12 @@ export { default as Pagination } from "./pagination";
 export { default as TableLoading } from "./table-loading";
 export { default as TableToolbar } from "./table-toolbar";
 export type {
+    ColumnAlign,
     DataTableColumn,
     DataTableProps,
+    EmptyStateConfig,
     ExpandableConfig,
     SortByOption,
     TableFilters,
+    ToolbarFilter,
 } from "./table-types";

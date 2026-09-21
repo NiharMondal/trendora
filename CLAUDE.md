@@ -227,12 +227,14 @@ Admin/customer lists are all built from one generic table in `src/shared/compone
    pagination/search/sort. State lives in the **URL search params** (`router.replace`, params equal
    to defaults are deleted), search is debounced 1000ms, and it returns both UI state
    (`search`, `sortBy`, `limit`, `currentPage` + setters) and `queryParams` to feed the RTK Query hook.
-2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters` is passed), the table body,
-   `TableLoading` skeleton (when `isFetching`), `NoDataFound` when empty, and `Pagination` (only when
-   `meta.totalPages > 1`). Optional `expandable` config renders nested `DataTableSubRows`.
+2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters`, `title`, `description` or
+   `actions` is passed), the table body, `TableLoading` skeleton (when `isFetching`), `NoDataFound`
+   when empty, and `Pagination` (only when `meta.totalPages > 1`). Optional `expandable` config
+   renders nested `DataTableSubRows`.
 3. **`<resource>-columns.tsx`** — columns are defined as `DataTableColumn<T>[]` in a sibling file,
    exported either as a const or as a **factory taking row handlers** (`brandColumns({ handleEdit, handleDelete })`).
-   A column with no `cell` falls back to `row[col.key]`.
+   A column with no `cell` falls back to `row[col.key]`, and `align` / `width` / `headerClassName`
+   cover the common layout tweaks without a per-table wrapper.
 
 The canonical wiring (see `src/features/brands/components/brand-table.tsx`):
 
@@ -254,6 +256,33 @@ const { data, isFetching } = useAllBrandQuery(filters.queryParams as Record<stri
 Sort dropdown options are shared presets in `src/shared/constants/sort-options.ts`. Row-level
 edit is commonly driven by a URL param (`?id=…`) opening a `TDSheet`, and delete by local state
 opening a `TDModal`.
+
+**The toolbar takes any number of filters — never hand-roll a select beside a table.** Declare the
+extra query params as `defaultFilters` on the hook and describe them as `toolbarFilters` on the
+table; the hook keeps each one in the URL, adds it to `queryParams`, clears it on reset and counts
+it in `activeFilterCount`, and the toolbar renders it as a labelled pill plus a removable chip.
+
+```tsx
+const filters = useTableFilters({
+  defaultSortBy: "createdAt:desc",
+  defaultFilters: { status: "" },   // query-param name -> default value
+});
+
+<DataTable
+  title="Listing moderation"          // header strip: accent bar + icon + description
+  description="Approve a listing to let its store publish it."
+  icon={Package}
+  actions={<TDButton size="sm">Add product</TDButton>}
+  toolbarFilters={[{ key: "status", label: "Status", icon: BadgeCheck,
+                     allLabel: "All statuses", options: statusOptions }]}
+  emptyState={{ title: "No listings yet" }}
+  …
+/>
+```
+
+An empty filter value is **dropped from `queryParams`** on purpose: the backend turns any unknown
+key into a `where` clause, so `status: ""` would match nothing rather than meaning "all". The
+toolbar's "All" option therefore writes `""`, which also deletes the param from the URL.
 
 `ahooks` / `@ahooks.js/use-url-state` are in `package.json` but **unused** — URL state is hand-rolled
 in `useTableFilters` with `next/navigation` + `use-debounce`. Don't introduce a second mechanism.

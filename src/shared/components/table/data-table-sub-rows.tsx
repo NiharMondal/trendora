@@ -9,7 +9,16 @@ import {
 
 import { cn } from "@/shared/lib/utils";
 import { ReactNode } from "react";
-import { DataTableColumn } from "./table-types";
+import { ColumnAlign, DataTableColumn } from "./table-types";
+
+const ALIGN_CLASS: Record<ColumnAlign, string> = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+};
+
+const columnClasses = <S,>(col: DataTableColumn<S>) =>
+    cn(col.align && ALIGN_CLASS[col.align], col.width, col.className);
 
 interface Props<S> {
     rows: S[];
@@ -47,8 +56,9 @@ export default function DataTableSubRows<S>({
                                     <TableHead
                                         key={col.key as string}
                                         className={cn(
-                                            "text-xs font-semibold text-gray-600 h-10",
-                                            col.className,
+                                            "h-10 text-xs font-semibold text-gray-600",
+                                            columnClasses(col),
+                                            col.headerClassName,
                                         )}
                                     >
                                         {col.header}
@@ -67,12 +77,19 @@ export default function DataTableSubRows<S>({
                                             key={col.key as string}
                                             className={cn(
                                                 "py-2",
-                                                col.className,
+                                                columnClasses(col),
                                             )}
                                         >
                                             {col.cell
                                                 ? col.cell(sub)
-                                                : (sub as any)[col.key]}
+                                                : ((
+                                                      sub as Record<
+                                                          string,
+                                                          unknown
+                                                      >
+                                                  )[
+                                                      col.key as string
+                                                  ] as ReactNode)}
                                         </TableCell>
                                     ))}
                                 </TableRow>
