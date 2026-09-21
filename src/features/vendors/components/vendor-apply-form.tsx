@@ -92,6 +92,7 @@ export default function VendorApplyForm() {
                         name="description"
                         label="About your store"
                         placeholder="What you sell, how long you've been doing it, how you ship…"
+                        required
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
