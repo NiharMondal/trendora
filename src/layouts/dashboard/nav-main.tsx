@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
     SidebarGroup,
@@ -9,15 +10,11 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
 } from "@/shared/ui/sidebar";
 import { cn } from "@/shared/lib/utils";
+import { pathMatchScore } from "@/shared/utils/match-path";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { TSidebarLink } from "./dashboard-navlink";
+import { navLinkPaths, navLinkUrl, TSidebarLink } from "./dashboard-navlink";
 
 type TProps = {
     label: string;
@@ -26,68 +23,41 @@ type TProps = {
 
 export default function NavMain({ label, navLink }: TProps) {
     const pathname = usePathname();
+
+    // One row per resource — a resource's list/add screens are tabs on the
+    // page (see DashboardTabs), never a second row here. Only the best-scoring
+    // row lights up, so "/admin" doesn't stay highlighted on "/admin/brand-list".
+    const scores = navLink.map((nav) =>
+        Math.max(
+            0,
+            ...navLinkPaths(nav).map((path) => pathMatchScore(path, pathname)),
+        ),
+    );
+    const bestScore = Math.max(0, ...scores);
+    const activeIndex = bestScore > 0 ? scores.indexOf(bestScore) : -1;
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel className="mb-4">{label}</SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu>
-                    {navLink.map((nav) => {
-                        return (
-                            <React.Fragment key={nav.title}>
-                                {nav.title && nav.url ? (
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            asChild
-                                            className={cn(
-                                                nav.url === pathname
-                                                    ? "bg-accent text-accent-foreground"
-                                                    : "",
-                                            )}
-                                        >
-                                            <Link href={nav.url}>
-                                                {nav.icon && <nav.icon />}
-                                                {nav.title}
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ) : (
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            className={cn(
-                                                nav.url === pathname
-                                                    ? "bg-accent text-accent-foreground"
-                                                    : "",
-                                            )}
-                                        >
-                                            {nav.icon && <nav.icon />}
-                                            {nav.title}
-                                        </SidebarMenuButton>
-                                        <SidebarMenuSub>
-                                            {nav?.children?.map((sub) => (
-                                                <SidebarMenuSubItem
-                                                    key={sub?.title}
-                                                >
-                                                    <SidebarMenuSubButton
-                                                        asChild
-                                                        className={cn(
-                                                            sub?.url ===
-                                                                pathname
-                                                                ? "bg-accent text-accent-foreground"
-                                                                : "",
-                                                        )}
-                                                    >
-                                                        <Link href={sub?.url}>
-                                                            {sub.title}
-                                                        </Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            ))}
-                                        </SidebarMenuSub>
-                                    </SidebarMenuItem>
+                    {navLink.map((nav, index) => (
+                        <SidebarMenuItem key={nav.title}>
+                            <SidebarMenuButton
+                                asChild
+                                className={cn(
+                                    index === activeIndex
+                                        ? "bg-accent text-accent-foreground"
+                                        : "",
                                 )}
-                            </React.Fragment>
-                        );
-                    })}
+                            >
+                                <Link href={navLinkUrl(nav)}>
+                                    {nav.icon && <nav.icon />}
+                                    {nav.title}
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
                 </SidebarMenu>
             </SidebarGroupContent>
         </SidebarGroup>
