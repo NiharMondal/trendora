@@ -331,12 +331,19 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
 
 ### Image uploads
 `src/shared/utils/upload-to-cloudinary.ts` posts directly to Cloudinary with an unsigned preset into
-`trendora/<folder>`, returning `{ url, publicId }`. Uploads land in a **temp folder first**:
+`trendora/<folder>`, returning `{ url, publicId }`. The preset puts them in a **temp folder
+first** — the resulting publicId is `trendora/temp/<folder>/<id>`, with `temp` as the *second*
+segment, not the last:
 `TDImageUpload` stores both `urlName` and `publicIdName` form fields and, whenever an image is
 replaced or removed, calls `deleteTempImage` (`src/shared/lib/delete-temp-image.ts` → backend
 `/cloudinary/delete-temp`) **only if the current `publicId` contains `/temp/`**. Preserve that
 guard — the backend promotes the image out of `temp/` on save, and deleting a promoted image would
 destroy a live asset. Client-side limit is 2MB. `next.config.ts` allows any https image host.
+
+`deleteTempImage` is a raw `fetch` that sends **no `authorization` header** — one of the two
+deliberate exceptions to "all server data goes through RTK Query". The backend route is
+correspondingly unauthenticated, so adding a guard there without also sending the token here breaks
+every image replace and remove. See `docs/FEATURE-GAPS.md` XR-notes and the backend's BE-04.
 
 ## Known gaps
 

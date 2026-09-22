@@ -32,7 +32,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-01 | `/products` has no filters, sort, search or pagination | P0 | M | storefront |
 | FE-02 | Both navbar search boxes are inert | P0 | M | storefront |
 | FE-03 | The home page renders only the hero slider | P0 | M | storefront |
-| FE-04 | Forgot-password form submits to `console.log` | P0 | S | auth |
+| FE-04 | Forgot-password form submits to `console.log` (backend now ready) | P0 | M | auth |
 | FE-05 | No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere | P0 | M | robustness |
 | FE-06 | Only one component in the app handles `isError` | P0 | M | robustness |
 | FE-07 | Placeholder pages wired into live navigation | P1 | M | dashboard |
@@ -138,10 +138,16 @@ query first, and `new-arrivals.tsx:17` swallows its error into a `console.log`.
 **Gap:** A user who has forgotten their password sees a complete, styled form with a "Send Reset
 Link" button that does nothing at all — no request, no error, no feedback.
 
-**Fix:** This one is blocked on the backend, and **should stay unwired until it is fixed.**
-`POST /auth/forgot-password` exists but returns a valid access token in the response body
-(backend **BE-01**) — calling it as-is would be worse than not calling it. There is also no
-`/auth/reset-password` endpoint and no reset page here. Build both sides together: see **XR-11**.
+**Fix — unblocked as of 2026-09-22.** This was previously blocked on the backend returning a
+valid access token in the response body; that is now fixed (backend **BE-01**), and
+`POST /auth/forgot-password` and `POST /auth/reset-password` both behave correctly and mail a
+single-use link.
+
+So this is now purely frontend work: wire the form to a `forgotPassword` mutation, and add the
+`/reset-password` page the emailed link points at. **XR-11** carries the exact request/response
+contract, the five concrete steps, and the one behaviour not to get wrong — the forgot-password
+response is identical for every input on purpose, so the UI must never branch on whether the
+account exists.
 
 ---
 
@@ -323,10 +329,15 @@ no `/admin/slides` route and no sidebar entry.
 **Gap:** The hero carousel — the first thing on the storefront — can only be changed through the
 database. The API work is already done on both sides.
 
-**Fix:** Add `/admin/(slides)/slide-list` + `add-slide` following the brand pattern
-(`src/features/brands/components/brand-table.tsx` is the canonical wiring), and one
-`dashboard-navlink.ts` entry. Backend **BE-16** should land with it, or `isActive` and `sortOrder`
-will be editable but ignored.
+**Fix — backend is ready as of 2026-09-22.** Add `/admin/(slides)/slide-list` + `add-slide`
+following the brand pattern (`src/features/brands/components/brand-table.tsx` is the canonical
+wiring), and one `dashboard-navlink.ts` entry.
+
+`isActive` and `sortOrder` now work (backend **BE-16**), and the listing the screen needs already
+exists: **`GET /slides/admin/all`** (ADMIN) returns every non-deleted slide *including deactivated
+ones*. Use that, not `GET /slides` — the public list hard-filters `isActive: true`, so a management
+screen built on it could never show or restore a slide the operator had hidden. The frontend's
+`slide.api.ts` currently only calls the public list, so this needs a new endpoint entry.
 
 ---
 
@@ -698,7 +709,7 @@ client.
   The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:127` calls correctly.
 - `DELETE /users/:id` (`src/features/users/api/user.api.ts:48-53`) — no such backend route.
 
-**Backend routes nothing here calls:** `POST /auth/forgot-password` (FE-04);
+**Backend routes nothing here calls:** `POST /auth/forgot-password` and `POST /auth/reset-password` (FE-04, XR-11);
 `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
 (FE-19); `GET /address` admin list; the slide write CRUD (FE-14); `GET /payouts/:id`;
@@ -707,16 +718,23 @@ client.
 ---
 
 ### XR-03 · Brand `logo` never reaches the database
-**P1 · S · contract**
+**P1 · S · contract — ✅ backend half FIXED 2026-09-22; frontend half still open**
 
-This form sends `logo` (`src/features/brands/schemas/brand-form.schema.ts:5`, default set at
-`brand-form.tsx:26`). The backend's `brandSchema` declares **only `name`**, and its
-`validateRequest` replaces `req.body` with the Zod-parsed result — which strips unknown keys. The
-request returns 200 and the logo is gone, although `Brand.logo` exists in Prisma.
+**Was:** the backend's `brandSchema` declared **only `name`** and its `validateRequest` stripped
+the `logo` this form sends, so the request returned 200 with the logo gone.
 
-The symptom is already visible: `edit-brand.tsx:28` has the logo default commented out.
+**Backend now:** `brandSchema` and a new `brandUpdateSchema` both declare `logo` as a validated URL
+string, and the empty string this form sends is stored as `null` rather than rejected or persisted
+as `""`. See `backend/docs/FEATURE-GAPS.md` BE-21. **The original "backend only, nothing to change
+here" verdict was wrong.**
 
-**Fix: backend only.** One line in `brand.validation.ts`. Nothing to change here.
+**Still open here:** `brand-form.tsx` carries `logo` in its zod schema and default values but
+**renders no input for it** — only a `name` field and the submit button. So the value posted is
+always `""`, and an admin has no way to set a brand logo even though the API now accepts one.
+`edit-brand.tsx` still has its logo default commented out.
+
+**Fix here:** give `BrandForm` an image upload control. `Brand.logo` is a **plain URL string**, not
+the `{ url, publicId }` pair that vendor/product images use — send the Cloudinary secure URL only.
 
 ---
 
@@ -755,9 +773,20 @@ Most of these are **our** type declarations being wrong, not the backend being w
 | `TSlide` has no `sortOrder`/`isActive` | both exist on the backend model and should drive ordering |
 | `ShippingSnapshot.state` required, no `email` (`order.types.ts:5-19`) | `Address.state` is nullable and `email` is required. `TAddress.state?` gets this right — the two are internally inconsistent |
 
-**Two are genuinely backend-side:** `GET /users` returning no email, role or `meta` (**BE-20** —
-this is why the admin user table's columns are blank and its pagination never appears), and the
-missing `size` include.
+**~~Two are~~ One is genuinely backend-side:** the missing `size` include.
+
+~~`GET /users` returning no email, role or `meta`~~ — **fixed backend-side 2026-09-22 (BE-15 +
+BE-20)**. `meta` is returned, and `email` and `role` now arrive **flat**, exactly as `TUser`
+already declares them. The backend chose flattening over nesting under `auth` specifically so this
+side would not have to change: `TUser` was right and the API was wrong. `row.email` and `row.role`
+in `user-management-columns.tsx` render real values now, and `DataTable` gets its pagination.
+
+Two caveats for whoever picks up **FE-08**:
+- **The search box now honours its own placeholder.** *"Search by name, email…"* previously
+  searched name and phone only; `?search=` now also matches email, case-insensitively.
+- **`email` and `role` may be `null`** on a user with no `Auth` row (an account that cannot sign
+  in at all). `TUser` types both as required `string`; treat them as `string | null` if you touch
+  that type.
 
 ---
 
@@ -775,8 +804,9 @@ missing `size` include.
 - **Vendor `payoutDetails`:** the backend's apply schema accepts it; `vendorApplySchema`
   (`vendor-form.schema.ts:20-40`) never sends it, so a seller cannot supply bank details at
   application time. *(Either side.)*
-- **Profile name:** the backend's unused `userUpdateSchema` requires `min(5)`; this form requires
-  `min(1)`. Invisible until the backend wires its validation up (**BE-08**).
+- ~~**Profile name:** the backend's unused `userUpdateSchema` requires `min(5)`; this form requires
+  `min(1)`.~~ **Settled 2026-09-22:** the backend relaxed to `min(1)` and now applies the schema.
+  This form already matches — **no change needed here.**
 
 ---
 
@@ -808,10 +838,14 @@ param that would become a bogus `where` clause.** Two caveats:
   `buildQueryParams` strips `"10"` as the default. Choosing "10" drops the param and the backend
   falls back to 10 — the right answer by coincidence. If either default moves independently, the
   limit selector starts lying.
-- `shared/constants/sort-options.ts:16-23` (`userSortOptions`) offers `email:asc`/`email:desc`, and
-  `email` lives on the backend's `Auth` model, not `User`. It only escapes a Prisma 500 today
-  because `GET /users` bypasses the query builder entirely. Fixing **BE-20** makes this a live
-  500 — the backend must add a column allowlist (**BE-14**) in the same change.
+- ~~⚠️ **LIVE BUG as of 2026-09-22**~~ — **resolved backend-side the same day, no change needed
+  here.** `shared/constants/sort-options.ts:16-23` (`userSortOptions`) offers
+  `email:asc`/`email:desc`, and `email` lives on the backend's `Auth` model, not `User` — so for a
+  few hours, between BE-14/BE-15 and BE-20, picking **Email** in the admin user table returned
+  `400 Cannot sort by "email"`. BE-20 taught the backend's query builder about declared relation
+  aliases instead of asking this side to drop the option, so **keep both Email entries**; they
+  work. Sorting by `role` would also work if it were ever offered — note it orders by the enum's
+  database declaration order (`CUSTOMER < ADMIN < VENDOR`), which is not alphabetical.
 
 ---
 
@@ -852,22 +886,53 @@ documented only in `CLAUDE.md`.
 
 ---
 
-### XR-11 · Password reset is a dead end on both sides
+### XR-11 · Password reset — backend done, this side pending
 **P1 · M · auth**
 
-| | State |
-| --- | --- |
-| Page + form + schema here | exist, linked from login, whitelisted in `auth-sync.tsx:9` |
-| Submit handler here | `console.log(data)` (FE-04) |
-| `POST /auth/forgot-password` | exists, and **returns a valid access token in the response body** to any unauthenticated caller (backend **BE-01**) |
-| Email delivery | not implemented — the backend has no mail transport at all |
-| `POST /auth/reset-password` | **does not exist** on either side |
-| Reset page here | does not exist |
+**Updated 2026-09-22.** The backend half has landed; **this side is now the only thing missing.**
 
-**Do not wire the form to the current endpoint.** Fix BE-01 first (a purpose-scoped, single-use,
-hashed, expiring token that is mailed rather than returned), add the reset endpoint, then build
-the `/reset-password` page and point the form at it. This is one feature spanning two repos and
-should land as a pair.
+| Piece | State |
+| --- | --- |
+| `POST /auth/forgot-password` | ✅ emails a single-use link, generic 200, token never in the body |
+| `POST /auth/reset-password` | ✅ redeems the token and sets the new password |
+| Email delivery + token storage | ✅ SHA-256 hashed, TTL, single-use, supersede, per-account cooldown |
+| Forgot-password form here | ❌ still `console.log(data)` (FE-04) |
+| `/reset-password` page here | ❌ does not exist |
+
+**What to build, and the contract it must meet:**
+
+```
+POST /auth/forgot-password   { email }
+  -> 200 { success: true, message: "If an account exists…", result: null }   ALWAYS
+     Render that message verbatim. Do NOT branch on whether the account exists,
+     and do not show "email not found" — the endpoint is deliberately identical
+     for every input so it cannot be used to discover who has an account.
+
+POST /auth/reset-password    { token, newPassword }
+  -> 200 { success: true, message: "Password has been reset successfully…", result: null }
+  -> 400 "This password reset link is invalid or has expired. Please request a new one."
+     Covers unknown, expired, already-used and malformed tokens, deliberately
+     indistinguishable. Surface it as-is and link back to /forgot-password.
+```
+
+Concretely:
+
+1. Point `forgot-password-form.tsx:24` at a new `forgotPassword` mutation in
+   `features/auth/api/auth.api.ts`, and render the returned message. On success, swap the form for
+   a "check your inbox" state rather than redirecting.
+2. Add `src/app/(auth)/reset-password/page.tsx`. The emailed link is
+   **`${FRONTEND_URL}/reset-password?token=<raw>`**, so this exact path must exist and read
+   `?token=` from the search params.
+3. Add `reset-password.schema.ts` mirroring the backend's shared `passwordRule`: 6–30 characters,
+   at least one letter and one number, plus a confirm-password field that is validated here only.
+4. Whitelist `/reset-password` in `auth-sync.tsx` alongside `/forgot-password`, or a logged-in user
+   following the link gets bounced to their role home.
+5. On success, send the user to `/login` with a toast — do **not** auto-login; the backend returns
+   no tokens from this endpoint, by design.
+
+**Note:** a social-only (Google) account is skipped silently by the backend — it has no password to
+reset, so the generic "link sent" comes back and no mail arrives. Worth a line of copy on the
+confirmation screen pointing Google users at the Google button.
 
 ---
 
