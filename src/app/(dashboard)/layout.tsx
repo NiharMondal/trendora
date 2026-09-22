@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import React from "react";
 
 import { DashboardSidebar } from "@/layouts/dashboard/dashboard-sidebar";
+import DashboardTabs from "@/layouts/dashboard/dashboard-tabs";
 import { TSessionResponse } from "@/features/auth/types/session.types";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/features/auth/constants/user-role";
@@ -45,6 +46,7 @@ export default async function DashboardLayout({
                     </div>
                 </div>
                 <div className="p-2 sm:px-3 md:p-5 bg-neutral-light">
+                    <DashboardTabs role={role as EnumUserRole} />
                     {children}
                 </div>
             </section>

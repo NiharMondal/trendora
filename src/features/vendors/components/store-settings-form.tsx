@@ -129,6 +129,7 @@ export default function StoreSettingsForm() {
                         form={form}
                         name="description"
                         label="About your store"
+                        required
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

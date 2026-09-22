@@ -2,7 +2,7 @@
 
 import { CloudUpload, X } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { type DragEvent, useRef, useState } from "react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -11,6 +11,10 @@ import { uploadToCloudinary } from "@/shared/utils/upload-to-cloudinary";
 import { deleteTempImage } from "@/shared/lib/delete-temp-image";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+
+/** Client-side guards only — Cloudinary's unsigned preset is the real limit. */
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+const ACCEPTED_TYPES = "image/*";
 
 type Props<T extends FieldValues> = {
     form: UseFormReturn<T>;
@@ -29,6 +33,7 @@ export default function TDImageUploadField<T extends FieldValues>({
 }: Props<T>) {
     const fileRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const url = form.watch(urlName);
 
@@ -60,12 +65,67 @@ export default function TDImageUploadField<T extends FieldValues>({
         }
     };
 
+    /**
+     * The one choke point every file passes through, whichever way it arrived.
+     * `accept="image/*"` on the input only filters the OS dialog — the user can
+     * switch it back to "All Files" — and it has no effect whatsoever on a
+     * drop, so the type check has to live here rather than on the input. A file
+     * the OS cannot type at all (empty `file.type`) is not a proven image and
+     * is refused too.
+     */
     const handleFileChange = (file: File) => {
-        if (file.size > 2 * 1024 * 1024) {
+        if (!file.type.startsWith("image/")) {
+            toast.error("Only image files can be uploaded");
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
             toast.error("File is too big. Maximum size is 2MB.");
             return;
         }
+
         handleUpload(file);
+    };
+
+    /**
+     * HTML5 drag-and-drop: every element refuses file drops until `dragover` is
+     * cancelled — without the preventDefault below, `onDrop` never fires at all
+     * and the browser just navigates to the dropped file. The file itself is
+     * unreadable until `drop` — the data store is protected while dragging —
+     * so nothing can be validated before then; `handleFileChange` does it.
+     */
+    const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        if (!loading) setIsDragging(true);
+    };
+
+    const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = loading ? "none" : "copy";
+    };
+
+    const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+        // dragleave also fires when the cursor crosses into a child, which
+        // would make the highlight flicker; ignore those.
+        if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragging(false);
+
+        if (loading) return;
+
+        // Dragging an image out of another browser tab carries a URL, not a
+        // file, so `files` is empty — say so instead of doing nothing.
+        const file = e.dataTransfer.files?.[0];
+        if (!file) {
+            toast.error("Drop an image file from your computer");
+            return;
+        }
+
+        handleFileChange(file);
     };
 
     const handleRemove = async () => {
@@ -84,7 +144,17 @@ export default function TDImageUploadField<T extends FieldValues>({
 
     return (
         <div className="space-y-2">
-            <div className="relative w-full h-36 border rounded-md bg-gray-100">
+            <div
+                onDragEnter={handleDragEnter}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={cn(
+                    "relative w-full h-36 border rounded-md bg-gray-100 transition-colors duration-150",
+                    isDragging &&
+                        "border-2 border-dashed border-primary bg-primary-50",
+                )}
+            >
                 {url ? (
                     <>
                         <Image
@@ -111,8 +181,10 @@ export default function TDImageUploadField<T extends FieldValues>({
                         )}
                         onClick={() => fileRef.current?.click()}
                     >
-                        <p className="text-muted-foreground text-sm">
-                            No image selected
+                        <p className="text-muted-foreground text-sm text-center px-2">
+                            {isDragging
+                                ? "Drop to upload"
+                                : "Drop an image here, or click to browse"}
                         </p>
                     </div>
                 )}
@@ -142,10 +214,13 @@ export default function TDImageUploadField<T extends FieldValues>({
             <input
                 ref={fileRef}
                 type="file"
-                accept="image/*"
+                accept={ACCEPTED_TYPES}
                 hidden
                 onChange={(e) => {
                     const file = e.target.files?.[0];
+                    // Reset so re-picking the same file after a rejection still
+                    // fires change.
+                    e.target.value = "";
                     if (file) handleFileChange(file);
                 }}
             />

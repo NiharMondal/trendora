@@ -51,6 +51,18 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
   are in `layouts/dashboard/dashboard-navlink.ts`).
 - `api/auth/[...nextauth]` — NextAuth handler.
 
+**The dashboard sidebar is flat — a resource gets exactly one row.** `dashboard-navlink.ts` still
+groups a resource's screens under `children`, but those children are no longer sub-rows: they are
+the **tabs** rendered above the page by `layouts/dashboard/dashboard-tabs.tsx`, which the
+`(dashboard)/layout.tsx` mounts once for every dashboard route. So "Brand List" and "Add Brand"
+remain two real routes that read as two tabs of one screen, and a new screen gets its tab for free
+by being added to `children` — never add a page-level tab strip by hand. The row links to the child
+marked `index: true`. A group with fewer than two children renders no tab strip, so flatten it to a
+plain `{ title, url, icon }` entry instead. `shared/components/page-tabs.tsx` (`PageTabs`) is the
+presentational strip if a non-dashboard page ever needs one; active-route matching for both the
+sidebar and the tabs goes through `shared/utils/match-path.ts` so nested routes
+(`/admin/product-list/update-product/<id>`) keep their parent lit.
+
 Admin routes use parenthesised **non-URL grouping folders** to bundle a resource's pages, e.g.
 `admin/(brand)/add-brand` + `admin/(brand)/brand-list` both live at `/admin/...`. **`src/app`
 holds nothing but `page.tsx` / `layout.tsx` / `route.ts`** — every page is a thin shell that renders
