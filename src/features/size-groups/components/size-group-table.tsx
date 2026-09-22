@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { ComponentType, useState } from "react";
 import { toast } from "sonner";
 
 import { DataTable, TableLoading } from "@/shared/components/table";
@@ -18,6 +18,7 @@ import {
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSizeGroup from "./edit-size-group";
 import { sizeGroupColumns } from "./size-group-columns";
+import { PackageIcon, PlusIcon } from "lucide-react";
 
 export default function CategoryTable() {
     const router = useRouter();
@@ -69,6 +70,17 @@ export default function CategoryTable() {
                 meta={sizeGroups?.meta}
                 sortByOptions={categorySortOptions}
                 placeholder="Search by name"
+                title="Size Groups"
+                description="Manage your size groups"
+                icon={PackageIcon as ComponentType<{ className?: string }>}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" onClick={() => router.push("/admin/add-size-group")}>
+                            <PlusIcon className="size-4" />
+                            Add Size Group
+                        </Button>
+                    </div>
+                }
             />
 
             <TDSheet

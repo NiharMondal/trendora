@@ -1,7 +1,6 @@
 "use client";
 
 import NoDataFound from "@/shared/components/no-data-found";
-import { Button } from "@/shared/ui/button";
 import {
     Table,
     TableBody,
@@ -11,26 +10,44 @@ import {
     TableRow,
 } from "@/shared/ui/table";
 import { cn } from "@/shared/lib/utils";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { Fragment, useState } from "react";
+import { ChevronRight } from "lucide-react";
+import { Fragment, ReactNode, useState } from "react";
 
 import DataTableSubRows from "./data-table-sub-rows";
 import Pagination from "./pagination";
 import TableLoading from "./table-loading";
 import TableToolbar from "./table-toolbar";
-import { DataTableProps } from "./table-types";
+import { ColumnAlign, DataTableColumn, DataTableProps } from "./table-types";
+
+const ALIGN_CLASS: Record<ColumnAlign, string> = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+};
+
+const columnClasses = <T,>(col: DataTableColumn<T>) =>
+    cn(col.align && ALIGN_CLASS[col.align], col.width, col.className);
 
 export default function DataTable<T, S = unknown>({
     data,
     columns,
     rowKey,
     rowClassName,
+    onRowClick,
     isFetching,
     expandable,
     filters,
     meta,
     sortByOptions,
+    limitOptions,
+    toolbarFilters,
     placeholder,
+    title,
+    description,
+    icon,
+    actions,
+    emptyState,
+    loadingRows,
     className,
 }: DataTableProps<T, S>) {
     const initialExpanded = () => {
@@ -59,32 +76,52 @@ export default function DataTable<T, S = unknown>({
 
     const totalCols = columns.length + (expandable ? 1 : 0);
     const showPagination = !!filters && !!meta && meta.totalPages > 1;
+    // The header strip stands on its own, so a table with a title but no
+    // `filters` still gets a toolbar (just without the controls row).
+    const showToolbar = !!filters || !!title || !!description || !!actions;
 
     return (
         <div className={cn("space-y-5", className)}>
-            {filters ? (
+            {showToolbar ? (
                 <TableToolbar
-                    search={filters.search}
-                    limit={filters.limit}
-                    sortBy={filters.sortBy}
-                    setSearch={filters.setSearch}
-                    setLimit={filters.handleLimitChange}
-                    setSortBy={filters.setSortBy}
-                    onReset={filters.handleResetFilters}
+                    search={filters?.search}
+                    limit={filters?.limit}
+                    sortBy={filters?.sortBy}
+                    setSearch={filters?.setSearch}
+                    setLimit={filters?.handleLimitChange}
+                    setSortBy={filters?.setSortBy}
+                    onReset={filters?.handleResetFilters}
+                    columnFilters={filters?.columnFilters}
+                    setFilter={filters?.setFilter}
+                    defaults={filters?.defaults}
+                    activeFilterCount={filters?.activeFilterCount}
+                    toolbarFilters={toolbarFilters}
                     sortByOptions={sortByOptions}
+                    limitOptions={limitOptions}
                     placeholder={placeholder}
+                    title={title}
+                    description={description}
+                    icon={icon}
+                    actions={actions}
                 />
             ) : null}
 
-            <div className="bg-white rounded-md overflow-hidden">
+            <div className="overflow-hidden rounded-xl border border-muted bg-white shadow-xs">
                 {isFetching ? (
-                    <TableLoading columnCount={totalCols} />
+                    <TableLoading
+                        columnCount={totalCols}
+                        rowCount={loadingRows}
+                        className="rounded-none border-0"
+                    />
                 ) : !data || data.length === 0 ? (
-                    <NoDataFound />
+                    <NoDataFound
+                        className="rounded-none border-0"
+                        {...emptyState}
+                    />
                 ) : (
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-gray-50/50 h-16 hover:bg-gray-50/50">
+                            <TableRow className="h-12 border-b border-muted bg-gradient-to-b from-gray-50 to-gray-50/40 hover:bg-gray-50/50">
                                 {expandable ? (
                                     <TableHead className="w-10" />
                                 ) : null}
@@ -92,8 +129,9 @@ export default function DataTable<T, S = unknown>({
                                     <TableHead
                                         key={col.key as string}
                                         className={cn(
-                                            "font-semibold text-gray-700",
-                                            col.className,
+                                            "text-xs font-semibold tracking-wider text-gray-600 uppercase",
+                                            columnClasses(col),
+                                            col.headerClassName,
                                         )}
                                     >
                                         {col.header}
@@ -113,21 +151,27 @@ export default function DataTable<T, S = unknown>({
                                 return (
                                     <Fragment key={key}>
                                         <TableRow
+                                            onClick={
+                                                onRowClick
+                                                    ? () => onRowClick(row)
+                                                    : undefined
+                                            }
                                             className={cn(
-                                                "hover:bg-gray-50/50 transition-colors",
+                                                "border-b border-muted/60 transition-colors last:border-0 hover:bg-muted/20",
+                                                isOpen && "bg-muted/20",
+                                                onRowClick && "cursor-pointer",
                                                 rowClassName?.(row),
                                             )}
                                         >
                                             {expandable ? (
                                                 <TableCell className="w-10">
                                                     {hasSubRows ? (
-                                                        <Button
+                                                        <button
                                                             type="button"
-                                                            variant="link"
-                                                            size="icon-sm"
-                                                            onClick={() =>
-                                                                toggle(key)
-                                                            }
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                toggle(key);
+                                                            }}
                                                             aria-label={
                                                                 isOpen
                                                                     ? "Collapse row"
@@ -136,13 +180,20 @@ export default function DataTable<T, S = unknown>({
                                                             aria-expanded={
                                                                 isOpen
                                                             }
-                                                        >
-                                                            {isOpen ? (
-                                                                <ChevronDown className="h-4 w-4" />
-                                                            ) : (
-                                                                <ChevronRight className="h-4 w-4" />
+                                                            className={cn(
+                                                                "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-primary-100/70 hover:text-primary-700",
+                                                                isOpen &&
+                                                                    "bg-primary-100/70 text-primary-700",
                                                             )}
-                                                        </Button>
+                                                        >
+                                                            <ChevronRight
+                                                                className={cn(
+                                                                    "size-4 transition-transform duration-200",
+                                                                    isOpen &&
+                                                                        "rotate-90",
+                                                                )}
+                                                            />
+                                                        </button>
                                                     ) : null}
                                                 </TableCell>
                                             ) : null}
@@ -150,11 +201,20 @@ export default function DataTable<T, S = unknown>({
                                             {columns.map((col) => (
                                                 <TableCell
                                                     key={col.key as string}
-                                                    className={col.className}
+                                                    className={columnClasses(
+                                                        col,
+                                                    )}
                                                 >
                                                     {col.cell
                                                         ? col.cell(row)
-                                                        : (row as any)[col.key]}
+                                                        : ((
+                                                              row as Record<
+                                                                  string,
+                                                                  unknown
+                                                              >
+                                                          )[
+                                                              col.key as string
+                                                          ] as ReactNode)}
                                                 </TableCell>
                                             ))}
                                         </TableRow>

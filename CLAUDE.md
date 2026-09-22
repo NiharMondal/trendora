@@ -15,7 +15,7 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **55 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+`pnpm lint` passes (exit 0) with **52 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
 plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
 code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
 warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
@@ -227,12 +227,14 @@ Admin/customer lists are all built from one generic table in `src/shared/compone
    pagination/search/sort. State lives in the **URL search params** (`router.replace`, params equal
    to defaults are deleted), search is debounced 1000ms, and it returns both UI state
    (`search`, `sortBy`, `limit`, `currentPage` + setters) and `queryParams` to feed the RTK Query hook.
-2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters` is passed), the table body,
-   `TableLoading` skeleton (when `isFetching`), `NoDataFound` when empty, and `Pagination` (only when
-   `meta.totalPages > 1`). Optional `expandable` config renders nested `DataTableSubRows`.
+2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters`, `title`, `description` or
+   `actions` is passed), the table body, `TableLoading` skeleton (when `isFetching`), `NoDataFound`
+   when empty, and `Pagination` (only when `meta.totalPages > 1`). Optional `expandable` config
+   renders nested `DataTableSubRows`.
 3. **`<resource>-columns.tsx`** — columns are defined as `DataTableColumn<T>[]` in a sibling file,
    exported either as a const or as a **factory taking row handlers** (`brandColumns({ handleEdit, handleDelete })`).
-   A column with no `cell` falls back to `row[col.key]`.
+   A column with no `cell` falls back to `row[col.key]`, and `align` / `width` / `headerClassName`
+   cover the common layout tweaks without a per-table wrapper.
 
 The canonical wiring (see `src/features/brands/components/brand-table.tsx`):
 
@@ -254,6 +256,33 @@ const { data, isFetching } = useAllBrandQuery(filters.queryParams as Record<stri
 Sort dropdown options are shared presets in `src/shared/constants/sort-options.ts`. Row-level
 edit is commonly driven by a URL param (`?id=…`) opening a `TDSheet`, and delete by local state
 opening a `TDModal`.
+
+**The toolbar takes any number of filters — never hand-roll a select beside a table.** Declare the
+extra query params as `defaultFilters` on the hook and describe them as `toolbarFilters` on the
+table; the hook keeps each one in the URL, adds it to `queryParams`, clears it on reset and counts
+it in `activeFilterCount`, and the toolbar renders it as a labelled pill plus a removable chip.
+
+```tsx
+const filters = useTableFilters({
+  defaultSortBy: "createdAt:desc",
+  defaultFilters: { status: "" },   // query-param name -> default value
+});
+
+<DataTable
+  title="Listing moderation"          // header strip: accent bar + icon + description
+  description="Approve a listing to let its store publish it."
+  icon={Package}
+  actions={<TDButton size="sm">Add product</TDButton>}
+  toolbarFilters={[{ key: "status", label: "Status", icon: BadgeCheck,
+                     allLabel: "All statuses", options: statusOptions }]}
+  emptyState={{ title: "No listings yet" }}
+  …
+/>
+```
+
+An empty filter value is **dropped from `queryParams`** on purpose: the backend turns any unknown
+key into a `where` clause, so `status: ""` would match nothing rather than meaning "all". The
+toolbar's "All" option therefore writes `""`, which also deletes the param from the URL.
 
 `ahooks` / `@ahooks.js/use-url-state` are in `package.json` but **unused** — URL state is hand-rolled
 in `useTableFilters` with `next/navigation` + `use-debounce`. Don't introduce a second mechanism.
@@ -302,12 +331,26 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
 
 ### Image uploads
 `src/shared/utils/upload-to-cloudinary.ts` posts directly to Cloudinary with an unsigned preset into
-`trendora/<folder>`, returning `{ url, publicId }`. Uploads land in a **temp folder first**:
+`trendora/<folder>`, returning `{ url, publicId }`. The preset puts them in a **temp folder
+first** — the resulting publicId is `trendora/temp/<folder>/<id>`, with `temp` as the *second*
+segment, not the last:
 `TDImageUpload` stores both `urlName` and `publicIdName` form fields and, whenever an image is
 replaced or removed, calls `deleteTempImage` (`src/shared/lib/delete-temp-image.ts` → backend
 `/cloudinary/delete-temp`) **only if the current `publicId` contains `/temp/`**. Preserve that
 guard — the backend promotes the image out of `temp/` on save, and deleting a promoted image would
 destroy a live asset. Client-side limit is 2MB. `next.config.ts` allows any https image host.
+
+`deleteTempImage` is a raw `fetch` that sends **no `authorization` header** — one of the two
+deliberate exceptions to "all server data goes through RTK Query". The backend route is
+correspondingly unauthenticated, so adding a guard there without also sending the token here breaks
+every image replace and remove. See `docs/FEATURE-GAPS.md` XR-notes and the backend's BE-04.
+
+## Known gaps
+
+`docs/FEATURE-GAPS.md` is the prioritized audit of what is missing, stubbed or drifted from
+the backend, with every item anchored to a `file:line`. Worth a glance before building a new
+screen — several already have their RTK Query endpoint defined and unused, and `/products`,
+the navbar search and the home page are much less finished than they look.
 
 ## Environment
 Required env vars (`.env.local`):
