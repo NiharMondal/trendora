@@ -15,7 +15,7 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **55 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+`pnpm lint` passes (exit 0) with **52 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
 plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
 code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
 warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
@@ -337,6 +337,13 @@ replaced or removed, calls `deleteTempImage` (`src/shared/lib/delete-temp-image.
 `/cloudinary/delete-temp`) **only if the current `publicId` contains `/temp/`**. Preserve that
 guard — the backend promotes the image out of `temp/` on save, and deleting a promoted image would
 destroy a live asset. Client-side limit is 2MB. `next.config.ts` allows any https image host.
+
+## Known gaps
+
+`docs/FEATURE-GAPS.md` is the prioritized audit of what is missing, stubbed or drifted from
+the backend, with every item anchored to a `file:line`. Worth a glance before building a new
+screen — several already have their RTK Query endpoint defined and unused, and `/products`,
+the navbar search and the home page are much less finished than they look.
 
 ## Environment
 Required env vars (`.env.local`):
