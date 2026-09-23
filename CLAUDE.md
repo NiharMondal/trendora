@@ -279,6 +279,32 @@ place. `pnpm build` confirms it: `/about-us`, `/cart`, `/checkout` and `/product
 Off `/products` the box shows nothing, because no search is running there. A navbar search also
 pushes the bare path, so it starts a fresh result set rather than merging into filters left behind.
 
+### The home page is ten self-hiding sections
+
+`app/(root)/page.tsx` composes `features/home/components/`. Two rules keep it stable as the
+marketplace grows:
+
+- **A section with no data renders `null`.** With zero completed orders there are no best sellers;
+  with no markdowns there are no deals. A confident heading over an empty shelf reads as a broken
+  page. This is why each rail fetches its own data — the decision to disappear happens after the
+  fetch, not in the page.
+- **Rails are broken up, never stacked.** Four product carousels in a row read as one scroll and
+  the lower ones are never seen, so the tiles and the full-bleed banner sit between them.
+
+`product-rail.tsx` is the shared shelf; `rails.tsx` holds the four queries bound to it (separate
+components because hooks cannot be chosen at runtime). Every rail's "View all" is a real filtered
+catalogue URL built from the same params the rail queried, so it always lands on the wider set the
+shelf previewed — which also means **a new rail filter must be registered in
+`PRODUCT_FILTER_KEYS`** or `useTableFilters` drops it from `queryParams` and the link silently
+shows everything.
+
+**`CategoryTiles` reads `GET /products/filters`, not `GET /categories`.** The taxonomy is
+admin-owned and aspirational — it carries Belt, Bag, Heels and a dozen more nobody has listed a
+product in. Tiling all of them hands the shopper seventeen doors, most opening onto "no products
+found". The facets endpoint returns only categories with live stock, with counts and (since the
+`Category.image` migration) artwork. Tiles link to **top-level** categories, which works because
+the backend matches `categoryId` against the category *or its children*.
+
 ### Tables (centralized `DataTable`)
 Admin/customer lists are all built from one generic table in `src/shared/components/table`
 (import from its `index.ts` barrel). Three pieces work together:

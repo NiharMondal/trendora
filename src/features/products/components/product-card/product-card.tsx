@@ -1,4 +1,8 @@
+"use client";
+
+import { ImageOff } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { TProduct } from "@/features/products/types/product.types";
@@ -18,7 +22,10 @@ type Props = {
 
 export default function ProductCard({ product }: Props) {
 	const dispatch = useAppDispatch();
+	const [imageFailed, setImageFailed] = useState(false);
+
 	const isMainPhoto = product?.images?.find((img) => img?.isMain);
+	const imageUrl = isMainPhoto?.url || product?.images?.[0]?.url;
 	const handleAddToCart = (product: TProduct | undefined) => {
 		dispatch(addItemToCart(toCartItem(product)));
 		toast.success("Product added to cart");
@@ -29,15 +36,26 @@ export default function ProductCard({ product }: Props) {
 				<CardUtility product={product} />
 
 				<Link href={`/products/${product.slug}`}>
-					{product?.images?.length && (
+					{/* A row can carry a URL that no longer resolves — an image
+					    saved while still in Cloudinary's temp/ folder gets
+					    deleted out from under the product (see the backend's
+					    BE-41). Without this fallback one such row renders a
+					    broken frame in the middle of a home page rail. */}
+					{imageUrl && !imageFailed ? (
 						<Image
-							src={isMainPhoto?.url || product.images[0].url}
-							alt="image"
+							src={imageUrl}
+							alt={product.name}
 							height={300}
 							width={200}
 							className="w-full h-full object-cover object-center rounded aspect-auto"
 							loading="lazy"
+							onError={() => setImageFailed(true)}
 						/>
+					) : (
+						<div className="flex size-full flex-col items-center justify-center gap-2 rounded bg-muted text-muted-foreground">
+							<ImageOff className="size-8" strokeWidth={1.5} />
+							<span className="text-xs">No image</span>
+						</div>
 					)}
 				</Link>
 

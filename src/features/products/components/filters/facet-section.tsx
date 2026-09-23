@@ -12,6 +12,8 @@ export type TFacetOption = {
     count: number;
     /** Optional heading this option sits under, e.g. its size group. */
     group?: string | null;
+    /** Nests the row under the one above it, for a child category. */
+    indent?: boolean;
 };
 
 type FacetSectionProps = {
@@ -91,7 +93,10 @@ export default function FacetSection({
 
                                 <label
                                     htmlFor={checkboxId}
-                                    className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                                    className={cn(
+                                        "flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-foreground",
+                                        option.indent && "pl-4",
+                                    )}
                                 >
                                     <Checkbox
                                         id={checkboxId}

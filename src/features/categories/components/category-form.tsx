@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import TDCombobox from "@/shared/form/TDCombobox";
+import TDImageUploadField from "@/shared/form/TDImageUpload";
 import TDInput from "@/shared/form/TDInput";
 import { Form } from "@/shared/ui/form";
 import { useAllSizeGroupsQuery } from "@/features/size-groups/api/size-group.api";
@@ -37,6 +38,7 @@ export default function CategoryForm({
             name: "",
             sizeGroupId: null,
             parentId: null,
+            image: null,
         },
     });
 
@@ -70,6 +72,24 @@ export default function CategoryForm({
                     label="Parent Category"
                     options={categories}
                 />
+
+                {/* Only top-level categories get a tile on the home page, so
+                    this is worth setting on a parent and optional elsewhere.
+                    Without one the tile falls back to a gradient. */}
+                <div className="space-y-2">
+                    <p className="text-sm font-medium">
+                        Storefront tile image
+                        <span className="ml-1 font-normal text-muted-foreground">
+                            (optional)
+                        </span>
+                    </p>
+                    <TDImageUploadField
+                        form={hookForm}
+                        urlName="image.url"
+                        publicIdName="image.publicId"
+                        folderName="categories"
+                    />
+                </div>
 
                 <TDButton
                     type="submit"

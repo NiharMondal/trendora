@@ -14,6 +14,15 @@ export type TCategoryFacet = TFacetCount & {
     id: string;
     name: string;
     slug: string;
+    /** Merchandising artwork, for the home page's category tiles. */
+    image: string | null;
+    /**
+     * Null for a top-level category. Products hang off leaves, so a parent's
+     * `count` is rolled up from its children server-side — which is what makes
+     * the home page's category tiles (which link to parents) land on a
+     * non-empty page.
+     */
+    parentId: string | null;
 };
 
 export type TBrandFacet = TFacetCount & {

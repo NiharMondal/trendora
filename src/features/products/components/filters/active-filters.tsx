@@ -77,7 +77,7 @@ export default function ActiveFilters({ facets, filters }: ActiveFiltersProps) {
         }
     }
 
-    const { minPrice, maxPrice, minRating, inStock } = columnFilters;
+    const { minPrice, maxPrice, minRating, inStock, onSale } = columnFilters;
 
     if (minPrice || maxPrice) {
         chips.push({
@@ -102,6 +102,14 @@ export default function ActiveFilters({ facets, filters }: ActiveFiltersProps) {
             key: "inStock",
             label: "In stock",
             onRemove: () => setFilter("inStock", ""),
+        });
+    }
+
+    if (onSale === "true") {
+        chips.push({
+            key: "onSale",
+            label: "On sale",
+            onRemove: () => setFilter("onSale", ""),
         });
     }
 
