@@ -128,11 +128,16 @@ pre-discount price. Noted on `storefrontSortOptions`.
 
 Three decisions worth keeping:
 
-- **The navbar box is NOT synced from the URL.** The navbar is mounted in the root layout, so a
-  `useSearchParams` call there would opt *every route in the app* out of static rendering — to
-  display a term the catalogue's own toolbar input already shows. It is a jumping-off point, not a
-  second source of truth for `?search=`. (Confirmed: `/products` is still `○ Static` after this
-  change.)
+- **The navbar box mirrors `?search=` in both directions.** The first cut kept local state only, to
+  avoid a `useSearchParams` call in a layout-level component — and that shipped a bug: searching
+  from the navbar and then clearing the catalogue toolbar left the navbar advertising a search that
+  was no longer running. The URL is the single source of truth; the hook keeps a draft only for
+  what has been typed and not yet submitted, reset on change **during render** rather than in an
+  effect (an effect repaints the stale term for a frame; an unconditional assignment clobbers
+  mid-word). Reading search params is safe here because `Navbar` lives in `app/(root)/layout.tsx`,
+  not the global root layout, and `PersistGate loading={null}` already leaves every page with no
+  meaningful prerendered HTML — `/about-us`, `/cart`, `/checkout` and `/products` all remain
+  `○ Static` in the build output.
 - **A navbar search starts a fresh result set.** It pushes the bare path plus `?search=`, which
   clears whatever brand/price filters the shopper left on `/products`. An empty submit therefore
   means "show me everything", not a no-op.

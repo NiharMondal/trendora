@@ -254,11 +254,30 @@ keystroke for the same class of reason: a number input fires on every digit.
 `useSearchParams`, and without it the route opts out of static rendering at build time.
 
 **Both navbar search boxes feed this page** through `layouts/navbar/use-navbar-search.ts`, which
-pushes `/products?search=<q>`. That hook deliberately keeps its own local state and **never calls
-`useSearchParams`**: the navbar is mounted in the root layout, so reading search params there would
-opt *every route in the app* out of static rendering, just to echo a term the catalogue toolbar
-already displays. A navbar search also pushes the bare path, so it starts a fresh result set rather
-than merging into filters left on `/products`.
+pushes `/products?search=<q>` and **mirrors that param back into the input**. The URL is the single
+source of truth for both boxes; the hook keeps a local draft only for what has been typed and not
+yet submitted. Skipping that sync is a visible bug — search from the navbar, clear the catalogue
+toolbar, and the navbar goes on advertising a search that is no longer running.
+
+The sync is a **reset-on-change during render**, not a `useEffect`:
+
+```ts
+const [query, setQuery] = useState(urlTerm);
+const [syncedTerm, setSyncedTerm] = useState(urlTerm);
+if (urlTerm !== syncedTerm) { setSyncedTerm(urlTerm); setQuery(urlTerm); }
+```
+
+An effect would repaint the stale term for a frame, and a plain `setQuery(urlTerm)` on every render
+would clobber the shopper mid-word. `urlTerm` only moves on navigation, so a draft survives typing.
+
+`useSearchParams` in the navbar is safe **here specifically**: `Navbar` is mounted in
+`app/(root)/layout.tsx`, not the global root layout, and `Providers` gates the whole tree behind
+`PersistGate loading={null}` — so no page has meaningful prerendered HTML to lose in the first
+place. `pnpm build` confirms it: `/about-us`, `/cart`, `/checkout` and `/products` all stay
+`○ Static`. Re-check that route table if the navbar moves up a layout or `PersistGate` goes away.
+
+Off `/products` the box shows nothing, because no search is running there. A navbar search also
+pushes the bare path, so it starts a fresh result set rather than merging into filters left behind.
 
 ### Tables (centralized `DataTable`)
 Admin/customer lists are all built from one generic table in `src/shared/components/table`
