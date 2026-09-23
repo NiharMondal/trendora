@@ -219,6 +219,40 @@ upload and `deleteTempImage`).
   (`src/shared/utils/build-query-params.ts`), which **drops values equal to the defaults**
   (`page:1`, `limit:10`, `search:""`, `sortBy:createdAt:desc`) to keep URLs and cache keys clean.
 
+### The storefront catalogue is faceted, and the facets come from the server
+
+`/products` (`features/products/components/product-wrapper.tsx`) is the reference for a public,
+filterable list. It is **not** a `DataTable` — it is a grid with a sidebar — but it shares the URL
+state machinery:
+
+- **`useProductFilters`** (`features/products/hooks/use-product-filters.ts`) wraps `useTableFilters`
+  with the storefront's filter set and adds the one thing a facet panel needs that a table toolbar
+  does not: **multi-select**, stored as one comma-joined param per dimension
+  (`?brandId=nike,adidas`), which is the form the backend reads as an `IN`.
+- **`PRODUCT_FILTER_KEYS` mirrors `STOREFRONT_FILTER_KEYS`** in the backend's
+  `helpers/product-filter.ts`. The two must agree: the backend turns an unrecognised key into a
+  `where` clause on a column of that name, so a typo here fails as an empty page, not an error.
+- **The options are not declared in this repo.** `GET /products/filters`
+  (`useProductFiltersQuery`) returns the categories, brands, sizes, genders, stores, price range and
+  rating buckets that exist in the live catalogue, each with a count. Sellers list whatever they
+  like, so which of those exist is a property of the data — a vendor opening a new category appears
+  in the panel with no frontend change. Don't reintroduce a hardcoded list; three such components
+  were deleted for exactly this reason.
+- **Both queries take the SAME `queryParams`.** That is what keeps the counts honest — they are
+  computed from the current selection, not the whole catalogue. The counts are disjunctive
+  server-side, so ticking one brand leaves the others tickable.
+- **`ProductFilterPanel` is rendered twice** — as the `lg` sidebar and inside the mobile `TDSheet` —
+  from one component, so the two cannot drift. `showHeading={false}` in the sheet, whose own header
+  already says "Filters".
+
+**Use `setFilters` (plural), not two `setFilter` calls,** when moving more than one param at once.
+Both build their `URLSearchParams` from the same render's snapshot, so the second silently discards
+the first — a price min/max pair loses its min. `PriceFilter` applies on submit rather than per
+keystroke for the same class of reason: a number input fires on every digit.
+
+`app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>` — Next 15 requires it for
+`useSearchParams`, and without it the route opts out of static rendering at build time.
+
 ### Tables (centralized `DataTable`)
 Admin/customer lists are all built from one generic table in `src/shared/components/table`
 (import from its `index.ts` barrel). Three pieces work together:

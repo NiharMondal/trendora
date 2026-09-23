@@ -29,7 +29,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 
 | ID | Title | Pri | Eff | Area |
 | --- | --- | --- | --- | --- |
-| FE-01 | `/products` has no filters, sort, search or pagination | P0 | M | storefront |
+| ~~FE-01~~ | ~~`/products` has no filters, sort, search or pagination~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | FE-02 | Both navbar search boxes are inert | P0 | M | storefront |
 | FE-03 | The home page renders only the hero slider | P0 | M | storefront |
 | FE-04 | Forgot-password form submits to `console.log` (backend now ready) | P0 | M | auth |
@@ -73,25 +73,45 @@ uses `BE-nn` and the same `XR-nn` numbers.
 
 ## P0 — headline features that do not work
 
-### FE-01 · `/products` has no filters, sort, search or pagination
-**P0 · M · storefront**
+### ~~FE-01~~ · `/products` has no filters, sort, search or pagination
+**✅ FIXED 2026-09-23 · storefront**
 
-**Now:** `src/features/products/components/product-wrapper.tsx:11` renders the literal string
-`<div>Filter section</div>` and calls `useAllProductsQuery({})` with an empty object. It
-destructures `isLoading` and never uses it, so there is no skeleton and no empty state either.
+**Was:** `product-wrapper.tsx:11` rendered the literal string `<div>Filter section</div>` and called
+`useAllProductsQuery({})` with an empty object, destructuring `isLoading` and never using it.
 
-**Gap:** The main catalogue page of an e-commerce site shows an unfiltered, unsorted, unpaginated
-first page of products. A shopper cannot narrow by price, brand, category or size, cannot sort,
-and cannot reach page two.
+**Now:** `product-wrapper.tsx` is a faceted catalogue — a sticky filter sidebar on `lg` and up, the
+same panel inside a `TDSheet` below it, plus search, sort, pagination, a skeleton, an empty state
+and an error state.
 
-Four working filter components already exist and are imported by nothing:
-`src/features/products/components/filters/{brand,category,price,size}-filter.tsx`.
+**The filter options come from the backend, not from this repo.** `GET /products/filters`
+(`useProductFiltersQuery`) returns the categories, brands, sizes, genders, stores, price range and
+rating buckets that actually exist in the live catalogue, each with a count. Both queries take the
+**same** `queryParams`, so the counts narrow with the selection. That is what makes the panel
+survive a marketplace where sellers list whatever they like: a vendor opening a new category makes
+it appear in the panel with no frontend change. Counts are disjunctive server-side, so ticking one
+brand does not zero out the others.
 
-**Fix:** Wire the existing filters into `product-wrapper.tsx` using `useTableFilters`
-(`src/shared/hooks/use-table-filters.ts`) with `defaultFilters` for the column filters — that hook
-already keeps state in the URL, debounces search, strips defaults and produces `queryParams`. Pass
-the result to `useAllProductsQuery`. Note `defaultFilters` currently has **zero call sites**, so
-this will be its first real use. Add the skeleton and empty state.
+New/changed files:
+
+- `features/products/hooks/use-product-filters.ts` — `useTableFilters` + multi-select. Its
+  `PRODUCT_FILTER_KEYS` must mirror `STOREFRONT_FILTER_KEYS` in the backend's
+  `helpers/product-filter.ts`.
+- `features/products/types/product-filter.types.ts` — `TProductFacets`.
+- `features/products/components/filters/` — `product-filter-panel`, `facet-section`,
+  `price-filter` (rewritten), `rating-filter`, `active-filters`. The old `brand-filter`,
+  `category-filter` and `size-filter` stubs were deleted; they hardcoded what the server now serves.
+- `features/products/components/product-toolbar.tsx`, `product-grid-skeleton.tsx`.
+- `shared/hooks/use-table-filters.ts` gained **`setFilters`** (several params in one URL write) —
+  two `setFilter` calls in a tick both build from the same params snapshot, so a price min/max pair
+  lost its min.
+- `shared/constants/sort-options.ts` gained `storefrontSortOptions`.
+- `app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>`, which Next 15 requires for
+  `useSearchParams` if the route is to stay statically rendered.
+
+**Known limitation:** the price *filter* matches on the price the shopper is shown (discounted
+where discounted), but the price *sort* orders by `basePrice` — Prisma cannot order by a
+coalesced expression without a generated column, so a deeply discounted item sorts by its
+pre-discount price. Noted on `storefrontSortOptions`.
 
 ---
 
@@ -504,14 +524,18 @@ the entire list cache for that resource. Acceptable at this scale, worth knowing
 
 ---
 
-### FE-25 · Eleven orphaned component files
+### FE-25 · Seven orphaned component files
 **P2 · S · cleanup**
 
 `features/home/components/{featured-product,new-arrivals,offer,showcase,trending-product}.tsx`
-(FE-03), `features/products/components/filters/{brand,category,price,size}-filter.tsx` (FE-01),
-`features/users/components/user-management-table.tsx` (FE-08), `shared/components/td-drawer.tsx`.
+(FE-03), `features/users/components/user-management-table.tsx` (FE-08),
+`shared/components/td-drawer.tsx`.
 
-Nine of the eleven are wanted by FE-01 and FE-03 — wire them up rather than delete them.
+Five of the seven are wanted by FE-03 — wire them up rather than delete them.
+
+The four `products/components/filters/*` files this list used to name are **resolved**: FE-01
+rewrote `price-filter.tsx` and deleted `brand`, `category` and `size` — each hardcoded a list the
+server now serves as a facet.
 
 ---
 
