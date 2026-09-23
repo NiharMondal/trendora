@@ -253,6 +253,13 @@ keystroke for the same class of reason: a number input fires on every digit.
 `app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>` — Next 15 requires it for
 `useSearchParams`, and without it the route opts out of static rendering at build time.
 
+**Both navbar search boxes feed this page** through `layouts/navbar/use-navbar-search.ts`, which
+pushes `/products?search=<q>`. That hook deliberately keeps its own local state and **never calls
+`useSearchParams`**: the navbar is mounted in the root layout, so reading search params there would
+opt *every route in the app* out of static rendering, just to echo a term the catalogue toolbar
+already displays. A navbar search also pushes the bare path, so it starts a fresh result set rather
+than merging into filters left on `/products`.
+
 ### Tables (centralized `DataTable`)
 Admin/customer lists are all built from one generic table in `src/shared/components/table`
 (import from its `index.ts` barrel). Three pieces work together:

@@ -30,7 +30,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ID | Title | Pri | Eff | Area |
 | --- | --- | --- | --- | --- |
 | ~~FE-01~~ | ~~`/products` has no filters, sort, search or pagination~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
-| FE-02 | Both navbar search boxes are inert | P0 | M | storefront |
+| ~~FE-02~~ | ~~Both navbar search boxes are inert~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | FE-03 | The home page renders only the hero slider | P0 | M | storefront |
 | FE-04 | Forgot-password form submits to `console.log` (backend now ready) | P0 | M | auth |
 | FE-05 | No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere | P0 | M | robustness |
@@ -115,19 +115,36 @@ pre-discount price. Noted on `storefrontSortOptions`.
 
 ---
 
-### FE-02 · Both navbar search boxes are inert
-**P0 · M · storefront**
+### ~~FE-02~~ · Both navbar search boxes are inert
+**✅ FIXED 2026-09-23 · storefront**
 
-**Now:** `src/layouts/navbar/desktop-navbar.tsx:30` and
-`src/layouts/navbar/mobile-navbar.tsx:67` render a search input with no `onChange`, no `onSubmit`,
-no `<form>` wrapper and no navigation. There is no `/search` route.
+**Was:** `desktop-navbar.tsx:30` and `mobile-navbar.tsx:67` rendered a search input with no
+`onChange`, no `onSubmit`, no `<form>` wrapper and no navigation.
 
-**Gap:** The most prominent control on the site does nothing. A shopper who types a product name
-and presses Enter gets no response at all.
+**Now:** both are `<form role="search">` elements submitting through the shared
+`layouts/navbar/use-navbar-search.ts`, which pushes `/products?search=<q>` — the param FE-01's
+`useProductFilters` already reads. No API work was needed; the backend has searched `name` and
+`description` all along.
 
-**Fix:** Wrap in a `<form>` that pushes to `/products?search=<q>`, and let FE-01's wiring pick the
-param up. The backend already supports `?search=` on `/products`
-(`PrismaQueryBuilder.search()` over `name` and `description`), so no API work is needed.
+Three decisions worth keeping:
+
+- **The navbar box is NOT synced from the URL.** The navbar is mounted in the root layout, so a
+  `useSearchParams` call there would opt *every route in the app* out of static rendering — to
+  display a term the catalogue's own toolbar input already shows. It is a jumping-off point, not a
+  second source of truth for `?search=`. (Confirmed: `/products` is still `○ Static` after this
+  change.)
+- **A navbar search starts a fresh result set.** It pushes the bare path plus `?search=`, which
+  clears whatever brand/price filters the shopper left on `/products`. An empty submit therefore
+  means "show me everything", not a no-op.
+- **`onMouseDown` preventDefault on the desktop submit button.** Found while verifying: pressing
+  the button blurred the input, which collapsed the button from ~110px to 40px *between* mousedown
+  and mouseup, so the mouseup landed outside it and **clicking Search did nothing**. Only the Enter
+  key worked. Keeping focus through the press is what fixes it; the two-branch `{focused ? … : …}`
+  button was also merged into one so its DOM node survives the state change.
+
+Also fixed in passing: the mobile search trigger was a click handler on a bare `<Search>` SVG, so
+mobile search was unreachable by keyboard. It is a `<button aria-label="Open search">` now, the
+panel autofocuses its input, and Escape closes it.
 
 ---
 
@@ -259,8 +276,9 @@ anything…" input with no handler at `:29-33`.
 money. A seller could reasonably read it as their payout balance.
 
 **Fix:** Remove it, or replace it with a real value per role — the vendor case has
-`useMyBalanceQuery` (`src/features/payouts/api/payout.api.ts`) ready. Remove the fake search input
-or wire it to FE-02.
+`useMyBalanceQuery` (`src/features/payouts/api/payout.api.ts`) ready. The fake search input beside
+it can be removed, or wired the way FE-02 wired the navbar — `useNavbarSearch`
+(`layouts/navbar/use-navbar-search.ts`) is reusable for it.
 
 ---
 

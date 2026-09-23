@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 
 import Container from "@/shared/components/container";
+import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+
+import { useNavbarSearch } from "./use-navbar-search";
 
 export default function DesktopNavbar({
     cartQuantity = 0,
@@ -13,6 +16,7 @@ export default function DesktopNavbar({
     cartQuantity: number;
 }) {
     const [focused, setFocused] = useState(false);
+    const { query, setQuery, handleSubmit } = useNavbarSearch();
 
     return (
         <nav className="border-b h-20">
@@ -26,27 +30,40 @@ export default function DesktopNavbar({
                         className="h-20 w-[130px] hover:scale-105 duration-300"
                     />
                 </Link>
-                <div className="flex items-center bg-white h-10 ring ring-primary/30 rounded-full justify-between min-w-md">
+                <form
+                    role="search"
+                    onSubmit={handleSubmit}
+                    className="flex items-center bg-white h-10 ring ring-primary/30 rounded-full justify-between min-w-md"
+                >
                     <input
-                        type="text"
+                        type="search"
+                        name="search"
+                        aria-label="Search products"
+                        value={query}
+                        onChange={(event) => setQuery(event.target.value)}
                         className="outline-0 border-0 pl-4 text-primary w-full text-base  placeholder:text-primary/80 placeholder:text-sm placeholder:font-medium placeholder:tracking-wider"
                         placeholder="Search products..."
                         onFocus={() => setFocused(true)}
                         onBlur={() => setFocused(false)}
                     />
-                    {focused ? (
-                        <Button className="h-10 min-w-[40px] rounded-full ">
-                            <div className="flex items-center gap-x-2">
-                                <Search />{" "}
-                                <span className="mb-0.5">Search</span>
-                            </div>
-                        </Button>
-                    ) : (
-                        <Button className="size-10 rounded-full ">
-                            <Search />
-                        </Button>
-                    )}
-                </div>
+                    {/* `preventDefault` on mousedown keeps the input focused
+                        through the click. Without it the press blurs the input,
+                        the button collapses from ~110px to 40px *between*
+                        mousedown and mouseup, and the mouseup lands outside the
+                        button — so clicking Search did nothing at all. */}
+                    <Button
+                        type="submit"
+                        aria-label="Search"
+                        onMouseDown={(event) => event.preventDefault()}
+                        className={cn(
+                            "h-10 rounded-full",
+                            focused ? "gap-x-2 px-4" : "size-10",
+                        )}
+                    >
+                        <Search />
+                        {focused && <span className="mb-0.5">Search</span>}
+                    </Button>
+                </form>
 
                 <div className="flex items-center gap-x-10">
                     <div className="relative">

@@ -74,14 +74,14 @@ export default function ProductToolbar({
                             </span>
                         )}
                     </button>
-
                     <Select
                         value={filters.sortBy}
                         onValueChange={filters.setSortBy}
                     >
                         <SelectTrigger
-                            className="h-10 min-w-[170px]"
+                            className="min-w-[170px]"
                             aria-label="Sort products"
+                            size="sm"
                         >
                             <ArrowUpDown className="size-4 text-muted-foreground" />
                             <SelectValue placeholder="Sort" />
