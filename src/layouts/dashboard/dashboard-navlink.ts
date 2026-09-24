@@ -5,6 +5,7 @@ import {
     Boxes,
     Feather,
     FilePlus,
+    GalleryHorizontal,
     Heart,
     Home,
     Key,
@@ -135,6 +136,14 @@ export const adminDashboardLinks: TSidebarLink[] = [
         title: "Featured Products",
         url: "/admin/featured-products",
         icon: Feather,
+    },
+    {
+        title: "Hero Slides",
+        icon: GalleryHorizontal,
+        children: [
+            { title: "Slides", url: "/admin/slide-list", index: true },
+            { title: "Add Slide", url: "/admin/add-slide" },
+        ],
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
     { title: "Home", url: "/", icon: Home },

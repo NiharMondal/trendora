@@ -42,3 +42,11 @@ export const storefrontSortOptions = [
     { label: "Top rated", value: "averageRating:desc" },
     { label: "Name (A-Z)", value: "name:asc" },
 ];
+
+/** Hero slides — `sortOrder` is the operator's display order, so it leads. */
+export const slideSortOptions = [
+    { label: "Display order", value: "sortOrder:asc" },
+    { label: "Newest first", value: "createdAt:desc" },
+    { label: "Oldest first", value: "createdAt:asc" },
+    { label: "Title (A-Z)", value: "title:asc" },
+];

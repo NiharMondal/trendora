@@ -42,7 +42,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-11 | Three admin dashboard widgets are demo fixtures | P1 | M | analytics |
 | FE-12 | SEO metadata is on the wrong pages; none on the storefront | P1 | M | seo |
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
-| FE-14 | No admin hero-slider screen despite full CRUD API | P1 | M | admin |
+| ~~FE-14~~ | ~~No admin hero-slider screen despite full CRUD API~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-15 | Five search boxes are silent no-ops | P1 | S | tables |
 | FE-16 | Admin user actions — backend ready, UI not wired | P1 | S | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
@@ -52,7 +52,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
-| FE-24 | Two RTK tags are never provided; one is misdeclared | P2 | S | api |
+| FE-24 | Two RTK tags are never provided (the misdeclared one fixed in FE-14) | P2 | S | api |
 | FE-25 | 1 orphaned component file (was 11) | P2 | S | cleanup |
 | FE-26 | Five stray `console.log`s | P2 | S | cleanup |
 | FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
@@ -468,25 +468,49 @@ endpoints, `src/app/robots.ts` disallowing `/admin`, `/vendor` and `/dashboard`,
 
 ---
 
-### FE-14 · No admin hero-slider screen, despite a complete CRUD API
-**P1 · M · admin**
+### ~~FE-14~~ · No admin hero-slider screen, despite a complete CRUD API
+**✅ FIXED 2026-09-24 · admin** (backend half: **BE-43**, branch `BE-slides-admin`)
 
-**Now:** `src/features/home/api/slide.api.ts` defines `createSlide` (:9), `slideById` (:32),
-`updateSlide` (:41) and `deleteSlide` (:55). **All four hooks are imported by nothing.** There is
-no `/admin/slides` route and no sidebar entry.
+**Was:** `slide.api.ts` defined create/by-id/update/delete and nothing imported them. There was no
+route and no sidebar entry, so the storefront hero could only be changed in the database.
 
-**Gap:** The hero carousel — the first thing on the storefront — can only be changed through the
-database. The API work is already done on both sides.
+**The API was not in fact complete.** The audit's "backend is ready" was wrong in one way that
+mattered. `Slide` stored a bare `photoUrl` with no publicId, and nothing promoted an upload out
+of Cloudinary's `temp/`. Wiring `TDImageUpload` to it would have saved every new banner as a
+`temp/` asset, which anyone can delete through the unauthenticated `/cloudinary/delete-temp`
+(BE-41). `PATCH /slides/:id` was also unvalidated. Both were fixed backend-side first (**BE-43**).
+**Writes now send `photo: { url, publicId }`, not `photoUrl`.**
 
-**Fix — backend is ready as of 2026-09-22.** Add `/admin/(slides)/slide-list` + `add-slide`
-following the brand pattern (`src/features/brands/components/brand-table.tsx` is the canonical
-wiring), and one `dashboard-navlink.ts` entry.
+**Now:**
 
-`isActive` and `sortOrder` now work (backend **BE-16**), and the listing the screen needs already
-exists: **`GET /slides/admin/all`** (ADMIN) returns every non-deleted slide *including deactivated
-ones*. Use that, not `GET /slides` — the public list hard-filters `isActive: true`, so a management
-screen built on it could never show or restore a slide the operator had hidden. The frontend's
-`slide.api.ts` currently only calls the public list, so this needs a new endpoint entry.
+- **`/admin/slide-list`** (`features/home/components/slides/slide-table.tsx`) reads the new
+  `allSlidesForAdmin` endpoint (`GET /slides/admin/all`), so hidden slides stay manageable.
+  - It is a `DataTable` sorted by display order, with a Live/Hidden toolbar filter
+    (`?isActive=`, which the query builder coerces to a boolean) and search over title and
+    subtitle.
+  - Each row has a thumbnail. The row menu offers Edit (a `TDSheet` driven by `?id=`), Hide/Show
+    (a one-field `PATCH` of `isActive`) and Delete (confirmed in a `TDModal`, whose copy points at
+    Hide for a temporary takedown).
+- **`/admin/add-slide`** (`add-slide.tsx`) uses the shared `slide-form.tsx`:
+  - title, subtitle and button link (a `/path` or `http(s)` URL);
+  - sort order and "Show on the storefront";
+  - `TDImageUpload` into `slides/`.
+  - `slide-form.schema.ts` mirrors the backend `slideSchema` exactly.
+  - The form resets only after a **successful** save. The brand form resets and closes even when
+    the save fails.
+- **`edit-slide.tsx`** does not render the form on a failed load (FE-06). An image hosted
+  elsewhere (the seeded Unsplash banners) round-trips with an empty `publicId`.
+- **Sidebar:** a "Hero Slides" row with Slides / Add Slide tabs.
+- **`TSlide`** gained `photoPublicId`, `sortOrder` and `isActive` (XR-05).
+- **`slideById` provided the `products` tag.** It provides `slides` now (FE-24).
+
+**Verified:** `pnpm lint` (50 warnings, unchanged) and `pnpm build` pass. Every request shape this
+screen sends was exercised against the live backend: create, admin list with an inactive slide,
+the `isActive` toggle, validation errors and 401 without a token.
+
+**Not verified:** the screen was not clicked through in a browser, and a real upload's `temp/`
+promotion could not be run from the sandbox, which cannot reach Cloudinary. Add one slide with an
+uploaded image and check that the stored `photoPublicId` contains no `/temp/`.
 
 ---
 
@@ -656,9 +680,8 @@ Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19:
 - `"payments"` (:62) is invalidated four times by refund mutations (`refund.api.ts:70,78,91,103`)
   and **provided zero times** — there is no `payment.api.ts`, and the backend has no payments read
   endpoint (**BE-28**).
-- `src/features/home/api/slide.api.ts:37` declares `providesTags: ["products"]` where it means
-  `["slides"]` — so updating a slide does not refresh `slideById`, and reading one needlessly
-  couples to the product cache.
+- ~~`slide.api.ts` `slideById` declared `providesTags: ["products"]` where it meant `["slides"]`~~
+  — **fixed in FE-14**.
 
 All invalidation is coarse whole-tag; no `{ type, id }` is used anywhere, so any mutation drops
 the entire list cache for that resource. Acceptable at this scale, worth knowing.
@@ -874,7 +897,7 @@ client.
 
 **Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
-(FE-19); `GET /address` admin list; the slide write CRUD (FE-14); `GET /payouts/:id`;
+(FE-19); `GET /address` admin list; `GET /payouts/:id`;
 `GET /refunds/:id` (FE-18). See FE-23.
 
 ---
@@ -932,7 +955,7 @@ Most of these are **our** type declarations being wrong, not the backend being w
 | Order money fields required `string` (`:73-77`) | deliberately `undefined` for a VENDOR viewing an order — the vendor sees only their own slice |
 | `TReview.rating: number` (`reviews/types/review.types.ts:6`) | Prisma `Decimal` → JSON **string**. `edit-review.tsx:26` feeds it to a `z.number()` resolver, so the edit form's rating is invalid on load. Every other decimal here is correctly typed `string`, including `TVendorReview.rating` |
 | `TVendor._count.payouts` (`vendor.types.ts:83`) | never selected |
-| `TSlide` has no `sortOrder`/`isActive` | both exist on the backend model and should drive ordering |
+| ~~`TSlide` has no `sortOrder`/`isActive`~~ | **fixed in FE-14**, along with `photoPublicId` |
 | `ShippingSnapshot.state` required, no `email` (`order.types.ts:5-19`) | `Address.state` is nullable and `email` is required. `TAddress.state?` gets this right — the two are internally inconsistent |
 
 **~~Two are~~ One is genuinely backend-side:** the missing `size` include.

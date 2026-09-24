@@ -223,7 +223,10 @@ upload and `deleteTempImage`).
   the generated hooks. **Add endpoints by injecting into `baseApi`; never create a second
   `createApi`.** New tag types must be registered in `baseApi.ts`. The file name does not always
   match the feature: `features/home`'s endpoints live in `api/slide.api.ts` (hero slides, tag
-  `slides`).
+  `slides`). The admin screen (`/admin/slide-list`, `features/home/components/slides/`) reads
+  `allSlidesForAdmin` (`/slides/admin/all`), because the public list hides inactive slides. Slide
+  writes send `photo: { url, publicId }`, not `photoUrl`, so the backend can promote the upload out
+  of Cloudinary's `temp/`.
 - Cache invalidation is coarse: `providesTags` / `invalidatesTags` against whole tag names
   (`["brands"]`), not per-id tags.
 - List endpoints take `Record<string, string>` and build their query string with `buildQueryParams`
