@@ -16,6 +16,6 @@ export const ourPolicies = [
 export const order = [
 	{ path: "/dashboard", label: "My Account" },
 	{ path: "/cart", label: "View Cart" },
-	{ path: "/dashboard-wishlist", label: "Wishlist" },
+	{ path: "/dashboard/wishlist", label: "Wishlist" },
 	{ path: "/cookie-policy", label: "Cookie Policy" },
 ];

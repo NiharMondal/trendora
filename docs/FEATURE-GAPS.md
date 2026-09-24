@@ -38,7 +38,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-07~~ | ~~Placeholder pages wired into live navigation~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | ~~FE-08~~ | ~~`/admin/user-management` is empty; the real table is unlinked~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | ~~FE-09~~ | ~~Hardcoded "Your Balance $12627" on every dashboard page~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
-| FE-10 | Footer links to nine routes that do not exist | P1 | M | storefront |
+| FE-10 | Footer links to eight routes that do not exist (was nine) | P1 | M | storefront |
 | FE-11 | Three admin dashboard widgets are demo fixtures | P1 | M | analytics |
 | FE-12 | SEO metadata is on the wrong pages; none on the storefront | P1 | M | seo |
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
@@ -48,7 +48,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
 | ~~FE-18~~ | ~~No customer-facing refunds view~~ | ✅ **FIXED** 2026-09-24 | — | orders |
 | ~~FE-19~~ | ~~No vendor store-review screen~~ | ✅ **FIXED** 2026-09-24 | — | vendor |
-| FE-20 | Two wishlist pages, one of them an empty shell | P1 | S | storefront |
+| ~~FE-20~~ | ~~Two wishlist pages, one of them an empty shell~~ | ✅ **FIXED** 2026-09-24 | — | storefront |
 | FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
@@ -393,18 +393,18 @@ is the same person, and it is still true there.
 
 ---
 
-### FE-10 · The footer links to nine routes that do not exist
+### FE-10 · The footer links to eight routes that do not exist (was nine)
 **P1 · M · storefront**
 
 **Now:** `src/shared/constants/footer.ts` lists `/shipping-and-return` (:3), `/contact-us` (:4),
 `/not-found` (:5), `/maintenance` (:6), `/faq` (:10), `/privacy-policy` (:11), `/cookie-policy`
-(:12, twice), `/terms-and-conditions` (:13) and `/dashboard-wishlist` (:19).
+(:12, twice), `/terms-and-conditions` (:13) and ~~`/dashboard-wishlist` (:19)~~ (typo fixed in FE-20).
 
 **Gap:** Every one is a 404 — now at least the branded `not-found.tsx` (FE-05). The last
 is a typo for `/dashboard/wishlist`. A site with no privacy policy or terms page is also a
 compliance problem before launch.
 
-**Fix:** Fix the `/dashboard-wishlist` typo now (one character). Write the four legal/help pages
+**Fix:** ~~Fix the `/dashboard-wishlist` typo~~ (done in FE-20). Write the four legal/help pages
 (privacy, terms, cookies, FAQ) and a contact page. Delete the `/not-found` and `/maintenance`
 entries — those were demo links to template pages.
 
@@ -706,18 +706,32 @@ that vendor's `averageRating = null, totalReviews = 0`.
 
 ---
 
-### FE-20 · Two wishlist pages, one an empty shell
-**P1 · S · storefront**
+### ~~FE-20~~ · Two wishlist pages, one an empty shell
+**✅ FIXED 2026-09-24 · storefront**
 
-**Now:** `/dashboard/wishlist` is the real one. `src/app/(root)/wish-list/page.tsx:8` renders a
-heading above an empty `<div>` grid.
+**Was:** `/dashboard/wishlist` is the real wishlist. `src/app/(root)/wish-list/page.tsx` rendered
+a "wish list" heading over an empty grid, whatever the shopper had saved. Nothing in `src/` linked
+to it, so it was reachable only by old links or bookmarks. The footer's Wishlist link pointed at
+a third URL, `/dashboard-wishlist`, a typo that 404s (FE-10).
 
-**Gap:** A public `/wish-list` URL that always looks like an empty wishlist, regardless of
-contents. The footer's broken `/dashboard-wishlist` link (FE-10) suggests the split confused
-someone already.
+**Now:**
 
-**Fix:** Delete `(root)/wish-list` and redirect it to `/dashboard/wishlist`, or render the same
-component in both.
+- **`(root)/wish-list` is deleted.** `next.config.ts` `redirects()` sends `/wish-list` **308 →
+  `/dashboard/wishlist`**. A signed-out visitor continues through the middleware to
+  `/login?callbackUrl=/dashboard/wishlist`, so they land on their wishlist after signing in.
+- **Why a config redirect and not `permanentRedirect()` in a page:** it is a real HTTP 308,
+  answered before any rendering, and it needs no page file.
+- **The footer typo is fixed**: `footer.ts` now links `/dashboard/wishlist`. That closes the
+  one-character part of FE-10.
+
+**Verified** against `pnpm start`:
+
+- `/wish-list` returns 308 with `location: /dashboard/wishlist`.
+- Followed while signed out, the chain ends at `/login?callbackUrl=%2Fdashboard%2Fwishlist`.
+- `/dashboard-wishlist` is still a 404, as expected, since nothing links there now.
+
+The footer link itself could not be checked from served HTML, because `PersistGate
+loading={null}` means no page prerenders its body. The constant was checked instead.
 
 ---
 
