@@ -1,31 +1,18 @@
 "use client";
 
-import { Check, RotateCcw, Settings2, Store, X } from "lucide-react";
+import { Store } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { vendorStatusMap } from "@/features/orders/constants/status-maps";
-import {
-    useAllVendorsForAdminQuery,
-    useApproveVendorMutation,
-    useReinstateVendorMutation,
-} from "@/features/vendors/api/vendor.api";
+import { useAllVendorsForAdminQuery } from "@/features/vendors/api/vendor.api";
 import { TVendor, TVendorStatus } from "@/features/vendors/types/vendor.types";
 import { DataTable, TableLoading } from "@/shared/components/table";
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
-import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
 
-import {
-    VendorReasonModal,
-    VendorSettingsModal,
-} from "./vendor-action-modals";
-
-const apiMessage = (error: unknown) =>
-    (error as { data?: { message?: string } })?.data?.message;
+import VendorModerationActions from "./vendor-moderation-actions";
 
 /**
  * Admin view of every store.
@@ -44,12 +31,6 @@ export default function VendorAdminTable({
     description?: string;
 }) {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const [reasonTarget, setReasonTarget] = useState<{
-        vendor: TVendor;
-        mode: "reject" | "suspend";
-    } | null>(null);
-    const [settingsTarget, setSettingsTarget] = useState<TVendor | null>(null);
-
     const {
         data,
         isLoading,
@@ -60,35 +41,6 @@ export default function VendorAdminTable({
         ...(filters.queryParams as Record<string, string>),
         ...(statusFilter ? { status: statusFilter } : {}),
     });
-
-    const [approveVendor, { isLoading: isApproving }] =
-        useApproveVendorMutation();
-    const [reinstateVendor, { isLoading: isReinstating }] =
-        useReinstateVendorMutation();
-
-    const handleApprove = async (vendor: TVendor) => {
-        try {
-            await approveVendor(vendor.id).unwrap();
-            toast.success(
-                `${vendor.storeName} approved — the owner is now a vendor`,
-            );
-        } catch (error) {
-            toast.error(apiMessage(error) ?? "Could not approve this store");
-        }
-    };
-
-    const handleReinstate = async (vendor: TVendor) => {
-        try {
-            await reinstateVendor(vendor.id).unwrap();
-            toast.success(
-                `${vendor.storeName} reinstated — their listings stay hidden until they republish`,
-            );
-        } catch (error) {
-            toast.error(apiMessage(error) ?? "Could not reinstate this store");
-        }
-    };
-
-    const isMutating = isApproving || isReinstating;
 
     const columns: DataTableColumn<TVendor>[] = [
         {
@@ -110,7 +62,7 @@ export default function VendorAdminTable({
                     </div>
                     <div>
                         <Link
-                            href={`/stores/${row.slug}`}
+                            href={`/admin/vendor-list/${row.id}`}
                             className="font-medium hover:underline"
                         >
                             {row.storeName}
@@ -181,71 +133,7 @@ export default function VendorAdminTable({
         {
             key: "actions",
             header: "Actions",
-            cell: (row) => (
-                <div className="flex flex-wrap items-center gap-1">
-                    {/* PENDING and REJECTED are both approvable — the backend
-                        refuses only an already-approved store. */}
-                    {row.status !== "APPROVED" && row.status !== "SUSPENDED" && (
-                        <Button
-                            size="sm"
-                            disabled={isMutating}
-                            onClick={() => handleApprove(row)}
-                        >
-                            <Check className="size-3.5" />
-                            Approve
-                        </Button>
-                    )}
-
-                    {row.status === "PENDING" && (
-                        <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() =>
-                                setReasonTarget({ vendor: row, mode: "reject" })
-                            }
-                        >
-                            <X className="size-3.5" />
-                            Reject
-                        </Button>
-                    )}
-
-                    {row.status === "APPROVED" && (
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                                setReasonTarget({
-                                    vendor: row,
-                                    mode: "suspend",
-                                })
-                            }
-                        >
-                            Suspend
-                        </Button>
-                    )}
-
-                    {row.status === "SUSPENDED" && (
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            disabled={isMutating}
-                            onClick={() => handleReinstate(row)}
-                        >
-                            <RotateCcw className="size-3.5" />
-                            Reinstate
-                        </Button>
-                    )}
-
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        title="Commercial terms"
-                        onClick={() => setSettingsTarget(row)}
-                    >
-                        <Settings2 className="size-4" />
-                    </Button>
-                </div>
-            ),
+            cell: (row) => <VendorModerationActions vendor={row} compact />,
         },
     ];
 
@@ -269,25 +157,6 @@ export default function VendorAdminTable({
                 meta={data?.meta}
                 placeholder="Search stores..."
             />
-
-            {reasonTarget && (
-                <VendorReasonModal
-                    key={`${reasonTarget.vendor.id}-${reasonTarget.mode}`}
-                    vendor={reasonTarget.vendor}
-                    mode={reasonTarget.mode}
-                    open={!!reasonTarget}
-                    onOpenChange={(open) => !open && setReasonTarget(null)}
-                />
-            )}
-
-            {settingsTarget && (
-                <VendorSettingsModal
-                    key={settingsTarget.id}
-                    vendor={settingsTarget}
-                    open={!!settingsTarget}
-                    onOpenChange={(open) => !open && setSettingsTarget(null)}
-                />
-            )}
         </div>
     );
 }

@@ -63,7 +63,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-32~~ | ~~Accessibility: three `aria-*` attributes in the whole app~~ | ✅ **FIXED** 2026-09-24 | — | a11y |
 | FE-33 | No test runner, no CI | P2 | L | ops |
 | FE-34 | ~~No vendor analytics, order detail or profile screens~~ — tooling left | 🟡 **PARTIAL** 2026-09-24 | M | vendor |
-| FE-35 | No admin settings or vendor detail screens | P2 | M | admin |
+| FE-35 | ~~No admin settings or vendor detail screens~~ — coupons, email, audit log left | 🟡 **PARTIAL** 2026-09-24 | M | admin |
 | FE-36 | No coupon field, guest checkout, multi-currency or i18n | P2 | L | storefront |
 | FE-37 | No category or brand browsing | P2 | M | storefront |
 | FE-38 | No order tracking timeline or per-order invoice | P2 | M | orders |
@@ -1245,12 +1245,91 @@ endpoint.
 ---
 
 ### FE-35 · Admin dashboard gaps
-**P2 · M · admin**
+**🟡 PARTIAL 2026-09-24 · admin** (frontend + backend)
 
-Beyond FE-08, FE-11, FE-14 and FE-16: no settings screen of any kind (commission rate, tax rate,
-shipping defaults, platform config — all DB-only); no admin vendor detail page; no manual-refund
-entry; no coupons; no email/notification management; no audit log; no date-range picker on
-analytics.
+**Was:** beyond FE-08, FE-11, FE-14 and FE-16, the admin area had none of these:
+
+- a settings screen (commission, tax, shipping defaults and platform config were all backend-only);
+- an admin vendor detail page (`useVendorByIdForAdminQuery` was unused);
+- a manual-refund entry (`useRecordManualRefundMutation` was unused);
+- coupons, email/notification management and an audit log;
+- a date-range picker on analytics.
+
+**Now:**
+
+- **`/admin/vendor-list/[id]`** (`vendors/components/admin/vendor-admin-details.tsx`), linked from
+  the store name in the vendor table and from "Top stores" on the admin home. It shows:
+  - owner, login and role; business contacts and tax id; the applied / approved / suspended dates;
+  - the rejection or suspension reason, with the banner title matching the store's status;
+  - commercial terms, and product / parcel / payout counts;
+  - payout details (the scalar fields of `payoutDetails`);
+  - the full **moderation trail**, with actor and IP, which only the admin read carries.
+- **Moderation actions are one component now.** `vendor-moderation-actions.tsx`
+  (approve / reject / suspend / reinstate / commercial terms) is used by both the table and the
+  detail page, so the two cannot offer different moves. The table's icon-only terms button gained
+  a row-specific `aria-label` (FE-32).
+- **Manual refunds from the admin order page.** A parcel with no refund row, on an order whose
+  money was collected, shows **Record manual refund** (`refunds/components/manual-refund-modal.tsx`).
+  - The amount defaults to the parcel total and is capped client-side at what is still
+    unrefunded. The method is cash / bank transfer / mobile money / other.
+  - It records a fact and sends nothing. The modal says so, and warns about BE-50.
+  - **Backend guards added to `recordManualRefund`:**
+    - it refuses an order whose money was never collected. An unpaid COD order used to be
+      "refunded" and flipped to REFUNDED. This shares one `wasCollected` rule with the automatic
+      path;
+    - it refuses a `vendorOrderId` from a different order, which used to attach the refund to a
+      stranger's parcel and block that parcel's own refund.
+- **Date range on the admin home.** `MarketplaceOverview` has the same picker as the vendor
+  dashboard, now shared as `shared/components/date-range-select.tsx` (`useDateRange`). It scopes the
+  tiles and top stores. "Stores by status" is a current count and the backend does not date-filter
+  it. The three mock widgets (FE-08) ignore the picker.
+  - **Backend:** both analytics endpoints parse their range through one `helpers/date-range.ts`, so
+    `GET /orders/analytics` now 400s on a bad or reversed date instead of a Prisma 500.
+- **`/admin/settings`** (`features/settings/`), backed by a new ADMIN-only **`GET /settings`**. It
+  is **read-only on purpose.** Every value is backend environment config, and the tax rate is
+  compiled into checkout's estimate. A rate edited in the database would make every cart quote a
+  total the backend then refuses to charge.
+  - Instead, the screen compares the backend's `TAX_RATE` with this build's `NEXT_PUBLIC_TAX_RATE`
+    and raises an alert when they differ. It raises the same alert when any category has its own
+    tax rate, which the cart still ignores (BE-38).
+  - It also lists the new-store defaults, the checkout-draft TTL, integrations on/off (no secret is
+    returned), per-category tax overrides, and every store whose terms differ from the defaults.
+
+**Verified live** against the dev backend, as admin:
+
+- `GET /settings` returns the values above; a vendor gets 403.
+  - It lists all three seeded stores as custom: Sole Society 12%/150/2000, Trendora Official
+    0%/100/1000, and Urban Threads 10%/**80/800**, whose fee and threshold differ from the defaults.
+- `GET /orders/analytics` with a September range returns the FE-34 test order's 152.45 / 6.90 /
+  142.10. A bad date and a reversed range each return 400.
+- The vendor detail payload carries owner, auth, counts and trail, and a random id is a 404. The
+  seeded stores' trails are empty: they predate `VendorStatusHistory`, and the page says so.
+- **Manual refund**, recorded against the FE-34 test order's parcel:
+  - A parcel from another order → 404, and an amount over the unrefunded balance → 400, both
+    before anything is written.
+  - A 5.00 cash refund → `SUCCEEDED`, `gateway: "cash"`; the order became `PARTIALLY_REFUNDED`.
+  - A second refund on the same parcel → 409.
+  - That refund is also what **reproduced BE-50:** Urban Threads' outstanding payout went from
+    142.10 to 0.
+- The "unpaid order" guard was not exercised live. No unpaid order existed, and making one means
+  another test order.
+- The screens were **not clicked through in a browser**.
+
+**Found, not fixed — backend BE-50 (P1):** any successful refund flips the order to
+`PARTIALLY_REFUNDED`, and payout eligibility requires `PAID`. So the order's other, delivered and
+un-refunded parcels are never paid out. Automatic Stripe refunds on multi-store carts hit this
+too. The fix needs a business decision (does a goodwill refund on a delivered parcel reduce the
+store's earning?), so it was logged rather than guessed at.
+
+**Still open:**
+
+- **Editable** platform settings, which would need a settings model *and* a way for the frontend's
+  tax estimate to read it at runtime;
+- coupons (BE-29);
+- email/notification management;
+- a platform-wide audit log (only the per-store moderation trail exists);
+- filtering the admin product and order lists by store, so the vendor detail's counts could link
+  through.
 
 ---
 

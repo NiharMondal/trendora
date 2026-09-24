@@ -116,9 +116,10 @@ src/
 ├── assets/  types/ (ambient only)  middleware.ts
 ```
 
-The 17 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
+The 19 features: `addresses`, `analytics` (admin dashboard widgets), `auth`, `brands`, `cart`,
 `categories`, `checkout`, `home` (storefront landing sections), `orders`, `payouts`, `products`,
-`reviews`, `size-groups`, `sizes`, `users`, `vendors`, `wishlist`. Each uses the same subfolders,
+`refunds`, `reviews`, `settings` (read-only platform config), `size-groups`, `sizes`, `users`, `vendors`,
+`wishlist`. Each uses the same subfolders,
 all optional:
 
 ```
@@ -252,6 +253,14 @@ wording, rather than the operator-worded `refundStatusMap`.
 `/vendor`'s range picker must build its query args **when a range is picked**, never during
 render — a `new Date()` in the cache key refetches in a loop. The dashboard's `salesTrend` is
 bucketed by **UTC** day, so the window starts at UTC midnight.
+
+`/admin/settings` is **read-only by design**. `GET /settings` is backend environment config, and
+`NEXT_PUBLIC_TAX_RATE` is compiled into checkout, so a runtime-editable rate would break the quote.
+The screen's job is to flag drift between the two sides. Manual refunds are recorded per parcel
+from the admin order page (`ManualRefundModal`). Money moves first; this only writes it down.
+
+The analytics range pickers share `shared/components/date-range-select.tsx` (`useDateRange`) —
+reuse it rather than building another.
 
 `/admin/refunds` is a failure queue: its normal state is empty, and anything in it is money owed. Only
 a `gateway === "stripe"` refund can be retried — a manual one never had a gateway to call.

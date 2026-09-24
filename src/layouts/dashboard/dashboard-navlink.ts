@@ -148,6 +148,8 @@ export const adminDashboardLinks: TSidebarLink[] = [
         ],
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
+    // Read-only: backend environment config, compared with the frontend's.
+    { title: "Settings", url: "/admin/settings", icon: Settings },
     { title: "Home", url: "/", icon: Home },
 ];
 

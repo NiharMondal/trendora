@@ -9,6 +9,9 @@ import { vendorStatusMap } from "@/features/orders/constants/status-maps";
 import type { TVendorStatus } from "@/shared/types/status.types";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { Skeleton } from "@/shared/ui/skeleton";
+import DateRangeSelect, {
+    useDateRange,
+} from "@/shared/components/date-range-select";
 import QueryError from "@/shared/components/query-error";
 
 /**
@@ -20,7 +23,9 @@ import QueryError from "@/shared/components/query-error";
  * "revenue" overstates income by roughly 10x at a 10% commission rate.
  */
 export default function MarketplaceOverview() {
-    const { data, isLoading, error, refetch } = useOrderAnalyticsQuery();
+    const { range, setRangeValue } = useDateRange();
+    const { data, isLoading, isFetching, error, refetch } =
+        useOrderAnalyticsQuery(range.params);
 
     if (isLoading) {
         return (
@@ -50,6 +55,21 @@ export default function MarketplaceOverview() {
 
     return (
         <div className="space-y-5">
+            {/* Scopes the tiles and the top-stores table. "Stores by status"
+                is a current count, so the backend does not date-filter it,
+                and the mock widgets further down the page ignore it. */}
+            <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                    Marketplace figures ·{" "}
+                    {range.value === "all" ? "all time" : range.label.toLowerCase()}
+                </p>
+                <DateRangeSelect
+                    value={range.value}
+                    onChange={setRangeValue}
+                    isFetching={isFetching}
+                />
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <Tile
                     color="#f24312"
@@ -134,9 +154,12 @@ export default function MarketplaceOverview() {
                                     className="flex items-center justify-between gap-3"
                                 >
                                     <div className="min-w-0">
+                                        {/* To the admin record, not the
+                                            storefront: this is an operator's
+                                            screen. */}
                                         {vendor.slug ? (
                                             <Link
-                                                href={`/stores/${vendor.slug}`}
+                                                href={`/admin/vendor-list/${vendor.vendorId}`}
                                                 className="text-sm font-medium hover:underline line-clamp-1"
                                             >
                                                 {vendor.storeName}

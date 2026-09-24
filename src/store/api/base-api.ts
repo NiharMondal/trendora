@@ -76,5 +76,7 @@ export const baseApi = createApi({
         "payouts",
         "vendorReviews",
         "refunds",
+        // admin — read-only platform configuration
+        "settings",
     ],
 });
