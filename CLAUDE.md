@@ -15,7 +15,7 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **49 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+`pnpm lint` passes (exit 0) with **48 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
 plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
 code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
 warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
@@ -461,8 +461,9 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
   - `src/shared/form/TDInput|TDSelect|TDCombobox|TDCheckbox|TDRadioGroup|TDTextArea|TDRating|TDImageUpload`
     — react-hook-form-bound fields. They all take `form={hookForm}` + `name` and render the
     shadcn `FormField`/`FormMessage` scaffolding themselves.
-  - `TDButton` (`shared/components/td-button.tsx`) adds `isLoading` + spinner; `TDSheet`, `TDDrawer`,
-    `TDPopover`, `TDModal` (`shared/components/td-modal.tsx`) wrap the overlay primitives.
+  - `TDButton` (`shared/components/td-button.tsx`) adds `isLoading` + spinner; `TDSheet`,
+    `TDPopover`, `TDModal` (`shared/components/td-modal.tsx`) wrap the overlay primitives. (There
+    is no `TDDrawer` any more: it was an unused shadcn demo, deleted in FE-25.)
 - Forms use **react-hook-form + zod** (`@hookform/resolvers`). Each form is a presentational
   component taking `defaultValues` / `onSubmit` / `isSubmitting` so create and update pages share it
   (`features/<feature>/components/`), with the zod schema co-located in
@@ -471,7 +472,7 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
 - Status pills go through `StatusBadge` / `getStatusBadge` (`shared/ui/status-badge.tsx`) driven
   by the maps in `features/orders/constants/status-maps.ts` (`orderStatusMap`, `paymentStatusMap`).
 - Other libraries in use: `lucide-react` icons, `motion` for animation, `recharts` for dashboard
-  charts, `embla-carousel` for carousels, `vaul` for drawers, `moment` (via `lib/format-date-time.ts`)
+  charts, `embla-carousel` for carousels, `vaul` (installed, but nothing renders a drawer since FE-25), `moment` (via `lib/format-date-time.ts`)
   for dates, `@react-pdf/renderer` for order invoices (`features/orders/components/order-pdf/`).
 
 ### Image uploads

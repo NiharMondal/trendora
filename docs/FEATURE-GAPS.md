@@ -53,8 +53,8 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-22~~ | ~~Customer `/dashboard` is a link grid, not a dashboard~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
 | ~~FE-24~~ | ~~Two RTK tags are never provided (the misdeclared one fixed in FE-14)~~ | ✅ **FIXED** 2026-09-24 | — | api |
-| FE-25 | 1 orphaned component file (was 11) | P2 | S | cleanup |
-| FE-26 | Five stray `console.log`s | P2 | S | cleanup |
+| ~~FE-25~~ | ~~1 orphaned component file (was 11)~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
+| ~~FE-26~~ | ~~Five stray `console.log`s~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
 | FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
 | FE-28 | Duplicate type definitions across features | P2 | S | types |
 | FE-29 | No `.env.example`; README is scaffold boilerplate | P2 | S | onboarding |
@@ -891,36 +891,55 @@ the entire list cache for that resource. Acceptable at this scale, worth knowing
 
 ---
 
-### FE-25 · Two orphaned component files
-**P2 · S · cleanup**
+### ~~FE-25~~ · Orphaned component files
+**✅ FIXED 2026-09-24 · cleanup** (branch `FE-25-26-orphan-and-console-cleanup`)
 
-`shared/components/td-drawer.tsx`. (`features/users/components/user-management-table.tsx` was
-the other one; FE-08 mounted it.)
+The audit's last orphan, and one it missed, are both deleted:
 
-The other nine are **resolved**. FE-01 rewrote `products/components/filters/price-filter.tsx` and
-deleted `brand`, `category` and `size` — each hardcoded a list the server now serves as a facet.
-FE-03 deleted all five `features/home/components/*` orphans: four were empty shells or mock data,
-and the fifth (`new-arrivals.tsx`) was replaced by an RTK Query rail.
+- **`shared/components/td-drawer.tsx`**: not a reusable wrapper. It was the shadcn demo pasted
+  in: a hardcoded "Open me" trigger, "Are you absolutely sure?" copy, and Submit/Cancel buttons
+  with no handlers. Nothing imported it.
+- **`features/auth/hooks/use-client-session.ts`**: found by a fresh scan. It duplicated
+  `useUserInfoClient()` (`auth/utils/user-info.ts`), the hook the app actually uses, but returned
+  the whole session behind an unchecked `as TSessionResponse` cast. Nothing imported it, and
+  `features/auth/hooks/` is now empty and gone.
+
+The other ten were resolved earlier:
+
+- FE-01 rewrote `price-filter.tsx` and deleted the hardcoded `brand`, `category` and `size`
+  filters.
+- FE-03 deleted the five `features/home/components/*` shells.
+- FE-08 mounted `user-management-table.tsx`.
+
+**Verified by a script** that walks every `@/…` and relative import in `src/`. Nothing outside
+`shared/ui/` is unimported now, apart from route entry files (page, layout, route, error,
+loading, not-found, middleware). **`shared/ui/` is exempt on purpose:** those are vendored shadcn
+primitives, kept whether or not they are used, and `breadcrumb`, `card`, `chart`, `drawer` and
+`stepper` currently are not. With `td-drawer` gone, nothing renders `shared/ui/drawer.tsx`, so the
+`vaul` dependency is currently unused. It is left in place; remove both together if no drawer is
+planned.
 
 ---
 
-### FE-26 · Five stray `console.log`s
-**P2 · S · cleanup**
+### ~~FE-26~~ · Stray `console.log`s
+**✅ FIXED 2026-09-24 · cleanup** (branch `FE-25-26-orphan-and-console-cleanup`)
 
-~~`forgot-password-form.tsx:24`~~ (removed by FE-04),
-`brands/components/edit-brand.tsx:44` (harmless leftover after a working mutation),
-`products/components/product-details/related-products.tsx:21`,
-`home/components/new-arrivals.tsx:17` (swallows a fetch error),
-`shared/lib/delete-temp-image.ts:13` (swallows the error).
+| Was | Now |
+| --- | --- |
+| `edit-brand.tsx`: `console.log(values)` after every save, beside a `catch (error: any)` | log removed; the catch uses `getApiErrorMessage` (one fewer `any`, so lint is 48) |
+| `related-products.tsx`: `console.log(count)` on every render | removed. `count` itself is real, because it drives the carousel dots. |
+| `delete-temp-image.ts`: `console.log(error)` in a swallowing catch | a deliberate **`console.warn`** with the publicId. It also warns on a non-2xx response, which `fetch` never throws for, so a failed cleanup had been invisible. Swallowing is kept on purpose: an orphaned temp upload costs storage, and throwing would break the image replace or remove the user asked for. |
+| `home/components/new-arrivals.tsx` | already deleted in FE-03 |
+| `forgot-password-form.tsx:24` | **fixed by FE-04, on the `FE-04-…` branch.** It still appears on branches cut before FE-04 merges, and was deliberately not touched here to avoid a merge conflict. |
 
-The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legitimate.
+The `console.error`s in `auth-options.ts` (3) and `TDImageUpload.tsx` (1) are legitimate and stay.
 
 ---
 
 ### FE-27 · Thirty-nine `any`s, eight of them in type definitions
 **P2 · M · types**
 
-`pnpm lint` passes at **49 warnings / 0 errors** (52 before FE-04, 51 before FE-08, 50 before FE-21); treat that as the baseline and do not add to it.
+`pnpm lint` passes at **48 warnings / 0 errors** (52 before FE-04, 51 before FE-08, 50 before FE-21, 49 before FE-26); treat that as the baseline and do not add to it.
 
 - **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
   ~~`reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**

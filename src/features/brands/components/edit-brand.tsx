@@ -10,6 +10,7 @@ import {
     useUpdateBrandMutation,
 } from "@/features/brands/api/brand.api";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 type EditBrandProps = {
     onClose: () => void;
@@ -44,10 +45,9 @@ export default function EditBrand({ onClose }: EditBrandProps) {
                 id: brandId,
             }).unwrap();
             toast.success("Brand updated successfully");
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Could not update the brand"));
         }
-        console.log(values);
     };
     if (!brandId) return null;
     if (isLoading) return <SpinnerLoading />;
