@@ -3,7 +3,6 @@ import React from "react";
 
 import { DashboardSidebar } from "@/layouts/dashboard/dashboard-sidebar";
 import DashboardTabs from "@/layouts/dashboard/dashboard-tabs";
-import VendorBalance from "@/layouts/dashboard/vendor-balance";
 import { TSessionResponse } from "@/features/auth/types/session.types";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/features/auth/constants/user-role";
@@ -23,14 +22,16 @@ export default async function DashboardLayout({
                 session={session as TSessionResponse}
                 role={role as EnumUserRole}
             />
-            <section className="w-full">
-                {/* No global search box and no notification bell here: neither
-                    had a handler, and every dashboard table has its own search.
-                    The balance is real and vendor-only — it replaced a
-                    hardcoded "$12627" that every role saw (FE-09). */}
-                <div className="flex items-center justify-between border-b py-3 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20 min-h-16">
-                    <SidebarTrigger className="cursor-pointer" />
-                    {role === EnumUserRole.VENDOR ? <VendorBalance /> : null}
+            <section className="w-full min-w-0 flex-1">
+                {/* Desktop has no top bar: the trigger lives in the sidebar
+                    header, and the vendor balance in the sidebar footer. On
+                    mobile the sidebar is a closed drawer, so a trigger inside
+                    it could never open it — this slim bar is the way in. */}
+                <div className="sticky top-0 z-20 flex h-12 items-center border-b bg-white px-2 md:hidden">
+                    <SidebarTrigger
+                        className="size-9 cursor-pointer"
+                        aria-label="Open navigation"
+                    />
                 </div>
                 <main
                     id="main-content"

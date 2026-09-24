@@ -141,7 +141,7 @@ Dependency rules:
 - `app/` imports from `features/`, `layouts/`, `shared/` — never the reverse.
 - `shared/` **never** imports from `features/` — keep it that way. `layouts/`, `store/` and
   `providers/` do reach into a few features by necessity (navbar → `cart` selectors, dashboard
-  sidebar/nav-user → `auth` role+session types and `useMyProfileQuery`, dashboard header →
+  sidebar/nav-user → `auth` role+session types and `useMyProfileQuery`, dashboard sidebar footer →
   `payouts` `useMyBalanceQuery` for the vendor-only balance, `store.ts` → the cart slice,
   `providers.tsx` → `AuthSync`); add to that list only when a layout genuinely needs feature state.
 - Cross-feature imports are allowed but should stay few; they are listed by

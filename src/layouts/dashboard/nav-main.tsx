@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import {
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -17,11 +16,10 @@ import { pathMatchScore } from "@/shared/utils/match-path";
 import { navLinkPaths, navLinkUrl, TSidebarLink } from "./dashboard-navlink";
 
 type TProps = {
-    label: string;
     navLink: TSidebarLink[];
 };
 
-export default function NavMain({ label, navLink }: TProps) {
+export default function NavMain({ navLink }: TProps) {
     const pathname = usePathname();
 
     // One row per resource — a resource's list/add screens are tabs on the
@@ -38,13 +36,13 @@ export default function NavMain({ label, navLink }: TProps) {
 
     return (
         <SidebarGroup>
-            <SidebarGroupLabel className="mb-4">{label}</SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu>
                     {navLink.map((nav, index) => (
                         <SidebarMenuItem key={nav.title}>
                             <SidebarMenuButton
                                 asChild
+                                tooltip={nav.title}
                                 className={cn(
                                     index === activeIndex
                                         ? "bg-accent text-accent-foreground"
