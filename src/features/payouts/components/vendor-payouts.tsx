@@ -155,7 +155,7 @@ export default function VendorPayouts() {
                     isFetching={isFetching}
                     filters={filters}
                     meta={payoutData?.meta}
-                    placeholder="Search payouts..."
+                    placeholder="Search reference, method or notes..."
                 />
             </div>
         </div>

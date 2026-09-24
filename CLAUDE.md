@@ -405,6 +405,11 @@ An empty filter value is **dropped from `queryParams`** on purpose: the backend 
 key into a `where` clause, so `status: ""` would match nothing rather than meaning "all". The
 toolbar's "All" option therefore writes `""`, which also deletes the param from the URL.
 
+**A toolbar search box is a promise about the backend.** `search` is a reserved param, so an
+endpoint that never calls `PrismaQueryBuilder.search()` accepts it, ignores it and returns the full
+list with no error (FE-15 / BE-44). Before giving a `DataTable` `filters`, check that the backend
+list service calls `.search()`, and make the `placeholder` name the fields it actually matches.
+
 `ahooks` / `@ahooks.js/use-url-state` are in `package.json` but **unused** — URL state is hand-rolled
 in `useTableFilters` with `next/navigation` + `use-debounce`. Don't introduce a second mechanism.
 

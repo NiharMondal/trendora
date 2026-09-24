@@ -29,7 +29,7 @@ export default function OrderTable() {
                 isFetching={isFetching}
                 filters={filters}
                 meta={orders?.meta}
-                placeholder="Search by name"
+                placeholder="Search order number, buyer name or email..."
             />
         </div>
     );

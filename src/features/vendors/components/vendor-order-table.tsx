@@ -202,7 +202,7 @@ export default function VendorOrderTable() {
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}
-                placeholder="Search orders..."
+                placeholder="Search order or parcel number, tracking, buyer..."
             />
 
             {target && (

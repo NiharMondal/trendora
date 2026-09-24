@@ -349,7 +349,7 @@ export default function RefundAdminConsole() {
                     isFetching={isFetching}
                     filters={filters}
                     meta={data?.meta}
-                    placeholder="Search refunds..."
+                    placeholder="Search order or parcel number, Stripe refund id, reason..."
                 />
             </div>
 

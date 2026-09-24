@@ -43,7 +43,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-12 | SEO metadata is on the wrong pages; none on the storefront | P1 | M | seo |
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
 | ~~FE-14~~ | ~~No admin hero-slider screen despite full CRUD API~~ | ✅ **FIXED** 2026-09-24 | — | admin |
-| FE-15 | Five search boxes are silent no-ops | P1 | S | tables |
+| ~~FE-15~~ | ~~Five search boxes are silent no-ops~~ | ✅ **FIXED** 2026-09-24 | — | tables |
 | FE-16 | Admin user actions — backend ready, UI not wired | P1 | S | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
 | FE-18 | No customer-facing refunds view | P1 | M | orders |
@@ -514,21 +514,34 @@ uploaded image and check that the stored `photoPublicId` contains no `/temp/`.
 
 ---
 
-### FE-15 · Five search boxes are silent no-ops
-**P1 · S · tables**
+### ~~FE-15~~ · Five search boxes are silent no-ops
+**✅ FIXED 2026-09-24 · tables** (backend half: **BE-44**, branch `BE-list-search`)
 
-**Now:** The admin orders table (`order-table.tsx:13`), my-orders (`my-orders-list.tsx:31`), the
-admin payout table (`payout-admin-table.tsx:32`), vendor payouts (`vendor-payouts.tsx:33`) and the
-refund console (`refund-admin-console.tsx:45`) all render a search input bound to `filters.search`.
-But `order.service.ts`, `payout.service.ts` and `refund.service.ts` on the backend **never call**
-`PrismaQueryBuilder.search()`.
+**Was:** the admin orders, my-orders, admin payouts, vendor payouts and refund console tables all
+sent `?search=`. `order.service.ts`, `payout.service.ts` and `refund.service.ts` never called
+`PrismaQueryBuilder.search()`, so the unfiltered list came back and no error was reported. **The
+audit missed a sixth:** the vendor's own order table (`vendor-order-table.tsx`) had the same
+problem.
 
-**Gap:** Typing sends `?search=…`, which the backend accepts as a reserved param and ignores. The
-box looks functional, returns the unfiltered list, and reports no error.
+**Fixed backend-side, as the audit recommended.** Each list now calls `.search()`, and
+`search()` relation paths nest (`user.auth.email`). See BE-44 for the per-endpoint fields and
+the live verification, including the check that a vendor's search cannot reach another store's
+parcels.
 
-**Fix:** Add `.search([...])` to those three backend services (a one-line change each), or remove
-the `filters` prop from those five tables. The backend fix is preferable — users expect search
-there.
+**Here:** each placeholder now says what the box actually searches. The old ones promised things
+the backend never matched. The admin orders box said "Search by name", for example.
+
+| Table | Placeholder |
+| --- | --- |
+| `order-table.tsx` (admin) | Search order number, buyer name or email... |
+| `my-orders-list.tsx` | Search by order number... |
+| `vendor-order-table.tsx` | Search order or parcel number, tracking, buyer... |
+| `payout-admin-table.tsx` | Search store, reference, method or notes... |
+| `vendor-payouts.tsx` | Search reference, method or notes... |
+| `refund-admin-console.tsx` | Search order or parcel number, Stripe refund id, reason... |
+
+**Keep them in step:** a placeholder is a claim about the backend's `.search()` field list. Change
+one, change the other.
 
 ---
 

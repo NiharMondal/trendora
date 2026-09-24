@@ -65,7 +65,7 @@ export default function MyOrdersList() {
                 isFetching={isFetching}
                 filters={filters}
                 meta={orders?.meta}
-                placeholder="Search your orders..."
+                placeholder="Search by order number..."
                 expandable={{
                     getSubRows: (o) => o.vendorOrders,
                     subRowKey: (slice, o) => `${o.id}-${slice.id}`,
