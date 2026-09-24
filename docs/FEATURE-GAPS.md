@@ -65,9 +65,10 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-34 | ~~No vendor analytics, order detail or profile screens~~ — tooling left | 🟡 **PARTIAL** 2026-09-24 | M | vendor |
 | FE-35 | ~~No admin settings or vendor detail screens~~ — coupons, email, audit log left | 🟡 **PARTIAL** 2026-09-24 | M | admin |
 | FE-36 | No coupon field, guest checkout, multi-currency or i18n | P2 | L | storefront |
-| FE-37 | No category or brand browsing | P2 | M | storefront |
+| FE-37 | ~~No category or brand browsing~~ — compare left | 🟡 **PARTIAL** 2026-09-24 | M | storefront |
 | FE-38 | No order tracking timeline or per-order invoice | P2 | M | orders |
 | FE-39 | Committed build artefacts; no Prettier config | P2 | S | cleanup |
+| ~~FE-40~~ | ~~Home page and `/products` crash in the browser (server env in the client bundle)~~ | ✅ **FIXED** 2026-09-24 | — | auth |
 
 ---
 
@@ -1342,12 +1343,107 @@ store's earning?), so it was logged rather than guessed at.
 | FE-36 | Guest checkout | `checkout-form.tsx:53-64` accepts an inline address, but `base-api.ts:17-23` attaches a session token to every call — effectively logged-in only |
 | FE-36 | Multi-currency | `currencyFormatter` hardcodes `en-US`/`USD` (`calculate-order-total.ts:103-108`) |
 | FE-36 | i18n | no `next-intl`, no `[locale]` segment, `lang="en"` fixed |
-| FE-37 | Category browsing | `/categories/[slug]` now redirects into the filtered catalogue (FE-07), but there is no `/categories` index |
-| FE-37 | Brand browsing | no route at all, though `/brands` exists on the backend |
-| FE-37 | Compare, recently viewed | nothing |
+| ~~FE-37~~ | ~~Category browsing~~ | ✅ `/categories` index — see FE-37 below |
+| ~~FE-37~~ | ~~Brand browsing~~ | ✅ `/brands` index — see FE-37 below |
+| FE-37 | Compare | nothing yet; recently viewed is done (FE-37 below) |
 | FE-38 | Order tracking timeline | the tracking *number* renders (`my-orders-list.tsx:124`, `order-details.tsx:286`) but there is no carrier link, no status timeline and no public track-by-number page. The backend has the data in `OrderStatusHistory` and never exposes it (**BE-13**) |
 | FE-38 | Per-order invoice | the PDF export (`orders/components/my-orders/pdf-download-print.tsx`) is a bulk "my-orders.pdf" list, not a per-order invoice |
 | FE-38 | Newsletter | `layouts/footer.tsx:74-77` has the heading and input, no submit and no API |
+
+---
+
+### FE-37 · Category and brand browsing
+**🟡 PARTIAL 2026-09-24 · storefront** (frontend only, with no backend change)
+
+**Was:** `/categories/[slug]` redirected into the catalogue, but there was no `/categories` index,
+no brand route at all, and no compare or recently-viewed.
+
+**Now:**
+
+- **`/categories`** (`products/components/browse/category-directory.tsx`) is every category with
+  live stock, as a two-level tree. Each top-level card has its artwork or a gradient and a rolled-up
+  count, with its subcategories listed beneath.
+- **`/brands`** (`browse/brand-directory.tsx`) runs A–Z with counts and logos where they exist. It
+  shows letter jump links and a local name filter once the list is long enough to need them.
+- **Both read `GET /products/filters`, not `/categories` or `/brands`,** for the reason
+  `CategoryTiles` documents: the admin-owned tables hold names nobody sells, and a directory of
+  doors onto "no products found" is worse than none. Every entry links to the catalogue
+  (`/products?categoryId=` / `?brandId=`), never to a second product list.
+  - **A brand has no slug** (`Brand` has `name` only), so there is no `/brands/<slug>` alias like
+    the category one. Adding one needs a slug column on the backend.
+- **The directories live in `products`, not in `categories` / `brands`.** `products` already imports
+  both of those (product types and form), so a directory there that reads the products facets
+  would have made a circular module dependency.
+- **Recently viewed** (`products/hooks/use-recently-viewed.ts`). The product page records a view
+  once the listing has loaded, so a 404 never enters the trail. It is shown in two places:
+  - as a **rail on the home page**, between the brand strip and the sellers, so it never stacks on
+    another shelf;
+  - as a **row under a product** (`product-details/recently-viewed.tsx`), which leaves out the
+    product being viewed.
+  - **Only ids are stored** (up to 12, in `localStorage`). They are re-fetched in one request as
+    `GET /products?id=a,b,c`, which reaches the backend's generic column filter as an `IN`, still
+    behind the public visibility gate. So prices are current and a delisted product silently
+    drops out.
+  - Every storage access is guarded; with storage blocked or corrupt, the rail renders nothing.
+  - `ProductRail`'s `href` is optional now, because there is no catalogue URL for "what I looked
+    at".
+- **Entry points:**
+  - "All categories" beside the home tiles, and "All brands" beside the brand strip;
+  - a new **Shop** column in the footer (All Products / Categories / Brands / Stores). The navbar
+    has only search.
+
+**Verified in headless Chrome** against the dev servers:
+
+- `/categories` lists the 8 live categories in their tree with counts.
+- `/brands` lists 6 brands; clicking one lands on `/products?brandId=…`.
+- **Recently viewed:**
+  - a fresh profile's home page has no "Recently viewed" heading;
+  - after viewing two products, storage holds both ids, newest first, and the second product's page
+    shows only the first;
+  - the home page then shows the rail;
+  - corrupting the stored value hides the rail with no error.
+- The batch lookup returned only the live products when sent a random uuid and a malformed id
+  alongside them. There was no hidden product in the dev DB, so the visibility drop itself was not
+  exercised.
+- `/`, `/categories` and `/brands` still build as static.
+
+That check is also what found **FE-40** below: before it was fixed, the home page could not be
+tested at all.
+
+**Seen, not fixed:** one product image 404s because its URL still points into
+`trendora/temp/products/`, an asset that was never promoted and is gone (backend **BE-41**).
+
+**Still open:** compare. It needs a product-to-product attribute model that does not exist yet
+(variants carry size and colour only).
+
+---
+
+### ~~FE-40~~ · Home page and `/products` crash in the browser
+**✅ FIXED 2026-09-24 · auth** — found while verifying FE-37
+
+**Was:** `features/auth/utils/user-info.ts` held both `useUserInfoClient` and a
+`useUserInfoServer` helper that imported `authOptions`. `authOptions` reads the validated
+`serverEnv` (FE-30), whose secrets are undefined in a browser. So any client module importing the
+hook evaluated the server schema on load and threw "Invalid server environment configuration".
+
+`useWishlistToggle` imports the hook, and **every product card** uses that toggle. As a result `/`,
+`/products` and the product pages all rendered the error boundary ("Something went wrong").
+`/stores`, `/about-us` and pages without product cards were unaffected. It had been broken since
+`3c73c36`. `pnpm build` could not catch it, because the throw happens at module evaluation in the
+browser, not at compile time.
+
+**Now:** the file is split.
+
+- `user-info.ts` holds only the client hook, with a comment saying why it must never import
+  `auth-options`.
+- **`user-info-server.ts`** holds `getUserInfoServer()`, renamed because it is not a hook. It had no
+  callers.
+
+Verified in headless Chrome: `/` and `/products` render their content again, with no
+server-env error.
+
+**Hardening not done:** adding the `server-only` package would make a repeat a build error. It is
+not installed, and adding a dependency was left as a decision.
 
 ---
 

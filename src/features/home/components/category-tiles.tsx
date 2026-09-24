@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -41,11 +42,22 @@ export default function CategoryTiles() {
     return (
         <section className="py-10">
             <Container className="space-y-6">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-semibold">Shop by category</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Jump straight to what you came for.
-                    </p>
+                <div className="flex items-end justify-between gap-4">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-semibold">Shop by category</h2>
+                        <p className="text-sm text-muted-foreground">
+                            Jump straight to what you came for.
+                        </p>
+                    </div>
+                    {/* The tiles stop at MAX_TILES top-level categories; the
+                        index has all of them, with their subcategories. */}
+                    <Link
+                        href="/categories"
+                        className="group flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                    >
+                        All categories
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">

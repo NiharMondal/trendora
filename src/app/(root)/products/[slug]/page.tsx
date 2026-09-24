@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
@@ -8,6 +8,8 @@ import Container from "@/shared/components/container";
 import QueryError from "@/shared/components/query-error";
 import ProductDetails from "@/features/products/components/product-details/product-details";
 import RelatedProducts from "@/features/products/components/product-details/related-products";
+import RecentlyViewed from "@/features/products/components/product-details/recently-viewed";
+import { useRecentlyViewed } from "@/features/products/hooks/use-recently-viewed";
 import ReviewSection from "@/features/reviews/components/review-section/review-section";
 import { TProductImage } from "@/features/products/types/product.types";
 import { cn } from "@/shared/lib/utils";
@@ -21,6 +23,14 @@ export default function ProductDetailsPage({
     const { slug } = use(params);
     const { data, isLoading, error, refetch } = useProductBySlugQuery(slug);
     const product = data?.result;
+    const { recordView } = useRecentlyViewed();
+
+    // Recorded only once the listing has loaded, so a 404 or a typo'd slug
+    // never enters the trail.
+    const productId = product?.id;
+    useEffect(() => {
+        if (productId) recordView(productId);
+    }, [productId, recordView]);
 
     if (isLoading) return <SpinnerLoading />;
     if (error || !product) {
@@ -57,6 +67,9 @@ export default function ProductDetailsPage({
 
             {/* related products  */}
             <RelatedProducts productId={product?.id ?? ""} />
+
+            {/* the shopper's own trail, minus this product */}
+            <RecentlyViewed productId={product.id} />
         </Container>
     );
 }

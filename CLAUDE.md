@@ -69,6 +69,12 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
   `/products?categoryId=<id>`. Don't grow it into a second product list; link to the catalogue.
   The wishlist lives only at `/dashboard/wishlist`; `/wish-list` is a 308 in `next.config.ts`
   `redirects()`, not a page.
+  `/categories` and `/brands` are browse indexes built from `GET /products/filters` (live stock
+  only, with counts), in `features/products/components/browse/`. They sit in `products` because
+  `products` already imports `categories` and `brands`. Every entry links into `/products`. A
+  brand has no slug, so there is no `/brands/<slug>`. "Recently viewed" stores product **ids
+  only** in `localStorage` (`products/hooks/use-recently-viewed.ts`) and re-fetches them via
+  `GET /products?id=a,b`, so prices stay current and delisted items drop out.
 - `(auth)` — login, register, forgot-password, reset-password (the emailed `?token=` link; kept
   out of `AuthSync`'s bounce list so a signed-in user can still follow it).
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
@@ -173,7 +179,10 @@ JWT-strategy NextAuth defined in `src/features/auth/lib/auth-options.ts`, wrappi
 - `src/features/auth/components/auth-sync.tsx` redirects already-authenticated users away from public
   auth pages to their role home.
 - Session/token typing is augmented in `src/types/next-auth.d.ts`; read the current user with
-  `useUserInfoClient()` / `useUserInfoServer()` (`src/features/auth/utils/user-info.ts`).
+  `useUserInfoClient()` (`src/features/auth/utils/user-info.ts`, client) or
+  `getUserInfoServer()` (`user-info-server.ts`, server). **Keep them in separate files:** anything
+  that imports `auth-options` reads `serverEnv`, and one shared module put the server secrets in
+  every client bundle that used the hook — every page with a product card crashed on load.
 
 ### The marketplace model
 

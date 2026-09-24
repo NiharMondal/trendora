@@ -5,6 +5,7 @@ import {
     useBestSellersQuery,
     useNewArrivalsQuery,
 } from "@/features/products/api/product.api";
+import { useRecentlyViewedProducts } from "@/features/products/hooks/use-recently-viewed";
 
 import ProductRail from "./product-rail";
 
@@ -82,6 +83,24 @@ export function TopRatedRail() {
             description="Highest rated by buyers who actually received them."
             href="/products?sortBy=averageRating:desc&minRating=1"
             products={data?.result}
+            isLoading={isLoading}
+        />
+    );
+}
+
+/**
+ * The shopper's own trail, from this browser's storage. It has no "View all":
+ * there is no catalogue URL for "what I looked at". Renders nothing on a first
+ * visit, like every other shelf with no data.
+ */
+export function RecentlyViewedRail() {
+    const { products, isLoading } = useRecentlyViewedProducts();
+
+    return (
+        <ProductRail
+            title="Recently viewed"
+            description="Pick up where you left off."
+            products={products}
             isLoading={isLoading}
         />
     );

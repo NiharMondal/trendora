@@ -2,7 +2,7 @@ import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { footerInfo, order, ourPolicies } from "@/shared/constants/footer";
+import { footerInfo, order, ourPolicies, shop } from "@/shared/constants/footer";
 import { socialIcon } from "@/shared/constants/images";
 
 import Container from "@/shared/components/container";
@@ -10,7 +10,22 @@ export default function Footer() {
     return (
         <footer className="py-10 bg-gray-700 text-white">
             <Container className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-0">
-                <div className="grid grid-cols-2  md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="space-y-2">
+                        <h4>Shop</h4>
+                        <ul className="text-gray-200">
+                            {shop.map((info) => (
+                                <li key={info.label}>
+                                    <Link
+                                        href={info.path}
+                                        className="font-normal tracking-wide hover:underline"
+                                    >
+                                        {info.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                     <div className="space-y-2">
                         <h4>Info</h4>
                         <ul className="text-gray-200">

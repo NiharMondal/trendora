@@ -1,3 +1,11 @@
+/** The storefront's browse entry points — the navbar has only search. */
+export const shop = [
+	{ path: "/products", label: "All Products" },
+	{ path: "/categories", label: "Categories" },
+	{ path: "/brands", label: "Brands" },
+	{ path: "/stores", label: "Stores" },
+];
+
 export const footerInfo = [
 	{ path: "/about-us", label: "About Us" },
 	{ path: "/shipping-and-return", label: "Shipping and Returns" },

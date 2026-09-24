@@ -8,6 +8,7 @@ import {
     BestSellersRail,
     DealsRail,
     NewArrivalsRail,
+    RecentlyViewedRail,
     TopRatedRail,
 } from "@/features/home/components/rails";
 
@@ -38,6 +39,8 @@ export default function Home() {
             <NewArrivalsRail />
             <TopRatedRail />
             <BrandStrip />
+            {/* Between two non-rail sections, so it never stacks on a shelf. */}
+            <RecentlyViewedRail />
             <TopStores />
         </div>
     );
