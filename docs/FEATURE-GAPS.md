@@ -46,7 +46,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-15~~ | ~~Five search boxes are silent no-ops~~ | ✅ **FIXED** 2026-09-24 | — | tables |
 | ~~FE-16~~ | ~~Admin user actions — backend ready, UI not wired~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
-| FE-18 | No customer-facing refunds view | P1 | M | orders |
+| ~~FE-18~~ | ~~No customer-facing refunds view~~ | ✅ **FIXED** 2026-09-24 | — | orders |
 | FE-19 | No vendor store-review screen | P1 | M | vendor |
 | FE-20 | Two wishlist pages, one of them an empty shell | P1 | S | storefront |
 | FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
@@ -615,20 +615,54 @@ for Google avatars, and `github.com` if the shadcn fallback avatar stays. Add `f
 
 ---
 
-### FE-18 · No customer-facing refunds view
-**P1 · M · orders**
+### ~~FE-18~~ · No customer-facing refunds view
+**✅ FIXED 2026-09-24 · orders** (backend half: **BE-46**, branch `BE-refunds-buyer-scope`)
 
-**Now:** `useMyRefundsQuery` (`src/features/refunds/api/refund.api.ts:21`) and
-`useRefundByIdQuery` (`:57`) are defined and used nowhere. `features/refunds` has exactly one
-component, and it is the admin console.
+**Was:** `useMyRefundsQuery` was defined and used by nothing. A buyer whose parcel was cancelled
+could only see the refund as an inline badge on `my-orders-list.tsx`. There was no list and no
+history.
 
-**Gap:** A buyer whose order was cancelled has no screen showing whether their money came back.
-`my-orders-list.tsx` does render `slice.refund.status` inline — which is the important half — but
-there is no list, no history and no detail.
+**Found while building it:** for a **VENDOR**, `GET /refunds/me` returned refunds on parcels they
+*sold*. It had no way to return refunds on orders they *bought*. A vendor is a shopper (their
+sidebar already links to `/dashboard/my-orders`), so a shared "My refunds" page would have shown a
+seller the wrong list, and their own refunds could not be listed at all. The backend fix is
+**BE-46**: an explicit `?as=buyer|seller`.
 
-**Fix:** Add `/dashboard/my-refunds` backed by `useMyRefundsQuery`, plus a sidebar entry in
-`customerDashboardLinks`. Keep the existing rule visible: a `CANCELED` parcel whose refund is
-`FAILED` is a buyer who has **not** been paid — never present cancellation as settled.
+**Now:**
+
+- **`/dashboard/my-refunds`** (`features/refunds/components/my-refunds-list.tsx`) is a
+  `DataTable` with search by order or parcel number, a Status toolbar filter, pagination and the
+  FE-06 error state. **It always sends `as: "buyer"`.**
+  - It shows the parcel number and "Shipped by <store>" ("Whole order" for an order-level manual
+    refund), the amount, the status, where it went (original card / cash / bank transfer), and the
+    requested and completed dates.
+- **Buyer-worded statuses** live in `features/refunds/constants/buyer-refund-status.ts`. The
+  existing `refundStatusMap` is the operator's vocabulary ("Owed", "Abandoned"). The buyer's map
+  is Processing, On its way, Refunded, **Delayed** and Not refunded. Each has a one-line hint
+  under the badge.
+  - **FAILED reads as "Delayed — our team can see this", never as settled.** A cancelled parcel
+    with a failed refund is a buyer who has not been paid. The hint does not promise an automatic
+    retry, because nothing schedules the retry sweep (see `backend/CLAUDE.md`).
+- **Sidebar:** "My Refunds" is in **both** `customerDashboardLinks` and `vendorDashboardLinks`,
+  next to My Orders.
+
+**Verified live.** vendor1, shopping, placed a cash-on-delivery order from **vendor2's** store and
+cancelled it. The admin recorded a manual refund on that parcel. 13 of 13 checks passed:
+
+- vendor1 `as=buyer` sees it, and vendor1's default seller view does not.
+- vendor2 (the seller) sees it, and vendor2 `as=buyer` does not.
+- The customer sees nothing.
+- A customer asking `as=seller` gets a 403, and `as=bogus` gets a 400.
+- Search by parcel number and `status=SUCCEEDED` / `FAILED` narrow correctly.
+- The row carries the parcel, the store and `gateway: "cash"`, and does not include
+  `gatewayResponse`.
+
+Everything was deleted afterwards, and stock was confirmed back at its starting value. The page was
+not clicked through in a browser.
+
+**Still open:** a **seller-side** refunds screen, where a vendor sees refunds on parcels they sold.
+The endpoint supports it now (`as=seller`, the default for a vendor), but no screen exists. See
+FE-34.
 
 ---
 
@@ -855,7 +889,7 @@ money, and it has already diverged from its backend twin once (**XR-07**).
 Beyond FE-19: no vendor analytics or time series (`orderAnalytics` is admin-only); no vendor order
 detail page (`useVendorOrderByIdQuery` unused — the table is the only view); no payout detail; no
 Profile entry in `vendorDashboardLinks`, unlike admin and customer; no rejection-reason surface, so
-a seller sees a REJECTED badge without the reason; no view of refunds against their own orders; no
+a seller sees a REJECTED badge without the reason; no view of refunds against parcels they sold (`GET /refunds/me?as=seller` is ready — BE-46); no
 low-stock alerts, bulk import/export or promotion tooling.
 
 What does exist is solid: `/vendor` handles both `isLoading` and `isError`, and products, orders,
