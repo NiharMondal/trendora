@@ -35,7 +35,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-04~~ | ~~Forgot-password form submits to `console.log`~~ | ✅ **FIXED** 2026-09-24 | — | auth |
 | ~~FE-05~~ | ~~No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
 | ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
-| FE-07 | Placeholder pages wired into live navigation | P1 | M | dashboard |
+| ~~FE-07~~ | ~~Placeholder pages wired into live navigation~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | FE-08 | `/admin/user-management` is empty; the real table is unlinked | P1 | S | admin |
 | FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
 | FE-10 | Footer links to nine routes that do not exist | P1 | M | storefront |
@@ -313,24 +313,28 @@ the part of a page that a query feeds.
 
 ## P1 — a user hits this
 
-### FE-07 · Placeholder pages wired into live navigation
-**P1 · M · dashboard**
+### ~~FE-07~~ · Placeholder pages wired into live navigation
+**✅ FIXED 2026-09-24 · dashboard**
+
+**Was:** four routes rendered a bare word: `/admin/hot-offers` (`<div>HotOffers</div>`, with a
+sidebar row), `/admin/order-history` (orphaned), `/categories/[slug]` (`<div>page</div>`) and
+`/about-us` (`<div>AboutUs</div>`, linked from the footer).
+
+**Correction to the original audit:** `/categories/[slug]` was **not** "on every category link on
+the storefront". Since FE-03, the home-page tiles link to `/products?categoryId=<id>`, and nothing
+in `src/` linked to `/categories/…`. It could only be reached by typing the URL.
 
 **Now:**
 
-| Route | Renders | Reachable? |
-| --- | --- | --- |
-| `/admin/hot-offers` | `<div>HotOffers</div>` | **Yes — sidebar row** (`src/layouts/dashboard/dashboard-navlink.ts:141`) |
-| `/admin/order-history` | `<div>OrderHistory</div>` | Orphan — the sidebar's "Order History" points at `/admin/order-list` |
-| `/categories/[slug]` | `<div>page</div>` | Yes — every category link on the storefront |
-| `/about-us` | `<div>AboutUs</div>` | Yes — footer |
+| Route | Resolution |
+| --- | --- |
+| `/admin/hot-offers` | **Deleted**, along with its `dashboard-navlink.ts` row and the `Coffee` icon import. The backend has no offers concept beyond a product's `discountPrice`, and markdowns already surface on the storefront (`?onSale=true`, `DealsRail`). If an admin promotions screen is wanted, it needs a backend model first (BE-29 covers coupons). |
+| `/admin/order-history` | **Deleted.** The sidebar's "Order History" row already points at the real `/admin/order-list`. |
+| `/categories/[slug]` | **A readable alias for the catalogue, not a second product list.** `features/categories/components/category-redirect.tsx` resolves the slug through `GET /categories?slug=<slug>`, because `GET /categories/:id` takes an id only and the list endpoint's generic column filter does the lookup. It then `router.replace`s to `/products?categoryId=<id>`, which already has the facets, sort, search and pagination, and matches the category *or its children*. An unknown slug shows "Category not found" with a "Browse all products" action, and a failed lookup shows `QueryError`. |
+| `/about-us` | **Built:** `features/home/components/about-us.tsx`. A hero, "How it works" (independent reviewed stores, one checkout with per-store shipping, per-parcel tracking and cancellation with automatic refunds), the home page's `TrustStrip`, and a "Sell on Trendora" CTA to `/vendor/apply`. Every claim describes behaviour the code implements, and there are no invented figures. It has page `metadata` and is still `○ Static`. |
 
-**Gap:** An admin clicking "Hot Offers" lands on the word "HotOffers". A shopper clicking any
-category lands on the word "page". These are the most visible unfinished edges in the product.
-
-**Fix:** Build them, or remove the nav entries and routes until they exist. `/categories/[slug]`
-is the urgent one — it is on the shopper's main path and the data layer
-(`useAllProductsQuery` with a `categoryId` filter) already supports it.
+**Not verified live:** the slug lookup was not exercised against a running backend. It relies on
+`PrismaQueryBuilder.filter()`, which `category.service.ts` applies to the list read.
 
 ---
 
@@ -417,7 +421,7 @@ That is **stale** — both now use real RTK Query hooks
 
 **Now:** 18 of 58 pages export `metadata`, and they are **almost all `(dashboard)` pages** — which
 should never be indexed. The public storefront pages that need it have none: `(root)/page.tsx`,
-`products/page.tsx`, `products/[slug]`, `categories/[slug]`, `stores/[slug]`, `cart`, `about-us`.
+`products/page.tsx`, `products/[slug]`, `categories/[slug]`, `stores/[slug]`, `cart` (`about-us` has had `metadata` since FE-07).
 There is no `generateMetadata` anywhere, and the storefront detail pages are `"use client"`
 (`src/app/(root)/products/[slug]/page.tsx:1`), so they cannot produce per-item titles as written.
 The root description is still `"Generated by create next app"` (`src/app/layout.tsx:24`).
@@ -425,7 +429,7 @@ The root description is still `"Generated by create next app"` (`src/app/layout.
 **Gap:** Every product and store shares one generic title and the scaffold description. For a
 storefront whose traffic depends on product pages ranking, this is a significant miss.
 
-**Fix:** Add `generateMetadata` to `products/[slug]`, `categories/[slug]` and `stores/[slug]`,
+**Fix:** Add `generateMetadata` to `products/[slug]` and `stores/[slug]` (`categories/[slug]` only redirects, so it needs none),
 which means splitting each into a server page shell plus the existing client component — the
 `src/app` convention already expects the page to be a thin shell. Add `metadataBase` and a real
 root description. Mark the dashboard route groups `robots: { index: false }`.
@@ -784,7 +788,7 @@ analytics.
 | FE-36 | Guest checkout | `checkout-form.tsx:53-64` accepts an inline address, but `base-api.ts:17-23` attaches a session token to every call — effectively logged-in only |
 | FE-36 | Multi-currency | `currencyFormatter` hardcodes `en-US`/`USD` (`calculate-order-total.ts:103-108`) |
 | FE-36 | i18n | no `next-intl`, no `[locale]` segment, `lang="en"` fixed |
-| FE-37 | Category browsing | `/categories/[slug]` is a placeholder (FE-07); no `/categories` index |
+| FE-37 | Category browsing | `/categories/[slug]` now redirects into the filtered catalogue (FE-07), but there is no `/categories` index |
 | FE-37 | Brand browsing | no route at all, though `/brands` exists on the backend |
 | FE-37 | Compare, recently viewed | nothing |
 | FE-38 | Order tracking timeline | the tracking *number* renders (`my-orders-list.tsx:124`, `order-details.tsx:286`) but there is no carrier link, no status timeline and no public track-by-number page. The backend has the data in `OrderStatusHistory` and never exposes it (**BE-13**) |

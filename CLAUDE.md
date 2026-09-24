@@ -42,8 +42,10 @@ commission. Read **The marketplace model** below before touching cart, checkout,
 code — those flows changed shape, and `backend/CLAUDE.md` has the server-side half.
 
 ### Route groups (`src/app`)
-- `(root)` — public storefront (products, categories, cart, checkout, wish-list, about-us, plus
-  `stores` / `stores/[slug]` — the seller directory and storefronts).
+- `(root)` — public storefront (products, cart, checkout, wish-list, about-us, plus
+  `stores` / `stores/[slug]` — the seller directory and storefronts). `categories/[slug]` is only
+  an alias: it resolves the slug via `GET /categories?slug=` and `router.replace`s to
+  `/products?categoryId=<id>`. Don't grow it into a second product list; link to the catalogue.
 - `(auth)` — login, register, forgot-password, reset-password (the emailed `?token=` link; kept
   out of `AuthSync`'s bounce list so a signed-in user can still follow it).
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
