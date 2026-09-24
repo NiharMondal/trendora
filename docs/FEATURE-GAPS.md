@@ -49,7 +49,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-18~~ | ~~No customer-facing refunds view~~ | ✅ **FIXED** 2026-09-24 | — | orders |
 | ~~FE-19~~ | ~~No vendor store-review screen~~ | ✅ **FIXED** 2026-09-24 | — | vendor |
 | ~~FE-20~~ | ~~Two wishlist pages, one of them an empty shell~~ | ✅ **FIXED** 2026-09-24 | — | storefront |
-| FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
+| ~~FE-21~~ | ~~Product reviews are not gated on purchase~~ | ✅ **FIXED** 2026-09-24 | — | reviews |
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
 | FE-24 | Two RTK tags are never provided (the misdeclared one fixed in FE-14) | P2 | S | api |
@@ -735,19 +735,55 @@ loading={null}` means no page prerenders its body. The constant was checked inst
 
 ---
 
-### FE-21 · Product reviews are not gated on purchase
-**P1 · M · reviews**
+### ~~FE-21~~ · Product reviews are not gated on purchase
+**✅ FIXED 2026-09-24 · reviews** (backend half: **BE-48**, branch `BE-review-purchase-gate`)
 
-**Now:** `src/features/reviews/components/review-section/review-section.tsx:51` gates
-`WriteReview` on being logged in, and nothing more.
+**Was:** `review-section.tsx` showed `WriteReview` to anyone signed in. The backend's create
+checked only that the product was public, so **any account could review any product, any number
+of times**. Store reviews were already tied to a delivered parcel, so products were the
+inconsistent path.
 
-**Gap:** Any signed-in user can review any product they have never bought. Store reviews are
-correctly gated — `VendorReview` is tied to a delivered vendor order, one per order — so the
-product path is the inconsistent one.
+**Backend first (BE-48):**
 
-**Fix:** Needs a backend rule first: verify a delivered `OrderItem` for this `(userId, productId)`
-before accepting a `Review`. Then hide `WriteReview` unless the product appears in the user's
-delivered orders.
+- A product review needs a **DELIVERED** parcel containing the product, bought by this user.
+- There is **one active review per user per product**. Buying again does not earn a second one.
+- `GET /reviews/eligibility/:productId` returns `{ canReview, reason, reviewId? }`, using the same
+  function the create route enforces.
+
+**Here:**
+
+- `useReviewEligibilityQuery` (it provides `reviews`, so posting a review refetches it).
+- `review-section.tsx` shows the form only when `canReview`. Otherwise `ReviewGate` explains why,
+  with a next step:
+
+  | `reason` | Shown |
+  | --- | --- |
+  | `ALREADY_REVIEWED` | "You have reviewed this product", with a link to edit it in My Reviews |
+  | `NOT_DELIVERED` | "Your order is on its way", with a link to My Orders |
+  | `NOT_PURCHASED` | "Reviews are from verified buyers" |
+
+  If the eligibility request itself fails, the column stays empty rather than showing an error
+  box. Reviewing is optional, and the backend refuses an ineligible review anyway. Signed-out
+  visitors still get the login prompt.
+- XR-04 is fixed on both sides in the same pass (see below). The FE-27 catch in `write-review.tsx`
+  is fixed too, so lint is at **49**.
+
+**Verified live.** One temporary order went PENDING → PROCESSING → SHIPPED → DELIVERED, and 15 of
+15 checks passed:
+
+- The response moved NOT_PURCHASED → NOT_DELIVERED (pending and shipped) → canReview.
+- Creating before delivery is a 403.
+- A rating-only review is a 201, and a second review is a 409.
+- Eligibility then reports ALREADY_REVIEWED with the review id.
+- vendor2, who never bought the product, gets a 403, and a missing token gets a 401.
+- Deleting the review restores the product's rating.
+
+The order, review and address were deleted afterwards, and stock and rating were confirmed at
+their starting values. The product page was not clicked through in a browser.
+
+**Not addressed:** reviews written **before** this gate are kept. Some may be from accounts that
+never bought the product, and nothing marks them as unverified. A "Verified buyer" badge would
+need a flag or a lookup per review.
 
 ---
 
@@ -829,11 +865,11 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
 ### FE-27 · Thirty-nine `any`s, eight of them in type definitions
 **P2 · M · types**
 
-`pnpm lint` passes at **50 warnings / 0 errors** (52 before FE-04, 51 before FE-08); treat that as the baseline and do not add to it.
+`pnpm lint` passes at **49 warnings / 0 errors** (52 before FE-04, 51 before FE-08, 50 before FE-21); treat that as the baseline and do not add to it.
 
 - **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
-  `reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
-  optional chaining, so a network failure throws inside the catch block.
+  ~~`reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
+  optional chaining, so a network failure throws inside the catch block.~~ Fixed in FE-21.
 - **8 are `any` in type definitions**, which defeats the point of the type layer:
   `orders/types/order.types.ts:51-57` (`transactionId`, `paymentGateway`, `gatewayResponse`,
   `failureReason`, `paidAt`, `refundedAt`, `refundAmount`) and `auth/types/auth.types.ts:5`
@@ -1035,20 +1071,29 @@ the `{ url, publicId }` pair that vendor/product images use — send the Cloudin
 
 ---
 
-### XR-04 · A rating-only review always 400s
-**P1 · S · contract**
+### ~~XR-04~~ · A rating-only review always 400s
+**✅ FIXED 2026-09-24 on both sides · contract** (with FE-21 / BE-48)
 
-`write-review.tsx:23` initialises `comment: ""` and `:33` submits the form values verbatim. The
-backend declares `comment: z.string().min(5).max(400).trim().optional()` — an empty string is
-*present*, so `.optional()` does not apply and `.min(5)` fires.
+**Was:** the form initialised `comment: ""` and submitted it verbatim. The backend's
+`comment: z.string().min(5)…optional()` treats an empty string as *present*, so `.optional()` did
+not apply and every rating-only review got a 400 reading "Min length is 2", which did not even
+match the rule. The frontend's catch read `error.data.message` without optional chaining, so a
+network failure threw inside the catch.
 
-Every buyer who rates a product without writing a comment gets a 400 whose message reads
-**"Min length is 2"**. And `:36` catches it with `error.data.message` — no optional chaining — so
-a network error throws inside the catch.
+**Now, both halves:**
 
-**Fix here:** strip an empty `comment` before submitting, and use `error?.data?.message`.
-**Fix there:** preprocess empty-to-undefined and correct the message string. Either alone closes
-it.
+- **Backend:** `review.validation.ts` has one shared `optionalComment`, used by create *and*
+  update. It preprocesses a blank string to `undefined`, and the rule is 2–400 characters with
+  messages that say so.
+- **Frontend:** `write-review.tsx` drops an empty comment before sending, reports errors through
+  `getApiErrorMessage`, and resets the form on success. `review-form.schema.ts` checks the same
+  2–400 rule client-side.
+
+Verified live: a rating-only review with `comment: ""` returns 201 with `comment` stored as `null`,
+and a one-character comment is a 400 with "A comment should be at least 2 characters".
+
+**Side effect on edit:** a blank comment in `PATCH /reviews/:id` now means "leave it unchanged". A
+comment cannot be removed by clearing it. It needs an explicit `null` if that is ever wanted.
 
 ---
 

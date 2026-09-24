@@ -15,7 +15,7 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **50 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+`pnpm lint` passes (exit 0) with **49 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
 plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
 code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
 warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
@@ -209,6 +209,10 @@ path. Two consequences for the UI:
   `slice.refund.status` with `refundStatusMap` beside it (see `my-orders-list.tsx`).
 - `payment.refundAmount` is money that **actually went back**, not what is owed. `PaymentStatus`
   gained `PARTIALLY_REFUNDED` for the one-parcel-of-three case.
+
+The product page shows `WriteReview` only when `useReviewEligibilityQuery` says `canReview`.
+The backend enforces the same rule on create (a delivered purchase, one review per product), so
+never re-derive it client-side.
 
 `/vendor/reviews` lists the seller's store reviews from the public
 `GET /vendor-reviews/store/:slug`, using the slug from `/vendors/me`. **Not** `/vendor-reviews/my-reviews`:

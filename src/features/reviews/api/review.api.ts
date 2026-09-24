@@ -1,5 +1,5 @@
 import { TServerResponse } from "@/shared/types/common.types";
-import { TReview } from "@/features/reviews/types/review.types";
+import { TReview, TReviewEligibility } from "@/features/reviews/types/review.types";
 
 import { TReviewFormValues } from "@/features/reviews/schemas/review-form.schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
@@ -17,6 +17,23 @@ export const reviewApi = baseApi.injectEndpoints({
                 body: payload,
             }),
             invalidatesTags: ["reviews"],
+        }),
+
+        /**
+         * Can the signed-in user review this product, and if not, why. The
+         * backend enforces the same rule on create, so this only decides what
+         * the product page shows. Provides `reviews`, so posting a review
+         * refetches it and the form turns into "you have reviewed this".
+         */
+        reviewEligibility: builder.query<
+            TServerResponse<TReviewEligibility>,
+            string
+        >({
+            query: (productId) => ({
+                url: `/reviews/eligibility/${productId}`,
+                method: "GET",
+            }),
+            providesTags: ["reviews"],
         }),
 
         allReview: builder.query<
@@ -93,4 +110,5 @@ export const {
     useUpdateReviewMutation,
     useReviewsByProductIdQuery,
     useGetMyReviewsQuery,
+    useReviewEligibilityQuery,
 } = reviewApi;

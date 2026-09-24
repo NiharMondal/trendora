@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { getApiErrorMessage } from "@/shared/utils/api-error";
+
 type WriteReviewProps = {
     productId: string;
 };
@@ -30,11 +32,21 @@ export default function WriteReview({ productId }: WriteReviewProps) {
     const [createReview, { isLoading }] = useCreateReviewMutation();
 
     const onSubmit = async (data: TReviewFormValues) => {
+        // An empty comment means "rating only" — send no comment at all rather
+        // than `""`, which the backend used to reject (XR-04).
+        const comment = data.comment?.trim();
         try {
-            await createReview({ ...data, productId }).unwrap();
+            await createReview({
+                rating: data.rating,
+                productId,
+                ...(comment ? { comment } : {}),
+            }).unwrap();
             toast.success("Review added successfully");
-        } catch (error: any) {
-            toast.error(error.data.message);
+            hookForm.reset({ rating: 0, comment: "", productId });
+        } catch (error) {
+            // Was `error.data.message` with no optional chaining, so a network
+            // failure threw inside the catch block.
+            toast.error(getApiErrorMessage(error, "Could not post your review"));
         }
     };
 
