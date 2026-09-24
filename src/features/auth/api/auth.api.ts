@@ -21,7 +21,6 @@ export const authApi = baseApi.injectEndpoints({
                     body: payload,
                 };
             },
-            invalidatesTags: ["auth"],
         }),
         loginUser: builder.mutation<
             TServerResponse<TAuthLoginResponse>,
@@ -32,7 +31,6 @@ export const authApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["auth"],
         }),
 
         oAuthLogin: builder.mutation({
@@ -40,7 +38,6 @@ export const authApi = baseApi.injectEndpoints({
                 url: `/auth/google`,
                 method: "GET",
             }),
-            invalidatesTags: ["auth"],
         }),
         changePassword: builder.mutation({
             query: (payload) => ({
@@ -48,7 +45,6 @@ export const authApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["auth"],
         }),
     }),
 });

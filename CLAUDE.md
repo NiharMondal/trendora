@@ -238,7 +238,9 @@ upload and `deleteTempImage`).
   refresh) before retrying — or calls `signOut()` if refresh failed.
 - Feature APIs (`features/products/api/product.api.ts`, `features/orders/api/order.api.ts`, …) use `baseApi.injectEndpoints({...})` and export
   the generated hooks. **Add endpoints by injecting into `baseApi`; never create a second
-  `createApi`.** New tag types must be registered in `baseApi.ts`. The file name does not always
+  `createApi`.** New tag types must be registered in `baseApi.ts`, **and provided by at least one
+  query**: invalidating a tag nothing provides is a silent no-op (FE-24 removed two such tags).
+  The file name does not always
   match the feature: `features/home`'s endpoints live in `api/slide.api.ts` (hero slides, tag
   `slides`). The admin screen (`/admin/slide-list`, `features/home/components/slides/`) reads
   `allSlidesForAdmin` (`/slides/admin/all`), because the public list hides inactive slides. Slide

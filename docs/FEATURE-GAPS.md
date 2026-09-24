@@ -52,7 +52,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-21~~ | ~~Product reviews are not gated on purchase~~ | ✅ **FIXED** 2026-09-24 | — | reviews |
 | ~~FE-22~~ | ~~Customer `/dashboard` is a link grid, not a dashboard~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
-| FE-24 | Two RTK tags are never provided (the misdeclared one fixed in FE-14) | P2 | S | api |
+| ~~FE-24~~ | ~~Two RTK tags are never provided (the misdeclared one fixed in FE-14)~~ | ✅ **FIXED** 2026-09-24 | — | api |
 | FE-25 | 1 orphaned component file (was 11) | P2 | S | cleanup |
 | FE-26 | Five stray `console.log`s | P2 | S | cleanup |
 | FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
@@ -859,16 +859,32 @@ Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19:
 
 ---
 
-### FE-24 · Two RTK tags are never provided; one is misdeclared
-**P2 · S · api**
+### ~~FE-24~~ · Two RTK tags are never provided; one is misdeclared
+**✅ FIXED 2026-09-24 · api** (the misdeclared `slideById` tag was already fixed in FE-14)
 
-`base-api.ts:56-76` declares 18 tag types.
-- `"auth"` (:57) is invalidated four times (`auth.api.ts:24,35,43,51`) and **provided zero times**.
-- `"payments"` (:62) is invalidated four times by refund mutations (`refund.api.ts:70,78,91,103`)
-  and **provided zero times** — there is no `payment.api.ts`, and the backend has no payments read
-  endpoint (**BE-28**).
-- ~~`slide.api.ts` `slideById` declared `providesTags: ["products"]` where it meant `["slides"]`~~
-  — **fixed in FE-14**.
+**Was:** `base-api.ts` declared 18 tag types. Two were invalidated but **provided by nothing**, and
+invalidating an unprovided tag is a silent no-op:
+
+- `"auth"` was invalidated by all four mutations in `auth.api.ts` (register, the dead
+  `loginUser` / `oAuthLogin`, and change-password). No query provides it, and none of those
+  mutations change anything a query caches.
+- `"payments"` was invalidated by all four refund mutations. There is no payments read endpoint
+  (backend BE-28). The payment state the UI shows (`paymentStatus`, `refundAmount`) arrives
+  **inside order payloads**, and every one of those mutations **already** invalidated `"orders"`.
+
+**Now:** both tags are removed from `tagTypes`, all four `["auth"]` invalidations are removed, and
+`"payments"` is dropped from the refund mutations, which keep `["refunds", "orders"]`. No screen's
+refresh behaviour changes, because nothing was listening. A comment on `tagTypes` states the rule
+(every tag must be provided) and says where payment state is refreshed.
+
+Checked before removing `"payments"`: no vendor or payout screen renders refund state (the only
+vendor-side mention is help text in `vendor-order-status-modal.tsx`), so `"vendorOrders"` did not
+need adding.
+
+**Verified:** a script audit of every `providesTags` / `invalidatesTags` in `src/` finds all **16**
+remaining tags provided by at least one query. `pnpm build` passes, and since `invalidatesTags` is
+typed against `tagTypes`, any leftover reference to a removed tag would fail to compile. Lint is
+unchanged at 49.
 
 All invalidation is coarse whole-tag; no `{ type, id }` is used anywhere, so any mutation drops
 the entire list cache for that resource. Acceptable at this scale, worth knowing.
