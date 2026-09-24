@@ -47,7 +47,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-16~~ | ~~Admin user actions — backend ready, UI not wired~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
 | ~~FE-18~~ | ~~No customer-facing refunds view~~ | ✅ **FIXED** 2026-09-24 | — | orders |
-| FE-19 | No vendor store-review screen | P1 | M | vendor |
+| ~~FE-19~~ | ~~No vendor store-review screen~~ | ✅ **FIXED** 2026-09-24 | — | vendor |
 | FE-20 | Two wishlist pages, one of them an empty shell | P1 | S | storefront |
 | FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
@@ -666,18 +666,43 @@ FE-34.
 
 ---
 
-### FE-19 · No vendor store-review screen
-**P1 · M · vendor**
+### ~~FE-19~~ · No vendor store-review screen
+**✅ FIXED 2026-09-24 · vendor** (frontend only, with no backend change)
 
-**Now:** `useMyStoreReviewsQuery` (`src/features/vendors/api/vendor.api.ts:205`) is used by no
-component. `vendorDashboardLinks` (`dashboard-navlink.ts:163-180`) has no Reviews entry.
+**Was:** there was no `/vendor/reviews` and no Reviews entry in `vendorDashboardLinks`. The audit
+said to build it on `useMyStoreReviewsQuery`, and that **would have been wrong.** The hook hits
+`GET /vendor-reviews/my-reviews`, which is `where: { userId }`: the store reviews the user
+**wrote as a buyer**. A seller screen on it would have listed their reviews of *other* stores.
 
-**Gap:** Buyers rate stores and the ratings show on the storefront, but a seller cannot list their
-own reviews. Their only route is visiting their public `/stores/[slug]` as a shopper. (This gap is
-already noted in `CLAUDE.md`; it is confirmed and quantified here.)
+**Now:**
 
-**Fix:** Add `/vendor/reviews` using `useMyStoreReviewsQuery` and the shared `DataTable`, plus one
-`dashboard-navlink.ts` entry. The backend endpoint exists; only the screen is missing.
+- **`/vendor/reviews`** (`features/vendors/components/vendor-store-reviews.tsx`) reads the
+  **public** `GET /vendor-reviews/store/:slug` via `useStoreReviewsQuery`, with the slug from
+  `useMyStoreQuery` (`/vendors/me`). That is the list shoppers see on the storefront, which is the
+  point: it shows the buyer, a 1–5 star rating, the comment ("Rating only" if there is none) and the
+  date.
+  - It is a `DataTable` with search over the comment (the only field the backend searches),
+    pagination and the FE-06 error state.
+- **A summary strip** shows the store's `averageRating` and `totalReviews`, with a link to the
+  public storefront.
+- **No store** (a 404; an ADMIN can reach `/vendor/*`) and **an unusable store** (an actionable
+  403) render the backend's message, not a failure with a retry.
+- **Sidebar:** "Reviews" in `vendorDashboardLinks`.
+- **The misleading hook was renamed** `myStoreReviews` → **`myWrittenStoreReviews`**
+  (`useMyWrittenStoreReviewsQuery`), with a comment saying what it returns. It had no callers.
+
+**Verified live (read-only)** as vendor1 and vendor2:
+
+- `/vendors/me` and the store's review list return 200, and a no-match search returns 0.
+- `/my-reviews` confirmed to return reviews the user wrote.
+- A customer's `/vendors/me` is a 404, which is how the no-store case above was found.
+
+**Found in the data, not fixed:** vendor1's store (Urban Threads) carries `averageRating: 5,
+totalReviews: 1`, but has **zero `VendorReview` rows**, not even soft-deleted ones. So the
+storefront and this screen's summary both show "5.0 · 1 review" over an empty list. The cause is
+backend **BE-47**: `VendorReview.vendorOrder` is `onDelete: Cascade`, so hard-deleting an order
+silently deletes its reviews without calling `recomputeVendorRating`. To repair the dev data, set
+that vendor's `averageRating = null, totalReviews = 0`.
 
 ---
 
@@ -886,7 +911,7 @@ money, and it has already diverged from its backend twin once (**XR-07**).
 ### FE-34 · Vendor dashboard gaps
 **P2 · M · vendor**
 
-Beyond FE-19: no vendor analytics or time series (`orderAnalytics` is admin-only); no vendor order
+FE-19 added store reviews. Still missing: no vendor analytics or time series (`orderAnalytics` is admin-only); no vendor order
 detail page (`useVendorOrderByIdQuery` unused — the table is the only view); no payout detail; no
 Profile entry in `vendorDashboardLinks`, unlike admin and customer; no rejection-reason surface, so
 a seller sees a REJECTED badge without the reason; no view of refunds against parcels they sold (`GET /refunds/me?as=seller` is ready — BE-46); no
@@ -970,7 +995,7 @@ client.
 
 **Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
-(FE-19); `GET /address` admin list; `GET /payouts/:id`;
+(reviews the user *wrote*, hook `useMyWrittenStoreReviewsQuery`, no screen); `GET /address` admin list; `GET /payouts/:id`;
 `GET /refunds/:id` (FE-18). See FE-23.
 
 ---

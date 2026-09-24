@@ -202,7 +202,13 @@ export const vendorApi = baseApi.injectEndpoints({
             providesTags: ["vendorReviews"],
         }),
 
-        myStoreReviews: builder.query<TServerResponse<TVendorReview[]>, void>({
+        /**
+         * Store reviews the signed-in user WROTE, as a buyer (`where: { userId }`).
+         * NOT the reviews of their own store — that is `storeReviews` with the
+         * store's slug, which is what `/vendor/reviews` uses. Renamed from
+         * `myStoreReviews`, a name that invited exactly that mistake (FE-19).
+         */
+        myWrittenStoreReviews: builder.query<TServerResponse<TVendorReview[]>, void>({
             query: () => ({
                 url: "/vendor-reviews/my-reviews",
                 method: "GET",
@@ -232,5 +238,5 @@ export const {
     //
     useCreateVendorReviewMutation,
     useStoreReviewsQuery,
-    useMyStoreReviewsQuery,
+    useMyWrittenStoreReviewsQuery,
 } = vendorApi;

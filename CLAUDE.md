@@ -208,6 +208,10 @@ path. Two consequences for the UI:
 - `payment.refundAmount` is money that **actually went back**, not what is owed. `PaymentStatus`
   gained `PARTIALLY_REFUNDED` for the one-parcel-of-three case.
 
+`/vendor/reviews` lists the seller's store reviews from the public
+`GET /vendor-reviews/store/:slug`, using the slug from `/vendors/me`. **Not** `/vendor-reviews/my-reviews`:
+that returns reviews the user *wrote* as a buyer (hook `useMyWrittenStoreReviewsQuery`).
+
 `/dashboard/my-refunds` is the buyer's list, and is linked for customers **and vendors**. It must
 send `as: "buyer"` to `useMyRefundsQuery`, or a VENDOR gets refunds on parcels they *sold*
 (backend BE-46). It uses `buyerRefundStatusMap` (`features/refunds/constants/`), the buyer's
