@@ -36,6 +36,8 @@ export default function CategoryTable() {
         data: sizeGroups,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllSizeGroupsQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (sizeGroup: TSizeGroup) => {
@@ -65,6 +67,8 @@ export default function CategoryTable() {
                 columns={sizeGroupColumns({ handleEdit, handleDelete })}
                 data={sizeGroups?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={sizeGroups?.meta}

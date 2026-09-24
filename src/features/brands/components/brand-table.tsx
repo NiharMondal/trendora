@@ -30,6 +30,8 @@ export default function BrandTable() {
         data: brands,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllBrandQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TBrand) => {
@@ -59,6 +61,8 @@ export default function BrandTable() {
                 columns={brandColumns({ handleEdit, handleDelete })}
                 data={brands?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={brands?.meta}

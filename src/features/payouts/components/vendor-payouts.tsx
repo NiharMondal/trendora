@@ -29,7 +29,13 @@ import { StatusBadge } from "@/shared/ui/status-badge";
 export default function VendorPayouts() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
     const { data: balanceData, isLoading: balanceLoading } = useMyBalanceQuery();
-    const { data: payoutData, isLoading, isFetching } = useMyPayoutsQuery(
+    const {
+        data: payoutData,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useMyPayoutsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -144,6 +150,8 @@ export default function VendorPayouts() {
                     columns={columns}
                     data={payoutData?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={payoutData?.meta}

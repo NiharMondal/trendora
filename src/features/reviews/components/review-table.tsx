@@ -25,6 +25,8 @@ export default function ReviewTable() {
         data: reviews,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllReviewQuery(filters.queryParams as Record<string, string>);
 
     const handleAction = (review: TReview) => {
@@ -42,6 +44,8 @@ export default function ReviewTable() {
                     columns={reviewColumns(handleAction)}
                     data={reviews?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={reviews?.meta}

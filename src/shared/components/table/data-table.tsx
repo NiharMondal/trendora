@@ -1,6 +1,7 @@
 "use client";
 
 import NoDataFound from "@/shared/components/no-data-found";
+import QueryError from "@/shared/components/query-error";
 import {
     Table,
     TableBody,
@@ -35,6 +36,8 @@ export default function DataTable<T, S = unknown>({
     rowClassName,
     onRowClick,
     isFetching,
+    error,
+    onRetry,
     expandable,
     filters,
     meta,
@@ -75,7 +78,8 @@ export default function DataTable<T, S = unknown>({
     };
 
     const totalCols = columns.length + (expandable ? 1 : 0);
-    const showPagination = !!filters && !!meta && meta.totalPages > 1;
+    const showPagination =
+        !error && !!filters && !!meta && meta.totalPages > 1;
     // The header strip stands on its own, so a table with a title but no
     // `filters` still gets a toolbar (just without the controls row).
     const showToolbar = !!filters || !!title || !!description || !!actions;
@@ -111,6 +115,13 @@ export default function DataTable<T, S = unknown>({
                     <TableLoading
                         columnCount={totalCols}
                         rowCount={loadingRows}
+                        className="rounded-none border-0"
+                    />
+                ) : error ? (
+                    <QueryError
+                        error={error}
+                        onRetry={onRetry}
+                        title="Could not load this list"
                         className="rounded-none border-0"
                     />
                 ) : !data || data.length === 0 ? (

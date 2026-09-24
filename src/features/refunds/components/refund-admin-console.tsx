@@ -41,7 +41,13 @@ export default function RefundAdminConsole() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
     const { data: outstanding, isLoading: outstandingLoading } =
         useOutstandingRefundsQuery();
-    const { data, isLoading, isFetching } = useAllRefundsQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllRefundsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -338,6 +344,8 @@ export default function RefundAdminConsole() {
                     columns={columns}
                     data={data?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={data?.meta}

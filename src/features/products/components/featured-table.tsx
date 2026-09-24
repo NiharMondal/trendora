@@ -27,6 +27,7 @@ import {
 } from "@/shared/ui/table";
 import { cn } from "@/shared/lib/utils";
 import { useAllProductsQuery } from "@/features/products/api/product.api";
+import QueryError from "@/shared/components/query-error";
 
 export default function FeaturedTable() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +35,7 @@ export default function FeaturedTable() {
     const [search, setSearch] = useState("");
     const [value] = useDebounce(search, 1000);
 
-    const { data: products, isLoading } = useAllProductsQuery({
+    const { data: products, isLoading, error, refetch } = useAllProductsQuery({
         search: value,
         limit: limit,
         page: currentPage.toString(),
@@ -45,6 +46,16 @@ export default function FeaturedTable() {
             <div className="mt-5">
                 <TableLoading />
             </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load products"
+            />
         );
     }
 

@@ -9,7 +9,12 @@ import { orderColumns } from "./order-columns";
 export default function OrderTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
-    const { data: orders, isLoading } = useAllOrderQuery(
+    const {
+        data: orders,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllOrderQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -19,7 +24,9 @@ export default function OrderTable() {
                 columns={orderColumns}
                 data={orders?.result || []}
                 rowKey={(row) => row.id}
-                isFetching={isLoading}
+                error={listError}
+                onRetry={refetchList}
+                isFetching={isFetching}
                 filters={filters}
                 meta={orders?.meta}
                 placeholder="Search by name"

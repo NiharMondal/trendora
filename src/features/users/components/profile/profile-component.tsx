@@ -1,10 +1,25 @@
 "use client";
 import { useMyProfileQuery } from "@/features/users/api/user.api";
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import QueryError from "@/shared/components/query-error";
 import ProfileForm from "./profile-form";
 import { TProfileFormValues } from "@/features/users/schemas/profile-form.schema";
 
 export default function ProfileComponent() {
-    const { data } = useMyProfileQuery(undefined);
+    const { data, isLoading, error, refetch } = useMyProfileQuery(undefined);
+
+    if (isLoading) return <SpinnerLoading />;
+    // A failed load must not render the form: its blank defaults would save
+    // over the real name and phone.
+    if (error) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load your profile"
+            />
+        );
+    }
 
     const defaultValues = {
         name: data?.result?.name ?? "",

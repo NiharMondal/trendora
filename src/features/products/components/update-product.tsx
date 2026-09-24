@@ -10,13 +10,18 @@ import {
     useMyVendorProductByIdQuery,
     useUpdateProductMutation,
 } from "@/features/products/api/product.api";
+import QueryError from "@/shared/components/query-error";
 
 export default function UpdateProduct({ productId }: { productId: string }) {
     // Read through the vendor/admin endpoint, not the public one: an ADMIN
     // gets any product from it, whereas `/products/:id` applies the storefront
     // visibility filter and 404s on a DRAFT, PENDING or REJECTED listing.
-    const { data: product, isLoading: fetchLoading } =
-        useMyVendorProductByIdQuery(productId);
+    const {
+        data: product,
+        isLoading: fetchLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useMyVendorProductByIdQuery(productId);
 
     // update product mutation
     const [updateProduct, { isLoading: updateLoading }] =
@@ -40,6 +45,20 @@ export default function UpdateProduct({ productId }: { productId: string }) {
     };
 
     if (fetchLoading) return <GeneralLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this product"
+                notFound={{
+                    title: "Product not found",
+                    description:
+                        "It may have been deleted, or the link is wrong.",
+                }}
+            />
+        );
+    }
     return (
         <div>
             <ProductForm

@@ -26,7 +26,13 @@ import VendorOrderStatusModal, {
  */
 export default function VendorOrderTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const { data, isLoading, isFetching } = useMyVendorOrdersQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useMyVendorOrdersQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -191,6 +197,8 @@ export default function VendorOrderTable() {
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

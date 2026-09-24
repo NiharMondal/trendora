@@ -15,11 +15,11 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **52 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
+`pnpm lint` passes (exit 0) with **51 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
 plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
 code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
 warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
-uses `(error as { data?: { message?: string } })?.data?.message` instead of `error: any` — prefer
+uses `getApiErrorMessage(error)` (`shared/utils/api-error.ts`) instead of `error: any` — prefer
 that in new code.
 
 **`pnpm build` must be run as the script (`next build --turbopack`).** A bare `next build` uses
@@ -44,12 +44,20 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
 ### Route groups (`src/app`)
 - `(root)` — public storefront (products, categories, cart, checkout, wish-list, about-us, plus
   `stores` / `stores/[slug]` — the seller directory and storefronts).
-- `(auth)` — login, register, forgot-password.
+- `(auth)` — login, register, forgot-password, reset-password (the emailed `?token=` link; kept
+  out of `AuthSync`'s bounce list so a signed-in user can still follow it).
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
   seller portal) and `dashboard` (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side
   via `getServerSession(authOptions)` and renders the role-appropriate sidebar (the three link sets
   are in `layouts/dashboard/dashboard-navlink.ts`).
 - `api/auth/[...nextauth]` — NextAuth handler.
+
+**Error and loading boundaries.** Each route group has an `error.tsx` rendering the shared
+`shared/components/error-state.tsx` — use that rather than a bespoke error screen. `app/error.tsx`
+catches a throw in a group *layout* (a group's own boundary sits inside its layout, so it cannot),
+`app/global-error.tsx` catches the root layout and must not depend on `Providers`, and
+`app/not-found.tsx` serves every unmatched URL outside all group chrome. Those boundaries catch
+*render throws*; a failed *request* is handled inline — see **Failed requests** below.
 
 **The dashboard sidebar is flat — a resource gets exactly one row.** `dashboard-navlink.ts` still
 groups a resource's screens under `children`, but those children are no longer sub-rows: they are
@@ -219,6 +227,24 @@ upload and `deleteTempImage`).
   (`src/shared/utils/build-query-params.ts`), which **drops values equal to the defaults**
   (`page:1`, `limit:10`, `search:""`, `sortBy:createdAt:desc`) to keep URLs and cache keys clean.
 
+**Failed requests must never render as empty.** "You have no orders" and "we could not load your
+orders" need different actions from the user. Every screen that reads a query handles its `error`:
+
+- Tables: pass the hook's `error` and `refetch` to `DataTable` as `error` / `onRetry`. It shows the
+  error even when stale `data` from a previous page is still cached. RTK Query keeps the last good
+  result, so checking `data` alone would show page 1's rows for a failed page 2.
+- Anything else: render `QueryError` (`shared/components/query-error.tsx`) after the loading check.
+  It shows the backend's message via `getApiErrorMessage` and a retry. Pass `notFound` copy for
+  detail pages, so a 404 reads as "not found" rather than as a failure.
+- **Edit forms must not render on a failed load.** Their blank defaults would be saved over the
+  real record.
+- Branch on status with `getApiErrorStatus`. The vendor dashboard is the example: a 403 carries
+  the backend's actionable "application pending/rejected/suspended" message, and anything else is a
+  real failure.
+
+The home-page sections are the one deliberate exception: they render `null` on failure, as they do
+when empty.
+
 ### The storefront catalogue is faceted, and the facets come from the server
 
 `/products` (`features/products/components/product-wrapper.tsx`) is the reference for a public,
@@ -315,7 +341,8 @@ Admin/customer lists are all built from one generic table in `src/shared/compone
    (`search`, `sortBy`, `limit`, `currentPage` + setters) and `queryParams` to feed the RTK Query hook.
 2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters`, `title`, `description` or
    `actions` is passed), the table body, `TableLoading` skeleton (when `isFetching`), `NoDataFound`
-   when empty, and `Pagination` (only when `meta.totalPages > 1`). Optional `expandable` config
+   when empty, `QueryError` when given `error` (with `onRetry`), and `Pagination` (only when
+   `meta.totalPages > 1` and there is no error). Optional `expandable` config
    renders nested `DataTableSubRows`.
 3. **`<resource>-columns.tsx`** — columns are defined as `DataTableColumn<T>[]` in a sibling file,
    exported either as a const or as a **factory taking row handlers** (`brandColumns({ handleEdit, handleDelete })`).
@@ -326,13 +353,15 @@ The canonical wiring (see `src/features/brands/components/brand-table.tsx`):
 
 ```tsx
 const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-const { data, isFetching } = useAllBrandQuery(filters.queryParams as Record<string, string>);
+const { data, isFetching, error, refetch } = useAllBrandQuery(filters.queryParams as Record<string, string>);
 
 <DataTable
   columns={brandColumns({ handleEdit, handleDelete })}
   data={data?.result || []}
   rowKey={(row) => row.id}
   isFetching={isFetching}
+  error={error}              // failed request -> error state, never "no data"
+  onRetry={refetch}
   filters={filters}          // drives toolbar + pagination
   meta={data?.meta}          // server pagination envelope
   sortByOptions={categorySortOptions}

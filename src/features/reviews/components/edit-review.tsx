@@ -8,6 +8,7 @@ import {
     useReviewByIdQuery,
     useUpdateReviewMutation,
 } from "@/features/reviews/api/review.api";
+import QueryError from "@/shared/components/query-error";
 type EditReviewProps = {
     onClose?: () => void;
 };
@@ -16,7 +17,12 @@ export default function EditReview({ onClose }: EditReviewProps) {
     const reviewId = searchParams.get("reviewId");
     const [updateReview, { isLoading: isUpdating }] = useUpdateReviewMutation();
 
-    const { data: review, isLoading } = useReviewByIdQuery(reviewId!, {
+    const {
+        data: review,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useReviewByIdQuery(reviewId!, {
         skip: !reviewId,
     });
 
@@ -42,6 +48,15 @@ export default function EditReview({ onClose }: EditReviewProps) {
 
     if (!reviewId) return null;
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this review"
+            />
+        );
+    }
     return (
         <ReviewForm
             defaultValues={defaultValues}

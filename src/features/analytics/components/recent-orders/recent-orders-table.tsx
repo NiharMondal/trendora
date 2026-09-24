@@ -5,7 +5,12 @@ import { useAllOrderQuery } from "@/features/orders/api/order.api";
 import { orderColumns } from "./recent-order-columns";
 
 export default function RecentOrdersTable() {
-	const { data: orders } = useAllOrderQuery({
+	const {
+	    data: orders,
+	    isFetching,
+	    error: listError,
+	    refetch: refetchList,
+	} = useAllOrderQuery({
 		limit: "5",
 		sortBy: "createdAt",
 		orderBy: "desc",
@@ -19,6 +24,9 @@ export default function RecentOrdersTable() {
 				columns={orderColumns}
 				data={orders?.result || []}
 				rowKey={(row) => row.id}
+				isFetching={isFetching}
+				error={listError}
+				onRetry={refetchList}
 			/>
 		</div>
 	);

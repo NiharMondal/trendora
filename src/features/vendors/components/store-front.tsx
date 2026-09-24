@@ -14,6 +14,7 @@ import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { Pagination } from "@/shared/components/table";
+import QueryError from "@/shared/components/query-error";
 
 /**
  * A single storefront: who the seller is, what they charge for delivery, what
@@ -22,15 +23,38 @@ import { Pagination } from "@/shared/components/table";
 export default function StoreFront({ slug }: { slug: string }) {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
-    const { data: storeData, isLoading: storeLoading } =
-        useStoreBySlugQuery(slug);
-    const { data: productData, isFetching } = useStoreProductsQuery({
+    const {
+        data: storeData,
+        isLoading: storeLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useStoreBySlugQuery(slug);
+    const {
+        data: productData,
+        isFetching,
+        error: productsError,
+        refetch: retryProducts,
+    } = useStoreProductsQuery({
         slug,
         query: filters.queryParams as Record<string, string>,
     });
     const { data: reviewData } = useStoreReviewsQuery({ slug });
 
     if (storeLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this store"
+                notFound={{
+                    title: "Store not found",
+                    description:
+                        "This store may have been removed or is no longer accepting orders.",
+                }}
+            />
+        );
+    }
 
     const store = storeData?.result;
     if (!store)
@@ -126,6 +150,12 @@ export default function StoreFront({ slug }: { slug: string }) {
                 <h3>Products</h3>
                 {isFetching && products.length === 0 ? (
                     <SpinnerLoading />
+                ) : productsError ? (
+                    <QueryError
+                        error={productsError}
+                        onRetry={retryProducts}
+                        title="Could not load this store's products"
+                    />
                 ) : products.length === 0 ? (
                     <NoDataFound
                         title="No products yet"

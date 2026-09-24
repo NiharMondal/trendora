@@ -28,6 +28,8 @@ export default function MyOrdersList() {
         data: orders,
         isFetching,
         isLoading,
+        error: listError,
+        refetch: refetchList,
     } = useGetMyOrdersQuery(filters.queryParams as Record<string, string>);
 
     if (isLoading) {
@@ -57,6 +59,8 @@ export default function MyOrdersList() {
             <DataTable<TOrder, TVendorOrder>
                 data={orderList}
                 rowKey={(o) => o.id}
+                error={listError}
+                onRetry={refetchList}
                 columns={myOrderColumns()}
                 isFetching={isFetching}
                 filters={filters}

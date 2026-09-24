@@ -30,6 +30,8 @@ export default function SizeTable() {
         data: sizes,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllSizesQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (size: TSize) => {
@@ -59,6 +61,8 @@ export default function SizeTable() {
                 columns={sizeColumns({ handleEdit, handleDelete })}
                 data={sizes?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={sizes?.meta}

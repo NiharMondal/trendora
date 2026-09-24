@@ -9,6 +9,7 @@ import { vendorStatusMap } from "@/features/orders/constants/status-maps";
 import type { TVendorStatus } from "@/features/orders/types/status.types";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { Skeleton } from "@/shared/ui/skeleton";
+import QueryError from "@/shared/components/query-error";
 
 /**
  * Platform-level marketplace metrics.
@@ -19,7 +20,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
  * "revenue" overstates income by roughly 10x at a 10% commission rate.
  */
 export default function MarketplaceOverview() {
-    const { data, isLoading } = useOrderAnalyticsQuery();
+    const { data, isLoading, error, refetch } = useOrderAnalyticsQuery();
 
     if (isLoading) {
         return (
@@ -28,6 +29,19 @@ export default function MarketplaceOverview() {
                     <Skeleton key={index} className="h-28 rounded-2xl" />
                 ))}
             </div>
+        );
+    }
+
+    // Without this a failed request rendered every tile as 0 — a real-looking
+    // "the marketplace made nothing" rather than an error.
+    if (error) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load marketplace figures"
+                className="min-h-[200px]"
+            />
         );
     }
 

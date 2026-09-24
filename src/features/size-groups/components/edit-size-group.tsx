@@ -9,6 +9,7 @@ import {
 	useSizeGroupByIdQuery,
 	useUpdateSizeGroupMutation,
 } from "@/features/size-groups/api/size-group.api";
+import QueryError from "@/shared/components/query-error";
 
 type EditSizeGroupProps = {
 	onClose: () => void;
@@ -17,7 +18,12 @@ type EditSizeGroupProps = {
 export default function EditSizeGroup({ onClose }: EditSizeGroupProps) {
 	const searchParams = useSearchParams();
 	const sizeGroupId = searchParams.get("id");
-	const { data: selectedSizeGroup, isLoading } = useSizeGroupByIdQuery(
+	const {
+	    data: selectedSizeGroup,
+	    isLoading,
+	    error: loadError,
+	    refetch: retryLoad,
+	} = useSizeGroupByIdQuery(
 		sizeGroupId!,
 		{
 			skip: !sizeGroupId,
@@ -47,6 +53,15 @@ export default function EditSizeGroup({ onClose }: EditSizeGroupProps) {
 	};
 	if (!sizeGroupId) return null;
 	if (isLoading) return <SpinnerLoading />;
+	if (loadError) {
+		return (
+			<QueryError
+				error={loadError}
+				onRetry={retryLoad}
+				title="Could not load this size group"
+			/>
+		);
+	}
 	return (
 		<div>
 			<SizeGroupForm

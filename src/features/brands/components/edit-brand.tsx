@@ -9,6 +9,7 @@ import {
     useBrandByIdQuery,
     useUpdateBrandMutation,
 } from "@/features/brands/api/brand.api";
+import QueryError from "@/shared/components/query-error";
 
 type EditBrandProps = {
     onClose: () => void;
@@ -17,7 +18,12 @@ type EditBrandProps = {
 export default function EditBrand({ onClose }: EditBrandProps) {
     const searchParams = useSearchParams();
     const brandId = searchParams.get("id");
-    const { data: selectedBrand, isLoading } = useBrandByIdQuery(brandId!, {
+    const {
+        data: selectedBrand,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useBrandByIdQuery(brandId!, {
         skip: !brandId,
     });
     const [updateBrand, { isLoading: isUpdating }] = useUpdateBrandMutation();
@@ -45,6 +51,15 @@ export default function EditBrand({ onClose }: EditBrandProps) {
     };
     if (!brandId) return null;
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this brand"
+            />
+        );
+    }
     return (
         <div>
             <BrandForm

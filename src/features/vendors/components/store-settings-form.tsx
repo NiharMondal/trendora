@@ -19,6 +19,7 @@ import TDInput from "@/shared/form/TDInput";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { Form } from "@/shared/ui/form";
 import { StatusBadge } from "@/shared/ui/status-badge";
+import QueryError from "@/shared/components/query-error";
 
 /**
  * Store settings.
@@ -31,7 +32,12 @@ import { StatusBadge } from "@/shared/ui/status-badge";
  * it would be ignored by the backend.
  */
 export default function StoreSettingsForm() {
-    const { data, isLoading } = useMyStoreQuery();
+    const {
+        data,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useMyStoreQuery();
     const [updateStore, { isLoading: isSaving }] = useUpdateMyStoreMutation();
 
     const store = data?.result;
@@ -60,6 +66,15 @@ export default function StoreSettingsForm() {
     });
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load your store settings"
+            />
+        );
+    }
 
     if (!store) {
         return (

@@ -16,6 +16,7 @@ import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
+import QueryError from "@/shared/components/query-error";
 
 const apiMessage = (error: unknown) =>
     (error as { data?: { message?: string } })?.data?.message;
@@ -41,7 +42,12 @@ type Row = {
  * backend returns 400 and the toast says so.
  */
 export default function OutstandingBalances() {
-    const { data, isLoading } = useOutstandingBalancesQuery();
+    const {
+        data,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useOutstandingBalancesQuery();
     const [target, setTarget] = useState<Row | null>(null);
 
     const [periodStart, setPeriodStart] = useState(() => {
@@ -79,6 +85,15 @@ export default function OutstandingBalances() {
     };
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load outstanding balances"
+            />
+        );
+    }
 
     const balances = data?.result;
     const rows = balances?.vendors ?? [];

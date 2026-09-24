@@ -32,9 +32,9 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-01~~ | ~~`/products` has no filters, sort, search or pagination~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-02~~ | ~~Both navbar search boxes are inert~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-03~~ | ~~The home page renders only the hero slider~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
-| FE-04 | Forgot-password form submits to `console.log` (backend now ready) | P0 | M | auth |
-| FE-05 | No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere | P0 | M | robustness |
-| FE-06 | Only one component in the app handles `isError` | P0 | M | robustness |
+| ~~FE-04~~ | ~~Forgot-password form submits to `console.log`~~ | ✅ **FIXED** 2026-09-24 | — | auth |
+| ~~FE-05~~ | ~~No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
+| ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
 | FE-07 | Placeholder pages wired into live navigation | P1 | M | dashboard |
 | FE-08 | `/admin/user-management` is empty; the real table is unlinked | P1 | S | admin |
 | FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
@@ -205,64 +205,109 @@ product because only one has a rating — the rail fills as reviews arrive.
 
 ---
 
-### FE-04 · The forgot-password form submits to `console.log`
-**P0 · S · auth**
+### ~~FE-04~~ · The forgot-password form submits to `console.log`
+**✅ FIXED 2026-09-24 · auth**
 
-**Now:** `src/features/auth/components/forgot-password-form.tsx:24` is
-`const onSubmit = (data) => { console.log(data); }`. The page
-(`src/app/(auth)/forgot-password/page.tsx`), the zod schema
-(`src/features/auth/schemas/forgot-password.schema.ts`), the link from the login form
-(`login-form.tsx:90-93`) and the `auth-sync.tsx:9` whitelist all exist.
+**Was:** `forgot-password-form.tsx:24` was `const onSubmit = (data) => { console.log(data); }`, and
+the `/reset-password` page the emailed link points at did not exist.
 
-**Gap:** A user who has forgotten their password sees a complete, styled form with a "Send Reset
-Link" button that does nothing at all — no request, no error, no feedback.
+**Now:** both halves of XR-11 are built.
 
-**Fix — unblocked as of 2026-09-22.** This was previously blocked on the backend returning a
-valid access token in the response body; that is now fixed (backend **BE-01**), and
-`POST /auth/forgot-password` and `POST /auth/reset-password` both behave correctly and mail a
-single-use link.
+- `auth.api.ts` gained `forgotPassword` and `resetPassword` mutations.
+- `forgot-password-form.tsx` posts the email and swaps the form for a "Check your inbox" state
+  that renders the backend's generic message **verbatim**. It never branches on whether the account
+  exists. The confirmation copy tells Google-only users to use the Google button.
+- `app/(auth)/reset-password/page.tsx` reads `?token=` server-side and renders
+  `reset-password-form.tsx`. Its schema is `reset-password.schema.ts`: it mirrors the backend
+  `passwordRule` (6–30 characters, one letter, one number) and adds a confirm field checked only
+  here. A 400 (invalid, expired or used token) and a missing token both show the backend's
+  message plus a link back to `/forgot-password`. On success the page shows a toast and goes to
+  `/login`. It does not auto-login.
 
-So this is now purely frontend work: wire the form to a `forgotPassword` mutation, and add the
-`/reset-password` page the emailed link points at. **XR-11** carries the exact request/response
-contract, the five concrete steps, and the one behaviour not to get wrong — the forgot-password
-response is identical for every input on purpose, so the UI must never branch on whether the
-account exists.
-
----
-
-### FE-05 · No `error.tsx`, `not-found.tsx`, `loading.tsx` or `global-error.tsx` anywhere
-**P0 · M · robustness**
-
-**Now:** `find src/app -name "error.tsx" -o -name "not-found.tsx" -o -name "loading.tsx" -o -name "global-error.tsx"`
-returns **nothing**, across 58 `page.tsx` files.
-
-**Gap:** Any render throw shows the raw Next.js error overlay in development and a blank screen in
-production. Any bad URL — including `/faq`, `/contact-us` and the seven other dead footer links in
-FE-10 — shows the stock unstyled Next 404. There are no route-level loading boundaries.
-
-**Fix:** Add `src/app/global-error.tsx`, a branded `src/app/not-found.tsx`, and an `error.tsx` at
-each route-group root (`(root)`, `(dashboard)`, `(auth)`) with a reset button. Add `loading.tsx`
-where a page does server-side work.
+**Deviation from XR-11 step 4 (deliberate):** `/reset-password` was **not** added to
+`auth-sync.tsx`'s `PUBLIC_AUTH_PATHS`. That list holds the pages that *redirect signed-in users
+away*, so adding it would cause the very bounce step 4 set out to prevent. Keeping it off the list,
+and outside the `middleware.ts` matcher, is what lets a signed-in user follow the link.
 
 ---
 
-### FE-06 · Only one component in the entire app handles `isError`
-**P0 · M · robustness**
+### ~~FE-05~~ · No `error.tsx`, `not-found.tsx`, `loading.tsx` or `global-error.tsx` anywhere
+**✅ FIXED 2026-09-24 · robustness**
 
-**Now:** The only `isError` read in the codebase is
-`src/features/vendors/components/vendor-dashboard.tsx:30`.
+**Was:** none of the four existed, so a render throw showed a blank screen in production and every
+bad URL got the stock Next 404.
 
-**Gap:** Everywhere else a failed request renders as an empty list — indistinguishable from "you
-have no orders". The user is told nothing went wrong, so they do not retry.
+**Now:**
 
-Worst case: `src/app/(dashboard)/admin/(products)/product-list/[id]/page.tsx:19` is
-`if (isLoading) return;` — returning `undefined` renders nothing — and then `:27` dereferences
-`product?.result?.images[selectedImage].url`, which **throws on a product with no images**. With
-FE-05 unfixed, that is a blank screen.
+| File | Catches / shows |
+| --- | --- |
+| `app/global-error.tsx` | a throw in the root layout or `Providers`. It replaces the layout, so it renders its own `<html>`/`<body>`, imports `globals.css` itself and uses plain `<a>` links (a full reload). |
+| `app/error.tsx` | a throw in any route-group **layout**. A group's own `error.tsx` sits inside that layout, so it cannot catch it. |
+| `app/(root)/error.tsx` | storefront pages. The navbar and footer stay. |
+| `app/(auth)/error.tsx` | auth pages. Links back to `/login`. |
+| `app/(dashboard)/error.tsx` | dashboard pages. The sidebar stays, and it links to `roleHomePath(role)`. |
+| `app/not-found.tsx` | every unmatched URL, in every group. It has its own minimal header, because it renders outside all group layouts. |
+| `app/(root)/loading.tsx`, `(dashboard)/loading.tsx`, `(auth)/loading.tsx` | skeleton/spinner feedback on navigation. `/login` awaits `getServerSession`. |
 
-**Fix:** Establish one error pattern and apply it to the list/detail screens. `DataTable` already
-renders `NoDataFound` when empty; give it an error state too, so every table inherits the fix.
-Fix the unguarded array index at `product-list/[id]/page.tsx:27` regardless.
+All four `error.tsx` files render the shared `shared/components/error-state.tsx`. Its "Try again"
+button calls `router.refresh()` and then `reset()` inside a transition. `reset()` on its own only
+re-renders the client tree, so it can never recover an error thrown by a server component. The
+`digest` is shown as an "Error reference", so a user's report can be matched to the server log.
+
+`pnpm build` still reports `/`, `/products`, `/cart` and `/about-us` as `○ Static`. Verified
+against `pnpm start`: `/faq` returns 404 with the branded page.
+
+**Still open:** nothing calls `notFound()`. A bad `/products/<slug>` or `/stores/<slug>` matches a
+real route and renders client-side, so it answers 200 with FE-06's inline "not found" state, not
+this page.
+
+---
+
+### ~~FE-06~~ · Only one component in the entire app handles `isError`
+**✅ FIXED 2026-09-24 · robustness**
+
+**Was:** the only `isError` read was `vendor-dashboard.tsx:30`, and even that one got it wrong: any
+failure rendered "No store yet — Apply now", so a network blip told an approved seller to apply
+to sell. Its "Apply now" button also did nothing, because `NoDataFound` renders the action only
+when `onAction` is passed as well. Everywhere else, a failed request looked exactly like an empty
+list. `admin/product-list/[id]/page.tsx` returned `undefined` while loading and then **threw** on a
+product with no images (`images[selectedImage].url`).
+
+**Now there is one pattern, in three pieces:**
+
+- **`shared/utils/api-error.ts`**: `getApiErrorStatus(error)` returns the HTTP status, or
+  `undefined` when the server never answered. `getApiErrorMessage(error, fallback)` returns the
+  backend's `message` from the error envelope. When the request never reached the server it says
+  that, rather than "Something went wrong". Also `isNotFoundError(error)`. This is the helper FE-27
+  asks for.
+- **`shared/components/query-error.tsx`** (`QueryError`) is the inline "this request failed"
+  state: the backend's message plus a "Try again" button wired to the hook's `refetch`. An optional
+  `notFound` prop gives a 404 its own copy and no retry, because a missing record is not a failure.
+- **`DataTable` takes `error` and `onRetry`.** It renders `QueryError` instead of rows **even
+  when stale `data` from a previous page is still cached**. RTK Query keeps the last good result, so
+  a failed page 2 would otherwise still show page 1's rows. Pagination is hidden while in the error
+  state.
+
+**Where it is applied:**
+
+| | |
+| --- | --- |
+| Tables | all 18 `DataTable` consumers pass `error={listError} onRetry={refetchList}`. `order-table.tsx` fed `isLoading` into `isFetching`, so a retry or page change showed no skeleton; fixed. `recent-orders-table.tsx` had no loading state at all; fixed. |
+| Detail pages | `(root)/products/[slug]`, `admin/product-list/[id]` (plus the image crash: a "No image" placeholder), `store-front.tsx` (the store and, separately, its product grid) and `order-details.tsx`. Each shows "not found" copy on a 404 and a retry otherwise. |
+| Edit forms | brand, category, size, size group, review, `update-product`, `vendor-update-product`, `profile-component` and `store-settings-form`. **A failed load no longer renders the form.** Its blank defaults would have been saved over the real record. `profile-component` also gained the loading gate it never had. |
+| Lists and widgets | wishlist, addresses, store directory, outstanding balances, featured table and `marketplace-overview`, which rendered every tile as `0` on failure. |
+| `vendor-dashboard.tsx` | a **403** shows the backend's message verbatim. `requireApprovedVendor` sends an actionable one for each case: no store, pending, rejected (with the reason) or suspended. It comes with a working link to `/vendor/apply`. Any other failure is a real error with a retry. |
+
+Render-time throws are a separate concern and belong to the FE-05 boundaries. `QueryError` is for
+the part of a page that a query feeds.
+
+**Deliberately left:**
+
+- The home-page sections still render `null` on failure. They self-hide by design, and one
+  missing shelf is better than an error box on the landing page.
+- Option lists inside forms (category, size, product and billing selects) still show an empty
+  dropdown when their request fails.
+- Nothing calls `notFound()` (see FE-05).
 
 ---
 
@@ -331,7 +376,7 @@ it can be removed, or wired the way FE-02 wired the navbar — `useNavbarSearch`
 `/not-found` (:5), `/maintenance` (:6), `/faq` (:10), `/privacy-policy` (:11), `/cookie-policy`
 (:12, twice), `/terms-and-conditions` (:13) and `/dashboard-wishlist` (:19).
 
-**Gap:** Every one is a hard 404 — shown with the stock Next error page because of FE-05. The last
+**Gap:** Every one is a 404 — now at least the branded `not-found.tsx` (FE-05). The last
 is a typo for `/dashboard/wishlist`. A site with no privacy policy or terms page is also a
 compliance problem before launch.
 
@@ -600,7 +645,7 @@ and the fifth (`new-arrivals.tsx`) was replaced by an RTK Query rail.
 ### FE-26 · Five stray `console.log`s
 **P2 · S · cleanup**
 
-`forgot-password-form.tsx:24` (which **is** the feature — FE-04),
+~~`forgot-password-form.tsx:24`~~ (removed by FE-04),
 `brands/components/edit-brand.tsx:44` (harmless leftover after a working mutation),
 `products/components/product-details/related-products.tsx:21`,
 `home/components/new-arrivals.tsx:17` (swallows a fetch error),
@@ -613,7 +658,7 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
 ### FE-27 · Thirty-nine `any`s, eight of them in type definitions
 **P2 · M · types**
 
-`pnpm lint` passes at **52 warnings / 0 errors**; treat that as the baseline and do not add to it.
+`pnpm lint` passes at **51 warnings / 0 errors** (was 52 before FE-04); treat that as the baseline and do not add to it.
 
 - **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
   `reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
@@ -624,7 +669,7 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
   (`phone: any`).
 - 4 are `as any` around `form.setValue` in `shared/form/TDImageUpload.tsx:57,58,139,140`.
 
-**Fix:** Extract one `getApiErrorMessage(error)` helper and replace all 26 catches — that alone
+**Fix:** The helper now exists — `getApiErrorMessage(error)` in `shared/utils/api-error.ts` (FE-06). Replace all 26 catches with it — that alone
 clears roughly half the lint baseline. Then type the eight definition fields from the Prisma
 schema.
 
@@ -791,8 +836,7 @@ client.
   The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:127` calls correctly.
 - `DELETE /users/:id` (`src/features/users/api/user.api.ts:48-53`) — no such backend route.
 
-**Backend routes nothing here calls:** `POST /auth/forgot-password` and `POST /auth/reset-password` (FE-04, XR-11);
-`GET /products/:productId/variants` and `/images` (both arrive nested on the product);
+**Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
 (FE-19); `GET /address` admin list; the slide write CRUD (FE-14); `GET /payouts/:id`;
 `GET /refunds/:id` (FE-18). See FE-23.
@@ -968,7 +1012,7 @@ documented only in `CLAUDE.md`.
 
 ---
 
-### XR-11 · Password reset — backend done, this side pending
+### XR-11 · Password reset — ✅ both sides done 2026-09-24
 **P1 · M · auth**
 
 **Updated 2026-09-22.** The backend half has landed; **this side is now the only thing missing.**
@@ -978,8 +1022,8 @@ documented only in `CLAUDE.md`.
 | `POST /auth/forgot-password` | ✅ emails a single-use link, generic 200, token never in the body |
 | `POST /auth/reset-password` | ✅ redeems the token and sets the new password |
 | Email delivery + token storage | ✅ SHA-256 hashed, TTL, single-use, supersede, per-account cooldown |
-| Forgot-password form here | ❌ still `console.log(data)` (FE-04) |
-| `/reset-password` page here | ❌ does not exist |
+| Forgot-password form here | ✅ wired (FE-04) |
+| `/reset-password` page here | ✅ built (FE-04) |
 
 **What to build, and the contract it must meet:**
 

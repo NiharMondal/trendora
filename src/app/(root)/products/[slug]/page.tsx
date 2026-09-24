@@ -5,6 +5,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import Container from "@/shared/components/container";
+import QueryError from "@/shared/components/query-error";
 import ProductDetails from "@/features/products/components/product-details/product-details";
 import RelatedProducts from "@/features/products/components/product-details/related-products";
 import ReviewSection from "@/features/reviews/components/review-section/review-section";
@@ -18,10 +19,26 @@ export default function ProductDetailsPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = use(params);
-    const { data, isLoading } = useProductBySlugQuery(slug);
+    const { data, isLoading, error, refetch } = useProductBySlugQuery(slug);
     const product = data?.result;
 
     if (isLoading) return <SpinnerLoading />;
+    if (error || !product) {
+        return (
+            <Container className="py-10">
+                <QueryError
+                    error={error}
+                    onRetry={refetch}
+                    title="Could not load this product"
+                    notFound={{
+                        title: "Product not found",
+                        description:
+                            "This listing may have been removed or is no longer on sale.",
+                    }}
+                />
+            </Container>
+        );
+    }
 
     return (
         <Container className="py-10 space-y-5">

@@ -85,6 +85,14 @@ export type DataTableProps<T, S = unknown> = {
     rowClassName?: (row: T) => string;
     onRowClick?: (row: T) => void;
     isFetching?: boolean;
+    /**
+     * The query hook's `error`. When set the table renders an error state with
+     * the backend's message instead of rows — even if stale `data` from a
+     * previous page is still cached — so a failure never reads as "no data".
+     */
+    error?: unknown;
+    /** Retry for the error state; pass the hook's `refetch`. */
+    onRetry?: () => void;
     expandable?: ExpandableConfig<T, S>;
     /** Pass the object returned by `useTableFilters` to render the toolbar. */
     filters?: TableFilters;

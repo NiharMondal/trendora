@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
     Banknote,
     Boxes,
     Package,
     Star,
+    Store,
     TrendingUp,
     Wallet,
 } from "lucide-react";
@@ -15,6 +17,11 @@ import { orderStatusMap, productStatusMap } from "@/features/orders/constants/st
 import { useVendorDashboardQuery } from "@/features/vendors/api/vendor.api";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
+import QueryError from "@/shared/components/query-error";
+import {
+    getApiErrorMessage,
+    getApiErrorStatus,
+} from "@/shared/utils/api-error";
 import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import type { TOrderStatus, TProductModerationStatus } from "@/features/orders/types/status.types";
@@ -27,21 +34,39 @@ import type { TOrderStatus, TProductModerationStatus } from "@/features/orders/t
  * will actually be paid — not gross sales.
  */
 export default function VendorDashboard() {
-    const { data, isLoading, isError } = useVendorDashboardQuery();
+    const router = useRouter();
+    const { data, isLoading, error, refetch } = useVendorDashboardQuery();
 
     if (isLoading) return <SpinnerLoading />;
 
-    const dashboard = data?.result;
-
-    if (isError || !dashboard) {
+    // The backend answers 403 with an actionable message for every store that
+    // is not approved yet — none, pending, rejected (with the reason) or
+    // suspended — so show that message verbatim. Anything else is a real
+    // failure: telling an approved seller to "apply" because the network
+    // blipped was the old behaviour.
+    if (getApiErrorStatus(error) === 403) {
         return (
             <NoDataFound
-                title="No store yet"
-                description="Apply to sell on Trendora to get a seller dashboard."
-                actionLabel="Apply now"
+                icon={Store}
+                title="No active store"
+                description={getApiErrorMessage(error)}
+                actionLabel="Go to seller application"
+                onAction={() => router.push("/vendor/apply")}
             />
         );
     }
+    if (error) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load your dashboard"
+            />
+        );
+    }
+
+    const dashboard = data?.result;
+    if (!dashboard) return null;
 
     const { store, overview, ordersByStatus, productsByStatus, topProducts } =
         dashboard;
