@@ -50,7 +50,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-19~~ | ~~No vendor store-review screen~~ | ✅ **FIXED** 2026-09-24 | — | vendor |
 | ~~FE-20~~ | ~~Two wishlist pages, one of them an empty shell~~ | ✅ **FIXED** 2026-09-24 | — | storefront |
 | ~~FE-21~~ | ~~Product reviews are not gated on purchase~~ | ✅ **FIXED** 2026-09-24 | — | reviews |
-| FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
+| ~~FE-22~~ | ~~Customer `/dashboard` is a link grid, not a dashboard~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
 | FE-24 | Two RTK tags are never provided (the misdeclared one fixed in FE-14) | P2 | S | api |
 | FE-25 | 1 orphaned component file (was 11) | P2 | S | cleanup |
@@ -789,12 +789,51 @@ need a flag or a lookup per review.
 
 ## P2 — cleanup, and features never started
 
-### FE-22 · Customer `/dashboard` is a link grid, not a dashboard
-**P2 · M · dashboard**
+### ~~FE-22~~ · Customer `/dashboard` is a link grid, not a dashboard
+**✅ FIXED 2026-09-24 · dashboard** (backend half: **BE-49**, branch `BE-buyer-summary`)
 
-`src/app/(dashboard)/dashboard/page.tsx` maps over `customerDashboardLinks` and renders one card
-per sidebar entry — a second copy of the navigation. No order count, no spend, no recent activity,
-no open refunds. The vendor dashboard beside it is a real dashboard.
+**Was:** `(dashboard)/dashboard/page.tsx` mapped over `customerDashboardLinks` and rendered one card
+per sidebar entry, a second copy of the navigation. It showed no numbers at all.
+
+**Needed from the backend:** lifetime spend has no endpoint, and computing it here would mean paging
+every order down. **`GET /orders/my-summary`** (BE-49) aggregates it server-side.
+
+**Now:** `features/orders/components/buyer-dashboard.tsx` shows:
+
+- **A greeting** with the shopper's first name.
+- **Four tiles** (`useMyOrderSummaryQuery`):
+  - Orders, linking to My Orders.
+  - **Total spent**: completed payments minus money actually refunded.
+  - **On the way**: parcels pending, processing or shipped, with the delivered count as a hint.
+  - **Refunds owed**: amount and count, styled as a warning when any are open, linking to My
+    Refunds (FE-18).
+- **Up to three "next steps"**, each shown only when it is true:
+  - Unreviewed delivered products first, **each linking to its product page**, where a product
+    review is written (FE-21).
+  - Wishlist items saved.
+  - "Start shopping", if the buyer has never ordered.
+- **Recent orders**: the last three, with order number, date, parcel count, rollup status and
+  total.
+- Loading skeletons, the FE-06 error state on each query, and empty states.
+
+`myOrderSummary` provides `orders`, `refunds` and `reviews`, so cancelling a parcel, a refund
+landing or posting a review all refresh the tiles.
+
+**A VENDOR landing on `/dashboard` sees their purchases, not their sales.** The endpoint is scoped
+to the caller as a buyer, and `/vendor` is the seller dashboard.
+
+**Verified live** with two temporary cash-on-delivery orders, one delivered and one pending. 8 of
+8 checks passed:
+
+- Orders, on-the-way and delivered each move by the right amount.
+- **Spend counts only the paid order**: +152.45, exactly A's total, and nothing for the pending B.
+- The delivered product appears under awaiting-review with its slug.
+- The *seller* vendor1's own summary stays at 0.
+- Cancelling B moves it from on-the-way to cancelled.
+- There is a 401 without a token.
+
+Both orders and their addresses were deleted afterwards, and stock was confirmed at its starting
+values. The page was not clicked through in a browser.
 
 ---
 

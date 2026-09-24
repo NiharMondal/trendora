@@ -190,3 +190,18 @@ export type TOrderAnalytics = {
 	}[];
 	recentOrders: TOrder[];
 };
+
+/**
+ * `GET /orders/my-summary` — the shopper dashboard's numbers, for the caller's
+ * own purchases (a VENDOR gets what they bought, not what they sold).
+ */
+export type TBuyerSummary = {
+	totalOrders: number;
+	/** Completed payments minus money actually refunded. */
+	totalSpent: number;
+	parcels: { inProgress: number; delivered: number; canceled: number };
+	/** Refunds still owed: pending, being sent, or failed. */
+	openRefunds: { count: number; amount: number };
+	/** Delivered products (still on sale) the buyer has not reviewed — the first three, plus the total. */
+	awaitingReview: { count: number; products: { name: string; slug: string }[] };
+};

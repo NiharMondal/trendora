@@ -53,7 +53,9 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
   seller portal) and `dashboard` (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side
   via `getServerSession(authOptions)` and renders the role-appropriate sidebar (the three link sets
-  are in `layouts/dashboard/dashboard-navlink.ts`).
+  are in `layouts/dashboard/dashboard-navlink.ts`). `/dashboard` itself is the shopper home
+  (`orders/components/buyer-dashboard.tsx`, backed by `GET /orders/my-summary`). It shows the
+  caller's *purchases*, even for a VENDOR.
 - `api/auth/[...nextauth]` — NextAuth handler.
 
 **Error and loading boundaries.** Each route group has an `error.tsx` rendering the shared

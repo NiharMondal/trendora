@@ -1,5 +1,6 @@
 import { TServerResponse } from "@/shared/types/common.types";
 import {
+    TBuyerSummary,
     TCreateOrderPayload,
     TCreateOrderResult,
     TOrder,
@@ -35,6 +36,15 @@ export const orderApi = baseApi.injectEndpoints({
                 };
             },
             providesTags: ["orders"],
+        }),
+
+        /**
+         * The shopper dashboard's numbers. Provides every tag whose mutations
+         * move them — cancelling a parcel, a refund landing, posting a review.
+         */
+        myOrderSummary: builder.query<TServerResponse<TBuyerSummary>, void>({
+            query: () => ({ url: "/orders/my-summary", method: "GET" }),
+            providesTags: ["orders", "refunds", "reviews"],
         }),
 
         getMyOrders: builder.query<
@@ -83,6 +93,7 @@ export const orderApi = baseApi.injectEndpoints({
 });
 
 export const {
+    useMyOrderSummaryQuery,
     useAllOrderQuery,
     useCreateOrderMutation,
     useGetMyOrdersQuery,

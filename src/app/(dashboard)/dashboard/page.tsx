@@ -1,30 +1,11 @@
-import Link from "next/link";
+import { Metadata } from "next";
 
-import { customerDashboardLinks } from "@/layouts/dashboard/dashboard-navlink";
+import BuyerDashboard from "@/features/orders/components/buyer-dashboard";
+
+export const metadata: Metadata = {
+    title: "Trendora | My Dashboard",
+};
 
 export default function UserDashboardPage() {
-    return (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-8">
-            {customerDashboardLinks?.map((item) => (
-                <div
-                    key={item.url}
-                    className="border bg-white rounded-lg hover:border hover:border-primary duration-200 h-[180px] md:h-[200px] shadow"
-                >
-                    {item.url && (
-                        <Link
-                            href={item?.url}
-                            className=" p-5 flex items-center justify-center flex-col space-y-2 min-w-full min-h-full"
-                        >
-                            <span className="text-primary">
-                                {item.icon && <item.icon />}
-                            </span>
-                            <p className="font-normal text-lg tracking-wider">
-                                {item.title}
-                            </p>
-                        </Link>
-                    )}
-                </div>
-            ))}
-        </div>
-    );
+    return <BuyerDashboard />;
 }
