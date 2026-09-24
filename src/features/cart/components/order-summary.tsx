@@ -107,11 +107,11 @@ export default function OrderSummary() {
                 />
             </div>
 
-            <Link href={"/checkout"}>
-                <Button className="w-full uppercase font-medium text-sm tracking-wider mt-2">
+            <Button className="w-full uppercase font-medium text-sm tracking-wider mt-2" asChild>
+                <Link href={"/checkout"}>
                     Proceed to Checkout
-                </Button>
-            </Link>
+                </Link>
+            </Button>
         </div>
     );
 }

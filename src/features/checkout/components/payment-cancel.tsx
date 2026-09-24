@@ -34,12 +34,12 @@ export default function PaymentCancel({ orderNumber }: PaymentCancelProps) {
                 )}
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                    <Link href="/checkout">
-                        <Button>Back to checkout</Button>
-                    </Link>
-                    <Link href="/cart">
-                        <Button variant="outline">View cart</Button>
-                    </Link>
+                    <Button asChild>
+                        <Link href="/checkout">Back to checkout</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                        <Link href="/cart">View cart</Link>
+                    </Button>
                 </div>
             </div>
         </Container>

@@ -54,6 +54,7 @@ export default function RelatedProducts({ productId }: { productId: string }) {
                         key={index}
                         size="icon"
                         className="h-3 w-3 rounded-full p-0"
+                        aria-label={`Go to related products page ${index + 1} of ${count}`}
                         onClick={() => api?.scrollTo(index)}
                     ></Button>
                 ))}

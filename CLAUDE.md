@@ -26,6 +26,23 @@ that way. Treat 11 as the baseline, and don't add to it.
 - A thrown JS error (`signIn`, a Cloudinary upload) is narrowed with `error instanceof Error`.
 - An unknown payload from the backend is typed `unknown`, not `any`.
 
+**Accessibility is linted (FE-32).** `eslint.config.mjs` enforces 12 `jsx-a11y` rules as
+**errors**. Lint catches:
+
+- a clickable `<div>` / `<img>` (use a `<button type="button">`);
+- an unlabelled field;
+- a bad `alt`.
+
+It **cannot** see inside our components, so by hand:
+
+- every icon-only `Button` / `TDButton` needs an `aria-label` (row-specific in tables);
+- a button that goes somewhere is `<Button asChild><Link …/></Button>`, never
+  `<Link><Button/></Link>`;
+- a toggle gets `aria-pressed`.
+
+Page content belongs inside the `<main id="main-content">` each route-group layout already
+renders. Don't add another `<main>`.
+
 **`pnpm build` must be run as the script (`next build --turbopack`).** A bare `next build` uses
 webpack and fails on `@react-pdf/renderer`'s ESM-only package in
 `features/orders/components/my-orders/pdf-download-print.tsx`.

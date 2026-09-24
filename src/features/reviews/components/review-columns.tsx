@@ -54,7 +54,7 @@ export const reviewColumns = (
         key: "actions",
         header: "Actions",
         cell: (row) => (
-            <Button onClick={() => handleAction(row)}>
+            <Button onClick={() => handleAction(row)} aria-label={`Moderate review by ${row.user.name}`}>
                 <Edit />
             </Button>
         ),

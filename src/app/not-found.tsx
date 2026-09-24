@@ -25,7 +25,11 @@ export default function NotFound() {
                     </Link>
                 </Container>
             </header>
-            <main className="flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
+            <main
+                id="main-content"
+                tabIndex={-1}
+                className="flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center outline-none"
+            >
                 <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5">
                     <Compass
                         className="size-9 text-primary"

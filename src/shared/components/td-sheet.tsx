@@ -16,6 +16,8 @@ type TDSheetProps = {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     title?: string;
+    /** Optional; read out after the title when the sheet opens. */
+    description?: string;
     className?: string;
     sheetWidth?: string;
     sheetHeight?: string;
@@ -25,6 +27,7 @@ export default function TDSheet({
     isOpen,
     setIsOpen,
     title = "Title",
+    description,
     sheetWidth,
     sheetHeight,
     children,
@@ -36,6 +39,7 @@ export default function TDSheet({
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetContent
                 side={!isDesktop ? "bottom" : "right"}
+                {...(!description && { "aria-describedby": undefined })}
                 className={cn(
                     "[&>button]:hidden",
                     { "min-w-2xl": isDesktop },
@@ -47,10 +51,13 @@ export default function TDSheet({
             >
                 <SheetHeader className="flex flex-row items-center justify-between gap-x-5 border-b border-muted pb-4">
                     <SheetTitle className="text-2xl w-fit">{title}</SheetTitle>
-                    <SheetDescription className="sr-only"></SheetDescription>
+                    {description ? (
+                        <SheetDescription className="sr-only">{description}</SheetDescription>
+                    ) : null}
                     <Button
                         className="bg-muted hover:bg-muted rounded-full text-muted-foreground hover:text-destructive scale-120 hover:rotate-90"
                         onClick={() => setIsOpen(false)}
+                        aria-label="Close"
                         variant={"link"}
                         size={"icon-sm"}
                     >

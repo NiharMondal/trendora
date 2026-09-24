@@ -147,17 +147,17 @@ export const vendorProductColumns = ({
                     </Button>
                 )}
 
-                <Link href={`/products/${row.slug}`}>
-                    <Button variant="ghost" size="icon" title="View">
+                <Button variant="ghost" size="icon" title="View" asChild>
+                    <Link href={`/products/${row.slug}`}>
                         <Eye className="size-4" />
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
 
-                <Link href={editHref(row)}>
-                    <Button variant="ghost" size="icon" title="Edit">
+                <Button variant="ghost" size="icon" title="Edit" asChild>
+                    <Link href={editHref(row)}>
                         <Edit className="size-4" />
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
 
                 <Button
                     variant="ghost"

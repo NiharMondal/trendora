@@ -155,7 +155,13 @@ export default function TDImageUploadField<T extends FieldValues>({
 
     return (
         <div className="space-y-2">
+            {/* Drag-and-drop is a mouse enhancement — there is no keyboard way
+                to drag a file — and the keyboard path is the "click to browse"
+                button inside. So the drop listeners here are deliberate. */}
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <div
+                role="group"
+                aria-label="Image upload"
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -178,6 +184,7 @@ export default function TDImageUploadField<T extends FieldValues>({
                         />
                         <button
                             type="button"
+                            aria-label="Remove image"
                             onClick={handleRemove}
                             className="absolute -top-2 -right-2 bg-black text-white rounded-full p-1"
                         >
@@ -185,19 +192,20 @@ export default function TDImageUploadField<T extends FieldValues>({
                         </button>
                     </>
                 ) : (
-                    <div
+                    <button
+                        type="button"
                         className={cn(
-                            "w-full h-full flex items-center justify-center cursor-pointer",
+                            "w-full h-full flex items-center justify-center cursor-pointer rounded-md focus-visible:outline-2 focus-visible:outline-primary",
                             className,
                         )}
                         onClick={() => fileRef.current?.click()}
                     >
-                        <p className="text-muted-foreground text-sm text-center px-2">
+                        <span className="text-muted-foreground text-sm text-center px-2">
                             {isDragging
                                 ? "Drop to upload"
                                 : "Drop an image here, or click to browse"}
-                        </p>
-                    </div>
+                        </span>
+                    </button>
                 )}
                 {form.formState.errors[urlName] && (
                     <p className="text-red-500 text-xs mt-1">

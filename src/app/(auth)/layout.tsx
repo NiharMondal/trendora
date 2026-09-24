@@ -9,7 +9,9 @@ export default function AuthLayout({
     return (
         <section>
             <AuthNavbar />
-            <Container>{children}</Container>
+            <main id="main-content" tabIndex={-1} className="outline-none">
+                <Container>{children}</Container>
+            </main>
         </section>
     );
 }

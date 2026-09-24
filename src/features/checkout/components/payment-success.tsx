@@ -51,12 +51,12 @@ export default function PaymentSuccess({ orderNumber }: PaymentSuccessProps) {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                    <Link href="/dashboard/my-orders">
-                        <Button>View my orders</Button>
-                    </Link>
-                    <Link href="/products">
-                        <Button variant="outline">Continue shopping</Button>
-                    </Link>
+                    <Button asChild>
+                        <Link href="/dashboard/my-orders">View my orders</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                        <Link href="/products">Continue shopping</Link>
+                    </Button>
                 </div>
             </div>
         </Container>

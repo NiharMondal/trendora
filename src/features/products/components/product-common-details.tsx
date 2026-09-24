@@ -112,21 +112,23 @@ export default function ProductCommonDetails({
                     )}
                 >
                     {product?.variants?.map((variant) => (
-                        <div
+                        <button
+                            type="button"
                             onClick={() => handleVariantInfo(variant)}
                             key={variant.id}
+                            aria-pressed={variant?.id === variantInfo.id}
                             className={cn(
-                                "cursor-pointer ring-1 ring-muted p-3 rounded-md text-sm font-light",
+                                "cursor-pointer ring-1 ring-muted p-3 rounded-md text-sm font-light text-left",
                                 {
                                     "ring-2 ring-primary":
                                         variant?.id === variantInfo.id,
                                 },
                             )}
                         >
-                            <p>Color: {variant.color}</p>
-                            <p>Size: {variant.size?.name}</p>
-                            <p>Price: {variant.price}</p>
-                        </div>
+                            <span className="block">Color: {variant.color}</span>
+                            <span className="block">Size: {variant.size?.name}</span>
+                            <span className="block">Price: {variant.price}</span>
+                        </button>
                     ))}
                 </div>
             </div>
@@ -156,6 +158,9 @@ export default function ProductCommonDetails({
                             className="hover:bg-destructive/10"
                             onClick={toggleWishlist}
                             disabled={isWishlistLoading || !product?.id}
+                            // The tooltip is visual only — it is not an accessible name.
+                            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                            aria-pressed={isWishlisted}
                         >
                             <Heart
                                 className={cn({

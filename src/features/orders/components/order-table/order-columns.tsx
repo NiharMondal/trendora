@@ -119,12 +119,12 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <Link href={`/admin/order-details/${order.id}`}>
-                    <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/admin/order-details/${order.id}`}>
                         <FileSearch />
                         Details
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
             );
         },
     },

@@ -82,6 +82,7 @@ export default function FeaturedTable() {
                 </div>
                 <Input
                     placeholder="Search here..."
+                    aria-label="Search products"
                     className="max-w-lg"
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -146,20 +147,26 @@ export default function FeaturedTable() {
                                 </TableCell>
                                 <TableCell className="text-right space-x-2">
                                     {/** redirect to product details page */}
-                                    <Link href={`/admin/product-list/${p.id}`}>
-                                        <Button variant={"secondary"}>
+                                    {/* Button asChild, not <Link><Button>: a button inside a link is
+                                        invalid HTML and reads as two controls. */}
+                                    <Button variant={"secondary"} asChild>
+                                        <Link
+                                            href={`/admin/product-list/${p.id}`}
+                                            aria-label={`View ${p.name}`}
+                                        >
                                             <Eye />
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
 
                                     {/** redirect to product update page */}
-                                    <Link
-                                        href={`/admin/product-list/update-product/${p.id}`}
-                                    >
-                                        <Button variant={"outline"}>
+                                    <Button variant={"outline"} asChild>
+                                        <Link
+                                            href={`/admin/product-list/update-product/${p.id}`}
+                                            aria-label={`Edit ${p.name}`}
+                                        >
                                             <Edit />
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         );

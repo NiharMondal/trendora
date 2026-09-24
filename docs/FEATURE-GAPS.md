@@ -60,7 +60,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-29~~ | ~~No `.env.example`; README is scaffold boilerplate~~ | ✅ **FIXED** 2026-09-24 | — | onboarding |
 | ~~FE-30~~ | ~~No env validation — a missing tax rate silently means 0%~~ | ✅ **FIXED** 2026-09-24 | — | config |
 | FE-31 | 13 raw `<img>` tags bypass `next/image` | P2 | S | performance |
-| FE-32 | Accessibility: three `aria-*` attributes in the whole app | P2 | L | a11y |
+| ~~FE-32~~ | ~~Accessibility: three `aria-*` attributes in the whole app~~ | ✅ **FIXED** 2026-09-24 | — | a11y |
 | FE-33 | No test runner, no CI | P2 | L | ops |
 | FE-34 | No vendor analytics, order detail or profile screens | P2 | M | vendor |
 | FE-35 | No admin settings or vendor detail screens | P2 | M | admin |
@@ -1107,15 +1107,61 @@ images dominate the payload.
 
 ---
 
-### FE-32 · Accessibility
-**P2 · L · a11y**
+### ~~FE-32~~ · Accessibility
+**✅ FIXED 2026-09-24 · a11y** (branch `FE-32-accessibility-pass`)
 
-Three `aria-*` attributes in all of `src/features`, `src/app` and `src/layouts` combined.
-Icon-only buttons with no accessible name (the worst example, `admin/user/page.tsx`, was deleted in FE-08). Search inputs with no
-`<label>` and no `<form>`. `lang="en"` hardcoded at `src/app/layout.tsx:31`. No skip link, no
-focus management on the `TDSheet`/`TDModal` overlays.
+**Was:** three `aria-*` attributes in the app at audit time. By the time the pass started, earlier
+items had added some, bringing it to 34. Icon-only buttons had no name, search inputs had no label,
+there was no skip link, and clicks were bound to `<div>`s and `<img>`s.
 
----
+**How it was inventoried.** Hand-rolled regexes proved unreliable (`() =>` fooled the first one),
+so there were two tools:
+
+1. **`eslint-plugin-jsx-a11y`**, already installed and registered by `next/core-web-vitals` but
+   with only a few rules enabled, was run with its full rule set. It found 17 issues.
+2. **A JSX-aware script** for what the plugin *cannot* see: an icon-only **shadcn `<Button>`**,
+   which is a React component rather than a DOM `<button>`. It found 19 nameless buttons.
+
+**Fixed:**
+
+| Problem | Fix |
+| --- | --- |
+| **19 nameless buttons** | Every icon-only button now has an `aria-label`. Row menus are row-specific ("Actions for Nike"), not ten identical "More actions". Carousel dots say "Go to slide 2 of 5", with `aria-current` on the active dot. The wishlist heart has `aria-pressed`, since its tooltip is not an accessible name. Also labelled: quantity ±, cart remove, address edit/delete, sheet close, image remove and back. |
+| **17 buttons nested in `<Link>`** | `<Link><Button>` is a button inside a link: invalid HTML, announced as two controls. A codemod converted 16 to `<Button asChild><Link>`, and the hero's "Shop Now" (a `TDButton`, which has no `asChild`) was converted by hand. |
+| **Click targets keyboard users could not reach** | Real `<button>`s with state: the admin and **public** product-image thumbnails (`aria-pressed`; the public ones were clickable `next/image`s the plugin could not see), **variant pickers** (`aria-pressed`), **checkout's saved-address picker** (`role="radiogroup"` / `role="radio"` + `aria-checked`), and the upload "click to browse" area. Block `<p>`s inside those buttons became `<span className="block">`, because `<p>` is invalid in a button. |
+| **Unlabelled inputs** | `aria-label` on the store-directory and featured-table searches and the payout reference. The footer newsletter field is `type="email"`, labelled, with `autoComplete`, and its decorative icon is `aria-hidden`. |
+| **Bad `alt` text** | The public product page's main image had `alt={productId}`, so a screen reader read out a UUID. It now uses the product name. The admin image uses the product name. Thumbnails inside labelled buttons use `alt=""`, because the button carries the name. |
+| **No skip link, no `<main>`** | A "Skip to main content" link is the first element in `<body>` (`app/layout.tsx`), visible on focus. Each route-group layout renders `<main id="main-content" tabIndex={-1}>`, as does the 404. The home page's own `<main>` became a `<div>`, since two are invalid. |
+| **Overlays** | Verified that `TDModal` and `TDSheet` are Radix Dialog with nothing overriding its focus trap, Escape or focus return, and each has a title. Both now pass `aria-describedby={undefined}` when there is no description, replacing an empty `sr-only` `SheetDescription` and Radix's "Missing Description" warning. `TDSheet` gained an optional `description` prop. |
+| Also | `type="button"` on the quantity ± buttons, which submitted any enclosing form. A no-op `onClick={() => setCurrentIndex(currentIndex)}` was removed. |
+
+**Kept on purpose, with a rule-specific `eslint-disable` and a comment:**
+
+- Escape-to-close on the mobile search `<form>`.
+- `autoFocus` on the search panel the user just opened.
+- The upload's drag-and-drop listeners. There is no keyboard way to drag a file, and the keyboard
+  path is the button inside.
+
+**Now enforced:** `eslint.config.mjs` enables 12 jsx-a11y rules as **errors** for `src/**/*.tsx`
+(`shared/ui/` excepted, as vendored shadcn). The app is at **0**, so a new clickable `<div>` or
+unlabelled field fails `pnpm lint`. `label-has-associated-control` is told `Input` is a control, so
+an implicit `<label>` around it passes. **The rules still cannot see inside our own components**, so
+an icon-only `<Button>` needs its `aria-label` by hand.
+
+**Verified:**
+
+- `pnpm lint` is 0 errors, and the warning baseline is unchanged at 11.
+- `pnpm build` passes, and the nameless-button script reports 0.
+- `aria-*` attributes went from 34 to 69.
+- On `pnpm start`, the skip link is in the served HTML on `/`, `/products`, `/login` and the 404.
+
+**Known limitation:** the `#main-content` target is inside `Providers`, and `PersistGate
+loading={null}` means **no page content is server-rendered**. Between first paint and hydration,
+the skip link has nothing to jump to; after hydration it works. The fix is the `PersistGate` gating
+itself, which blanks prerendered content for every page, and was out of scope here.
+
+**Not covered:** colour contrast was not measured, and no screen reader or keyboard walkthrough was
+done in a browser. `lang="en"` stays as it is, because the app has no other locale (FE-36).
 
 ### FE-33 · No test runner, no CI
 **P2 · L · ops**
