@@ -44,7 +44,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
 | ~~FE-14~~ | ~~No admin hero-slider screen despite full CRUD API~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | ~~FE-15~~ | ~~Five search boxes are silent no-ops~~ | ✅ **FIXED** 2026-09-24 | — | tables |
-| FE-16 | Admin user actions — backend ready, UI not wired | P1 | S | admin |
+| ~~FE-16~~ | ~~Admin user actions — backend ready, UI not wired~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
 | FE-18 | No customer-facing refunds view | P1 | M | orders |
 | FE-19 | No vendor store-review screen | P1 | M | vendor |
@@ -357,7 +357,7 @@ table lived at the unlinked `/admin/user`, and the `DataTable` version,
   nothing.
 - **`user-management-columns.tsx` was rewritten.** It has four columns: an avatar with an initial
   fallback (it had been `<img src="">`), name and email, phone, a role pill, and joined date. Its
-  Edit and Delete buttons had no handlers and were removed. Wiring real actions is FE-16.
+  Edit and Delete buttons had no handlers and were removed. Real actions arrived in FE-16.
 - **`TUser.email` and `TUser.role` are `string | null`**, per the XR-05 caveat. A user with no
   `Auth` row renders "No login credentials" and a `-` role.
 - The search placeholder now says what the backend searches: name, email and phone.
@@ -545,32 +545,58 @@ one, change the other.
 
 ---
 
-### FE-16 · Admin user actions — backend ready, UI not wired
-**P1 · S · admin**
+### ~~FE-16~~ · Admin user actions
+**✅ FIXED 2026-09-24 · admin** (backend half: **BE-45**, branch `BE-user-admin-list`)
 
-**Now:** the inert buttons are gone. The Eye and Block buttons went with `/admin/user`, and the
-Edit and Delete buttons went with the rewritten columns (FE-08). So the admin user table is
-**read-only**. No admin can disable, restore or re-role an account from the UI.
+**Was:** the Eye and Block buttons on `/admin/user` had no `onClick`. FE-08 removed them and left
+the table read-only, although BE-34 had shipped disable, restore and role change.
 
-**The backend blocker is gone.** BE-34 landed admin user management:
+**Found while building it:** restore was unreachable. `GET /users` applied
+`withDefaultFilter({ isDeleted: false })`, and the query builder ANDs the default with everything
+else. So `?isDeleted=true` asked for `isDeleted: false AND true` and matched nothing: a disabled
+account could never be listed, and so never restored. This was fixed backend-side as **BE-45**.
 
-| Route | Does |
-| --- | --- |
-| `DELETE /users/:id` | soft-deletes. This is the ban primitive: `authGuard` 401s a disabled user on their next request, and login refuses them. |
-| `PATCH /users/:id/restore` | undoes it |
-| `PATCH /users/:id/role` | assigns a role (validated) |
-| `GET /users/:id` | admin read |
+**Now**, in `/admin/user-management`:
 
-The service refuses to let an admin disable or demote **themselves**, and refuses to remove the
-**last active admin**. Surface those 4xx messages verbatim (`getApiErrorMessage`).
+- **Row actions** (`user-management-columns.tsx`, now a factory taking handlers):
+  - An active user gets a menu with **Change role** and **Disable**.
+  - A disabled user gets a **Restore** button.
+  - **The signed-in admin's own row shows "You" and no actions.** The backend refuses self-disable
+    and self re-role anyway. `session.user.id` is the User id (`auth.userId`), the same id
+    `assertNotSelf` compares.
+- **A Status toolbar filter** switches between active accounts (the default, `""`) and **disabled
+  accounts** (`?isDeleted=true`). Search works inside either list.
+- **Disable** is confirmed in a `TDModal` that states the consequences. The user is out on their
+  next request. **A seller's store is suspended and its listings leave the storefront.** Restoring
+  the account does not reinstate the store.
+- **Restore** has a confirm that repeats the store caveat.
+- **Change role** offers only CUSTOMER and ADMIN (`TAssignableRole`). VENDOR is deliberately
+  absent: the backend accepts it only for an account that already has an approved store, and store
+  approval sets it anyway. Choosing ADMIN shows a warning line. A row with no `Auth` record
+  (`role: null`) has the action disabled.
+- Every refusal is shown **verbatim** through `getApiErrorMessage`. The backend's are actionable,
+  for example "This account still owns an approved store. Suspend the store first".
+- `user.api.ts`: `deleteUser` became **`disableUser`**. It invalidates `vendors` too, because it
+  can suspend a store. New mutations are **`restoreUser`** and **`updateUserRole`**.
+  `TUser.isDeleted` was added.
 
-**Fix:** add a row-actions column to `user-management-columns.tsx`, as a factory taking handlers
-like `brandColumns`: Disable (confirm in a `TDModal`), Restore, and a role select. Repoint
-`useDeleteUserMutation` (it already targets `DELETE /users/:id`, which exists now) and add
-`restoreUser` and `updateUserRole` mutations. Restore needs a way to list disabled users. The list
-read applies `withDefaultFilter({ isDeleted: false })`, so check whether an `isDeleted=true` param
-overrides it before building a "Disabled" toolbar filter. Promoting to VENDOR here would bypass
-the vendor application flow, so check what `updateRole` permits before offering it.
+**Verified live**, reversibly, against the seeded accounts. 14 of 14 checks passed:
+
+- Self-disable and self re-role are refused.
+- Demoting vendor1 is refused while their store is approved.
+- A bad `isDeleted` value gets a 400.
+- The customer was disabled: they dropped out of the active list, appeared under Disabled (and
+  were searchable there), and could not log in. They were then restored and could log in again.
+- CUSTOMER → ADMIN → CUSTOMER round-trips.
+
+The end state was identical to the start. The screens were not clicked through in a browser.
+
+**Rough edges left:**
+
+- A disabled user's login error reads "User has been deleted". That is backend copy, and the
+  account is disabled, not deleted.
+- The demote refusal quotes an API path (`PATCH /vendors/:id/suspend`) at the admin. A link to the
+  vendor list would serve them better.
 
 ---
 
@@ -671,7 +697,7 @@ Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19:
 | Hook | Defined at | Missing screen |
 | --- | --- | --- |
 | `useRecordManualRefundMutation` | `refunds/api/refund.api.ts:82` | manual (cash) refund entry |
-| `useDeleteUserMutation` | `users/api/user.api.ts:48` | user disable — the route exists now (BE-34); wiring it is FE-16 |
+| ~~`useDeleteUserMutation`~~ | — | **wired in FE-16**, renamed `useDisableUserMutation` |
 | `useDeleteVendorMutation` | `vendors/api/vendor.api.ts:172` | vendor delete |
 | `useVendorByIdForAdminQuery` | `vendor.api.ts:110` | admin vendor detail |
 | `usePayoutByIdQuery` | `payouts/api/payout.api.ts:40` | payout detail |
@@ -906,7 +932,7 @@ client.
 **Calls here that would 404** — both currently unmounted, so latent rather than live:
 - `GET /auth/google` (`src/features/auth/api/auth.api.ts:38-43`) — wrong path *and* wrong verb.
   The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:127` calls correctly.
-- ~~`DELETE /users/:id`~~ — **exists now** (BE-34: admin soft delete, plus `PATCH /:id/restore` and `/:id/role`). FE-16.
+- ~~`DELETE /users/:id`~~ — **exists and is wired** (BE-34; FE-16), with `PATCH /:id/restore` and `/:id/role`.
 
 **Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
