@@ -507,16 +507,27 @@ screen — several already have their RTK Query endpoint defined and unused, and
 the navbar search and the home page are much less finished than they look.
 
 ## Environment
-Required env vars (`.env.local`):
-- `NEXT_PUBLIC_BACKEND_URL` — backend API base URL (all RTK Query + auth calls target this).
-- `NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — NextAuth.
-- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_PRESET_NAME` — image uploads
-  (read directly from `process.env`, not via `envConfig`).
-- `NEXT_PUBLIC_TAX_RATE` — checkout math in `src/features/cart/utils/calculate-order-total.ts`
-  (also exports `currencyFormatter`). Must match the backend's `TAX_RATE`.
-- `NEXT_PUBLIC_SHIPPING_COST`, `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` — **fallbacks only.** Shipping
-  is per store now and comes from each cart item's `vendorShippingFee` /
-  `vendorFreeShippingThreshold`; these are used only for a cart persisted before the marketplace
-  conversion, or a product payload missing its vendor.
+Copy **`.env.example`** to `.env.local`. It lists all ten variables with comments, and every one
+is required. They are validated with Zod at build time and at page load, and fail naming the
+variable (FE-30):
 
-Other public config is read through `src/shared/config/env-config.ts`.
+- **`src/shared/config/env-config.ts`** is the **public** config (`envConfig`) and is safe in client
+  code. It holds typed values for `NEXT_PUBLIC_BACKEND_URL` (must include `/api/v1`),
+  `NEXT_PUBLIC_TAX_RATE` (a fraction that must equal the backend's `TAX_RATE`),
+  `NEXT_PUBLIC_SHIPPING_COST` / `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` and the two
+  `NEXT_PUBLIC_CLOUDINARY_*` keys.
+  - **Read each by its literal `process.env.NEXT_PUBLIC_…` name.** Next inlines only literal
+    references, so a dynamic lookup is `undefined` in the browser.
+  - **A blank value is missing.** Coercing `""` to a number gives `0`, which is how a missing tax
+    rate used to quote 0% silently.
+- **`src/shared/config/server-env.ts`** holds the **secrets** (`serverEnv`): `NEXT_AUTH_SECRET`,
+  `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. **Import it only from server code**
+  (`auth-options.ts`, `middleware.ts`). These are undefined in a browser, so importing it from a
+  client component throws on every page. `NEXTAUTH_URL` is read by NextAuth itself.
+
+**Never read `process.env` anywhere else.** Add a new variable to the right schema and to
+`.env.example` together.
+
+The shipping values are **fallbacks only.** Shipping is per store and comes from each cart item's
+`vendorShippingFee` / `vendorFreeShippingThreshold`. The env values apply only to a cart persisted
+before the marketplace conversion, or a product payload missing its vendor.

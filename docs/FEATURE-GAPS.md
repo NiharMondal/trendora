@@ -57,8 +57,8 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-26~~ | ~~Five stray `console.log`s~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
 | ~~FE-27~~ | ~~39 `any`s, eight of them in type definitions~~ | ✅ **FIXED** 2026-09-24 | — | types |
 | ~~FE-28~~ | ~~Duplicate type definitions across features~~ | ✅ **FIXED** 2026-09-24 | — | types |
-| FE-29 | No `.env.example`; README is scaffold boilerplate | P2 | S | onboarding |
-| FE-30 | No env validation — a missing tax rate silently means 0% | P2 | S | config |
+| ~~FE-29~~ | ~~No `.env.example`; README is scaffold boilerplate~~ | ✅ **FIXED** 2026-09-24 | — | onboarding |
+| ~~FE-30~~ | ~~No env validation — a missing tax rate silently means 0%~~ | ✅ **FIXED** 2026-09-24 | — | config |
 | FE-31 | 13 raw `<img>` tags bypass `next/image` | P2 | S | performance |
 | FE-32 | Accessibility: three `aria-*` attributes in the whole app | P2 | L | a11y |
 | FE-33 | No test runner, no CI | P2 | L | ops |
@@ -1015,34 +1015,83 @@ had already removed a few, leaving 37 `no-explicit-any` warnings out of a 48-war
 - All six maps in `status-maps.ts` cover every value of their union.
 - `pnpm build` passes, and lint is unchanged at 11.
 
-### FE-29 · No `.env.example`; README is scaffold boilerplate
-**P2 · S · onboarding**
+### ~~FE-29~~ · No `.env.example`; README is scaffold boilerplate
+**✅ FIXED 2026-09-24 · onboarding** (branch `FE-29-30-env-example-readme-and-env-validation`)
 
-There is no `.env.example` — only a gitignored `.env.local`. A fresh clone cannot be configured
-without reading `CLAUDE.md`. The six required variables are `NEXT_PUBLIC_BACKEND_URL`,
-`NEXT_PUBLIC_TAX_RATE`, `NEXT_PUBLIC_SHIPPING_COST`, `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD`,
-`NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, plus the two Cloudinary keys read
-directly from `process.env`.
-
-`README.md` is still the untouched `create-next-app` output, and `package.json` is still
+**Was:** there was no `.env.example`, so a fresh clone could only be configured by reading
+`CLAUDE.md`. `README.md` was untouched `create-next-app` output, and `package.json` was
 `"name": "client"`.
 
-**Also verify `.env.local` is gitignored** — it is present on disk with a real
-`NEXT_AUTH_SECRET` and `GOOGLE_CLIENT_SECRET`.
+**Now:**
+
+- **`.env.example`** lists all **ten** variables, each with a comment and a placeholder value. The
+  audit said six; it missed `NEXTAUTH_URL`, and counted the Cloudinary pair and the Google pair
+  once each. It also notes what must match the backend (`TAX_RATE`, and the shipping fallbacks)
+  and the port-3000 CORS constraint. **Its keys were checked to be exactly the keys in the real
+  `.env.local`**, and no value was copied from it.
+- **`.gitignore` had `.env*`, which also ignored the new template.** It is re-included with
+  `!.env.example`.
+- **Verified:** `.env.local` is gitignored (`git check-ignore`) and appears in no commit
+  (`git ls-files`). Its real `NEXT_AUTH_SECRET` and `GOOGLE_CLIENT_SECRET` have never been
+  tracked.
+- **`README.md` was rewritten** for a developer setting up for the first time. It covers:
+  - what the app is and how it relates to the backend repo;
+  - prerequisites (Node 18.18+, checked against Next 15's `engines`), setup order, the seeded
+    logins and port 3000;
+  - which env values must match the backend, and the scripts, including why `pnpm build` must
+    be the script;
+  - pointers to `CLAUDE.md` and this audit.
+- **`package.json`** is renamed `"trendora-frontend"`. The lockfile does not record the name.
 
 ---
 
-### FE-30 · No env validation — a missing tax rate silently means 0%
-**P2 · S · config**
+### ~~FE-30~~ · No env validation — a missing tax rate silently means 0%
+**✅ FIXED 2026-09-24 · config** (same branch; closes XR-01's frontend half)
 
-`src/shared/config/env-config.ts` exposes every value as `string | undefined`, and
-`calculate-order-total.ts:26` does `Number(envConfig.tax_rate) || 0`.
+**Was:** `env-config.ts` exposed every value as `string | undefined`, and
+`calculate-order-total.ts` did `Number(envConfig.tax_rate) || 0`. A deploy without
+`NEXT_PUBLIC_TAX_RATE` quoted 0% tax while the backend charged its own rate. The Cloudinary keys
+were read raw from `process.env`, and `envConfig` also carried the Google secrets even though it is
+imported by client code.
 
-A deploy that omits `NEXT_PUBLIC_TAX_RATE` shows **0% tax in the cart** while the backend charges
-its own rate — the buyer is billed more than quoted, with no error anywhere. See **XR-01**.
+**Now, two validated modules** (Zod, at module load):
 
-**Fix:** Parse the public env through a Zod schema at module load and throw on a missing required
-value.
+- **`shared/config/env-config.ts`** is **public** and safe in the browser.
+  - It validates `NEXT_PUBLIC_BACKEND_URL` (an absolute URL that **includes `/api/v1`**),
+    `NEXT_PUBLIC_TAX_RATE` (a fraction, 0 to 1), the two shipping fallbacks (≥ 0) and both
+    Cloudinary keys.
+  - Each is read by its **literal** `process.env.NEXT_PUBLIC_…` name, because Next inlines only
+    literal references.
+  - **A blank value counts as missing.** Otherwise `z.coerce.number()` reads `""` as `0`, which is
+    the original bug.
+  - `envConfig` now holds typed numbers and strings, and no secrets.
+- **`shared/config/server-env.ts`** holds **secrets**: `NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID` and
+  `GOOGLE_CLIENT_SECRET`. It is imported **only** by `auth-options.ts` and `middleware.ts`, because
+  those values are always undefined in a browser. The Google provider previously fell back to
+  `?? ""`.
+- **Every `process.env` read in `src/` now goes through one of the two.** The consumers were
+  repointed: the cart math (with its `|| 0` fallbacks gone), the Cloudinary upload, NextAuth and
+  the middleware.
+
+**Verified:**
+
+- **Failing builds** (a shell env var overrides `.env.local`):
+
+  | Override | Build output |
+  | --- | --- |
+  | `NEXT_PUBLIC_TAX_RATE=""` | `NEXT_PUBLIC_TAX_RATE: is missing` |
+  | `NEXT_PUBLIC_BACKEND_URL=http://localhost:5001`, `NEXT_PUBLIC_TAX_RATE=5`, `NEXT_PUBLIC_SHIPPING_COST=""` | one line each: "must include the API base path … (got "http://localhost:5001")", "is a fraction — 0.05 means 5% (got "5")" and "is missing" |
+  | `GOOGLE_CLIENT_SECRET=""` | `Invalid server environment configuration … GOOGLE_CLIENT_SECRET: is missing` |
+
+- **Client inlining:** the client bundle contains the literal backend URL, and no chunk reads
+  `process.env.NEXT_PUBLIC_TAX_RATE` at runtime. Missed inlining would have thrown in every browser
+  while the server build passed.
+- **Pages:** with the real `.env.local`, `/`, `/products`, `/cart` and `/login` all return 200 on
+  `pnpm start`, with no env error.
+- Lint is unchanged at 11.
+
+**Consequence to know:** a misconfigured deploy now **fails loudly** at build or first load,
+instead of running with a wrong tax rate. That is the intent.
 
 ---
 
@@ -1135,7 +1184,7 @@ four spaces elsewhere) with no Prettier config to settle it.
 _Mirrored in `docs/FEATURE-GAPS.md` of the backend repo. The two repos share only HTTP, so a
 change here is always two commits on two branches._
 
-### XR-01 · Tax defaults disagree across four files
+### XR-01 · Tax defaults disagree across four files — ✅ frontend half fixed 2026-09-24
 **P1 · S · config**
 
 | Source | `TAX_RATE` |
@@ -1153,6 +1202,10 @@ client.
 `SHIPPING_COST` (100) and `FREE_SHIPPING_THRESHOLD` (1000) agree across all four places.
 
 **Fix:** See FE-30 — make the tax rate required rather than defaulted, on both sides.
+
+**Frontend half done (FE-30):** `NEXT_PUBLIC_TAX_RATE` is required and validated, so there is no
+`0` fallback any more. A deploy without it fails to build. The backend's code fallback of `0.08` in
+`env-config.ts` is still open on that side.
 
 ---
 
@@ -1323,16 +1376,15 @@ param that would become a bogus `where` clause.** Two caveats:
 
 ---
 
-### XR-10 · CORS is hardcoded; this repo has no `.env.example`
+### XR-10 · CORS is hardcoded — ✅ the `.env.example` half fixed 2026-09-24
 **P1 · S · config**
 
 The backend pins `origin: ["http://localhost:3000"]` in source (`app.ts:18`) while `FRONTEND_URL`
 sits in its env unused — so **this app cannot be deployed to any other origin** without a backend
-source edit.
+source edit. *Still open, backend side.*
 
-Symmetrically, this repo has no `.env.example` (FE-29), so its six required variables are
-documented only in `CLAUDE.md`.
-
+~~This repo has no `.env.example`~~: **added in FE-29**, with all ten variables. It notes the
+port-3000 constraint above.
 ---
 
 ### XR-11 · Password reset — ✅ both sides done 2026-09-24

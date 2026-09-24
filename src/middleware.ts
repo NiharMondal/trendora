@@ -2,6 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 import { isAdminRole, isVendorRole, roleHomePath } from "@/features/auth/utils/role-home";
+import { serverEnv } from "@/shared/config/server-env";
 
 export default withAuth(
     function middleware(req) {
@@ -30,7 +31,7 @@ export default withAuth(
             authorized: ({ token }) => !!token && !token.error,
         },
         pages: { signIn: "/login" },
-        secret: process.env.NEXT_AUTH_SECRET,
+        secret: serverEnv.NEXT_AUTH_SECRET,
     },
 );
 

@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { envConfig } from "@/shared/config/env-config";
+import { serverEnv } from "@/shared/config/server-env";
 import { EnumUserRole } from "@/features/auth/constants/user-role";
 
 const REFRESH_SKEW_MS = 30 * 1000; // 30 seconds
@@ -66,8 +67,8 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt", maxAge: SESSION_MAX_AGE_S },
     providers: [
         GoogleProvider({
-            clientId: envConfig.GOOGLE_CLIENT_ID ?? "",
-            clientSecret: envConfig.GOOGLE_CLIENT_SECRET ?? "",
+            clientId: serverEnv.GOOGLE_CLIENT_ID,
+            clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
         }),
         CredentialsProvider({
             name: "Credentials",
@@ -185,5 +186,5 @@ export const authOptions: NextAuthOptions = {
         },
     },
     pages: { signIn: "/login" },
-    secret: process.env.NEXT_AUTH_SECRET,
+    secret: serverEnv.NEXT_AUTH_SECRET,
 };
