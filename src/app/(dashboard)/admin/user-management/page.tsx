@@ -1,9 +1,11 @@
-import Headline from "@/shared/components/headline";
+import { Metadata } from "next";
 
-export default function UserManagement() {
-    return (
-        <div className="space-y-5">
-            <Headline title="User Management" showBackButton />
-        </div>
-    );
+import UserManagementTable from "@/features/users/components/user-management-table";
+
+export const metadata: Metadata = {
+    title: "Trendora | User Management",
+};
+
+export default function UserManagementPage() {
+    return <UserManagementTable />;
 }

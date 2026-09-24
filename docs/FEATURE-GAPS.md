@@ -36,7 +36,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-05~~ | ~~No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
 | ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
 | ~~FE-07~~ | ~~Placeholder pages wired into live navigation~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
-| FE-08 | `/admin/user-management` is empty; the real table is unlinked | P1 | S | admin |
+| ~~FE-08~~ | ~~`/admin/user-management` is empty; the real table is unlinked~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
 | FE-10 | Footer links to nine routes that do not exist | P1 | M | storefront |
 | FE-11 | Three admin dashboard widgets are demo fixtures | P1 | M | analytics |
@@ -44,7 +44,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
 | FE-14 | No admin hero-slider screen despite full CRUD API | P1 | M | admin |
 | FE-15 | Five search boxes are silent no-ops | P1 | S | tables |
-| FE-16 | Admin user actions are inert buttons | P1 | S | admin |
+| FE-16 | Admin user actions — backend ready, UI not wired | P1 | S | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
 | FE-18 | No customer-facing refunds view | P1 | M | orders |
 | FE-19 | No vendor store-review screen | P1 | M | vendor |
@@ -53,7 +53,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
 | FE-24 | Two RTK tags are never provided; one is misdeclared | P2 | S | api |
-| FE-25 | 2 orphaned component files (was 11) | P2 | S | cleanup |
+| FE-25 | 1 orphaned component file (was 11) | P2 | S | cleanup |
 | FE-26 | Five stray `console.log`s | P2 | S | cleanup |
 | FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
 | FE-28 | Duplicate type definitions across features | P2 | S | types |
@@ -338,21 +338,31 @@ in `src/` linked to `/categories/…`. It could only be reached by typing the UR
 
 ---
 
-### FE-08 · `/admin/user-management` is empty; the working table is unlinked
-**P1 · S · admin**
+### ~~FE-08~~ · `/admin/user-management` is empty; the working table is unlinked
+**✅ FIXED 2026-09-24 · admin**
 
-**Now:** `src/app/(dashboard)/admin/user-management/page.tsx` renders **only a `<Headline>`** — and
-it is the sidebar target (`dashboard-navlink.ts:132`). The working 134-line user table lives at
-`/admin/user`, which nothing links to. A third implementation,
-`src/features/users/components/user-management-table.tsx`, is orphaned.
+**Was:** the sidebar target `/admin/user-management` rendered only a `<Headline>`. A hand-rolled
+table lived at the unlinked `/admin/user`, and the `DataTable` version,
+`user-management-table.tsx`, was orphaned. That makes three implementations of one screen.
 
-**Gap:** Admin user management appears to be broken, because the screen the nav points at is
-blank. Three implementations of one screen exist and the wrong one is wired up.
+**Now:**
 
-**Fix:** Keep `user-management-table.tsx` (it uses the shared `DataTable`), render it from
-`/admin/user-management`, and delete `/admin/user` — which hand-rolls its own table, `Select`,
-`Input` and `Pagination` in defiance of the centralised table convention. That also resolves
-FE-16.
+- `/admin/user-management` renders `UserManagementTable`: the shared `DataTable` with a header
+  strip, URL-synced search, sort and pagination, and the FE-06 error state.
+  `user-management-table.tsx` also gained the `"use client"` it lacked. It uses hooks and had never
+  been mounted, so nothing had noticed.
+- **`/admin/user` is deleted.** It hand-rolled its own table, `Select`, `Input` and `Pagination`.
+  It rendered `NoDataFound` for a search with no results, which hid the search box that caused it.
+  It showed a fabricated `"Dhaka, Bangladesh"` on every row, and its Eye and Block buttons did
+  nothing.
+- **`user-management-columns.tsx` was rewritten.** It has four columns: an avatar with an initial
+  fallback (it had been `<img src="">`), name and email, phone, a role pill, and joined date. Its
+  Edit and Delete buttons had no handlers and were removed. Wiring real actions is FE-16.
+- **`TUser.email` and `TUser.role` are `string | null`**, per the XR-05 caveat. A user with no
+  `Auth` row renders "No login credentials" and a `-` role.
+- The search placeholder now says what the backend searches: name, email and phone.
+
+The lint baseline dropped to 50, because the deleted page carried a raw `<img>` warning.
 
 ---
 
@@ -488,20 +498,32 @@ there.
 
 ---
 
-### FE-16 · Admin user actions are inert buttons
+### FE-16 · Admin user actions — backend ready, UI not wired
 **P1 · S · admin**
 
-**Now:** `src/app/(dashboard)/admin/user/page.tsx:105-112` renders Eye and Block buttons with
-**no `onClick`**. Every row hardcodes the location `"Dhaka, Bangladesh"` at `:97`.
-`useDeleteUserMutation` exists (`src/features/users/api/user.api.ts:48`) and is used nowhere — and
-would 404 anyway, since the backend has no `DELETE /users/:id` (**XR-02**).
+**Now:** the inert buttons are gone. The Eye and Block buttons went with `/admin/user`, and the
+Edit and Delete buttons went with the rewritten columns (FE-08). So the admin user table is
+**read-only**. No admin can disable, restore or re-role an account from the UI.
 
-**Gap:** An admin sees View and Block controls that do nothing, beside a fabricated address on
-every row.
+**The backend blocker is gone.** BE-34 landed admin user management:
 
-**Fix:** Resolved largely by FE-08. The backend needs a user-management surface first
-(**BE-34**) — there is currently no ban, no role change and no delete endpoint, so there is
-nothing to wire these buttons to.
+| Route | Does |
+| --- | --- |
+| `DELETE /users/:id` | soft-deletes. This is the ban primitive: `authGuard` 401s a disabled user on their next request, and login refuses them. |
+| `PATCH /users/:id/restore` | undoes it |
+| `PATCH /users/:id/role` | assigns a role (validated) |
+| `GET /users/:id` | admin read |
+
+The service refuses to let an admin disable or demote **themselves**, and refuses to remove the
+**last active admin**. Surface those 4xx messages verbatim (`getApiErrorMessage`).
+
+**Fix:** add a row-actions column to `user-management-columns.tsx`, as a factory taking handlers
+like `brandColumns`: Disable (confirm in a `TDModal`), Restore, and a role select. Repoint
+`useDeleteUserMutation` (it already targets `DELETE /users/:id`, which exists now) and add
+`restoreUser` and `updateUserRole` mutations. Restore needs a way to list disabled users. The list
+read applies `withDefaultFilter({ isDeleted: false })`, so check whether an `isDeleted=true` param
+overrides it before building a "Disabled" toolbar filter. Promoting to VENDOR here would bypass
+the vendor application flow, so check what `updateRole` permits before offering it.
 
 ---
 
@@ -602,7 +624,7 @@ Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19:
 | Hook | Defined at | Missing screen |
 | --- | --- | --- |
 | `useRecordManualRefundMutation` | `refunds/api/refund.api.ts:82` | manual (cash) refund entry |
-| `useDeleteUserMutation` | `users/api/user.api.ts:48` | user delete — and it would 404 (XR-02) |
+| `useDeleteUserMutation` | `users/api/user.api.ts:48` | user disable — the route exists now (BE-34); wiring it is FE-16 |
 | `useDeleteVendorMutation` | `vendors/api/vendor.api.ts:172` | vendor delete |
 | `useVendorByIdForAdminQuery` | `vendor.api.ts:110` | admin vendor detail |
 | `usePayoutByIdQuery` | `payouts/api/payout.api.ts:40` | payout detail |
@@ -636,8 +658,8 @@ the entire list cache for that resource. Acceptable at this scale, worth knowing
 ### FE-25 · Two orphaned component files
 **P2 · S · cleanup**
 
-`features/users/components/user-management-table.tsx` (FE-08) and
-`shared/components/td-drawer.tsx`.
+`shared/components/td-drawer.tsx`. (`features/users/components/user-management-table.tsx` was
+the other one; FE-08 mounted it.)
 
 The other nine are **resolved**. FE-01 rewrote `products/components/filters/price-filter.tsx` and
 deleted `brand`, `category` and `size` — each hardcoded a list the server now serves as a facet.
@@ -662,7 +684,7 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
 ### FE-27 · Thirty-nine `any`s, eight of them in type definitions
 **P2 · M · types**
 
-`pnpm lint` passes at **51 warnings / 0 errors** (was 52 before FE-04); treat that as the baseline and do not add to it.
+`pnpm lint` passes at **50 warnings / 0 errors** (52 before FE-04, 51 before FE-08); treat that as the baseline and do not add to it.
 
 - **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
   `reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
@@ -738,7 +760,7 @@ images dominate the payload.
 **P2 · L · a11y**
 
 Three `aria-*` attributes in all of `src/features`, `src/app` and `src/layouts` combined.
-Icon-only buttons with no accessible name (e.g. `admin/user/page.tsx:105`). Search inputs with no
+Icon-only buttons with no accessible name (the worst example, `admin/user/page.tsx`, was deleted in FE-08). Search inputs with no
 `<label>` and no `<form>`. `lang="en"` hardcoded at `src/app/layout.tsx:31`. No skip link, no
 focus management on the `TDSheet`/`TDModal` overlays.
 
@@ -838,7 +860,7 @@ client.
 **Calls here that would 404** — both currently unmounted, so latent rather than live:
 - `GET /auth/google` (`src/features/auth/api/auth.api.ts:38-43`) — wrong path *and* wrong verb.
   The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:127` calls correctly.
-- `DELETE /users/:id` (`src/features/users/api/user.api.ts:48-53`) — no such backend route.
+- ~~`DELETE /users/:id`~~ — **exists now** (BE-34: admin soft delete, plus `PATCH /:id/restore` and `/:id/role`). FE-16.
 
 **Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
 `GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
@@ -911,12 +933,11 @@ already declares them. The backend chose flattening over nesting under `auth` sp
 side would not have to change: `TUser` was right and the API was wrong. `row.email` and `row.role`
 in `user-management-columns.tsx` render real values now, and `DataTable` gets its pagination.
 
-Two caveats for whoever picks up **FE-08**:
+Two caveats, both handled by **FE-08**:
 - **The search box now honours its own placeholder.** *"Search by name, email…"* previously
   searched name and phone only; `?search=` now also matches email, case-insensitively.
 - **`email` and `role` may be `null`** on a user with no `Auth` row (an account that cannot sign
-  in at all). `TUser` types both as required `string`; treat them as `string | null` if you touch
-  that type.
+  in at all). `TUser` now types both as `string | null`.
 
 ---
 
