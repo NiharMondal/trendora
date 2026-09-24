@@ -246,6 +246,13 @@ send `as: "buyer"` to `useMyRefundsQuery`, or a VENDOR gets refunds on parcels t
 (backend BE-46). It uses `buyerRefundStatusMap` (`features/refunds/constants/`), the buyer's
 wording, rather than the operator-worded `refundStatusMap`.
 
+`/vendor/refunds` is the other half: refunds on parcels the store **sold**, sending
+`as: "seller"`. It uses the operator-worded `refundStatusMap` and is read-only.
+
+`/vendor`'s range picker must build its query args **when a range is picked**, never during
+render — a `new Date()` in the cache key refetches in a loop. The dashboard's `salesTrend` is
+bucketed by **UTC** day, so the window starts at UTC midnight.
+
 `/admin/refunds` is a failure queue: its normal state is empty, and anything in it is money owed. Only
 a `gateway === "stripe"` refund can be retried — a manual one never had a gateway to call.
 

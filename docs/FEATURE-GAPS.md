@@ -62,7 +62,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-31 | 13 raw `<img>` tags bypass `next/image` | P2 | S | performance |
 | ~~FE-32~~ | ~~Accessibility: three `aria-*` attributes in the whole app~~ | ✅ **FIXED** 2026-09-24 | — | a11y |
 | FE-33 | No test runner, no CI | P2 | L | ops |
-| FE-34 | No vendor analytics, order detail or profile screens | P2 | M | vendor |
+| FE-34 | ~~No vendor analytics, order detail or profile screens~~ — tooling left | 🟡 **PARTIAL** 2026-09-24 | M | vendor |
 | FE-35 | No admin settings or vendor detail screens | P2 | M | admin |
 | FE-36 | No coupon field, guest checkout, multi-currency or i18n | P2 | L | storefront |
 | FE-37 | No category or brand browsing | P2 | M | storefront |
@@ -660,9 +660,7 @@ cancelled it. The admin recorded a manual refund on that parcel. 13 of 13 checks
 Everything was deleted afterwards, and stock was confirmed back at its starting value. The page was
 not clicked through in a browser.
 
-**Still open:** a **seller-side** refunds screen, where a vendor sees refunds on parcels they sold.
-The endpoint supports it now (`as=seller`, the default for a vendor), but no screen exists. See
-FE-34.
+**Still open:** ~~a **seller-side** refunds screen~~ — built as `/vendor/refunds` in FE-34.
 
 ---
 
@@ -1175,16 +1173,74 @@ money, and it has already diverged from its backend twin once (**XR-07**).
 ---
 
 ### FE-34 · Vendor dashboard gaps
-**P2 · M · vendor**
+**🟡 PARTIAL 2026-09-24 · vendor** (frontend + two small backend additions)
 
-FE-19 added store reviews. Still missing: no vendor analytics or time series (`orderAnalytics` is admin-only); no vendor order
-detail page (`useVendorOrderByIdQuery` unused — the table is the only view); no payout detail; no
-Profile entry in `vendorDashboardLinks`, unlike admin and customer; no rejection-reason surface, so
-a seller sees a REJECTED badge without the reason; no view of refunds against parcels they sold (`GET /refunds/me?as=seller` is ready — BE-46); no
-low-stock alerts, bulk import/export or promotion tooling.
+**Was:** FE-19 had added store reviews. Still missing: vendor analytics over time
+(`orderAnalytics` is admin-only), a vendor order detail page (`useVendorOrderByIdQuery` unused), a
+payout detail page, a Profile entry in `vendorDashboardLinks`, a rejection-reason surface, a
+seller view of refunds on parcels they sold, and low-stock / bulk import-export / promotion
+tooling.
 
-What does exist is solid: `/vendor` handles both `isLoading` and `isError`, and products, orders,
-payouts, settings and apply are all real.
+**Now:**
+
+- **Sales over time on `/vendor`.** A range picker (all time, 7 / 30 / 90 days, 12 months) scopes
+  every figure except "Ready for payout", which is a balance, not a period figure. Below the stat
+  cards, `vendor-sales-trend.tsx` charts daily gross sales and net earnings.
+  - **Backend:** `GET /vendors/me/dashboard` gained **`salesTrend`**, one zero-filled point per
+    **UTC** day (`{ date, orders, grossSales, netEarnings }`). The money follows the `overview`
+    rule (paid, not cancelled), so the series foots to the headline figures. With no range the
+    headline stays all-time and the trend covers the last 30 days; the chart caption says which.
+    The endpoint now 400s on an invalid date, a start after the end, or a window over 366 days.
+    Before, a bad date was a Prisma 500.
+  - The range's query args are computed **once, when it is picked**. A `new Date()` built during
+    render would change the cache key every render and refetch in a loop. The start is **UTC
+    midnight**; a local midnight made "last 7 days" come back as 8 points.
+- **`/vendor/orders/[id]`** (`vendor-order-details.tsx`), linked from the parcel number in the
+  queue. It shows items, the ship-to snapshot, the buyer's note, carrier and tracking, and the
+  status timeline. It offers the same `VENDOR_TRANSITIONS` actions as the table, through the same
+  modal.
+  - The money block runs from what the buyer paid, less commission and less tax (which the platform
+    remits), down to **You earn**. It links to the payout that settled the parcel.
+  - **Backend:** the detail read now includes the parcel's `refund` (`id`, `amount`, `status`,
+    `processedAt`), the narrow projection the buyer already gets. So a cancelled parcel shows
+    whether its money went back.
+- **`/vendor/payouts/[id]`** (`vendor-payout-details.tsx`), linked from the payout history. It
+  shows the transfer (method, reference, settled date), the failure reason and the parcels
+  settled. Each parcel shows its subtotal, shipping, commission and earning, and they foot to the
+  payout amount.
+- **`/vendor/refunds`** (`seller-refunds-list.tsx`) is refunds on parcels the store **sold**. It
+  sends `as: "seller"` explicitly, uses the operator-worded `refundStatusMap` with a
+  "nothing for you to do" hint per state, and is read-only, since every refund mutation is
+  admin-only. "My Refunds" stays in the sidebar as the buyer view.
+- **Sidebar:** "Refunds" and "Profile" in `vendorDashboardLinks`. Profile points at the shared
+  `/dashboard/profile`, which is the owner's account, not the store's; `/vendor/settings` is the
+  store.
+- **Rejection reason on the edit screen.** The list already showed it (`vendor-product-columns.tsx`).
+  `vendor-update-product.tsx` now puts it in a banner above the form, with a **Submit for review**
+  button.
+  - **Saving a REJECTED listing does not resubmit it.** The backend re-queues only an APPROVED
+    listing on a material edit (`needsReReview`), so resubmitting has to be an explicit step.
+
+**Verified live** against the dev backend with one COD order (`ORD-202609-254303`, vendor1, one
+pair of jeans) walked PENDING → DELIVERED as vendor1:
+
+- **The trend foots to the headline.** Gross 152.45 and net 142.10 match for both the default and a
+  7-day window. 142.10 = 152.45 − 6.90 commission − 3.45 tax.
+- Ranges return exactly 7 / 30 / 365 points.
+- The parcel detail carries the snapshot, the note, a four-step history with no IP or actor, and
+  `refund: null`. vendor2 gets a 404 on it.
+- `startDate=garbage`, a reversed range and a six-year range each return the intended 400.
+
+**Not verified:**
+
+- The screens were **not clicked through in a browser**.
+- A refund row on the parcel detail and the payout detail were **not seen with data**. The dev DB
+  has no Stripe-paid cancellations and no payouts; the endpoints behind both pre-date this change.
+
+The test order was left in the dev DB.
+
+**Still open:** low-stock alerts, bulk import/export, and promotion tooling. None has a backend
+endpoint.
 
 ---
 

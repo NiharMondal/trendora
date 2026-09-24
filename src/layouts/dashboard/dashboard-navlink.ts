@@ -14,6 +14,7 @@ import {
     type LucideIcon,
     MapPinHouse,
     ReceiptText,
+    RotateCcw,
     Scaling,
     ScrollText,
     Settings,
@@ -181,8 +182,12 @@ export const vendorDashboardLinks: TSidebarLink[] = [
     },
     { title: "Orders", url: "/vendor/orders", icon: ScrollText },
     { title: "Payouts", url: "/vendor/payouts", icon: Banknote },
+    // Refunds on parcels this store SOLD. "My Refunds" below is the buyer view.
+    { title: "Refunds", url: "/vendor/refunds", icon: RotateCcw },
     { title: "Reviews", url: "/vendor/reviews", icon: Star },
     { title: "Store Settings", url: "/vendor/settings", icon: Settings },
+    // The owner's own account (name, phone, avatar), not the store's.
+    { title: "Profile", url: "/dashboard/profile", icon: User2 },
     { title: "My Orders", url: "/dashboard/my-orders", icon: FilePlus },
     // A seller is a shopper too — these are refunds on orders they PLACED.
     { title: "My Refunds", url: "/dashboard/my-refunds", icon: ReceiptText },
