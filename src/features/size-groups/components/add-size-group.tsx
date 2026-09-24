@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import SizeGroupForm from "@/features/size-groups/components/size-group-form";
 import { TSizeGroupFormValues } from "@/features/size-groups/schemas/size-group-form.schema";
 import { useCreateSizeGroupMutation } from "@/features/size-groups/api/size-group.api";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function AddSizeGroup() {
     const [addSizeGroup, { isLoading }] = useCreateSizeGroupMutation();
@@ -12,8 +13,8 @@ export default function AddSizeGroup() {
         try {
             await addSizeGroup(values).unwrap();
             toast.success("Size group created successfully");
-        } catch (error: any) {
-            toast.error(error.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     return <SizeGroupForm onSubmit={onSubmit} isSubmitting={isLoading} />;

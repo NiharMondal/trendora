@@ -19,6 +19,7 @@ import {
 } from "@/features/reviews/api/review.api";
 
 import { myReviewColumns } from "./my-reviews-columns";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function MyReviewsList() {
 	const {
@@ -52,8 +53,8 @@ export default function MyReviewsList() {
 			}).unwrap();
 			toast.success("Review updated successfully");
 			setEditReview(null);
-		} catch (error: any) {
-			toast.error(error?.data?.message ?? "Failed to update review");
+		} catch (error) {
+			toast.error(getApiErrorMessage(error, "Failed to update review"));
 		}
 	};
 
@@ -63,8 +64,8 @@ export default function MyReviewsList() {
 			await removeReview(deleteReview.id).unwrap();
 			toast.success("Review deleted successfully");
 			setDeleteReview(null);
-		} catch (error: any) {
-			toast.error(error?.data?.message ?? "Failed to delete review");
+		} catch (error) {
+			toast.error(getApiErrorMessage(error, "Failed to delete review"));
 		}
 	};
 

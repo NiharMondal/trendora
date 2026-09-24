@@ -55,7 +55,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-24~~ | ~~Two RTK tags are never provided (the misdeclared one fixed in FE-14)~~ | ✅ **FIXED** 2026-09-24 | — | api |
 | ~~FE-25~~ | ~~1 orphaned component file (was 11)~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
 | ~~FE-26~~ | ~~Five stray `console.log`s~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
-| FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
+| ~~FE-27~~ | ~~39 `any`s, eight of them in type definitions~~ | ✅ **FIXED** 2026-09-24 | — | types |
 | FE-28 | Duplicate type definitions across features | P2 | S | types |
 | FE-29 | No `.env.example`; README is scaffold boilerplate | P2 | S | onboarding |
 | FE-30 | No env validation — a missing tax rate silently means 0% | P2 | S | config |
@@ -936,25 +936,47 @@ The `console.error`s in `auth-options.ts` (3) and `TDImageUpload.tsx` (1) are le
 
 ---
 
-### FE-27 · Thirty-nine `any`s, eight of them in type definitions
-**P2 · M · types**
+### ~~FE-27~~ · Thirty-nine `any`s, eight of them in type definitions
+**✅ FIXED 2026-09-24 · types** (branch `FE-27-anys-in-catches-and-types`)
 
-`pnpm lint` passes at **48 warnings / 0 errors** (52 before FE-04, 51 before FE-08, 50 before FE-21, 49 before FE-26); treat that as the baseline and do not add to it.
+**Was:** 39 `any`s. By the time this was picked up, earlier items (FE-04, FE-21, FE-26 and others)
+had already removed a few, leaving 37 `no-explicit-any` warnings out of a 48-warning lint.
 
-- **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
-  ~~`reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
-  optional chaining, so a network failure throws inside the catch block.~~ Fixed in FE-21.
-- **8 are `any` in type definitions**, which defeats the point of the type layer:
-  `orders/types/order.types.ts:51-57` (`transactionId`, `paymentGateway`, `gatewayResponse`,
-  `failureReason`, `paidAt`, `refundedAt`, `refundAmount`) and `auth/types/auth.types.ts:5`
-  (`phone: any`).
-- 4 are `as any` around `form.setValue` in `shared/form/TDImageUpload.tsx:57,58,139,140`.
+- **27 were `catch (error: any)`**, followed by some mix of `error?.data?.message`,
+  `error.data?.message` and `error.data.message`, with or without a fallback. Without optional
+  chaining, a network failure threw inside the catch. Without a fallback, it toasted `undefined`,
+  an empty toast.
+- **8 were `any` in type definitions**: seven `TOrderPaymentResponse` fields and
+  `TAuthRegisterResponse.phone`.
+- **4 were `"" as any`** in `TDImageUpload`.
 
-**Fix:** The helper now exists — `getApiErrorMessage(error)` in `shared/utils/api-error.ts` (FE-06). Replace all 26 catches with it — that alone
-clears roughly half the lint baseline. Then type the eight definition fields from the Prisma
-schema.
+**Now: zero `any`s in `src/`. Lint went from 48 warnings to 11.**
 
----
+- **All 27 catches** (in 24 files) are `catch (error)` plus `getApiErrorMessage(error, …)`. This
+  was done by a codemod that **kept every existing fallback string**. Catches with no fallback
+  now get the helper's default instead of an empty toast.
+- `login-form.tsx` and `TDImageUpload.tsx` catch *thrown JS errors* (`signIn`, a Cloudinary
+  upload), not API envelopes, so those two narrow with `error instanceof Error`. `pnpm build`
+  caught the second: `error?.message` stopped compiling once `error` was `unknown`, which is the
+  point.
+- **Payment fields**, taken from the backend `Payment` model:
+  - `transactionId`, `paymentGateway`, `failureReason`, `paidAt`, `refundedAt` and `refundAmount`
+    are optional `string | null`. They are nullable columns, and list reads select only some of
+    them (XR-05).
+  - `gatewayResponse` is optional **`unknown`**. It is the raw Stripe payload, ADMIN-only
+    (`sanitizePayment` strips it for buyers and sellers), and must be narrowed before reading.
+  - The build confirms no consumer assumed those fields were always strings.
+- `TAuthRegisterResponse.phone` is `string | null`, matching `User.phone String?`.
+- `TDImageUpload` clears its fields with one named `EMPTY` cast to `PathValue<T, Path<T>>`. That
+  is the path's own value type, not `any`. react-hook-form cannot prove `""` fits an arbitrary
+  generic path, so a single typed cast is the honest form.
+
+**The 11 left are not `any`s:** six raw `<img>` tags (FE-31) and five unused variables:
+
+- an unused `Headline` import;
+- an unused `moment` import;
+- an unused `index` parameter;
+- two unused `error` bindings in `address-list.tsx` and `edit-review.tsx`.
 
 ### FE-28 · Duplicate type definitions across features
 **P2 · S · types**

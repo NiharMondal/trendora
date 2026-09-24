@@ -15,6 +15,7 @@ import { useAllSizesQuery, useDeleteSizeMutation } from "@/features/sizes/api/si
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function SizeTable() {
     const router = useRouter();
@@ -50,8 +51,8 @@ export default function SizeTable() {
             await deleteSize(deleteSizeId).unwrap();
             toast.success("Size deleted successfully");
             setDeleteSizeId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;

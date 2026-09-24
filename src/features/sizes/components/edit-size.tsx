@@ -7,6 +7,7 @@ import { TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { useSizeByIdQuery, useUpdateSizeMutation } from "@/features/sizes/api/size.api";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 type EditSizeProps = {
     onClose: () => void;
 };
@@ -39,8 +40,8 @@ export default function EditSize({ onClose }: EditSizeProps) {
                 id: sizeId,
             }).unwrap();
             toast.success("Size updated successfully");
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (!sizeId) return null;

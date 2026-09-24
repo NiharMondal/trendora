@@ -15,6 +15,7 @@ import { useAllBrandQuery, useDeleteBrandMutation } from "@/features/brands/api/
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { brandColumns } from "./brand-columns";
 import EditBrand from "./edit-brand";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function BrandTable() {
     const router = useRouter();
@@ -50,8 +51,8 @@ export default function BrandTable() {
             await deleteBrand(deleteBrandId).unwrap();
             toast.success("Category deleted successfully");
             setDeleteBrandId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;

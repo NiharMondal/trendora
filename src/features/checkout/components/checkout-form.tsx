@@ -21,6 +21,7 @@ import {
     TCheckoutFormValues,
 } from "@/features/checkout/schemas/checkout-form.schema";
 import { paymentMethodOptions } from "@/features/checkout/constants/payment-method-options";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CheckoutForm() {
     const dispatch = useAppDispatch();
@@ -77,8 +78,8 @@ export default function CheckoutForm() {
             toast.success("Order placed successfully");
             dispatch(clearCart());
             router.push("/");
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
 

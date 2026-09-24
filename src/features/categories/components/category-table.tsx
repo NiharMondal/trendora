@@ -19,6 +19,7 @@ import {
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { categoryColumns } from "./category-columns";
 import EditCategory from "./edit-category";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
     const router = useRouter();
@@ -58,8 +59,8 @@ export default function CategoryTable() {
             await deleteCategory(deleteCategoryId).unwrap();
             toast.success("Category deleted successfully");
             setDeleteCategoryId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;

@@ -2,7 +2,7 @@ export type TAuthRegisterResponse = {
     id: string;
     name: string;
     email: string;
-    phone: any;
+    phone: string | null;
     role: string;
     createdAt: string;
     updatedAt: string;

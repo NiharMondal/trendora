@@ -2,6 +2,7 @@ import AddressForm from "@/features/addresses/components/address-form";
 import { TAddressFormValues } from "@/features/addresses/schemas/address-form.schema";
 import { useCreateAddressMutation } from "@/features/addresses/api/address.api";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function AddNewAddress({
     handleCloseDrawer,
@@ -16,8 +17,8 @@ export default function AddNewAddress({
                 toast.success(res?.message);
                 return true;
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message || "Something went wrong!");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Something went wrong!"));
             return false;
         }
     };

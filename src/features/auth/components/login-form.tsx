@@ -44,8 +44,9 @@ export default function LoginForm() {
             toast.success("Logged in successfully");
             const session = await getSession();
             router.push(roleHomePath(session?.user?.role));
-        } catch (error: any) {
-            toast.error(error?.message || "Something went wrong");
+        } catch (error) {
+            // `signIn` throws a plain Error, not an RTK Query error envelope.
+            toast.error(error instanceof Error && error.message ? error.message : "Something went wrong");
         } finally {
             setIsLoading(false);
         }

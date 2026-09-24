@@ -3,6 +3,7 @@ import { useChangePasswordMutation } from "@/features/auth/api/auth.api";
 import { toast } from "sonner";
 import ChangePasswordForm from "./change-password-form";
 import { TChangePasswordValues } from "@/features/users/schemas/change-password.schema";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function ChangePasswordComponent() {
     const [changePassword, { isLoading }] = useChangePasswordMutation();
@@ -11,8 +12,8 @@ export default function ChangePasswordComponent() {
         try {
             await changePassword(values).unwrap();
             toast.success("Password changed successfully");
-        } catch (error: any) {
-            toast.error(error.data.message || "Failed to change password");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Failed to change password"));
         }
     };
 

@@ -3,7 +3,7 @@
 import { CloudUpload, X } from "lucide-react";
 import Image from "next/image";
 import { type DragEvent, useRef, useState } from "react";
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { FieldValues, Path, PathValue, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 
 import { uploadToCloudinary } from "@/shared/utils/upload-to-cloudinary";
@@ -11,6 +11,13 @@ import { uploadToCloudinary } from "@/shared/utils/upload-to-cloudinary";
 import { deleteTempImage } from "@/shared/lib/delete-temp-image";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
+
+/**
+ * Clearing an image writes "" to its url/publicId fields. react-hook-form cannot
+ * prove "" fits an arbitrary `Path<T>`, so it is cast once, typed as the path's
+ * own value rather than `any`.
+ */
+const EMPTY = "";
 
 /** Client-side guards only — Cloudinary's unsigned preset is the real limit. */
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -52,14 +59,18 @@ export default function TDImageUploadField<T extends FieldValues>({
             form.setValue(publicIdName, uploaded.publicId);
 
             toast.success("Image uploaded successfully!");
-        } catch (error: any) {
+        } catch (error) {
             console.error("Upload failed:", error);
-            form.setValue(urlName, "" as any);
-            form.setValue(publicIdName, "" as any);
+            form.setValue(urlName, EMPTY as PathValue<T, Path<T>>);
+            form.setValue(publicIdName, EMPTY as PathValue<T, Path<T>>);
             if (fileRef.current) fileRef.current.value = "";
 
             // Show error to user
-            toast.error(error?.message || "Failed to upload image");
+            toast.error(
+                error instanceof Error && error.message
+                    ? error.message
+                    : "Failed to upload image",
+            );
         } finally {
             setLoading(false);
         }
@@ -136,8 +147,8 @@ export default function TDImageUploadField<T extends FieldValues>({
             await deleteTempImage(currentPublicId);
         }
 
-        form.setValue(urlName, "" as any);
-        form.setValue(publicIdName, "" as any);
+        form.setValue(urlName, EMPTY as PathValue<T, Path<T>>);
+        form.setValue(publicIdName, EMPTY as PathValue<T, Path<T>>);
         if (fileRef.current) fileRef.current.value = "";
         toast("Image removed");
     };

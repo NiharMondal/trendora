@@ -11,6 +11,7 @@ import {
 	useUpdateCategoryMutation,
 } from "@/features/categories/api/category.api";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 type EditCategoryProps = {
 	onClose: () => void;
 	categories: TCategory[];
@@ -70,8 +71,8 @@ export default function EditCategory({
 				id: categoryId,
 			}).unwrap();
 			toast.success("Category updated successfully");
-		} catch (error: any) {
-			toast.error(error?.data?.message);
+		} catch (error) {
+			toast.error(getApiErrorMessage(error));
 		}
 	};
 	if (!categoryId) return null;

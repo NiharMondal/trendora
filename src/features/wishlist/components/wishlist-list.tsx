@@ -17,6 +17,7 @@ import {
 
 import WishlistCard from "./wishlist-card";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function WishlistList() {
     const {
@@ -38,8 +39,8 @@ export default function WishlistList() {
             await removeFromWishlist(selected.id).unwrap();
             toast.success("Removed from wishlist");
             setSelected(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message ?? "Failed to remove item");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Failed to remove item"));
         }
     };
 
