@@ -1,6 +1,6 @@
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
 import { TRefund } from "@/features/refunds/types/refund.types";
-import { TOrderStatus, TPaymentStatus } from "@/features/orders/types/status.types";
+import { TOrderStatus, TPaymentStatus } from "@/shared/types/status.types";
 
 export type ShippingSnapshot = {
 	id: string;

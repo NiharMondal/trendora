@@ -1,9 +1,6 @@
-export type TRefundStatus =
-    | "PENDING"
-    | "PROCESSING"
-    | "SUCCEEDED"
-    | "FAILED"
-    | "CANCELED";
+// Defined once in `shared/types/status.types.ts` (FE-28).
+import type { TRefundStatus } from "@/shared/types/status.types";
+export type { TRefundStatus };
 
 /**
  * One attempt to move money back to a buyer — the mirror of a Payout.

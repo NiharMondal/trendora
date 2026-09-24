@@ -475,6 +475,10 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
   inferred types double as the RTK Query mutation payload types.
 - Status pills go through `StatusBadge` / `getStatusBadge` (`shared/ui/status-badge.tsx`) driven
   by the maps in `features/orders/constants/status-maps.ts` (`orderStatusMap`, `paymentStatusMap`).
+  Never hand-roll a status class table. The status unions themselves are defined **once**, in
+  `shared/types/status.types.ts`, mirroring the Prisma enums. A feature may re-export one, but
+  must not declare a copy: a third `PaymentStatus` copy missing `PARTIALLY_REFUNDED` is how a
+  part-refunded order came to render as Pending (FE-28).
 - Other libraries in use: `lucide-react` icons, `motion` for animation, `recharts` for dashboard
   charts, `embla-carousel` for carousels, `vaul` (installed, but nothing renders a drawer since FE-25), `moment` (via `lib/format-date-time.ts`)
   for dates, `@react-pdf/renderer` for order invoices (`features/orders/components/order-pdf/`).

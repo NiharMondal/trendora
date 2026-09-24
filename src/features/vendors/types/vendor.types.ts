@@ -1,6 +1,8 @@
 import { TMetaData } from "@/shared/types/common.types";
 
-export type TVendorStatus = "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
+// Defined once in `shared/types/status.types.ts` (FE-28).
+import type { TVendorStatus } from "@/shared/types/status.types";
+export type { TVendorStatus };
 
 /**
  * The store identity attached to every product and vendor order. This is the

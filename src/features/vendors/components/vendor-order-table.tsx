@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { orderStatusMap, paymentStatusMap } from "@/features/orders/constants/status-maps";
-import type { TOrderStatus, TPaymentStatus } from "@/features/orders/types/status.types";
+import type { TOrderStatus, TPaymentStatus } from "@/shared/types/status.types";
 import { useMyVendorOrdersQuery } from "@/features/vendors/api/vendor-order.api";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
 import { DataTable, TableLoading } from "@/shared/components/table";

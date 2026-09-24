@@ -56,7 +56,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-25~~ | ~~1 orphaned component file (was 11)~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
 | ~~FE-26~~ | ~~Five stray `console.log`s~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
 | ~~FE-27~~ | ~~39 `any`s, eight of them in type definitions~~ | ✅ **FIXED** 2026-09-24 | — | types |
-| FE-28 | Duplicate type definitions across features | P2 | S | types |
+| ~~FE-28~~ | ~~Duplicate type definitions across features~~ | ✅ **FIXED** 2026-09-24 | — | types |
 | FE-29 | No `.env.example`; README is scaffold boilerplate | P2 | S | onboarding |
 | FE-30 | No env validation — a missing tax rate silently means 0% | P2 | S | config |
 | FE-31 | 13 raw `<img>` tags bypass `next/image` | P2 | S | performance |
@@ -978,17 +978,42 @@ had already removed a few, leaving 37 `no-explicit-any` warnings out of a 48-war
 - an unused `index` parameter;
 - two unused `error` bindings in `address-list.tsx` and `edit-review.tsx`.
 
-### FE-28 · Duplicate type definitions across features
-**P2 · S · types**
+### ~~FE-28~~ · Duplicate type definitions across features
+**✅ FIXED 2026-09-24 · types** (branch `FE-28-Duplicate-type-definitions-across-features`; closes XR-09's frontend half)
 
-`VendorStatus`, `PayoutStatus` and `RefundStatus` each exist twice — once in
-`features/orders/types/status.types.ts` and once in the owning feature's types file. Values agree
-today. `PaymentStatus` exists twice and the two **disagree** — see **XR-09**, which is the reason
-this matters.
+**Was:**
 
-**Fix:** Keep `status.types.ts` as the single source and re-export from it.
+- `TVendorStatus`, `TPayoutStatus` and `TRefundStatus` were each declared twice: in
+  `orders/types/status.types.ts` and in the owning feature's types file.
+- `PaymentStatus` existed **three** times. The third copy, `orders/utils/payment-status.ts`'s
+  `EnumPaymentStatus`, was missing `PARTIALLY_REFUNDED`, so a part-refunded order rendered with
+  *Pending* styling in the admin order table.
+- The same folder held an `EnumOrderStatus` with its own style table: a second `TOrderStatus` and
+  a second `orderStatusMap`.
 
----
+**Now:**
+
+- **`src/shared/types/status.types.ts` is the single definition** of every status union
+  (`git mv`'d from `orders/types/`). Status vocabulary is cross-feature, since orders, vendors,
+  payouts, refunds and analytics all read it. It imports nothing, and `orders` ↔ `vendors` already
+  import each other's types, so `shared/` is the right home rather than a feature. All 7 importers
+  were repointed.
+- `vendor.types.ts`, `payout.types.ts` and `refund.types.ts` **re-export** their status from it,
+  instead of declaring a copy, so existing imports keep working.
+- **`orders/utils/payment-status.ts` and `order-status.ts` are deleted.** Their only consumer,
+  `order-columns.tsx`, now renders both columns with `StatusBadge` + `orderStatusMap` /
+  `paymentStatusMap`, like every other table. The payment column now handles
+  `PARTIALLY_REFUNDED` and shows labels, not raw enum text.
+- **The three phantom types are deleted**, all of them unused: `TUserStatus`, `TCouponStatus`, and
+  the pre-marketplace `TProductStatus`.
+
+**Verified by script:**
+
+- All six unions **match their Prisma enums exactly**: `OrderStatus`, `PaymentStatus`,
+  `ProductStatus` (as `TProductModerationStatus`), `VendorStatus`, `PayoutStatus` and
+  `RefundStatus`.
+- All six maps in `status-maps.ts` cover every value of their union.
+- `pnpm build` passes, and lint is unchanged at 11.
 
 ### FE-29 · No `.env.example`; README is scaffold boilerplate
 **P2 · S · onboarding**
@@ -1286,28 +1311,15 @@ param that would become a bogus `where` clause.** Two caveats:
 
 ---
 
-### XR-09 · Enum drift
-**P2 · S · contract**
+### ~~XR-09~~ · Enum drift
+**✅ FIXED 2026-09-24 · contract** (frontend half in FE-28; the backend half was already fixed as BE-25)
 
-The backend's Prisma enums and its Zod mirrors agree on all nine mirrored enums. The drift is on
-this side:
-
-- **`PaymentStatus` exists twice here and the copies disagree.**
-  `features/orders/utils/payment-status.ts:3-8` is **missing `PARTIALLY_REFUNDED`**, and
-  `PAYMENT_STATUS_STYLES` (`:10-15`) is keyed on that union — so a partially-refunded order falls
-  through the `??` at `:19` and renders with **Pending** styling. The other copy
-  (`orders/types/status.types.ts:8-14` + `constants/status-maps.ts:17-42`) is correct. Since
-  `PARTIALLY_REFUNDED` exists precisely so that refunding one parcel of three is not misreported,
-  rendering it as *Pending* defeats the point.
-- **Three phantom types** describe backend concepts that do not exist:
-  `TUserStatus = ACTIVE | INACTIVE` (`status.types.ts:16-18`; the backend `User` has only
-  `isDeleted`), `TCouponStatus` (`:46-49`; there is no `Coupon` model), and a pre-marketplace
-  `TProductStatus = ACTIVE | INACTIVE | OUT_OF_STOCK` (`:20-23`) sitting beside the correct
-  `TProductModerationStatus`.
-- `EnumUserRole.SUPER_ADMIN` exists only here — deliberate; see "Verified NOT a gap".
-
-**Fix:** Delete `payment-status.ts` and use `status-maps.ts` everywhere (FE-28). Delete the three
-phantom types.
+- **`PaymentStatus` duplication:** there was a third copy, missing `PARTIALLY_REFUNDED`, which
+  styled a part-refunded order as Pending. It is **deleted**. There is now one definition in
+  `shared/types/status.types.ts`, and `order-columns.tsx` renders through `paymentStatusMap`.
+- **Phantom types:** `TUserStatus`, `TCouponStatus` and the old `TProductStatus` are **deleted**.
+- **A script check** confirms all six frontend status unions match their Prisma enums exactly.
+- `EnumUserRole.SUPER_ADMIN` still exists only here, deliberately. See "Verified NOT a gap".
 
 ---
 

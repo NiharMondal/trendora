@@ -5,11 +5,11 @@ import Link from "next/link";
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TOrder } from "@/features/orders/types/order.types";
 import { Button } from "@/shared/ui/button";
-import { EnumOrderStatus, getOrderStatusStyles } from "@/features/orders/utils/order-status";
 import {
-    EnumPaymentStatus,
-    getPaymentStatusStyles,
-} from "@/features/orders/utils/payment-status";
+    orderStatusMap,
+    paymentStatusMap,
+} from "@/features/orders/constants/status-maps";
+import { StatusBadge } from "@/shared/ui/status-badge";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
     {
@@ -80,13 +80,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <span
-                    className={getOrderStatusStyles(
-                        order.orderStatus as EnumOrderStatus,
-                    )}
-                >
-                    {order.orderStatus}
-                </span>
+                <StatusBadge statusMap={orderStatusMap} status={order.orderStatus} />
             );
         },
     },
@@ -104,13 +98,10 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <span
-                    className={getPaymentStatusStyles(
-                        order.paymentStatus as EnumPaymentStatus,
-                    )}
-                >
-                    {order.paymentStatus}
-                </span>
+                // The canonical map includes PARTIALLY_REFUNDED; the deleted
+                // `utils/payment-status.ts` did not, so a part-refunded order
+                // used to render with Pending styling (XR-09).
+                <StatusBadge statusMap={paymentStatusMap} status={order.paymentStatus} />
             );
         },
     },
