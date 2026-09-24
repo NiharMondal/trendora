@@ -37,7 +37,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
 | ~~FE-07~~ | ~~Placeholder pages wired into live navigation~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | ~~FE-08~~ | ~~`/admin/user-management` is empty; the real table is unlinked~~ | ✅ **FIXED** 2026-09-24 | — | admin |
-| FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
+| ~~FE-09~~ | ~~Hardcoded "Your Balance $12627" on every dashboard page~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
 | FE-10 | Footer links to nine routes that do not exist | P1 | M | storefront |
 | FE-11 | Three admin dashboard widgets are demo fixtures | P1 | M | analytics |
 | FE-12 | SEO metadata is on the wrong pages; none on the storefront | P1 | M | seo |
@@ -366,20 +366,30 @@ The lint baseline dropped to 50, because the deleted page carried a raw `<img>` 
 
 ---
 
-### FE-09 · Hardcoded "Your Balance $12627" on every dashboard page
-**P1 · S · dashboard**
+### ~~FE-09~~ · Hardcoded "Your Balance $12627" on every dashboard page
+**✅ FIXED 2026-09-24 · dashboard**
 
-**Now:** `src/app/(dashboard)/layout.tsx:41-44`. It is in the chrome, so it renders for **admin,
-vendor and customer alike**, on every dashboard route. The same layout has a decorative "Search
-anything…" input with no handler at `:29-33`.
+**Was:** `(dashboard)/layout.tsx` put a fabricated "Your Balance **$12627**" in the chrome of every
+dashboard route, for admins, vendors and customers alike. Beside it were a "Search anything…"
+input with no handler and a `cursor-pointer` notification bell with no handler.
 
-**Gap:** A fabricated money figure shown to every logged-in user on every page, next to real
-money. A seller could reasonably read it as their payout balance.
+**Now:**
 
-**Fix:** Remove it, or replace it with a real value per role — the vendor case has
-`useMyBalanceQuery` (`src/features/payouts/api/payout.api.ts`) ready. The fake search input beside
-it can be removed, or wired the way FE-02 wired the navbar — `useNavbarSearch`
-(`layouts/navbar/use-navbar-search.ts`) is reusable for it.
+- **The balance is real and vendor-only.** `layouts/dashboard/vendor-balance.tsx` is mounted only
+  when the session role is `VENDOR`. It shows `availableForPayout` from `useMyBalanceQuery`
+  (`GET /payouts/me/balance`) and links to `/vendor/payouts`. That figure is money from delivered,
+  paid parcels not yet in a payout, with commission and tax already removed, so it is what the store
+  will actually be paid. Admins and customers see nothing, because they have no balance.
+  - It renders `null` on error. The backend 403s a pending, rejected or suspended store, and the
+    vendor dashboard already explains that (FE-06).
+  - It shows a small skeleton while loading.
+- **The search input was removed**, not wired. `useNavbarSearch` pushes `/products?search=`, which
+  would throw an admin out of the dashboard into the storefront. Every dashboard table already has
+  its own URL-synced search.
+- **The bell was removed.** There is no notifications backend.
+
+A VENDOR sees their balance on `/dashboard/*` (their shopper pages) too. That is deliberate: it
+is the same person, and it is still true there.
 
 ---
 

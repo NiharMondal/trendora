@@ -1,9 +1,9 @@
-import { Bell } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 
 import { DashboardSidebar } from "@/layouts/dashboard/dashboard-sidebar";
 import DashboardTabs from "@/layouts/dashboard/dashboard-tabs";
+import VendorBalance from "@/layouts/dashboard/vendor-balance";
 import { TSessionResponse } from "@/features/auth/types/session.types";
 import { SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { EnumUserRole } from "@/features/auth/constants/user-role";
@@ -24,26 +24,13 @@ export default async function DashboardLayout({
                 role={role as EnumUserRole}
             />
             <section className="w-full">
-                <div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
+                {/* No global search box and no notification bell here: neither
+                    had a handler, and every dashboard table has its own search.
+                    The balance is real and vendor-only — it replaced a
+                    hardcoded "$12627" that every role saw (FE-09). */}
+                <div className="flex items-center justify-between border-b py-3 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20 min-h-16">
                     <SidebarTrigger className="cursor-pointer" />
-                    <div className="">
-                        <input
-                            type="text"
-                            placeholder="Search anything..."
-                            className="outline-none border-none ring ring-neutral-dark/20 focus:ring-2 focus:ring-accent/50 rounded-full px-4 py-2 xl:min-w-xl"
-                        />
-                    </div>
-                    <div className="flex items-center gap-x-4 xl:gap-x-10">
-                        <div className="p-2 bg-gray-100 rounded-full cursor-pointer">
-                            <Bell />
-                        </div>
-                        <div className="hidden md:block">
-                            <p>Your Balance</p>
-                            <p>
-                                <strong>$12627</strong>
-                            </p>
-                        </div>
-                    </div>
+                    {role === EnumUserRole.VENDOR ? <VendorBalance /> : null}
                 </div>
                 <div className="p-2 sm:px-3 md:p-5 bg-neutral-light">
                     <DashboardTabs role={role as EnumUserRole} />
