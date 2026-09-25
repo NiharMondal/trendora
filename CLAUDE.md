@@ -344,8 +344,11 @@ state machinery:
 
 **Use `setFilters` (plural), not two `setFilter` calls,** when moving more than one param at once.
 Both build their `URLSearchParams` from the same render's snapshot, so the second silently discards
-the first — a price min/max pair loses its min. `PriceFilter` applies on submit rather than per
-keystroke for the same class of reason: a number input fires on every digit.
+the first — a price min/max pair loses its min. `PriceFilter` never applies per movement, for the same class of reason:
+it is a `react-slider-range` slider that applies on release via `onChangeCommitted` (dragging
+fires `onChange` on every pixel). The package's stylesheet is imported
+in `globals.css` **into `layer(components)`** — unlayered, it would beat every Tailwind utility put
+on the slider. A side left at its facet bound is sent as "no limit", not as that number.
 
 `app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>` — Next 15 requires it for
 `useSearchParams`, and without it the route opts out of static rendering at build time.

@@ -42,6 +42,7 @@
     "react-hook-form": "^7.62.0",
     "react-photo-view": "^1.2.7",
     "react-redux": "^9.2.0",
+    "react-slider-range": "^0.0.3",
     "react-smart-rating": "^3.0.5",
     "recharts": "^3.8.0",
     "redux-persist": "^6.0.0",
