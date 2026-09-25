@@ -6,6 +6,7 @@ type TDAvatarProps = {
     alt?: string;
     size?: "sm" | "md" | "lg";
     fallback?: string;
+    className?:string;
 };
 
 export default function TdAvatar({
@@ -13,6 +14,7 @@ export default function TdAvatar({
     alt,
     size = "md",
     fallback = "U",
+    className
 }: TDAvatarProps) {
     const avatarSize = {
         sm: "size-8",
@@ -20,13 +22,13 @@ export default function TdAvatar({
         lg: "size-16",
     };
     return (
-        <Avatar className={cn(avatarSize[size])}>
+        <Avatar className={cn(avatarSize[size], className)}>
             <AvatarImage
                 src={src}
                 alt={alt}
                 className="object-center object-cover w-full h-full rounded-full"
             />
-            <AvatarFallback className="rounded-full">{fallback}</AvatarFallback>
+            <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
     );
 }

@@ -15,9 +15,9 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **10 warnings, 0 errors**: five `@next/next/no-img-element`
-(FE-31) and five `no-unused-vars`. There are **no `no-explicit-any` warnings** since FE-27, so keep it
-that way. Treat 10 as the baseline, and don't add to it.
+`pnpm lint` passes (exit 0) with **9 warnings, 0 errors**: five `@next/next/no-img-element`
+(FE-31) and four `no-unused-vars`. There are **no `no-explicit-any` warnings** since FE-27, so keep it
+that way. Treat 9 as the baseline, and don't add to it.
 
 - **A catch reads its message with `getApiErrorMessage(error, "fallback")`**
   (`shared/utils/api-error.ts`), never `catch (error: any)` + `error.data.message`. That older
@@ -376,7 +376,7 @@ place. `pnpm build` confirms it: `/about-us`, `/cart`, `/checkout` and `/product
 Off `/products` the box shows nothing, because no search is running there. A navbar search also
 pushes the bare path, so it starts a fresh result set rather than merging into filters left behind.
 
-### The home page is ten self-hiding sections
+### The home page is eleven self-hiding sections
 
 `app/(root)/page.tsx` composes `features/home/components/`. Two rules keep it stable as the
 marketplace grows:
@@ -394,6 +394,12 @@ catalogue URL built from the same params the rail queried, so it always lands on
 shelf previewed — which also means **a new rail filter must be registered in
 `PRODUCT_FILTER_KEYS`** or `useTableFilters` drops it from `queryParams` and the link silently
 shows everything.
+
+**The Featured rail is curated at `/admin/featured-products`.** Both run the same
+`featuredRailQuery` (`features/products/constants/featured.ts`), so the admin's "On the home
+page now" summary is exactly what shoppers see. The rail has no "View all": `isFeatured` is not in
+`PRODUCT_FILTER_KEYS`, so a catalogue link would silently show everything. Only admin product forms
+pass `showFeatured` to `ProductForm`; the backend ignores `isFeatured` from a vendor.
 
 **`CategoryTiles` reads `GET /products/filters`, not `GET /categories`.** The taxonomy is
 admin-owned and aspirational — it carries Belt, Bag, Heels and a dozen more nobody has listed a

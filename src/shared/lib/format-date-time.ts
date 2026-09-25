@@ -11,8 +11,9 @@ export type TFormatDateTime =
     | "MM/DD/YYYY"
     | "DD MMM"
     | "DD/MM/YY"
-    | "DD Month YYYY"
-    | "DD-MM-YYYY";
+    | "DD MM YYYY"
+    | "DD-MM-YYYY"
+    | "Do MMM YYYY";
 
 export const formatDate = (
     dateString: string,

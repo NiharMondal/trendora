@@ -38,7 +38,10 @@ export const userManagementColumns = ({
                     src={row.avatar || undefined}
                     alt={row.name}
                     fallback={row.name?.charAt(0).toUpperCase() || "U"}
+                    className="border border-muted flex items-center justify-center rounded-full"
+                    
                 />
+                
                 <div className="space-y-0.5">
                     <p className="font-semibold">{row.name}</p>
                     <p className="text-sm text-muted-foreground">
@@ -73,7 +76,7 @@ export const userManagementColumns = ({
     {
         header: "Joined",
         key: "createdAt",
-        cell: (row) => formatDate(row.createdAt),
+        cell: (row) => formatDate(row.createdAt, "Do MMM YYYY"),
     },
     {
         header: "Actions",
