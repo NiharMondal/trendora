@@ -4,16 +4,12 @@ import { TServerResponse } from "@/shared/types/common.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
 import { baseApi } from "@/store/api/base-api";
-type TCategoryInput = {
-    name: string;
-    parentId?: string | null;
-};
 export const categoryApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         // create category
         createCategory: builder.mutation<
             TServerResponse<TCategory>,
-            TCategoryInput
+            TCategoryFormValues
         >({
             query: (payload) => {
                 return {

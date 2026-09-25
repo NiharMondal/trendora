@@ -18,6 +18,11 @@ export const uploadToCloudinary = async (file: File, folder: string) => {
 	);
 
 	const data = await res.json();
+	// Cloudinary answers a rejected upload with `{ error: { message } }` and
+	// no `secure_url`; returning that would save `undefined` as the image.
+	if (!res.ok || !data.secure_url || !data.public_id) {
+		throw new Error(data?.error?.message || "Image upload failed");
+	}
 	return {
 		url: data.secure_url,
 		publicId: data.public_id,

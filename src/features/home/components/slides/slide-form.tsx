@@ -102,7 +102,7 @@ export default function SlideForm({
                         form={hookForm}
                         urlName="photo.url"
                         publicIdName="photo.publicId"
-                        folderName="slides"
+                        folderName="temp/slides"
                     />
                     {hookForm.formState.errors.photo?.url ? (
                         <p className="text-sm text-destructive">

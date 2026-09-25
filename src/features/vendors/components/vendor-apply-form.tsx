@@ -104,7 +104,7 @@ export default function VendorApplyForm() {
                                 form={form}
                                 urlName="logo.url"
                                 publicIdName="logo.publicId"
-                                folderName="vendors"
+                                folderName="temp/vendors"
                             />
                         </div>
                         <div className="space-y-2">
@@ -115,7 +115,7 @@ export default function VendorApplyForm() {
                                 form={form}
                                 urlName="banner.url"
                                 publicIdName="banner.publicId"
-                                folderName="vendors"
+                                folderName="temp/vendors"
                             />
                         </div>
                     </div>

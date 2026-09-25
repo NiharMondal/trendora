@@ -41,8 +41,10 @@ export default function EditCategory({
 
 		return {
 			name: category?.name,
-			sizeGroupId: category?.sizeGroupId || "",
-			parentId: category?.parentId || "",
+			// `null`, never "": the backend writes "" into the foreign key and
+			// Postgres rejects it, so every edit of a top-level category failed.
+			sizeGroupId: category?.sizeGroupId ?? null,
+			parentId: category?.parentId ?? null,
 			// Round-trip the existing image. Omitting it sends `undefined`,
 			// which the backend reads as "leave it alone" — but the upload
 			// widget would then start blank and an admin replacing the picture
@@ -64,15 +66,17 @@ export default function EditCategory({
 		})) || [];
 
 	const handleUpdateCategory = async (values: TCategoryFormValues) => {
-		if (!categoryId) return;
+		if (!categoryId) return false;
 		try {
 			await updateCategory({
 				payload: values,
 				id: categoryId,
 			}).unwrap();
 			toast.success("Category updated successfully");
+			return true;
 		} catch (error) {
 			toast.error(getApiErrorMessage(error));
+			return false;
 		}
 	};
 	if (!categoryId) return null;

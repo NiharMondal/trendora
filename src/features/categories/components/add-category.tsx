@@ -23,8 +23,10 @@ export default function AddCategory() {
         try {
             await addCategory(values).unwrap();
             toast.success("Category added successfully");
+            return true;
         } catch (error) {
             toast.error(getApiErrorMessage(error));
+            return false;
         }
     };
     return (

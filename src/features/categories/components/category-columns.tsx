@@ -1,11 +1,11 @@
-import { Edit, EllipsisVertical, Trash } from "lucide-react";
-import moment from "moment";
+import { Edit, EllipsisVertical, ImageOff, Trash } from "lucide-react";
 
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import TDPopover from "@/shared/components/td-popover";
 import { TCategory } from "@/features/categories/types/category.types";
 import { Button } from "@/shared/ui/button";
 import { formatDate } from "@/shared/lib/format-date-time";
+import Image from "next/image";
 
 type Props = {
     handleEdit: (category: TCategory) => void;
@@ -15,6 +15,30 @@ export const categoryColumns = ({
     handleEdit,
     handleDelete,
 }: Props): DataTableColumn<TCategory>[] => [
+    {
+        key: "image",
+        header: "Store Front Image",
+        cell: (row) => (
+            // The image is optional, so render <Image> only when there is one:
+            // an empty `src` makes the browser re-request the page.
+            <div className="relative flex h-10 w-20 items-center justify-center overflow-hidden rounded bg-muted">
+                {row.image ? (
+                    <Image
+                        src={row.image}
+                        alt={row.name}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                    />
+                ) : (
+                    <ImageOff
+                        className="size-4 text-muted-foreground"
+                        aria-label="No image"
+                    />
+                )}
+            </div>
+        ),
+    },
     {
         key: "name",
         header: "Category Name",
