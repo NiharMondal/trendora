@@ -17,6 +17,9 @@ interface TableLoadingProps {
     columnCount?: number;
     rowCount?: number;
     showHeaders?: boolean;
+    /** Skeleton of the search / sort / limit row above the table. Off inside
+     *  `DataTable`, which renders the real toolbar over its own skeleton. */
+    showToolbar?: boolean;
     className?: string;
 }
 
@@ -24,9 +27,10 @@ export default function TableLoading({
     columnCount = 5,
     rowCount = 5,
     showHeaders = true,
+    showToolbar = true,
     className,
 }: TableLoadingProps) {
-    return (
+    const table = (
         <div className={cn("rounded-md border", className)}>
             <Table>
                 {showHeaders && (
@@ -61,6 +65,24 @@ export default function TableLoading({
                     ))}
                 </TableBody>
             </Table>
+        </div>
+    );
+
+    if (!showToolbar) return table;
+
+    // Mirrors `TableToolbar`'s controls row: search on the left, sort and
+    // per-page pills on the right, so the real toolbar lands without a jump.
+    return (
+        <div className="space-y-5">
+            <div className="w-full border-b border-muted pb-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+                    <Skeleton className="col-span-2 h-9 rounded-lg sm:w-64 lg:w-80" />
+                    <span aria-hidden="true" className="hidden sm:block sm:flex-1" />
+                    <Skeleton className="h-9 rounded-lg sm:w-40" />
+                    <Skeleton className="h-9 rounded-lg sm:w-28" />
+                </div>
+            </div>
+            {table}
         </div>
     );
 }
