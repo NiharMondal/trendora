@@ -6,7 +6,6 @@ import { TProduct } from "@/features/products/types/product.types";
 import { useWishlistToggle } from "@/features/wishlist/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import ProductCommonDetails from "@/features/products/components/product-common-details";
 import TDSheet from "@/shared/components/td-sheet";
 import Image from "next/image";
@@ -14,46 +13,47 @@ import Image from "next/image";
 type Props = {
 	product: TProduct;
 };
-export default function CardUtility({ product }: Props) {
-	const [isOpen, setIsOpen] = useState(false);
+
+const iconButton =
+	"flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm backdrop-blur transition hover:bg-white hover:scale-105 disabled:opacity-60";
+
+/** Always visible — a touch device has no hover to reveal it. */
+export function WishlistButton({ product }: Props) {
 	const { isWishlisted, toggle, isLoading } = useWishlistToggle(product.id);
 	return (
+		<button
+			type="button"
+			onClick={toggle}
+			disabled={isLoading}
+			aria-pressed={isWishlisted}
+			aria-label={
+				isWishlisted
+					? `Remove ${product.name} from wishlist`
+					: `Add ${product.name} to wishlist`
+			}
+			className={iconButton}
+		>
+			<Heart
+				className={cn("size-4", {
+					"fill-secondary text-secondary": isWishlisted,
+				})}
+			/>
+		</button>
+	);
+}
+
+export function QuickViewButton({ product, className }: Props & { className?: string }) {
+	const [isOpen, setIsOpen] = useState(false);
+	return (
 		<>
-			<div className="absolute right-0 top-0 overflow-hidden">
-				<div className="flex flex-col gap-y-2 pr-3 pt-3 translate-x-12 group-hover:translate-x-0 duration-300 ">
-					<Tooltip>
-						<TooltipTrigger
-							className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80 disabled:opacity-60"
-							onClick={toggle}
-							disabled={isLoading}
-						>
-							<Heart
-								className={cn("text-secondary", {
-									"fill-secondary": isWishlisted,
-								})}
-							/>
-						</TooltipTrigger>
-						<TooltipContent side="left">
-							<p>
-								{isWishlisted
-									? "Remove from Wishlist"
-									: "Add to Wishlist"}
-							</p>
-						</TooltipContent>
-					</Tooltip>
-					<Tooltip>
-						<TooltipTrigger
-							className="bg-neutral-light size-8 rounded-full flex items-center justify-center text-neutral-dark/80"
-							onClick={() => setIsOpen(true)}
-						>
-							<Eye className="text-secondary" />
-						</TooltipTrigger>
-						<TooltipContent side="left">
-							<p>Quick View</p>
-						</TooltipContent>
-					</Tooltip>
-				</div>
-			</div>
+			<button
+				type="button"
+				onClick={() => setIsOpen(true)}
+				aria-label={`Quick view ${product.name}`}
+				className={cn(iconButton, className)}
+			>
+				<Eye className="size-4" />
+			</button>
 			<TDSheet
 				isOpen={isOpen}
 				setIsOpen={setIsOpen}
