@@ -10,10 +10,12 @@ import { useAppDispatch } from "@/store/redux.hooks";
 import { addItemToCart } from "@/features/cart/store/cart.slice";
 import { toCartItem } from "@/features/cart/utils/to-cart-item";
 import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 
 import StoreBadge from "@/features/vendors/components/store-badge";
 import { QuickViewButton, WishlistButton } from "./card-utility";
 import ProductPrice from "./product-price";
+import { getDiscountPercent } from "@/features/products/utils/discount-percent";
 import Image from "next/image";
 
 type Props = {
@@ -110,16 +112,17 @@ export default function ProductCard({ product }: Props) {
 
 				{/* Add to cart — always shown on touch, revealed on hover/focus on desktop */}
 				<div className="absolute inset-x-3 bottom-3 transition duration-300 lg:translate-y-4 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
-					<button
+					<Button
 						type="button"
+						variant="ghost"
 						onClick={handleAddToCart}
 						disabled={isSoldOut}
 						aria-label={`Add ${product.name} to cart`}
-						className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-white/95 text-sm font-medium text-foreground shadow-md backdrop-blur transition hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-white/95 disabled:hover:text-foreground"
+						className="h-10 w-full cursor-pointer rounded-full bg-white/95 text-foreground shadow-md backdrop-blur hover:bg-foreground hover:text-background disabled:opacity-70"
 					>
 						<ShoppingBag className="size-4" aria-hidden="true" />
 						{isSoldOut ? "Sold out" : "Quick add"}
-					</button>
+					</Button>
 				</div>
 			</div>
 
@@ -160,11 +163,4 @@ export default function ProductCard({ product }: Props) {
 			</div>
 		</article>
 	);
-}
-
-function getDiscountPercent(basePrice: string, discountPrice: string | null) {
-	const base = Number(basePrice);
-	const discounted = Number(discountPrice);
-	if (!discountPrice || !(base > 0) || !(discounted < base)) return 0;
-	return Math.round((1 - discounted / base) * 100);
 }

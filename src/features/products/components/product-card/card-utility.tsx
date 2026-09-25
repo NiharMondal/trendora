@@ -5,6 +5,7 @@ import { useState } from "react";
 import { TProduct } from "@/features/products/types/product.types";
 import { useWishlistToggle } from "@/features/wishlist/hooks/use-wishlist-toggle";
 import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 
 import ProductCommonDetails from "@/features/products/components/product-common-details";
 import TDSheet from "@/shared/components/td-sheet";
@@ -15,14 +16,16 @@ type Props = {
 };
 
 const iconButton =
-	"flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm backdrop-blur transition hover:bg-white hover:scale-105 disabled:opacity-60";
+	"cursor-pointer rounded-full bg-white/90 text-foreground shadow-sm backdrop-blur hover:bg-white hover:text-foreground hover:scale-105 disabled:opacity-60";
 
 /** Always visible — a touch device has no hover to reveal it. */
 export function WishlistButton({ product }: Props) {
 	const { isWishlisted, toggle, isLoading } = useWishlistToggle(product.id);
 	return (
-		<button
+		<Button
 			type="button"
+			variant="ghost"
+			size="icon"
 			onClick={toggle}
 			disabled={isLoading}
 			aria-pressed={isWishlisted}
@@ -38,7 +41,7 @@ export function WishlistButton({ product }: Props) {
 					"fill-secondary text-secondary": isWishlisted,
 				})}
 			/>
-		</button>
+		</Button>
 	);
 }
 
@@ -46,14 +49,16 @@ export function QuickViewButton({ product, className }: Props & { className?: st
 	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<>
-			<button
+			<Button
 				type="button"
+				variant="ghost"
+				size="icon"
 				onClick={() => setIsOpen(true)}
 				aria-label={`Quick view ${product.name}`}
 				className={cn(iconButton, className)}
 			>
 				<Eye className="size-4" />
-			</button>
+			</Button>
 			<TDSheet
 				isOpen={isOpen}
 				setIsOpen={setIsOpen}

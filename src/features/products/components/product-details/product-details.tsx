@@ -8,10 +8,9 @@ type Props = {
 };
 export default function ProductDetails({ product }: Props) {
 	return (
-		<div className="space-y-5 bg-background">
+		<div className="space-y-8">
 			<ProductCommonDetails product={product} />
-			{/** Delivery Details */}
-			<DeliveryDetails />
+			<DeliveryDetails vendor={product?.vendor} />
 		</div>
 	);
 }
