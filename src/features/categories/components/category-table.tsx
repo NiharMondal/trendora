@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -22,9 +22,8 @@ import EditCategory from "./edit-category";
 import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const categoryId = searchParams.get("categoryId");
+    const editParam = useUrlParam("categoryId");
+    const categoryId = editParam.value;
 
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
@@ -44,10 +43,10 @@ export default function CategoryTable() {
     } = useAllCategoryQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TCategory) => {
-        router.push(`?categoryId=${category.id}`, { scroll: false });
+        editParam.set(category.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (category: TCategory) => {
         setDeleteCategoryId(category.id);

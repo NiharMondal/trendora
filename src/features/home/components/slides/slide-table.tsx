@@ -2,7 +2,7 @@
 
 import { Eye, GalleryHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -29,9 +29,8 @@ import { slideColumns } from "./slide-columns";
  * slide would vanish from the very screen that has to bring it back.
  */
 export default function SlideTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const editId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const editId = editParam.value;
 
     const filters = useTableFilters({
         defaultSortBy: "sortOrder:asc",
@@ -49,7 +48,7 @@ export default function SlideTable() {
     const [deleteSlide, { isLoading: isDeleting }] = useDeleteSlideMutation();
     const [deleteTarget, setDeleteTarget] = useState<TSlide | null>(null);
 
-    const closeEdit = () => router.push("?", { scroll: false });
+    const closeEdit = () => editParam.clear();
 
     const handleToggleActive = async (slide: TSlide) => {
         try {
@@ -94,7 +93,7 @@ export default function SlideTable() {
                 }
                 columns={slideColumns({
                     handleEdit: (slide) =>
-                        router.push(`?id=${slide.id}`, { scroll: false }),
+                        editParam.set(slide.id),
                     handleToggleActive,
                     handleDelete: setDeleteTarget,
                 })}

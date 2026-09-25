@@ -21,7 +21,7 @@ export const categoryColumns = ({
         cell: (row) => (
             // The image is optional, so render <Image> only when there is one:
             // an empty `src` makes the browser re-request the page.
-            <div className="relative flex h-10 w-20 items-center justify-center overflow-hidden rounded bg-muted">
+            <div className="relative flex h-12 w-20 items-center justify-center overflow-hidden rounded bg-muted">
                 {row.image ? (
                     <Image
                         src={row.image}

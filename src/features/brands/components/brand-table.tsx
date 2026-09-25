@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -18,9 +18,8 @@ import EditBrand from "./edit-brand";
 import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function BrandTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const brandId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const brandId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -36,10 +35,10 @@ export default function BrandTable() {
     } = useAllBrandQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TBrand) => {
-        router.push(`?id=${category.id}`, { scroll: false });
+        editParam.set(category.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (category: TBrand) => {
         setDeleteBrandId(category.id);
