@@ -1,10 +1,19 @@
 "use client";
 
-import { ArrowUpDown, ListFilter, RotateCcw, Rows3, Search, X } from "lucide-react";
+import {
+    ArrowUpDown,
+    ListFilter,
+    RotateCcw,
+    Rows3,
+    Search,
+    SlidersHorizontal,
+    X,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { ComponentType, ReactNode } from "react";
+import { ComponentType, ReactNode, useId, useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import {
     Select,
@@ -16,6 +25,7 @@ import {
 
 import { TColumnOption } from "@/shared/hooks/use-column-visibility";
 
+import AdvancedFilterPanel from "./advanced-filter-panel";
 import ColumnMenu from "./column-menu";
 import { SortByOption, ToolbarFilter } from "./table-types";
 
@@ -42,6 +52,7 @@ type TableToolbarProps = {
     /** Extra column filters — values, setter and config. */
     columnFilters?: Record<string, string>;
     setFilter?: (key: string, value: string) => void;
+    setFilters?: (updates: Record<string, string>) => void;
     toolbarFilters?: ToolbarFilter[];
     /** Values each control is compared against to decide if it is "active". */
     defaults?: Record<string, string>;
@@ -137,6 +148,7 @@ export default function TableToolbar({
     limitOptions = DEFAULT_LIMIT_OPTIONS,
     columnFilters,
     setFilter,
+    setFilters,
     toolbarFilters,
     defaults,
     activeFilterCount,
@@ -220,16 +232,93 @@ export default function TableToolbar({
 
     const hasHeader = !!title || !!description || !!actions;
 
+    const isFilterActive = (filter: ToolbarFilter) => {
+        const value = columnFilters?.[filter.key] ?? "";
+        return !!value && value !== (defaults?.[filter.key] ?? "");
+    };
+    const primaryFilters =
+        toolbarFilters?.filter(
+            (filter) => (filter.placement ?? "primary") === "primary",
+        ) ?? [];
+    const advancedFilters =
+        toolbarFilters?.filter((filter) => filter.placement === "advanced") ??
+        [];
+    const advancedActive = advancedFilters.filter(isFilterActive).length;
+    const canShowAdvanced =
+        advancedFilters.length > 0 && !!setFilter && !!setFilters;
+
+    // Opens itself when the URL already carries an advanced filter (a shared
+    // link, a reload), so an applied filter is never hidden behind a toggle.
+    const [advancedOpen, setAdvancedOpen] = useState(advancedActive > 0);
+    const panelId = useId();
+
+    // "Customise the view" controls — they change what the table shows, not
+    // which rows match, so they sit with the title rather than the filters.
+    const viewControls = (canShowAdvanced || columnMenu) && (
+        <>
+            {canShowAdvanced && (
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setAdvancedOpen((open) => !open)}
+                    aria-expanded={advancedOpen}
+                    aria-controls={panelId}
+                    className={cn(
+                        "h-9 gap-1.5 rounded-lg bg-white px-2.5 font-medium shadow-xs",
+                        (advancedOpen || advancedActive > 0) &&
+                            "border-primary-300 bg-primary-50/50  hover:bg-primary-50 text-primary-700",
+                    )}
+                >
+                    <SlidersHorizontal className="size-3.5" />
+                    {advancedOpen ? "Hide filters" : "Filters"}
+                    {advancedActive > 0 && (
+                        <span className="flex size-5 items-center justify-center rounded-full bg-primary-600 text-[10px] font-semibold">
+                            {advancedActive}
+                        </span>
+                    )}
+                </Button>
+            )}
+            {columnMenu && <ColumnMenu {...columnMenu} />}
+        </>
+    );
+
+    const pill = (filter: ToolbarFilter) => {
+        const fallback = defaults?.[filter.key] ?? "";
+        const value = columnFilters?.[filter.key] ?? fallback;
+        const options = filter.hideAllOption
+            ? filter.options
+            : [
+                  { label: filter.allLabel ?? "All", value: ALL_VALUE },
+                  ...filter.options,
+              ];
+        return (
+            <FilterPill
+                key={filter.key}
+                label={filter.label}
+                icon={filter.icon ?? ListFilter}
+                value={value === "" ? ALL_VALUE : value}
+                active={!!value && value !== fallback}
+                onChange={(next) =>
+                    setFilter?.(filter.key, next === ALL_VALUE ? "" : next)
+                }
+                options={options}
+                placeholder={filter.allLabel ?? "All"}
+                className={cn("w-full sm:w-auto", filter.className)}
+            />
+        );
+    };
+
     return (
         <div
             className={cn(
-                "w-full overflow-hidden border-b border-muted",
+                "w-full space-y-3 border-b border-muted pb-3",
                 className,
             )}
         >
             {hasHeader && (
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-muted/70 bg-gradient-to-r from-primary-50/80 to-white py-3 rounded-md">
-                    <div className="flex min-w-0 items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border-b border-muted/70 bg-gradient-to-r from-primary-50/80 to-white py-3 pr-2">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
                         <span className="h-9 w-1 shrink-0 rounded-full bg-gradient-to-b from-primary-300 to-primary-600" />
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 ring-1 ring-primary-100">
                             <Icon className="size-4.5" />
@@ -241,21 +330,26 @@ export default function TableToolbar({
                                 </h3>
                             )}
                             {description && (
-                                <p className="truncate text-xs text-muted-foreground">
+                                <p className="line-clamp-2 text-xs text-muted-foreground sm:truncate">
                                     {description}
                                 </p>
                             )}
                         </div>
                     </div>
-                    {actions && (
-                        <div className="flex items-center gap-2">{actions}</div>
+                    {(actions || viewControls) && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            {actions}
+                            {viewControls}
+                        </div>
                     )}
                 </div>
             )}
 
-            <div className="flex flex-wrap items-center gap-2.5 py-3">
+            {/* Two columns on a phone, one wrapping row from `sm` up. Search
+                has a fixed width there so it cannot swallow the row. */}
+            <div className="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center">
                 {setSearch && (
-                    <div className="relative min-w-[200px] flex-1 md:max-w-sm">
+                    <div className="relative col-span-2 sm:w-64 lg:w-80">
                         <Search
                             className={cn(
                                 "pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 transition-colors",
@@ -289,92 +383,89 @@ export default function TableToolbar({
                     </div>
                 )}
 
-                <div className="flex flex-1 flex-wrap items-center justify-end gap-2.5">
-                    {setFilter &&
-                        toolbarFilters?.map((filter) => {
-                            const fallback = defaults?.[filter.key] ?? "";
-                            const value = columnFilters?.[filter.key] ?? fallback;
-                            const options = filter.hideAllOption
-                                ? filter.options
-                                : [
-                                      {
-                                          label: filter.allLabel ?? "All",
-                                          value: ALL_VALUE,
-                                      },
-                                      ...filter.options,
-                                  ];
-                            return (
-                                <FilterPill
-                                    key={filter.key}
-                                    label={filter.label}
-                                    icon={filter.icon ?? ListFilter}
-                                    value={value === "" ? ALL_VALUE : value}
-                                    active={!!value && value !== fallback}
-                                    onChange={(next) =>
-                                        setFilter(
-                                            filter.key,
-                                            next === ALL_VALUE ? "" : next,
-                                        )
-                                    }
-                                    options={options}
-                                    placeholder={filter.allLabel ?? "All"}
-                                    className={filter.className}
-                                />
-                            );
-                        })}
+                {setFilter && primaryFilters.map(pill)}
 
-                    {setSortBy && (
-                        <FilterPill
-                            label="Sort"
-                            icon={ArrowUpDown}
-                            value={sortBy}
-                            active={sortActive}
-                            onChange={setSortBy}
-                            options={sortByOptions}
-                        />
+                <span aria-hidden="true" className="hidden sm:block sm:flex-1" />
+
+                {setSortBy && (
+                    <FilterPill
+                        label="Sort"
+                        icon={ArrowUpDown}
+                        value={sortBy}
+                        active={sortActive}
+                        onChange={setSortBy}
+                        options={sortByOptions}
+                        className="w-full sm:w-auto"
+                    />
+                )}
+
+                {setLimit && (
+                    <FilterPill
+                        label="Show"
+                        icon={Rows3}
+                        value={limit?.toString()}
+                        active={limitActive}
+                        onChange={setLimit}
+                        options={limitOptions.map((option) => ({
+                            label: option,
+                            value: option,
+                        }))}
+                        // keep 10 and 100 the same width so the row does not jump
+                        className="w-full sm:w-auto [&_[data-slot=select-value]]:min-w-6"
+                    />
+                )}
+
+                {/* No header strip to hold them — keep them on this row. */}
+                {!hasHeader && viewControls && (
+                    <div className="col-span-2 flex flex-wrap gap-2.5 sm:col-auto [&>button]:h-10">
+                        {viewControls}
+                    </div>
+                )}
+
+                <AnimatePresence initial={false}>
+                    {isFiltered && (
+                        <motion.button
+                            type="button"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.15 }}
+                            onClick={handleResetFilters}
+                            aria-label={`Reset ${count} filters`}
+                            className="col-span-2 flex h-10 items-center justify-center gap-1.5 rounded-lg border border-destructive-100 bg-destructive-50/60 px-3 text-sm font-medium text-destructive-600 transition-colors hover:bg-destructive-100/70 sm:col-auto"
+                        >
+                            <RotateCcw className="size-3.5" />
+                            Reset
+                            <span className="flex size-5 items-center justify-center rounded-full bg-destructive-500 text-[10px] font-semibold text-white">
+                                {count}
+                            </span>
+                        </motion.button>
                     )}
-
-                    {setLimit && (
-                        <FilterPill
-                            label="Show"
-                            icon={Rows3}
-                            value={limit?.toString()}
-                            active={limitActive}
-                            onChange={setLimit}
-                            options={limitOptions.map((option) => ({
-                                label: option,
-                                value: option,
-                            }))}
-                            // keep 10 and 100 the same width so the row does not jump
-                            className="[&_[data-slot=select-value]]:min-w-6"
-                        />
-                    )}
-
-                    {/* Not a filter: changing columns never narrows the rows,
-                        so it is not counted by Reset or shown as a chip. */}
-                    {columnMenu && <ColumnMenu {...columnMenu} />}
-
-                    <AnimatePresence initial={false}>
-                        {isFiltered && (
-                            <motion.button
-                                type="button"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ duration: 0.15 }}
-                                onClick={handleResetFilters}
-                                className="flex h-10 items-center gap-1.5 rounded-lg border border-destructive-100 bg-destructive-50/60 px-3 text-sm font-medium text-destructive-600 transition-colors hover:bg-destructive-100/70"
-                            >
-                                <RotateCcw className="size-3.5" />
-                                <span className="hidden sm:inline">Reset</span>
-                                <span className="flex size-5 items-center justify-center rounded-full bg-destructive-500 text-[10px] font-semibold text-white">
-                                    {count}
-                                </span>
-                            </motion.button>
-                        )}
-                    </AnimatePresence>
-                </div>
+                </AnimatePresence>
             </div>
+
+            <AnimatePresence initial={false}>
+                {canShowAdvanced && advancedOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                    >
+                        <AdvancedFilterPanel
+                            id={panelId}
+                            filters={advancedFilters}
+                            columnFilters={columnFilters}
+                            defaults={defaults}
+                            setFilter={setFilter!}
+                            setFilters={setFilters!}
+                            activeCount={advancedActive}
+                            onClose={() => setAdvancedOpen(false)}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence initial={false}>
                 {chips.length > 0 && (
@@ -385,14 +476,14 @@ export default function TableToolbar({
                         transition={{ duration: 0.18 }}
                         className="overflow-hidden"
                     >
-                        <div className="flex flex-wrap items-center gap-2 border-t border-dashed border-muted bg-gray-50/60 px-4 py-2.5">
+                        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-muted bg-gray-50/60 px-3 py-2.5">
                             <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
-                                Filters
+                                Applied
                             </span>
                             {chips.map((chip) => (
                                 <span
                                     key={chip.key}
-                                    className="inline-flex items-center gap-1.5 rounded-full border border-primary-100 bg-primary-50/70 py-1 pr-1 pl-2.5 text-xs font-medium text-primary-700"
+                                    className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-primary-100 bg-primary-50/70 py-1 pr-1 pl-2.5 text-xs font-medium text-primary-700"
                                 >
                                     <span className="text-primary-600/70">
                                         {chip.label}:

@@ -45,7 +45,7 @@ export default function ColumnMenu({
                     size="sm"
                     aria-label={`Columns, ${shown} of ${options.length} shown`}
                     className={cn(
-                        "h-10 gap-1.5 rounded-lg border-input bg-white px-2.5 font-medium shadow-xs",
+                        "h-9 gap-1.5 rounded-lg border-input bg-white px-2.5 font-medium shadow-xs",
                         isCustomised &&
                             "border-primary-300 bg-primary-50/50 text-primary-700 hover:bg-primary-50",
                     )}
@@ -61,7 +61,7 @@ export default function ColumnMenu({
                     <span className="hidden text-xs text-muted-foreground sm:inline">
                         Columns
                     </span>
-                    <span className="tabular-nums">
+                    <span className="tabular-nums text-primary-700">
                         {shown}/{options.length}
                     </span>
                 </Button>

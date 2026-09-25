@@ -70,6 +70,19 @@ export type ToolbarFilter = {
     hideAllOption?: boolean;
     icon?: ComponentType<{ className?: string }>;
     className?: string;
+    /**
+     * `primary` (default) renders inline beside search. `advanced` goes in
+     * the collapsible "Filters" panel — use it once a table has more filters
+     * than fit on one row, keeping the one or two most-used ones primary.
+     */
+    placement?: "primary" | "advanced";
+    /**
+     * How an advanced filter is drawn. `select` (default) takes the same space
+     * however many options there are. `chips` is opt-in, and only sensible for
+     * a short FIXED list (two or three values) — never for data-driven options
+     * like brands or stores, which would wrap into a wall of buttons.
+     */
+    display?: "select" | "chips";
 };
 
 export type EmptyStateConfig = {
@@ -94,6 +107,8 @@ export type TableFilters = {
     /** Current value of every extra column filter, keyed by query-param name. */
     columnFilters?: Record<string, string>;
     setFilter?: (key: string, value: string) => void;
+    /** Several filters in ONE URL write — see `useTableFilters.setFilters`. */
+    setFilters?: (updates: Record<string, string>) => void;
     /** The values a filter is compared against to decide whether it is "active". */
     defaults?: Record<string, string>;
     activeFilterCount?: number;

@@ -472,6 +472,14 @@ const filters = useTableFilters({
 />
 ```
 
+**Many filters → mark most of them `placement: "advanced"`.** Primary filters render inline
+beside search; advanced ones go in a collapsible panel opened from a "Filters" button in the
+header strip (beside "Columns"), which shows the active count and opens itself when the URL already
+carries one. In the panel every filter is a select, so it takes the same space with
+2 options or 200; `display: "chips"` is opt-in for a short fixed list only. Keep a big table's filter config in a
+`use-<resource>-filters` hook that returns `{ filters, toolbarFilters }` — see
+`features/products/hooks/use-admin-product-filters.ts`.
+
 **Column show/hide is opt-in per table.** Pass `columnConfig={{ storageKey: "admin-products" }}`
 and the toolbar gets a "Columns" menu; the viewer's choice is kept in `localStorage` (hidden keys
 only, read after mount so SSR markup matches — `shared/hooks/use-column-visibility.ts`). On a column,

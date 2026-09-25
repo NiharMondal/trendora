@@ -1,68 +1,25 @@
 "use client";
 
-import {
-    BadgeCheck,
-    Boxes,
-    Eye,
-    Layers,
-    Package,
-    PackageX,
-    Star,
-    Store,
-    Tag,
-    Users,
-} from "lucide-react";
+import { Boxes, Package } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { DataTable, TableLoading } from "@/shared/components/table";
 import TDButton from "@/shared/components/td-button";
 import { adminProductSortOptions } from "@/shared/constants/sort-options";
-import { productGenderOptions } from "@/shared/constants/mock-products";
 import { TDModal } from "@/shared/components/td-modal";
 import { Button } from "@/shared/ui/button";
 import {
     useAllProductsForAdminQuery,
     useDeleteProductMutation,
 } from "@/features/products/api/product.api";
-import { useAllBrandQuery } from "@/features/brands/api/brand.api";
-import { useAllCategoryQuery } from "@/features/categories/api/category.api";
-import { productStatusMap } from "@/features/orders/constants/status-maps";
-import { useAllVendorsForAdminQuery } from "@/features/vendors/api/vendor.api";
+import { useAdminProductFilters } from "@/features/products/hooks/use-admin-product-filters";
 
-import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { productColumns } from "./product-columns";
 import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function ProductTable() {
-    // Every key is a plain Product column: `/products/admin/all` runs the
-    // generic `filter()`, which turns an unknown key into an exact-match
-    // `where`. So "low stock" cannot be offered without a backend change —
-    // only "out of stock" (`stockQuantity=0`) is an equality.
-    const filters = useTableFilters({
-        defaultSortBy: "createdAt:desc",
-        defaultFilters: {
-            status: "",
-            isPublished: "",
-            isFeatured: "",
-            stockQuantity: "",
-            vendorId: "",
-            categoryId: "",
-            brandId: "",
-            gender: "",
-        },
-    });
-
-    // Option lists for the filters. 100 is the same ceiling the product
-    // form's pickers use.
-    const { data: vendors } = useAllVendorsForAdminQuery({ limit: "100" });
-    const { data: categories } = useAllCategoryQuery({ limit: "100" });
-    const { data: brands } = useAllBrandQuery({ limit: "100" });
-
-    const toOptions = (rows?: { id: string; name: string }[]) =>
-        (rows ?? [])
-            .map((row) => ({ label: row.name, value: row.id }))
-            .sort((a, b) => a.label.localeCompare(b.label));
+    const { filters, toolbarFilters } = useAdminProductFilters();
 
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
@@ -104,77 +61,7 @@ export default function ProductTable() {
                 description="Every listing from every store, including drafts and rejections."
                 icon={Package}
                 columnConfig={{ storageKey: "admin-products" }}
-                toolbarFilters={[
-                    {
-                        key: "status",
-                        label: "Review",
-                        icon: BadgeCheck,
-                        allLabel: "Any status",
-                        options: Object.entries(productStatusMap).map(
-                            ([value, { label }]) => ({ label, value }),
-                        ),
-                    },
-                    {
-                        key: "isPublished",
-                        label: "Published",
-                        icon: Eye,
-                        allLabel: "Any",
-                        options: [
-                            { label: "Published", value: "true" },
-                            { label: "Hidden", value: "false" },
-                        ],
-                    },
-                    {
-                        key: "isFeatured",
-                        label: "Featured",
-                        icon: Star,
-                        allLabel: "Any",
-                        options: [
-                            { label: "Featured", value: "true" },
-                            { label: "Not featured", value: "false" },
-                        ],
-                    },
-                    {
-                        key: "stockQuantity",
-                        label: "Stock",
-                        icon: PackageX,
-                        allLabel: "Any stock",
-                        options: [{ label: "Out of stock", value: "0" }],
-                    },
-                    {
-                        key: "vendorId",
-                        label: "Store",
-                        icon: Store,
-                        allLabel: "All stores",
-                        options: (vendors?.result ?? [])
-                            .map((vendor) => ({
-                                label: vendor.storeName,
-                                value: vendor.id,
-                            }))
-                            .sort((a, b) => a.label.localeCompare(b.label)),
-                    },
-                    {
-                        key: "categoryId",
-                        label: "Category",
-                        icon: Layers,
-                        allLabel: "All categories",
-                        options: toOptions(categories?.result),
-                    },
-                    {
-                        key: "brandId",
-                        label: "Brand",
-                        icon: Tag,
-                        allLabel: "All brands",
-                        options: toOptions(brands?.result),
-                    },
-                    {
-                        key: "gender",
-                        label: "Gender",
-                        icon: Users,
-                        allLabel: "Any",
-                        options: productGenderOptions,
-                    },
-                ]}
+                toolbarFilters={toolbarFilters}
                 emptyState={{
                     icon: Boxes,
                     title: filters.isFiltered

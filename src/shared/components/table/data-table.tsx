@@ -110,6 +110,7 @@ export default function DataTable<T, S = unknown>({
                     onReset={filters?.handleResetFilters}
                     columnFilters={filters?.columnFilters}
                     setFilter={filters?.setFilter}
+                    setFilters={filters?.setFilters}
                     defaults={filters?.defaults}
                     activeFilterCount={filters?.activeFilterCount}
                     toolbarFilters={toolbarFilters}
