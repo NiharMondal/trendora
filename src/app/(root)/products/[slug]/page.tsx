@@ -3,7 +3,7 @@ import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
-import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import ProductDetailsSkeleton from "@/features/products/components/product-details/product-details-skeleton";
 import Container from "@/shared/components/container";
 import QueryError from "@/shared/components/query-error";
 import ProductDetails from "@/features/products/components/product-details/product-details";
@@ -32,7 +32,7 @@ export default function ProductDetailsPage({
         if (productId) recordView(productId);
     }, [productId, recordView]);
 
-    if (isLoading) return <SpinnerLoading />;
+    if (isLoading) return <ProductDetailsSkeleton />;
     if (error || !product) {
         return (
             <Container className="py-10">
