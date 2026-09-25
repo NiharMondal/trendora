@@ -15,6 +15,28 @@ export type DataTableColumn<T> = {
     align?: ColumnAlign;
     /** Tailwind width utility for the column, e.g. `"w-40"`. */
     width?: string;
+    /**
+     * Name in the "Columns" menu. Defaults to `header` when that is a string;
+     * set it when the header is an icon or other node.
+     */
+    label?: string;
+    /**
+     * Whether the "Columns" menu may hide this column. Defaults to `true`;
+     * set `false` for the column that identifies the row and for actions.
+     */
+    hideable?: boolean;
+    /** Start hidden until the viewer turns it on in the "Columns" menu. */
+    defaultHidden?: boolean;
+};
+
+/**
+ * Turns on the toolbar's "Columns" menu. The viewer's choice is remembered
+ * in this browser under `storageKey` — a per-viewer convenience, so it is
+ * fine for it to be lost; the table renders its defaults without it.
+ */
+export type ColumnConfig = {
+    /** Unique per table, e.g. `"admin-products"`. */
+    storageKey: string;
 };
 
 export type ExpandableConfig<T, S> = {
@@ -115,5 +137,7 @@ export type DataTableProps<T, S = unknown> = {
     emptyState?: EmptyStateConfig;
     /** Skeleton rows rendered while fetching. Defaults to 5. */
     loadingRows?: number;
+    /** Adds a "Columns" menu to show and hide columns — see `ColumnConfig`. */
+    columnConfig?: ColumnConfig;
     className?: string;
 };

@@ -14,6 +14,9 @@ import {
     SelectValue,
 } from "@/shared/ui/select";
 
+import { TColumnOption } from "@/shared/hooks/use-column-visibility";
+
+import ColumnMenu from "./column-menu";
 import { SortByOption, ToolbarFilter } from "./table-types";
 
 const DEFAULT_SORT_OPTIONS: SortByOption[] = [
@@ -48,6 +51,13 @@ type TableToolbarProps = {
     description?: ReactNode;
     icon?: ComponentType<{ className?: string }>;
     actions?: ReactNode;
+    /** Renders the "Columns" menu — see `ColumnConfig` on `DataTable`. */
+    columnMenu?: {
+        options: TColumnOption[];
+        onToggle: (key: string) => void;
+        onReset: () => void;
+        isCustomised: boolean;
+    };
     className?: string;
 };
 
@@ -134,6 +144,7 @@ export default function TableToolbar({
     description,
     icon: Icon = ListFilter,
     actions,
+    columnMenu,
     className,
 }: TableToolbarProps) {
     const defaultLimit = defaults?.limit ?? "20";
@@ -338,6 +349,10 @@ export default function TableToolbar({
                             className="[&_[data-slot=select-value]]:min-w-6"
                         />
                     )}
+
+                    {/* Not a filter: changing columns never narrows the rows,
+                        so it is not counted by Reset or shown as a chip. */}
+                    {columnMenu && <ColumnMenu {...columnMenu} />}
 
                     <AnimatePresence initial={false}>
                         {isFiltered && (

@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "@/shared/ui/table";
 import { cn } from "@/shared/lib/utils";
+import { useColumnVisibility } from "@/shared/hooks/use-column-visibility";
 import { ChevronRight } from "lucide-react";
 import { Fragment, ReactNode, useState } from "react";
 
@@ -51,8 +52,19 @@ export default function DataTable<T, S = unknown>({
     actions,
     emptyState,
     loadingRows,
+    columnConfig,
     className,
 }: DataTableProps<T, S>) {
+    const columnVisibility = useColumnVisibility(
+        columns,
+        columnConfig?.storageKey,
+    );
+    // Without `columnConfig` every column is shown, whatever `defaultHidden`
+    // says — there would be no menu to bring a hidden one back.
+    const shownColumns = columnConfig
+        ? columnVisibility.visibleColumns
+        : columns;
+
     const initialExpanded = () => {
         if (!expandable?.defaultExpanded || !data) return new Set<string>();
         const seed = new Set<string>();
@@ -77,12 +89,13 @@ export default function DataTable<T, S = unknown>({
         });
     };
 
-    const totalCols = columns.length + (expandable ? 1 : 0);
+    const totalCols = shownColumns.length + (expandable ? 1 : 0);
     const showPagination =
         !error && !!filters && !!meta && meta.totalPages > 1;
     // The header strip stands on its own, so a table with a title but no
     // `filters` still gets a toolbar (just without the controls row).
-    const showToolbar = !!filters || !!title || !!description || !!actions;
+    const showToolbar =
+        !!filters || !!title || !!description || !!actions || !!columnConfig;
 
     return (
         <div className={cn("space-y-5", className)}>
@@ -107,6 +120,16 @@ export default function DataTable<T, S = unknown>({
                     description={description}
                     icon={icon}
                     actions={actions}
+                    columnMenu={
+                        columnConfig
+                            ? {
+                                  options: columnVisibility.options,
+                                  onToggle: columnVisibility.toggleColumn,
+                                  onReset: columnVisibility.resetColumns,
+                                  isCustomised: !columnVisibility.isDefault,
+                              }
+                            : undefined
+                    }
                 />
             ) : null}
 
@@ -136,7 +159,7 @@ export default function DataTable<T, S = unknown>({
                                 {expandable ? (
                                     <TableHead className="w-10" />
                                 ) : null}
-                                {columns?.map((col) => (
+                                {shownColumns.map((col) => (
                                     <TableHead
                                         key={col.key as string}
                                         className={cn(
@@ -209,7 +232,7 @@ export default function DataTable<T, S = unknown>({
                                                 </TableCell>
                                             ) : null}
 
-                                            {columns.map((col) => (
+                                            {shownColumns.map((col) => (
                                                 <TableCell
                                                     key={col.key as string}
                                                     className={columnClasses(

@@ -5,38 +5,11 @@ import Link from "next/link";
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import { TProduct } from "@/features/products/types/product.types";
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 
+import StockPill from "@/features/products/components/stock-pill";
+
 import FeaturedToggle from "./featured-toggle";
-
-/** Below this many units a live listing is flagged as running low. */
-const LOW_STOCK = 10;
-
-function StockPill({ quantity }: { quantity: number }) {
-    const [label, tone] =
-        quantity <= 0
-            ? ["Out of stock", "bg-destructive-50 text-destructive-600"]
-            : quantity < LOW_STOCK
-              ? ["Low stock", "bg-warning-50 text-warning-600"]
-              : ["In stock", "bg-success-50 text-success-600"];
-
-    return (
-        <span className="flex flex-col gap-0.5">
-            <span
-                className={cn(
-                    "w-fit rounded-full px-2.5 py-0.5 text-xs font-medium",
-                    tone,
-                )}
-            >
-                {label}
-            </span>
-            <span className="text-xs text-muted-foreground">
-                {quantity} units
-            </span>
-        </span>
-    );
-}
 
 export const featuredColumns: DataTableColumn<TProduct>[] = [
     {

@@ -7,6 +7,20 @@ export const allSortOptions = [
     { label: "Price (High to Low)", value: "basePrice:desc" },
 ];
 
+/** Admin product catalogue — every field here is a plain column on Product. */
+export const adminProductSortOptions = [
+    { label: "Newest first", value: "createdAt:desc" },
+    { label: "Oldest first", value: "createdAt:asc" },
+    { label: "Recently updated", value: "updatedAt:desc" },
+    { label: "Name (A-Z)", value: "name:asc" },
+    { label: "Name (Z-A)", value: "name:desc" },
+    { label: "Price (Low to High)", value: "basePrice:asc" },
+    { label: "Price (High to Low)", value: "basePrice:desc" },
+    { label: "Stock (Low to High)", value: "stockQuantity:asc" },
+    { label: "Stock (High to Low)", value: "stockQuantity:desc" },
+    { label: "Rating (High to Low)", value: "averageRating:desc" },
+];
+
 export const categorySortOptions = [
     { label: "CreatedAt (Asc)", value: "createdAt:asc" },
     { label: "CreatedAt (Desc)", value: "createdAt:desc" },

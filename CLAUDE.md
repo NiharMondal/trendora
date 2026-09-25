@@ -472,6 +472,14 @@ const filters = useTableFilters({
 />
 ```
 
+**Column show/hide is opt-in per table.** Pass `columnConfig={{ storageKey: "admin-products" }}`
+and the toolbar gets a "Columns" menu; the viewer's choice is kept in `localStorage` (hidden keys
+only, read after mount so SSR markup matches — `shared/hooks/use-column-visibility.ts`). On a column,
+`hideable: false` pins it (use it for the identifying column and actions), `defaultHidden: true`
+starts it off, and `label` names it in the menu when `header` is not a string. Without
+`columnConfig`, `defaultHidden` is ignored — there would be no way to bring the column back.
+`product-table.tsx` is the reference.
+
 An empty filter value is **dropped from `queryParams`** on purpose: the backend turns any unknown
 key into a `where` clause, so `status: ""` would match nothing rather than meaning "all". The
 toolbar's "All" option therefore writes `""`, which also deletes the param from the URL.
