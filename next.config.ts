@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
                 destination: "/dashboard/wishlist",
                 permanent: true,
             },
+            // Featuring is a per-row action in the product table now; the
+            // old standalone screen became the Products → Featured tab.
+            {
+                source: "/admin/featured-products",
+                destination: "/admin/product-list/featured",
+                permanent: true,
+            },
         ];
     },
     images: {

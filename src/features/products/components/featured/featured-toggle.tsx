@@ -1,42 +1,22 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { toast } from "sonner";
 
-import { useUpdateProductMutation } from "@/features/products/api/product.api";
+import { useToggleFeatured } from "@/features/products/hooks/use-toggle-featured";
 import { TProduct } from "@/features/products/types/product.types";
 import TDButton from "@/shared/components/td-button";
 import { cn } from "@/shared/lib/utils";
-import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 /**
- * One-click feature / unfeature. Each row owns its mutation, so toggling one
- * spins only that button and several rows can be changed in quick succession.
+ * The admin product table's one-click feature / unfeature button.
  *
- * Sends ONLY `isFeatured`. That is safe against the product-edit footgun: the
- * backend reads a missing `images` / `variants` array as "unchanged", not
- * "delete everything", and `isFeatured` is not a field that re-opens
- * moderation.
+ * A listing that is not live can still be starred: the home page rail reads
+ * only approved + published listings, so it appears there once it goes live.
+ * The tooltip says so, since a starred draft is otherwise surprising.
  */
 export default function FeaturedToggle({ product }: { product: TProduct }) {
-    const [updateProduct, { isLoading }] = useUpdateProductMutation();
-    const next = !product.isFeatured;
-
-    const handleToggle = async () => {
-        try {
-            await updateProduct({
-                id: product.id,
-                payload: { isFeatured: next },
-            }).unwrap();
-            toast.success(
-                next
-                    ? `${product.name} is now featured on the home page`
-                    : `${product.name} removed from featured`,
-            );
-        } catch (error) {
-            toast.error(getApiErrorMessage(error, "Could not update featured status"));
-        }
-    };
+    const { toggle, isLoading } = useToggleFeatured(product);
+    const isLive = product.status === "APPROVED" && product.isPublished;
 
     return (
         <TDButton
@@ -44,15 +24,22 @@ export default function FeaturedToggle({ product }: { product: TProduct }) {
             size="sm"
             variant="outline"
             isLoading={isLoading}
-            onClick={handleToggle}
+            onClick={toggle}
             aria-pressed={product.isFeatured}
             aria-label={
                 product.isFeatured
                     ? `Remove ${product.name} from featured`
                     : `Feature ${product.name}`
             }
+            title={
+                isLive
+                    ? undefined
+                    : "Not live yet — shows on the home page once approved and published"
+            }
             className={cn(
-                "min-w-28 cursor-pointer rounded-full",
+                // Explicit hover text: the outline variant's hover is the
+                // orange accent with white text.
+                "min-w-28 cursor-pointer rounded-full hover:bg-gray-50 hover:text-foreground text-xs",
                 product.isFeatured &&
                     "border-warning-500 bg-warning-50 text-warning-600 hover:bg-warning-100 hover:text-warning-600",
             )}

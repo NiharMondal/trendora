@@ -12,8 +12,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { productStatusMap } from "@/features/orders/constants/status-maps";
+import FeaturedToggle from "@/features/products/components/featured/featured-toggle";
 import ProductPrice from "@/features/products/components/product-card/product-price";
 import StockPill from "@/features/products/components/stock-pill";
+import { useToggleFeatured } from "@/features/products/hooks/use-toggle-featured";
 import { TProduct } from "@/features/products/types/product.types";
 import { getDiscountPercent } from "@/features/products/utils/discount-percent";
 import { DataTableColumn } from "@/shared/components/table/table-types";
@@ -35,6 +37,26 @@ const genderLabel = (value: string) =>
  * link is offered only for these.
  */
 const isLive = (row: TProduct) => row.status === "APPROVED" && row.isPublished;
+
+/**
+ * Feature / unfeature from the row menu — the same action as the Featured
+ * column's star, for when that column is hidden.
+ */
+function FeatureMenuItem({ product }: { product: TProduct }) {
+    const { toggle, isLoading } = useToggleFeatured(product);
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            className="justify-start"
+            onClick={toggle}
+            disabled={isLoading}
+        >
+            <Star className={cn(product.isFeatured && "fill-current")} />
+            {product.isFeatured ? "Unfeature" : "Feature on home page"}
+        </Button>
+    );
+}
 
 /**
  * Admin catalogue columns. The product and actions columns are pinned; the
@@ -178,15 +200,9 @@ export const productColumns = (
     {
         key: "isFeatured",
         header: "Featured",
-        cell: (row) =>
-            row.isFeatured ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-warning-50 px-2.5 py-0.5 text-xs font-medium text-warning-600">
-                    <Star className="size-3 fill-current" aria-hidden="true" />
-                    Featured
-                </span>
-            ) : (
-                <span className="text-sm text-muted-foreground">—</span>
-            ),
+        // Featuring happens here, on the row — there is no separate screen
+        // for it. The "Featured" tab is this table pre-filtered.
+        cell: (row) => <FeaturedToggle product={row} />,
     },
     {
         key: "category",
@@ -315,6 +331,7 @@ export const productColumns = (
                             Edit
                         </Link>
                     </Button>
+                    <FeatureMenuItem product={row} />
                     <Button
                         variant="ghost"
                         size="sm"

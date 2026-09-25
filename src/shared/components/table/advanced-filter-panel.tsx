@@ -82,7 +82,7 @@ export default function AdvancedFilterPanel({
                         size="sm"
                         onClick={clearAll}
                         disabled={activeCount === 0}
-                        className="text-muted-foreground"
+                        className="text-muted-foreground hover:bg-muted hover:text-foreground"
                     >
                         <X />
                         <span className="hidden sm:inline">Clear</span>
@@ -94,7 +94,7 @@ export default function AdvancedFilterPanel({
                         onClick={onClose}
                         aria-controls={id}
                         aria-expanded
-                        className="text-muted-foreground"
+                        className="text-muted-foreground hover:bg-muted hover:text-foreground"
                     >
                         Hide
                     </Button>
@@ -168,7 +168,7 @@ function FilterField({
                                     onChange(selected ? fallback : option.value)
                                 }
                                 className={cn(
-                                    "h-8 rounded-full bg-white px-3 text-xs font-medium shadow-none",
+                                    "h-8 rounded-full bg-white px-3 text-xs font-medium shadow-none hover:bg-gray-50 hover:text-foreground",
                                     selected &&
                                         "border-primary-300 bg-primary-50 text-primary-700 hover:bg-primary-100 hover:text-primary-700",
                                 )}

@@ -265,9 +265,12 @@ export default function TableToolbar({
                     aria-expanded={advancedOpen}
                     aria-controls={panelId}
                     className={cn(
-                        "h-9 gap-1.5 rounded-lg bg-white px-2.5 font-medium shadow-xs",
+                        // Explicit hover text: the outline variant's hover is
+                        // the orange accent with WHITE text, unreadable once
+                        // the background is overridden to a light tint.
+                        "h-9 gap-1.5 rounded-lg bg-white px-2.5 font-medium shadow-xs hover:bg-gray-50 hover:text-foreground",
                         (advancedOpen || advancedActive > 0) &&
-                            "border-primary-300 bg-primary-50/50  hover:bg-primary-50 text-primary-700",
+                            "border-primary-300 bg-primary-50/50 text-primary-700 hover:bg-primary-50 hover:text-primary-700",
                     )}
                 >
                     <SlidersHorizontal className="size-3.5" />

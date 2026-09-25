@@ -67,7 +67,6 @@ export default function UpdateProduct({ productId }: { productId: string }) {
                 onSubmit={handleUpdateProduct}
                 productId={productId}
                 isLoading={updateLoading}
-                showFeatured
             />
         </div>
     );

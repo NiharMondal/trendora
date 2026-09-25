@@ -3,7 +3,6 @@ import {
     Banknote,
     Blend,
     Boxes,
-    Feather,
     FilePlus,
     GalleryHorizontal,
     Heart,
@@ -102,6 +101,7 @@ export const adminDashboardLinks: TSidebarLink[] = [
         icon: ShoppingCart,
         children: [
             { title: "All Products", url: "/admin/product-list", index: true },
+            { title: "Featured", url: "/admin/product-list/featured" },
             { title: "Add Product", url: "/admin/add-product" },
         ],
     },
@@ -133,11 +133,6 @@ export const adminDashboardLinks: TSidebarLink[] = [
         title: "User Management",
         url: "/admin/user-management",
         icon: User2,
-    },
-    {
-        title: "Featured Products",
-        url: "/admin/featured-products",
-        icon: Feather,
     },
     {
         title: "Hero Slides",

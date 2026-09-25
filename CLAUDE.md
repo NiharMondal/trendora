@@ -395,11 +395,16 @@ shelf previewed — which also means **a new rail filter must be registered in
 `PRODUCT_FILTER_KEYS`** or `useTableFilters` drops it from `queryParams` and the link silently
 shows everything.
 
-**The Featured rail is curated at `/admin/featured-products`.** Both run the same
-`featuredRailQuery` (`features/products/constants/featured.ts`), so the admin's "On the home
-page now" summary is exactly what shoppers see. The rail has no "View all": `isFeatured` is not in
-`PRODUCT_FILTER_KEYS`, so a catalogue link would silently show everything. Only admin product forms
-pass `showFeatured` to `ProductForm`; the backend ignores `isFeatured` from a vendor.
+**The Featured rail is curated from the admin product table.** Featuring is a per-row action —
+the Featured column's star and the row menu, both via `useToggleFeatured` →
+`PATCH /products/:id/feature` (admin-only). It is **not** a form field: `isFeatured` is gone from
+`ProductForm`, its schema and `mapProductToFormValues`, and the backend strips it from every
+create/edit. Products → **Featured** (`/admin/product-list/featured`) is the same `ProductTable`
+with `featuredOnly` (which makes `isFeatured=true` the filter *default*), under `FeaturedSummary`.
+That summary runs the rail's own `featuredRailQuery` (`features/products/constants/featured.ts`), so
+"On the home page now" is exactly what shoppers see. The old `/admin/featured-products` is a 308 in
+`next.config.ts`. The rail has no "View all": `isFeatured` is not in `PRODUCT_FILTER_KEYS`, so a
+catalogue link would silently show everything.
 
 **`CategoryTiles` reads `GET /products/filters`, not `GET /categories`.** The taxonomy is
 admin-owned and aspirational — it carries Belt, Bag, Heels and a dozen more nobody has listed a

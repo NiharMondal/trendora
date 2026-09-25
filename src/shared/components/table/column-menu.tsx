@@ -45,9 +45,10 @@ export default function ColumnMenu({
                     size="sm"
                     aria-label={`Columns, ${shown} of ${options.length} shown`}
                     className={cn(
-                        "h-9 gap-1.5 rounded-lg border-input bg-white px-2.5 font-medium shadow-xs",
+                        // Explicit hover text — see the "Filters" toggle.
+                        "h-9 gap-1.5 rounded-lg border-input bg-white px-2.5 font-medium shadow-xs hover:bg-gray-50 hover:text-foreground",
                         isCustomised &&
-                            "border-primary-300 bg-primary-50/50 text-primary-700 hover:bg-primary-50",
+                            "border-primary-300 bg-primary-50/50 text-primary-700 hover:bg-primary-50 hover:text-primary-700",
                     )}
                 >
                     <Columns3

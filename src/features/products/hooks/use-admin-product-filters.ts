@@ -30,13 +30,22 @@ import { useTableFilters } from "@/shared/hooks/use-table-filters";
  * "out of stock" (`stockQuantity=0`) is an equality. Likewise `categoryId`
  * matches that category only, not its children (unlike the storefront).
  */
-export function useAdminProductFilters() {
+export function useAdminProductFilters({
+    featuredOnly = false,
+}: {
+    /**
+     * The Products → Featured tab. `isFeatured=true` becomes the DEFAULT
+     * rather than a filter, so it is always sent, Reset keeps it, it shows no
+     * chip, and the Featured filter itself is not offered.
+     */
+    featuredOnly?: boolean;
+} = {}) {
     const filters = useTableFilters({
         defaultSortBy: "createdAt:desc",
         defaultFilters: {
             status: "",
             isPublished: "",
-            isFeatured: "",
+            isFeatured: featuredOnly ? "true" : "",
             stockQuantity: "",
             vendorId: "",
             categoryId: "",
@@ -55,7 +64,7 @@ export function useAdminProductFilters() {
 
     // The two most-used triage filters stay on the row; the rest live in the
     // collapsible "Filters" panel.
-    const toolbarFilters: ToolbarFilter[] = [
+    const allFilters: ToolbarFilter[] = [
         {
             key: "status",
             label: "Review",
@@ -129,6 +138,10 @@ export function useAdminProductFilters() {
                 .sort(byLabel),
         },
     ];
+
+    const toolbarFilters = featuredOnly
+        ? allFilters.filter((filter) => filter.key !== "isFeatured")
+        : allFilters;
 
     return { filters, toolbarFilters };
 }

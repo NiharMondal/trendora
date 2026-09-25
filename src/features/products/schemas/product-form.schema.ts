@@ -79,7 +79,6 @@ export const productSchema = z
         gender: z
             .string({ error: "Gender is required" })
             .nonempty({ error: "Gender is required" }),
-        isFeatured: z.boolean().optional(),
         categoryId: z.string().min(1, "Category is required"),
         brandId: z.string().min(1, "Brand is required"),
         /**
