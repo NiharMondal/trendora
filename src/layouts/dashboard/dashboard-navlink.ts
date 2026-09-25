@@ -101,8 +101,8 @@ export const adminDashboardLinks: TSidebarLink[] = [
         icon: ShoppingCart,
         children: [
             { title: "All Products", url: "/admin/product-list", index: true },
-            { title: "Featured", url: "/admin/product-list/featured" },
             { title: "Add Product", url: "/admin/add-product" },
+            { title: "Featured Products", url: "/admin/product-list/featured" },
         ],
     },
     { title: "Order History", url: "/admin/order-list", icon: FilePlus },

@@ -7,8 +7,8 @@ export const allSortOptions = [
     { label: "Price (High to Low)", value: "basePrice:desc" },
 ];
 
-/** Admin product catalogue — every field here is a plain column on Product. */
-export const adminProductSortOptions = [
+/** Admin and seller product catalogues — every field here is a plain column on Product. */
+export const productTableSortOptions = [
     { label: "Newest first", value: "createdAt:desc" },
     { label: "Oldest first", value: "createdAt:asc" },
     { label: "Recently updated", value: "updatedAt:desc" },

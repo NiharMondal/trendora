@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { DataTable, TableLoading } from "@/shared/components/table";
 import TDButton from "@/shared/components/td-button";
-import { adminProductSortOptions } from "@/shared/constants/sort-options";
+import { productTableSortOptions } from "@/shared/constants/sort-options";
 import { TDModal } from "@/shared/components/td-modal";
 import { Button } from "@/shared/ui/button";
 import {
@@ -115,7 +115,7 @@ export default function ProductTable({
                     isFetching={isFetching}
                     filters={filters}
                     meta={products?.meta}
-                    sortByOptions={adminProductSortOptions}
+                    sortByOptions={productTableSortOptions}
                     // The admin list searches name and description.
                     placeholder="Search by name or description..."
                 />

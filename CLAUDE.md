@@ -485,6 +485,14 @@ carries one. In the panel every filter is a select, so it takes the same space w
 `use-<resource>-filters` hook that returns `{ filters, toolbarFilters }` — see
 `features/products/hooks/use-admin-product-filters.ts`.
 
+**The admin and seller product tables share cells, not columns.** `product-table/product-cells.tsx`
+holds the product, review-status, price, rating and date cells plus `optionalProductColumns` (the
+hidden-by-default secondary set); `product-columns.tsx` (admin: Store, Visibility, feature toggle)
+and `vendor-products/vendor-product-columns.tsx` (seller: publish toggle, submit, read-only
+"Featured by Trendora") each keep their own list and actions. Filters are
+`use-admin-product-filters.ts` / `use-vendor-product-filters.ts`. Row actions that mutate own their
+mutation per row, so one busy row never disables the rest.
+
 **Column show/hide is opt-in per table.** Pass `columnConfig={{ storageKey: "admin-products" }}`
 and the toolbar gets a "Columns" menu; the viewer's choice is kept in `localStorage` (hidden keys
 only, read after mount so SSR markup matches — `shared/hooks/use-column-visibility.ts`). On a column,
