@@ -199,6 +199,30 @@ export type TOrderAnalytics = {
 };
 
 /**
+ * `GET /orders/analytics/sales-trend` — platform sales over time (ADMIN).
+ *
+ * Zero-filled buckets: one per UTC day for a window of up to 90 days, one per
+ * UTC month beyond that. `date` is the bucket's first day (`YYYY-MM-DD`). The
+ * money uses the same rules as `TOrderAnalytics.overview`, so the series sums
+ * to the headline tiles for the same window.
+ */
+export type TSalesTrendPoint = {
+	date: string;
+	orders: number;
+	/** GMV — the total of paid orders. */
+	grossSales: number;
+	/** The platform's cut of paid, non-cancelled parcels. */
+	commission: number;
+};
+
+export type TSalesTrend = {
+	granularity: "day" | "month";
+	startDate: string;
+	endDate: string;
+	points: TSalesTrendPoint[];
+};
+
+/**
  * `GET /orders/my-summary` — the shopper dashboard's numbers, for the caller's
  * own purchases (a VENDOR gets what they bought, not what they sold).
  */
