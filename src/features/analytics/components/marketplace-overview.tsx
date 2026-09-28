@@ -59,10 +59,12 @@ export default function MarketplaceOverview() {
                 is a current count, so the backend does not date-filter it.
                 The sales chart below keeps its own range. */}
             <div className="flex items-center justify-between gap-3">
-                <p className="text-sm text-muted-foreground">
-                    Marketplace figures ·{" "}
-                    {range.value === "all" ? "all time" : range.label.toLowerCase()}
-                </p>
+                <div>
+                    <h1 className="text-base text-muted-foreground">
+                        Marketplace figures
+                    </h1>
+                    <p className="text-sm text-muted-foreground">  {range.value === "all" ? "All time" : range.label.toLowerCase()}</p>
+                </div>
                 <DateRangeSelect
                     value={range.value}
                     onChange={setRangeValue}
