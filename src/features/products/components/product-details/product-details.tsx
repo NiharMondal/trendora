@@ -12,7 +12,8 @@ export default function ProductDetails({ product, preview = false }: Props) {
 	return (
 		<div className="space-y-8">
 			<ProductCommonDetails product={product} preview={preview} />
-			<DeliveryDetails vendor={product?.vendor} />
+			{/* Shopper-facing terms; staff already see the store in the facts strip. */}
+			{!preview && <DeliveryDetails vendor={product?.vendor} />}
 		</div>
 	);
 }

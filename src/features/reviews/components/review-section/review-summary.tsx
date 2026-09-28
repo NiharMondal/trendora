@@ -14,7 +14,26 @@ export default function ReviewSummary({
     return (
         <div className="rounded-lg border border-muted bg-card/50 p-6">
             <div className="flex flex-col items-center gap-2 border-b border-muted pb-5">
-                <p className="text-5xl font-bold">{average}</p>
+                <p className="text-5xl font-bold">
+                    {Number(average || 0).toFixed(1)}
+                </p>
+                <div
+                    role="img"
+                    aria-label={`Average ${Number(average || 0).toFixed(1)} out of 5`}
+                    className="flex items-center gap-0.5"
+                >
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                            key={star}
+                            aria-hidden="true"
+                            className={
+                                star <= Math.round(Number(average || 0))
+                                    ? "size-5 fill-yellow-400 text-yellow-400"
+                                    : "size-5 fill-muted text-muted"
+                            }
+                        />
+                    ))}
+                </div>
                 <p className="text-sm text-muted-foreground">
                     Based on {total} {total === 1 ? "review" : "reviews"}
                 </p>

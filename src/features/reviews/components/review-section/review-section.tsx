@@ -49,18 +49,43 @@ export default function ReviewSection({
         count: reviews.filter((r) => Math.ceil(r.rating) === star).length,
     }));
 
+    const reviewList = (
+        <div className="space-y-3">
+            {isLoading ? (
+                <ReviewListSkeleton />
+            ) : reviews.length === 0 ? (
+                <div className="rounded-lg border border-muted bg-card/50 p-10 text-center">
+                    <p className="text-base font-medium">No reviews yet</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        {readOnly
+                            ? "No buyer has reviewed this product yet."
+                            : "Be the first to share your thoughts on this product."}
+                    </p>
+                </div>
+            ) : (
+                reviews.map((review) => (
+                    <ReviewItem key={review.id} review={review} />
+                ))
+            )}
+        </div>
+    );
+
     return (
         <section className="space-y-4 py-4">
             <SectionHeader title="Customer Reviews" />
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                <ReviewSummary
-                    average={averageRating}
-                    total={total}
-                    distribution={distribution}
-                />
+                <div className={readOnly ? "lg:self-start" : undefined}>
+                    <ReviewSummary
+                        average={averageRating}
+                        total={total}
+                        distribution={distribution}
+                    />
+                </div>
 
-                {!readOnly && (
+                {readOnly ? (
+                    <div className="lg:col-span-2">{reviewList}</div>
+                ) : (
                     <div className="lg:col-span-2">
                         {user ? (
                             eligibilityLoading ? (
@@ -81,24 +106,9 @@ export default function ReviewSection({
                 )}
             </div>
 
-            <div className="space-y-3">
-                {isLoading ? (
-                    <ReviewListSkeleton />
-                ) : reviews.length === 0 ? (
-                    <div className="rounded-lg border border-muted bg-card/50 p-10 text-center">
-                        <p className="text-base font-medium">No reviews yet</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            {readOnly
-                                ? "No buyer has reviewed this product yet."
-                                : "Be the first to share your thoughts on this product."}
-                        </p>
-                    </div>
-                ) : (
-                    reviews.map((review) => (
-                        <ReviewItem key={review.id} review={review} />
-                    ))
-                )}
-            </div>
+            {/* Staff view has no write box, so the list takes its place
+                beside the summary instead of leaving two empty columns. */}
+            {!readOnly && reviewList}
         </section>
     );
 }
