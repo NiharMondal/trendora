@@ -5,6 +5,7 @@ import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TReview } from "@/features/reviews/types/review.types";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
+import TdUserInfo from "@/shared/components/td-user-info";
 
 export const reviewColumns = (
     handleAction: (review: TReview) => void,
@@ -13,17 +14,7 @@ export const reviewColumns = (
         key: "user",
         header: "User",
         cell: (row) => (
-            <div className="flex items-center gap-x-2">
-                <div className="size-16 flex items-center justify-center bg-gray-100 rounded-md">
-                    <img
-                        src={row.user.avatar}
-                        alt="User Avatar"
-                        className="size-full rounded-md"
-                        loading="lazy"
-                    />
-                </div>
-                <p className="font-medium">{row.user.name}</p>
-            </div>
+            <TdUserInfo name={row.user.name} avatar={row.user.avatar} />
         ),
     },
     {

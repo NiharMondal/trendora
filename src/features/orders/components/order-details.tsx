@@ -18,6 +18,9 @@ import QueryError from "@/shared/components/query-error";
 import ManualRefundModal from "@/features/refunds/components/manual-refund-modal";
 import { Button } from "@/shared/ui/button";
 import { useState } from "react";
+import VendorOrderStatusModal, {
+    ADMIN_TRANSITIONS,
+} from "@/features/vendors/components/vendor-order-status-modal";
 
 /**
  * Admin view of one order.
@@ -313,6 +316,11 @@ function VendorOrderCard({
     // A parcel holds at most one refund (the column is unique), so the entry
     // disappears once one exists — automatic or manual.
     const canRecordRefund = !vendorOrder.refund && refundable > 0;
+    // The backend treats an ADMIN as able to move any parcel, whichever store
+    // ships it — including Trendora Official, which the admin account owns.
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+    const canUpdateStatus =
+        (ADMIN_TRANSITIONS[vendorOrder.orderStatus] ?? []).length > 0;
 
     return (
         <div className="bg-white padding border-radius space-y-3">
@@ -374,16 +382,34 @@ function VendorOrderCard({
 
             {/* For money returned outside the gateway — cash handed back on a
                 COD parcel, or a bank transfer. Records a fact; sends nothing. */}
-            {canRecordRefund && (
-                <div className="flex justify-end">
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setRecording(true)}
-                    >
-                        Record manual refund
-                    </Button>
+            {(canUpdateStatus || canRecordRefund) && (
+                <div className="flex justify-end gap-2">
+                    {canUpdateStatus && (
+                        <Button
+                            size="sm"
+                            onClick={() => setUpdatingStatus(true)}
+                        >
+                            Update status
+                        </Button>
+                    )}
+                    {canRecordRefund && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setRecording(true)}
+                        >
+                            Record manual refund
+                        </Button>
+                    )}
                 </div>
+            )}
+            {updatingStatus && (
+                <VendorOrderStatusModal
+                    vendorOrder={vendorOrder}
+                    transitions={ADMIN_TRANSITIONS}
+                    open
+                    onOpenChange={setUpdatingStatus}
+                />
             )}
             {recording && (
                 <ManualRefundModal

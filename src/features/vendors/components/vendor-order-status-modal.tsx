@@ -33,6 +33,16 @@ const VENDOR_TRANSITIONS: Record<TOrderStatus, TOrderStatus[]> = {
     CANCELED: [],
 };
 
+/**
+ * An ADMIN may do everything the state machine allows — including cancelling
+ * a shipped parcel, which is the refund-dispute case a seller cannot touch.
+ * Mirrors `allowedTransitions` in the backend's `allowedTransition.ts`.
+ */
+const ADMIN_TRANSITIONS: Record<TOrderStatus, TOrderStatus[]> = {
+    ...VENDOR_TRANSITIONS,
+    SHIPPED: ["DELIVERED", "CANCELED"],
+};
+
 const LABELS: Record<TOrderStatus, string> = {
     PENDING: "Pending",
     PROCESSING: "Mark as processing",
@@ -51,15 +61,18 @@ export default function VendorOrderStatusModal({
     nextStatus,
     open,
     onOpenChange,
+    transitions = VENDOR_TRANSITIONS,
 }: {
     vendorOrder: TVendorOrder;
     nextStatus?: TOrderStatus | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    /** Which moves to offer; the admin order screen passes ADMIN_TRANSITIONS. */
+    transitions?: Record<TOrderStatus, TOrderStatus[]>;
 }) {
     const [updateStatus, { isLoading }] = useUpdateVendorOrderStatusMutation();
 
-    const options = VENDOR_TRANSITIONS[vendorOrder.orderStatus] ?? [];
+    const options = transitions[vendorOrder.orderStatus] ?? [];
     const isPicker = !nextStatus;
 
     const form = useForm({
@@ -162,8 +175,8 @@ export default function VendorOrderStatusModal({
                                 placeholder="Out of stock, cannot ship to this address…"
                             />
                             <p className="text-xs text-muted-foreground">
-                                Stock for this parcel goes back to your
-                                inventory, and the buyer is refunded for it.
+                                Stock for this parcel goes back to the
+                                store&apos;s inventory, and the buyer is refunded for it.
                                 Their other parcels are unaffected.
                             </p>
                         </>
@@ -200,4 +213,4 @@ export default function VendorOrderStatusModal({
     );
 }
 
-export { VENDOR_TRANSITIONS, LABELS as STATUS_ACTION_LABELS };
+export { VENDOR_TRANSITIONS, ADMIN_TRANSITIONS, LABELS as STATUS_ACTION_LABELS };

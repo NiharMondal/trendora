@@ -1,28 +1,18 @@
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TOrder } from "@/features/orders/types/order.types";
 import { cn } from "@/shared/lib/utils";
+import TdUserInfo from "@/shared/components/td-user-info";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
     {
         key: "user",
         header: "User",
         cell: (row) => (
-            <div className="flex items-center gap-x-2">
-                <div className="size-16 flex items-center justify-center bg-gray-100 rounded-md">
-                    <img
-                        src={row.user.avatar}
-                        alt="User Avatar"
-                        className="size-full rounded-md"
-                        loading="lazy"
-                    />
-                </div>
-                <div>
-                    <p className="font-medium">{row.user.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                        {row.user.email}
-                    </p>
-                </div>
-            </div>
+            <TdUserInfo
+                name={row.user.name}
+                email={row.user.email}
+                avatar={row.user.avatar}
+            />
         ),
     },
     {

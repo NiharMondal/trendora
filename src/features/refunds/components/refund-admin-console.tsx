@@ -111,7 +111,7 @@ export default function RefundAdminConsole() {
             cell: (row) => (
                 <div>
                     <Link
-                        href={`/admin/order-details/${row.orderId}`}
+                        href={`/admin/order-list/${row.orderId}`}
                         className="font-medium hover:underline"
                     >
                         {row.order?.orderNumber ?? row.orderId.slice(0, 8)}

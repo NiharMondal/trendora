@@ -10,6 +10,7 @@ import {
     paymentStatusMap,
 } from "@/features/orders/constants/status-maps";
 import { StatusBadge } from "@/shared/ui/status-badge";
+import TdUserInfo from "@/shared/components/td-user-info";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
     {
@@ -17,19 +18,11 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         header: "Customer",
         cell: (row) => {
             return (
-                <div className="flex items-center gap-2">
-                    <img
-                        src={row.user.avatar}
-                        alt={row.user.name}
-                        className="size-10 rounded-full object-cover ring-1 ring-primary/25"
-                    />
-                    <div>
-                        <p className="font-medium">{row.user.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                            {row.user.email}
-                        </p>
-                    </div>
-                </div>
+                <TdUserInfo
+                    name={row.user.name}
+                    email={row.user.email || "test@gmail.com" }
+                    avatar={row.user.avatar}
+                />
             );
         },
     },
