@@ -54,7 +54,7 @@ export const topProductColumns: DataTableColumn<TRankedTopProduct>[] = [
                     {/* A deleted listing has no edit page to open. */}
                     {row.slug ? (
                         <Link
-                            href={`/admin/product-list/update-product/${row.productId}`}
+                            href={`/admin/product-list/${row.productId}`}
                             className="line-clamp-1 font-medium hover:underline"
                         >
                             {row.productName}

@@ -4,15 +4,10 @@ import { useGetMyOrdersQuery } from "@/features/orders/api/order.api";
 import { TOrder } from "@/features/orders/types/order.types";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
-import {
-    orderStatusMap,
-    refundStatusMap,
-} from "@/features/orders/constants/status-maps";
-import { StatusBadge } from "@/shared/ui/status-badge";
 
 import { myOrderColumns } from "./my-order-columns";
+import { myParcelColumns } from "./my-parcel-columns";
 import { DownloadButton, PrintButton } from "./pdf-download-print";
-import VendorOrderReviewButton from "./vendor-order-review-button";
 
 /**
  * The buyer's orders.
@@ -69,91 +64,7 @@ export default function MyOrdersList() {
                 expandable={{
                     getSubRows: (o) => o.vendorOrders,
                     subRowKey: (slice, o) => `${o.id}-${slice.id}`,
-                    subColumns: [
-                        {
-                            key: "storeName",
-                            header: "Store",
-                            cell: (slice) => (
-                                <span className="font-medium">
-                                    {slice.vendor?.storeName ?? "—"}
-                                </span>
-                            ),
-                        },
-                        {
-                            key: "items",
-                            header: "Items",
-                            cell: (slice) => (
-                                <div className="space-y-0.5">
-                                    {slice.items?.map((item) => (
-                                        <p key={item.id} className="text-xs">
-                                            {item.productName}
-                                            {item.variantDetails
-                                                ? ` (${item.variantDetails})`
-                                                : ""}{" "}
-                                            × {item.quantity}
-                                        </p>
-                                    ))}
-                                </div>
-                            ),
-                        },
-                        {
-                            key: "orderStatus",
-                            header: "Status",
-                            cell: (slice) => (
-                                <div className="space-y-1">
-                                    <StatusBadge
-                                        statusMap={orderStatusMap}
-                                        status={slice.orderStatus}
-                                    />
-                                    {/* A cancelled parcel is refunded
-                                        automatically — show the buyer where
-                                        their money is rather than leaving
-                                        "cancelled" to mean nothing. */}
-                                    {slice.refund && (
-                                        <div className="flex items-center gap-1">
-                                            <span className="text-[10px] text-muted-foreground">
-                                                Refund
-                                            </span>
-                                            <StatusBadge
-                                                statusMap={refundStatusMap}
-                                                status={slice.refund.status}
-                                                className="text-[10px] px-1.5 py-0"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            ),
-                        },
-                        {
-                            key: "trackingNumber",
-                            header: "Tracking",
-                            cell: (slice) =>
-                                slice.trackingNumber ? (
-                                    <span className="text-xs">
-                                        {slice.carrier
-                                            ? `${slice.carrier}: `
-                                            : ""}
-                                        {slice.trackingNumber}
-                                    </span>
-                                ) : (
-                                    <span className="text-xs text-muted-foreground">
-                                        —
-                                    </span>
-                                ),
-                        },
-                        {
-                            key: "totalAmount",
-                            header: "Parcel total",
-                            cell: (slice) => <span>${slice.totalAmount}</span>,
-                        },
-                        {
-                            key: "review",
-                            header: "",
-                            cell: (slice) => (
-                                <VendorOrderReviewButton vendorOrder={slice} />
-                            ),
-                        },
-                    ],
+                    subColumns: myParcelColumns(),
                     title: (o) => `Parcels in #${o.orderNumber}`,
                     emptyMessage: "No store parcels on this order yet.",
                     defaultExpanded: false,

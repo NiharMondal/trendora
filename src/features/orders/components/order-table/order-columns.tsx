@@ -120,7 +120,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
             const order = row;
             return (
                 <Button variant="outline" size="sm" asChild>
-                    <Link href={`/admin/order-details/${order.id}`}>
+                    <Link href={`/admin/order-list/${order.id}`}>
                         <FileSearch />
                         Details
                     </Link>

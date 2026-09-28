@@ -11,6 +11,7 @@ import type { TOrderStatus } from "@/shared/types/status.types";
 import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
 import TDInput from "@/shared/form/TDInput";
+import TDSelect from "@/shared/form/TDSelect";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { Button } from "@/shared/ui/button";
 import { Form } from "@/shared/ui/form";
@@ -40,6 +41,11 @@ const LABELS: Record<TOrderStatus, string> = {
     CANCELED: "Cancel this parcel",
 };
 
+/**
+ * `nextStatus` fixes the transition (the details page opens one modal per
+ * button). Leave it out and the modal offers a picker over the transitions
+ * allowed from the parcel's current status instead.
+ */
 export default function VendorOrderStatusModal({
     vendorOrder,
     nextStatus,
@@ -47,26 +53,32 @@ export default function VendorOrderStatusModal({
     onOpenChange,
 }: {
     vendorOrder: TVendorOrder;
-    nextStatus: TOrderStatus | null;
+    nextStatus?: TOrderStatus | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
     const [updateStatus, { isLoading }] = useUpdateVendorOrderStatusMutation();
 
+    const options = VENDOR_TRANSITIONS[vendorOrder.orderStatus] ?? [];
+    const isPicker = !nextStatus;
+
     const form = useForm({
         resolver: zodResolver(vendorOrderStatusSchema),
         defaultValues: {
-            orderStatus: (nextStatus ?? "PROCESSING") as TOrderStatus,
+            orderStatus: (nextStatus ?? options[0] ?? "PROCESSING") as TOrderStatus,
             trackingNumber: vendorOrder.trackingNumber ?? "",
             carrier: vendorOrder.carrier ?? "",
             cancelReason: "",
         },
     });
 
-    if (!nextStatus) return null;
+    const pickedStatus = form.watch("orderStatus");
+    const status = nextStatus ?? pickedStatus;
 
-    const isShipping = nextStatus === "SHIPPED";
-    const isCancelling = nextStatus === "CANCELED";
+    if (!options.includes(status)) return null;
+
+    const isShipping = status === "SHIPPED";
+    const isCancelling = status === "CANCELED";
 
     const handleSubmit = async (
         values: Parameters<typeof updateStatus>[0]["payload"],
@@ -75,9 +87,9 @@ export default function VendorOrderStatusModal({
             await updateStatus({
                 vendorOrderId: vendorOrder.id,
                 payload: {
-                    // The status comes from the button that opened the modal,
-                    // not from the form, so it cannot drift.
-                    orderStatus: nextStatus,
+                    // A fixed status comes from the button that opened the
+                    // modal, not from the form, so it cannot drift.
+                    orderStatus: status,
                     trackingNumber: isShipping
                         ? values.trackingNumber || undefined
                         : undefined,
@@ -101,7 +113,7 @@ export default function VendorOrderStatusModal({
         <TDModal
             open={open}
             onOpenChange={onOpenChange}
-            title={LABELS[nextStatus]}
+            title={isPicker ? "Update parcel status" : LABELS[status]}
             description={`Parcel #${vendorOrder.vendorOrderNumber}`}
         >
             <Form {...form}>
@@ -109,6 +121,18 @@ export default function VendorOrderStatusModal({
                     className="space-y-5"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
+                    {isPicker && (
+                        <TDSelect
+                            form={form}
+                            name="orderStatus"
+                            label="New status"
+                            options={options.map((value) => ({
+                                value,
+                                label: LABELS[value],
+                            }))}
+                        />
+                    )}
+
                     {isShipping && (
                         <>
                             <TDInput
@@ -148,7 +172,7 @@ export default function VendorOrderStatusModal({
                     {!isShipping && !isCancelling && (
                         <p className="text-sm text-muted-foreground">
                             This tells the buyer their parcel is
-                            {nextStatus === "PROCESSING"
+                            {status === "PROCESSING"
                                 ? " being prepared."
                                 : " with them."}
                         </p>

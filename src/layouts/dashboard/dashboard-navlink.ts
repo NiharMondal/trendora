@@ -105,7 +105,7 @@ export const adminDashboardLinks: TSidebarLink[] = [
             { title: "Featured Products", url: "/admin/product-list/featured" },
         ],
     },
-    { title: "Order History", url: "/admin/order-list", icon: FilePlus },
+    { title: "Order List", url: "/admin/order-list", icon: FilePlus },
     {
         title: "Vendors",
         icon: Store,
