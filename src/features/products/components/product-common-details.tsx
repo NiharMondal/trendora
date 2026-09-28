@@ -22,6 +22,12 @@ type Props = {
     product: TProduct | undefined;
     /** Rendered inside the card's Quick View sheet rather than on the page. */
     quickView?: boolean;
+    /**
+     * Staff preview (admin product page): the listing exactly as a shopper
+     * sees it, minus quantity / add to cart / wishlist. Variants stay
+     * clickable so each one's price can be checked.
+     */
+    preview?: boolean;
 };
 
 /**
@@ -31,6 +37,7 @@ type Props = {
 export default function ProductCommonDetails({
     product,
     quickView = false,
+    preview = false,
 }: Props) {
     const dispatch = useAppDispatch();
     const {
@@ -190,41 +197,43 @@ export default function ProductCommonDetails({
             )}
 
             {/* Quantity + actions */}
-            <div className="space-y-3">
-                <p className="text-sm font-medium">Quantity</p>
-                <div className="flex flex-wrap items-center gap-3">
-                    <ProductQuantity
-                        quantity={quantity}
-                        onIncrease={() => setQuantity((q) => q + 1)}
-                        onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="h-12 rounded-full px-3"
-                    />
-                    <Button
-                        size="lg"
-                        className="h-12 min-w-44 flex-1 cursor-pointer rounded-full text-base"
-                        onClick={() => handleAddToCart(product)}
-                    >
-                        <ShoppingBag />
-                        Add to cart
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="size-12 cursor-pointer rounded-full hover:bg-destructive/10"
-                        onClick={toggleWishlist}
-                        disabled={isWishlistLoading || !product?.id}
-                        aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-                        aria-pressed={isWishlisted}
-                        title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-                    >
-                        <Heart
-                            className={cn("size-5", {
-                                "fill-destructive text-destructive": isWishlisted,
-                            })}
+            {!preview && (
+                <div className="space-y-3">
+                    <p className="text-sm font-medium">Quantity</p>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <ProductQuantity
+                            quantity={quantity}
+                            onIncrease={() => setQuantity((q) => q + 1)}
+                            onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
+                            className="h-12 rounded-full px-3"
                         />
-                    </Button>
+                        <Button
+                            size="lg"
+                            className="h-12 min-w-44 flex-1 cursor-pointer rounded-full text-base"
+                            onClick={() => handleAddToCart(product)}
+                        >
+                            <ShoppingBag />
+                            Add to cart
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="size-12 cursor-pointer rounded-full hover:bg-destructive/10"
+                            onClick={toggleWishlist}
+                            disabled={isWishlistLoading || !product?.id}
+                            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                            aria-pressed={isWishlisted}
+                            title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+                        >
+                            <Heart
+                                className={cn("size-5", {
+                                    "fill-destructive text-destructive": isWishlisted,
+                                })}
+                            />
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Description */}
             {product?.description && (

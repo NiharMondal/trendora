@@ -5,11 +5,13 @@ import DeliveryDetails from "./delivery-details";
 
 type Props = {
 	product: TProduct | undefined;
+	/** Staff preview — see ProductCommonDetails. */
+	preview?: boolean;
 };
-export default function ProductDetails({ product }: Props) {
+export default function ProductDetails({ product, preview = false }: Props) {
 	return (
 		<div className="space-y-8">
-			<ProductCommonDetails product={product} />
+			<ProductCommonDetails product={product} preview={preview} />
 			<DeliveryDetails vendor={product?.vendor} />
 		</div>
 	);

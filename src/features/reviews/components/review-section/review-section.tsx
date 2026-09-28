@@ -17,15 +17,20 @@ import Link from "next/link";
 type Props = {
     productId: string;
     averageRating?: number;
+    /** Staff view: show the reviews, never the write/eligibility box. */
+    readOnly?: boolean;
 };
 
 export default function ReviewSection({
     productId,
     averageRating = 0,
+    readOnly = false,
 }: Props) {
     const user = useUserInfoClient();
     const { data: eligibilityData, isLoading: eligibilityLoading } =
-        useReviewEligibilityQuery(productId, { skip: !user || !productId });
+        useReviewEligibilityQuery(productId, {
+            skip: readOnly || !user || !productId,
+        });
     const eligibility = eligibilityData?.result;
 
     const { data: productReviews, isLoading } = useReviewsByProductIdQuery(
@@ -55,33 +60,37 @@ export default function ReviewSection({
                     distribution={distribution}
                 />
 
-                <div className="lg:col-span-2">
-                    {user ? (
-                        eligibilityLoading ? (
-                            <Skeleton className="h-full min-h-40 w-full rounded-lg" />
-                        ) : eligibility?.canReview ? (
-                            <WriteReview productId={productId} />
+                {!readOnly && (
+                    <div className="lg:col-span-2">
+                        {user ? (
+                            eligibilityLoading ? (
+                                <Skeleton className="h-full min-h-40 w-full rounded-lg" />
+                            ) : eligibility?.canReview ? (
+                                <WriteReview productId={productId} />
+                            ) : (
+                                <ReviewGate reason={eligibility?.reason ?? null} />
+                            )
                         ) : (
-                            <ReviewGate reason={eligibility?.reason ?? null} />
-                        )
-                    ) : (
-                        <Link href="/login">
-                            <div className="rounded-lg border border-muted bg-card/50 p-6 text-center text-sm text-muted-foreground">
-                                Please log in to write a review.
-                            </div>
-                        </Link>
-                    )}
-                </div>
+                            <Link href="/login">
+                                <div className="rounded-lg border border-muted bg-card/50 p-6 text-center text-sm text-muted-foreground">
+                                    Please log in to write a review.
+                                </div>
+                            </Link>
+                        )}
+                    </div>
+                )}
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {isLoading ? (
                     <ReviewListSkeleton />
                 ) : reviews.length === 0 ? (
                     <div className="rounded-lg border border-muted bg-card/50 p-10 text-center">
                         <p className="text-base font-medium">No reviews yet</p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Be the first to share your thoughts on this product.
+                            {readOnly
+                                ? "No buyer has reviewed this product yet."
+                                : "Be the first to share your thoughts on this product."}
                         </p>
                     </div>
                 ) : (
