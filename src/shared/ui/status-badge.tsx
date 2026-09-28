@@ -1,41 +1,49 @@
-import { Badge } from "@/shared/ui/badge";
-import { cn } from "@/shared/lib/utils";
+import TDStatusBadge, {
+    getStatusTone,
+    type TStatusTone,
+} from "@/shared/components/td-status-badge";
 
-type BadgeConfig = {
+/**
+ * A domain's wording for its statuses. Colour is NOT part of the map: it comes
+ * from the status value itself (`getStatusTone`), so PENDING looks the same on
+ * an order, a payout and a store. Set `tone` only to deliberately override it.
+ */
+export type TStatusBadgeConfig = {
     label: string;
-    className: string;
+    tone?: TStatusTone;
 };
 
-type StatusMap<T extends string> = Record<T, BadgeConfig>;
+export type TStatusMap<T extends string> = Record<T, TStatusBadgeConfig>;
 
 export function getStatusBadge<T extends string>(
-    statusMap: StatusMap<T>,
+    statusMap: TStatusMap<T>,
     status: T | undefined | null,
-): BadgeConfig {
-    if (!status || !statusMap[status]) {
-        return {
-            label: status ?? "Unknown",
-            className:
-                "bg-gray-100 text-gray-500 hover:bg-gray-100 border-gray-200",
-        };
-    }
-    return statusMap[status];
+): Required<TStatusBadgeConfig> {
+    const config = status ? statusMap[status] : undefined;
+    return {
+        label: config?.label ?? status ?? "Unknown",
+        tone: config?.tone ?? getStatusTone(status),
+    };
 }
 
+/** `TDStatusBadge` with the label looked up in a domain's status map. */
 export function StatusBadge<T extends string>({
     statusMap,
     status,
     className,
 }: {
-    statusMap: StatusMap<T>;
+    statusMap: TStatusMap<T>;
     status: T | undefined | null;
     className?: string;
 }) {
-    const config = getStatusBadge(statusMap, status);
+    const { label, tone } = getStatusBadge(statusMap, status);
 
     return (
-        <Badge variant="outline" className={cn(config.className, className)}>
-            {config.label}
-        </Badge>
+        <TDStatusBadge
+            status={status}
+            value={label}
+            tone={tone}
+            className={className}
+        />
     );
 }

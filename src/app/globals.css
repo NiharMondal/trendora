@@ -64,6 +64,39 @@
     --color-destructive-500: var(--destructive-500);
     --color-destructive-600: var(--destructive-600);
 
+    /* STATUS BADGES — one bg / fg / border triple per tone.
+       Used by TDStatusBadge (shared/components/td-status-badge.tsx). */
+    --color-status-neutral: var(--status-neutral);
+    --color-status-neutral-foreground: var(--status-neutral-foreground);
+    --color-status-neutral-border: var(--status-neutral-border);
+    --color-status-warning: var(--status-warning);
+    --color-status-warning-foreground: var(--status-warning-foreground);
+    --color-status-warning-border: var(--status-warning-border);
+    --color-status-info: var(--status-info);
+    --color-status-info-foreground: var(--status-info-foreground);
+    --color-status-info-border: var(--status-info-border);
+    --color-status-transit: var(--status-transit);
+    --color-status-transit-foreground: var(--status-transit-foreground);
+    --color-status-transit-border: var(--status-transit-border);
+    --color-status-success: var(--status-success);
+    --color-status-success-foreground: var(--status-success-foreground);
+    --color-status-success-border: var(--status-success-border);
+    --color-status-danger: var(--status-danger);
+    --color-status-danger-foreground: var(--status-danger-foreground);
+    --color-status-danger-border: var(--status-danger-border);
+    --color-status-alert: var(--status-alert);
+    --color-status-alert-foreground: var(--status-alert-foreground);
+    --color-status-alert-border: var(--status-alert-border);
+    --color-status-partial: var(--status-partial);
+    --color-status-partial-foreground: var(--status-partial-foreground);
+    --color-status-partial-border: var(--status-partial-border);
+    --color-status-refund: var(--status-refund);
+    --color-status-refund-foreground: var(--status-refund-foreground);
+    --color-status-refund-border: var(--status-refund-border);
+    --color-status-brand: var(--status-brand);
+    --color-status-brand-foreground: var(--status-brand-foreground);
+    --color-status-brand-border: var(--status-brand-border);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -142,6 +175,38 @@
     --destructive-500: oklch(0.58 0.22 27);
     --destructive-600: oklch(0.5 0.2 27);
 
+    /* STATUS BADGES (light) */
+    --status-neutral: oklch(0.96 0.008 255);
+    --status-neutral-foreground: oklch(0.45 0.02 255);
+    --status-neutral-border: oklch(0.88 0.012 255);
+    --status-warning: oklch(0.96 0.07 85);
+    --status-warning-foreground: oklch(0.5 0.12 85);
+    --status-warning-border: oklch(0.88 0.12 85);
+    --status-info: oklch(0.96 0.035 255);
+    --status-info-foreground: oklch(0.48 0.17 255);
+    --status-info-border: oklch(0.88 0.07 255);
+    --status-transit: oklch(0.96 0.04 215);
+    --status-transit-foreground: oklch(0.48 0.1 215);
+    --status-transit-border: oklch(0.88 0.07 215);
+    --status-success: oklch(0.96 0.05 155);
+    --status-success-foreground: oklch(0.47 0.12 155);
+    --status-success-border: oklch(0.88 0.09 155);
+    --status-danger: oklch(0.96 0.03 22);
+    --status-danger-foreground: oklch(0.52 0.19 22);
+    --status-danger-border: oklch(0.88 0.07 22);
+    --status-alert: oklch(0.96 0.045 50);
+    --status-alert-foreground: oklch(0.54 0.15 50);
+    --status-alert-border: oklch(0.88 0.09 50);
+    --status-partial: oklch(0.96 0.03 278);
+    --status-partial-foreground: oklch(0.48 0.17 278);
+    --status-partial-border: oklch(0.88 0.07 278);
+    --status-refund: oklch(0.96 0.035 310);
+    --status-refund-foreground: oklch(0.48 0.18 310);
+    --status-refund-border: oklch(0.88 0.07 310);
+    --status-brand: oklch(0.96 0.05 162);
+    --status-brand-foreground: oklch(0.45 0.1 162);
+    --status-brand-border: oklch(0.88 0.09 162);
+
     /* ALIASES */
     --success: var(--success-500);
     --warning: var(--warning-500);
@@ -213,6 +278,38 @@
     --destructive-100: oklch(0.36 0.07 27);
     --destructive-500: oklch(0.7 0.2 27);
     --destructive-600: oklch(0.78 0.22 27);
+
+    /* STATUS BADGES (dark) */
+    --status-neutral: oklch(0.3 0.01 255);
+    --status-neutral-foreground: oklch(0.86 0.012 255);
+    --status-neutral-border: oklch(0.42 0.012 255);
+    --status-warning: oklch(0.3 0.091 85);
+    --status-warning-foreground: oklch(0.86 0.072 85);
+    --status-warning-border: oklch(0.42 0.12 85);
+    --status-info: oklch(0.3 0.046 255);
+    --status-info-foreground: oklch(0.86 0.102 255);
+    --status-info-border: oklch(0.42 0.07 255);
+    --status-transit: oklch(0.3 0.052 215);
+    --status-transit-foreground: oklch(0.86 0.06 215);
+    --status-transit-border: oklch(0.42 0.07 215);
+    --status-success: oklch(0.3 0.065 155);
+    --status-success-foreground: oklch(0.86 0.072 155);
+    --status-success-border: oklch(0.42 0.09 155);
+    --status-danger: oklch(0.3 0.039 22);
+    --status-danger-foreground: oklch(0.86 0.114 22);
+    --status-danger-border: oklch(0.42 0.07 22);
+    --status-alert: oklch(0.3 0.058 50);
+    --status-alert-foreground: oklch(0.86 0.09 50);
+    --status-alert-border: oklch(0.42 0.09 50);
+    --status-partial: oklch(0.3 0.039 278);
+    --status-partial-foreground: oklch(0.86 0.102 278);
+    --status-partial-border: oklch(0.42 0.07 278);
+    --status-refund: oklch(0.3 0.046 310);
+    --status-refund-foreground: oklch(0.86 0.108 310);
+    --status-refund-border: oklch(0.42 0.07 310);
+    --status-brand: oklch(0.3 0.065 162);
+    --status-brand-foreground: oklch(0.86 0.06 162);
+    --status-brand-border: oklch(0.42 0.09 162);
 
     --success: var(--success-500);
     --warning: var(--warning-500);

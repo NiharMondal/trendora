@@ -1,6 +1,10 @@
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TOrder } from "@/features/orders/types/order.types";
-import { cn } from "@/shared/lib/utils";
+import {
+    orderStatusMap,
+    paymentStatusMap,
+} from "@/features/orders/constants/status-maps";
+import { StatusBadge } from "@/shared/ui/status-badge";
 import TdUserInfo from "@/shared/components/td-user-info";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
@@ -24,21 +28,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         key: "orderStatus",
         header: "Order Status",
         cell: (row) => (
-            <span
-                className={cn("px-3 py-0.5 rounded-full text-sm font-medium", {
-                    "bg-yellow-100 text-yellow-800":
-                        row.orderStatus === "PENDING",
-                    "bg-blue-100 text-blue-800":
-                        row.orderStatus === "PROCESSING",
-                    "bg-purple-100 text-purple-800":
-                        row.orderStatus === "SHIPPED",
-                    "bg-green-100 text-green-800":
-                        row.orderStatus === "DELIVERED",
-                    "bg-red-100 text-red-800": row.orderStatus === "CANCELED",
-                })}
-            >
-                {row.orderStatus}
-            </span>
+            <StatusBadge statusMap={orderStatusMap} status={row.orderStatus} />
         ),
     },
     {
@@ -49,18 +39,10 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         key: "paymentStatus",
         header: "Payment Status",
         cell: (row) => (
-            <span
-                className={cn("px-3 py-0.5 rounded-full text-sm font-medium", {
-                    "bg-yellow-100 text-yellow-800":
-                        row.paymentStatus === "PENDING",
-                    "bg-green-100 text-green-800": row.paymentStatus === "PAID",
-                    "bg-red-100 text-red-800": row.paymentStatus === "FAILED",
-                    "bg-purple-100 text-purple-800":
-                        row.paymentStatus === "REFUNDED",
-                })}
-            >
-                {row.paymentStatus}
-            </span>
+            <StatusBadge
+                statusMap={paymentStatusMap}
+                status={row.paymentStatus}
+            />
         ),
     },
 ];
