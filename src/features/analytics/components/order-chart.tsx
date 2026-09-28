@@ -103,7 +103,7 @@ export default function OrderChart() {
     return (
         <section
             aria-labelledby="sales-trend-heading"
-            className="bg-white rounded-2xl shadow-2xl p-5 lg:col-span-2 flex flex-col gap-4"
+            className="bg-white rounded-2xl p-5 lg:col-span-2 flex flex-col gap-4"
         >
             <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>

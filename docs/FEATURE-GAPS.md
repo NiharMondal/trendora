@@ -412,12 +412,16 @@ entries — those were demo links to template pages.
 ---
 
 ### FE-11 · Three admin dashboard widgets are demo fixtures
-**P1 · M · analytics · PARTIAL 2026-09-28 — `OrderChart` done**
+**P1 · M · analytics · PARTIAL 2026-09-28 — `OrderChart` and `TopProducts` done**
 
 **Done:** `order-chart.tsx` is now "Sales over time", backed by the new
 `GET /orders/analytics/sales-trend` (`useSalesTrendQuery`) and drawn with the shadcn
 `ChartContainer`. One metric at a time (gross sales / commission / orders), so there is never a
 second y-axis; its own range picker, daily buckets up to 90 days and monthly beyond.
+
+`top-products.tsx` is now a ranked `DataTable` (no toolbar, no pagination) over
+`topProducts` from `GET /orders/analytics`, which gained `revenue`, `image`, `slug` and the store,
+and no longer counts units in cancelled parcels.
 
 **Now:**
 - `src/features/analytics/components/top-products.tsx:6-49` — an `INV001…INV007` invoice fixture,

@@ -1,81 +1,62 @@
-import Image from "next/image";
+"use client";
 
-import { Table, TableBody, TableCell, TableRow } from "@/shared/ui/table";
-import { productsImage } from "@/shared/constants/images";
+import { PackageSearch } from "lucide-react";
 
-const invoices = [
-    {
-        invoice: "INV001",
-        paymentStatus: "Paid",
-        totalAmount: "$250.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV002",
-        paymentStatus: "Pending",
-        totalAmount: "$150.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV003",
-        paymentStatus: "Unpaid",
-        totalAmount: "$350.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV004",
-        paymentStatus: "Paid",
-        totalAmount: "$450.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV005",
-        paymentStatus: "Paid",
-        totalAmount: "$550.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV006",
-        paymentStatus: "Pending",
-        totalAmount: "$200.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV007",
-        paymentStatus: "Unpaid",
-        totalAmount: "$300.00",
-        paymentMethod: "Credit Card",
-    },
-];
+import {
+    topProductColumns,
+    type TRankedTopProduct,
+} from "@/features/analytics/components/top-product-columns";
+import { useOrderAnalyticsQuery } from "@/features/orders/api/order.api";
+import { DataTable } from "@/shared/components/table";
 
+/**
+ * The marketplace's ten best-selling products by units, all time.
+ *
+ * Reads `topProducts` from `GET /orders/analytics` with no range — the same
+ * cache entry `MarketplaceOverview` uses by default, so it costs no extra
+ * request. Units in cancelled parcels are not counted.
+ *
+ * A plain ranked list: no `filters`, `title` or `columnConfig`, so
+ * `DataTable` renders no toolbar and no pagination.
+ */
 export default function TopProducts() {
+    const { data, isFetching, error, refetch } = useOrderAnalyticsQuery();
+
+    const rows: TRankedTopProduct[] = (data?.result.topProducts ?? []).map(
+        (product, index) => ({ ...product, rank: index + 1 }),
+    );
+
     return (
-        <div className="bg-white rounded-2xl shadow-2xl p-5 lg:col-span-3">
-            <h4 className="mb-10 font-semibold text-black">Top Products</h4>
-            <Table>
-                <TableBody>
-                    {invoices.map((invoice) => (
-                        <TableRow key={invoice.invoice}>
-                            <TableCell className="size-16 bg-gray-100 rounded-md">
-                                <Image
-                                    src={productsImage.gray}
-                                    alt="Product"
-                                    height={40}
-                                    width={40}
-                                    className="size-12 object-center object-cover rounded-md"
-                                />
-                            </TableCell>
-                            <TableCell className="font-semibold text-base">
-                                Product name here
-                            </TableCell>
-                            <TableCell>{invoice.paymentMethod}</TableCell>
-                            <TableCell className="text-right">
-                                {invoice.totalAmount}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
+        <section
+            aria-labelledby="top-products-heading"
+            className="bg-white rounded-2xl p-5 lg:col-span-3 flex flex-col gap-4"
+        >
+            <div>
+                <h4
+                    id="top-products-heading"
+                    className="font-semibold text-black"
+                >
+                    Top products
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                    All time · by units sold
+                </p>
+            </div>
+
+            <DataTable
+                columns={topProductColumns}
+                data={rows}
+                rowKey={(row) => row.productId}
+                isFetching={isFetching}
+                error={error}
+                onRetry={refetch}
+                emptyState={{
+                    title: "No sales yet",
+                    description:
+                        "Best sellers appear here once orders come in.",
+                    icon: PackageSearch,
+                }}
+            />
+        </section>
     );
 }
