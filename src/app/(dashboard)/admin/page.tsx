@@ -19,8 +19,6 @@ export default function AdminHomePage() {
                 {/* top products  */}
                 <TopProducts />
 
-                <ProductsOverview />
-
                 <RecentOrdersTable />
                 <NewComments />
             </div>
