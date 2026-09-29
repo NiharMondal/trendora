@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import TDSeparator from "@/shared/components/td-separator";
 import TDCheckbox from "@/shared/form/TDCheckbox";
@@ -86,6 +86,21 @@ export default function ProductForm({
         },
     });
 
+    // With variants, the product's stock is their total — the backend
+    // derives it and ignores what is typed here (syncVariantStock, XR-13) —
+    // so show that total instead of a number that would be overwritten.
+    const watchedVariants = useWatch({ control: form.control, name: "variants" });
+    const hasVariants = (watchedVariants?.length ?? 0) > 0;
+    const variantStockTotal = (watchedVariants ?? []).reduce(
+        (sum, v) => sum + (Number(v?.stock) || 0),
+        0,
+    );
+    useEffect(() => {
+        if (hasVariants) {
+            form.setValue("stockQuantity", variantStockTotal);
+        }
+    }, [form, hasVariants, variantStockTotal]);
+
     const handleCategoryChange = (value: string) => {
         setCategoryId(value);
     };
@@ -135,6 +150,12 @@ export default function ProductForm({
                             name="stockQuantity"
                             type="number"
                             required
+                            disabled={hasVariants}
+                            description={
+                                hasVariants
+                                    ? "Total of the variants below — set stock per variant."
+                                    : undefined
+                            }
                         />
                         <TDCombobox
                             form={form}

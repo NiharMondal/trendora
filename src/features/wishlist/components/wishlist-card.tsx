@@ -27,6 +27,11 @@ export default function WishlistCard({ item, onRemove, isRemoving }: Props) {
         product?.images?.find((img) => img.isMain)?.url ??
         product?.images?.[0]?.url;
 
+    // A product with variants is bought by size/colour; send the shopper to
+    // pick one rather than adding a line the backend will refuse.
+    const needsOption = (product?.variants?.length ?? 0) > 0;
+    const isSoldOut = (product?.stockQuantity ?? 0) <= 0;
+
     const handleAddToCart = () => {
         dispatch(
             addItemToCart(toCartItem(product, { productImage: mainImage })),
@@ -73,14 +78,28 @@ export default function WishlistCard({ item, onRemove, isRemoving }: Props) {
                     basePrice={product?.basePrice ?? ""}
                     discountPrice={product?.discountPrice}
                 />
-                <TDButton
-                    variant="outline"
-                    className="w-full rounded-full"
-                    onClick={handleAddToCart}
-                >
-                    <ShoppingBag />
-                    Add to cart
-                </TDButton>
+                {needsOption && !isSoldOut ? (
+                    <Button
+                        asChild
+                        variant="outline"
+                        className="w-full rounded-full"
+                    >
+                        <Link href={`/products/${product?.slug}`}>
+                            <ShoppingBag />
+                            Choose options
+                        </Link>
+                    </Button>
+                ) : (
+                    <TDButton
+                        variant="outline"
+                        className="w-full rounded-full"
+                        onClick={handleAddToCart}
+                        disabled={isSoldOut}
+                    >
+                        <ShoppingBag />
+                        {isSoldOut ? "Sold out" : "Add to cart"}
+                    </TDButton>
+                )}
             </div>
         </div>
     );

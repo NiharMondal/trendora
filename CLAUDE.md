@@ -15,9 +15,9 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **9 warnings, 0 errors**: five `@next/next/no-img-element`
+`pnpm lint` passes (exit 0) with **6 warnings, 0 errors**: two `@next/next/no-img-element`
 (FE-31) and four `no-unused-vars`. There are **no `no-explicit-any` warnings** since FE-27, so keep it
-that way. Treat 9 as the baseline, and don't add to it.
+that way. Treat 6 as the baseline, and don't add to it.
 
 - **A catch reads its message with `getApiErrorMessage(error, "fallback")`**
   (`shared/utils/api-error.ts`), never `catch (error: any)` + `error.data.message`. That older
@@ -26,7 +26,7 @@ that way. Treat 9 as the baseline, and don't add to it.
 - A thrown JS error (`signIn`, a Cloudinary upload) is narrowed with `error instanceof Error`.
 - An unknown payload from the backend is typed `unknown`, not `any`.
 
-**Accessibility is linted (FE-32).** `eslint.config.mjs` enforces 12 `jsx-a11y` rules as
+**Accessibility is linted (FE-32).** `eslint.config.mjs` enforces 11 `jsx-a11y` rules as
 **errors**. Lint catches:
 
 - a clickable `<div>` / `<img>` (use a `<button type="button">`);
@@ -47,7 +47,7 @@ renders. Don't add another `<main>`.
 webpack and fails on `@react-pdf/renderer`'s ESM-only package in
 `features/orders/components/my-orders/pdf-download-print.tsx`.
 
-`eslint.config.mjs` needs both of its non-`extends` entries to stay shaped as flat-config **objects** —
+`eslint.config.mjs` needs every non-`extends` entry to stay shaped as a flat-config **object** —
 a bare `"rule-name", "warn"` pair in the array makes ESLint 9 abort with
 `TypeError: Unexpected non-object config`, and without the leading `ignores` entry ESLint lints the
 whole `.next/` build output (tens of thousands of issues in generated chunks).
@@ -75,8 +75,12 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
   brand has no slug, so there is no `/brands/<slug>`. "Recently viewed" stores product **ids
   only** in `localStorage` (`products/hooks/use-recently-viewed.ts`) and re-fetches them via
   `GET /products?id=a,b`, so prices stay current and delisted items drop out.
-- `(auth)` — login, register, forgot-password, reset-password (the emailed `?token=` link; kept
-  out of `AuthSync`'s bounce list so a signed-in user can still follow it).
+  `payment-success` / `payment-cancel` are Stripe's return URLs (`?order=<orderNumber>`); the cart
+  is cleared on success, not at Place Order.
+- `(auth)` — login, register, forgot-password. **Password reset is not merged here:** the working
+  forgot form and the `reset-password` page (the emailed `?token=` link, deliberately kept out of
+  `AuthSync`'s bounce list) live only on branch `FE-04-Forgot-password-form-submits-to-console-log`.
+  On this branch the forgot form still `console.log`s and the emailed link 404s (FE-04, XR-11).
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
   seller portal) and `dashboard` (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side
   via `getServerSession(authOptions)` and renders the role-appropriate sidebar (the three link sets
@@ -86,7 +90,9 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
 - `api/auth/[...nextauth]` — NextAuth handler.
 
 **Error and loading boundaries.** Each route group has an `error.tsx` rendering the shared
-`shared/components/error-state.tsx` — use that rather than a bespoke error screen. `app/error.tsx`
+`shared/components/error-state.tsx` — use that rather than a bespoke error screen — and a
+`loading.tsx` skeleton; `(root)/products/[slug]/loading.tsx` overrides the storefront's grid-shaped
+one with `ProductDetailsSkeleton`, so a route whose shape differs gets its own. `app/error.tsx`
 catches a throw in a group *layout* (a group's own boundary sits inside its layout, so it cannot),
 `app/global-error.tsx` catches the root layout and must not depend on `Providers`, and
 `app/not-found.tsx` serves every unmatched URL outside all group chrome. Those boundaries catch
@@ -106,14 +112,15 @@ sidebar and the tabs goes through `shared/utils/match-path.ts` so nested routes
 
 Admin routes use parenthesised **non-URL grouping folders** to bundle a resource's pages, e.g.
 `admin/(brand)/add-brand` + `admin/(brand)/brand-list` both live at `/admin/...`. **`src/app`
-holds nothing but `page.tsx` / `layout.tsx` / `route.ts`** — every page is a thin shell that renders
-a component from `src/features/<feature>/components/`.
+holds only routing files** (`page` / `layout` / `route` plus the `error` / `loading` / `not-found`
+boundaries and `globals.css`) — every page is a thin shell that awaits `params` and renders a
+component from `src/features/<feature>/components/`.
 
 ### Folder structure (feature-based)
 
 ```
 src/
-├── app/          routing only — page.tsx / layout.tsx / route.ts
+├── app/          routing only — page / layout / route + boundaries
 ├── features/     one folder per domain; where nearly all code lives
 ├── shared/       cross-feature primitives (ui, form, components, hooks, lib, utils, constants, types, config)
 ├── layouts/      navbar/, dashboard/ (sidebar + navlinks), footer.tsx
@@ -140,10 +147,12 @@ features/<feature>/
 Dependency rules:
 - `app/` imports from `features/`, `layouts/`, `shared/` — never the reverse.
 - `shared/` **never** imports from `features/` — keep it that way. `layouts/`, `store/` and
-  `providers/` do reach into a few features by necessity (navbar → `cart` selectors, dashboard
-  sidebar/nav-user → `auth` role+session types and `useMyProfileQuery`, dashboard sidebar footer →
-  `payouts` `useMyBalanceQuery` for the vendor-only balance, `store.ts` → the cart slice,
-  `providers.tsx` → `AuthSync`); add to that list only when a layout genuinely needs feature state.
+  `providers/` do reach into a few features by necessity (navbar → `cart` selectors and `auth`
+  `role-home`, dashboard sidebar/nav-user/tabs → `auth` role+session types, sidebar → `users`
+  `useMyProfileQuery`, `dashboard/vendor-balance.tsx` → `payouts` `useMyBalanceQuery` +
+  `cart` `currencyFormatter` for the vendor-only balance in the sidebar footer, `store.ts` → the cart
+  slice, `providers.tsx` → `AuthSync`); add to that list only when a layout genuinely needs feature
+  state.
 - Cross-feature imports are allowed but should stay few; they are listed by
   `grep -rn '@/features/' src/features` and today form a DAG except `products` ↔ `wishlist`
   (product cards use `useWishlistToggle`, wishlist cards use `ProductPrice`).
@@ -213,6 +222,13 @@ per-store detail from those, and note there is no whole-order status endpoint �
 `vendor-order-status-modal.tsx` mirrors the backend state machine so the UI cannot offer a move
 that will be rejected (a vendor cannot cancel a shipped parcel — that is admin-only).
 
+**Buyers cancel per parcel through the same mutation.** `/dashboard/my-orders/[id]`
+(`orders/components/my-orders/my-order-details.tsx`) is laid out per parcel, and
+`CancelParcelModal` sends `orderStatus: "CANCELED"` to that one parcel. It renders nothing unless the
+parcel is `PENDING` — the only move the backend allows a buyer — and toasts the backend's 403, which
+names the status the seller already moved it to. A two-store order is cancelled one parcel at a time;
+never add a whole-order cancel.
+
 **Products have two independent gates.** `status` is admin moderation
 (`DRAFT → PENDING → APPROVED/REJECTED`) and `isPublished` is the seller's own switch; a listing is
 on the storefront only when it is APPROVED *and* published *and* its store is approved. Two
@@ -220,7 +236,11 @@ consequences for reads:
 
 - `/products` and `/products/:id` apply that filter, so they **404 on a draft**. Admin and vendor
   screens must use `useMyVendorProductByIdQuery` / `useMyVendorProductsQuery` /
-  `useAllProductsForAdminQuery` instead.
+  `useAllProductsForAdminQuery` instead. `/admin/product-list/[id]`
+  (`products/components/admin/admin-product-details-view.tsx`) is the example: it renders the
+  storefront's own gallery / buy box / reviews in `preview` / `readOnly` mode off the owner endpoint,
+  so what an admin approves is what a shopper will see. Reuse the storefront components that way
+  rather than building a second product layout.
 - An ADMIN creating a product must send `vendorId` (see `create-product.tsx`, which passes
   `vendorOptions` to `ProductForm`); a VENDOR sends nothing and gets their own store.
 
@@ -239,7 +259,7 @@ path. Two consequences for the UI:
 
 - A parcel can be `CANCELED` while its `refund.status` is still `FAILED` — that is a buyer who has
   not been paid back. Never present "cancelled" as if the money is settled; render
-  `slice.refund.status` with `refundStatusMap` beside it (see `my-orders-list.tsx`).
+  `slice.refund.status` beside it (see `my-orders/my-parcel-columns.tsx`, `my-order-details.tsx`).
 - `payment.refundAmount` is money that **actually went back**, not what is owed. `PaymentStatus`
   gained `PARTIALLY_REFUNDED` for the one-parcel-of-three case.
 
@@ -251,13 +271,10 @@ never re-derive it client-side.
 `GET /vendor-reviews/store/:slug`, using the slug from `/vendors/me`. **Not** `/vendor-reviews/my-reviews`:
 that returns reviews the user *wrote* as a buyer (hook `useMyWrittenStoreReviewsQuery`).
 
-`/dashboard/my-refunds` is the buyer's list, and is linked for customers **and vendors**. It must
-send `as: "buyer"` to `useMyRefundsQuery`, or a VENDOR gets refunds on parcels they *sold*
-(backend BE-46). It uses `buyerRefundStatusMap` (`features/refunds/constants/`), the buyer's
-wording, rather than the operator-worded `refundStatusMap`.
-
-`/vendor/refunds` is the other half: refunds on parcels the store **sold**, sending
-`as: "seller"`. It uses the operator-worded `refundStatusMap` and is read-only.
+Refund lists pick a side with `as`. `/dashboard/my-refunds` (linked for customers **and vendors**)
+must send `as: "buyer"` to `useMyRefundsQuery`, or a VENDOR gets refunds on parcels they *sold*
+(backend BE-46), and uses the buyer-worded `buyerRefundStatusMap` (`features/refunds/constants/`).
+`/vendor/refunds` sends `as: "seller"`, is read-only, and uses the operator-worded `refundStatusMap`.
 
 `/vendor`'s range picker must build its query args **when a range is picked**, never during
 render — a `new Date()` in the cache key refetches in a loop. The dashboard's `salesTrend` is
@@ -271,6 +288,13 @@ from the admin order page (`ManualRefundModal`). Money moves first; this only wr
 The analytics range pickers share `shared/components/date-range-select.tsx` (`useDateRange`) —
 reuse it rather than building another.
 
+**The admin home (`/admin`) is `features/analytics`, which has no `api/`** — its widgets read
+other features' hooks. `MarketplaceOverview` and `TopProducts` use `useOrderAnalyticsQuery`
+(`GET /orders/analytics`), `OrderChart` uses `useSalesTrendQuery` (`/orders/analytics/sales-trend`,
+same GMV/commission rules as the tiles, so equal ranges agree), `RecentOrdersTable` uses
+`useAllOrderQuery` and `NewComments` `useAllReviewQuery`. `ProductsOverview` is still a hardcoded
+fixture and is imported but **not rendered** — don't mount it until it is backed by data.
+
 `/admin/refunds` is a failure queue: its normal state is empty, and anything in it is money owed. Only
 a `gateway === "stripe"` refund can be retried — a manual one never had a gateway to call.
 
@@ -282,13 +306,12 @@ upload and `deleteTempImage`).
   `baseQueryWithReauth` that injects the NextAuth `accessToken` as the `authorization` header and,
   on a 401, re-runs `getSession()` (which re-triggers the NextAuth `jwt` callback and thus the token
   refresh) before retrying — or calls `signOut()` if refresh failed.
-- Feature APIs (`features/products/api/product.api.ts`, `features/orders/api/order.api.ts`, …) use `baseApi.injectEndpoints({...})` and export
+- Feature APIs (`features/<x>/api/<x>.api.ts`) use `baseApi.injectEndpoints({...})` and export
   the generated hooks. **Add endpoints by injecting into `baseApi`; never create a second
-  `createApi`.** New tag types must be registered in `baseApi.ts`, **and provided by at least one
+  `createApi`.** New tag types must be registered in `base-api.ts`, **and provided by at least one
   query**: invalidating a tag nothing provides is a silent no-op (FE-24 removed two such tags).
-  The file name does not always
-  match the feature: `features/home`'s endpoints live in `api/slide.api.ts` (hero slides, tag
-  `slides`). The admin screen (`/admin/slide-list`, `features/home/components/slides/`) reads
+  File names do not always match the feature: `features/home`'s endpoints are `api/slide.api.ts`
+  (tag `slides`). The admin screen (`/admin/slide-list`, `features/home/components/slides/`) reads
   `allSlidesForAdmin` (`/slides/admin/all`), because the public list hides inactive slides. Slide
   writes send `photo: { url, publicId }`, not `photoUrl`, so the backend can promote the upload out
   of Cloudinary's `temp/`.
@@ -297,6 +320,8 @@ upload and `deleteTempImage`).
 - List endpoints take `Record<string, string>` and build their query string with `buildQueryParams`
   (`src/shared/utils/build-query-params.ts`), which **drops values equal to the defaults**
   (`page:1`, `limit:10`, `search:""`, `sortBy:createdAt:desc`) to keep URLs and cache keys clean.
+  **Sort is one param, `sortBy: "field:desc"`.** The backend splits on `:` and ignores `orderBy`,
+  so `{ sortBy: "createdAt", orderBy: "desc" }` silently sorts ascending.
 
 **Failed requests must never render as empty.** "You have no orders" and "we could not load your
 orders" need different actions from the user. Every screen that reads a query handles its `error`:
@@ -316,6 +341,11 @@ orders" need different actions from the user. Every screen that reads a query ha
 The home-page sections are the one deliberate exception: they render `null` on failure, as they do
 when empty.
 
+**Loading vs refreshing.** `isLoading` (no data yet) gets a skeleton shaped like the content;
+`isFetching && !isLoading` (a new filter combination, old `data` still cached) keeps the old result
+on screen, dimmed, under a progress sweep — `product-wrapper.tsx` is the reference. Swapping to a
+skeleton on every refetch loses the shopper's scroll position.
+
 ### The storefront catalogue is faceted, and the facets come from the server
 
 `/products` (`features/products/components/product-wrapper.tsx`) is the reference for a public,
@@ -330,11 +360,9 @@ state machinery:
   `helpers/product-filter.ts`. The two must agree: the backend turns an unrecognised key into a
   `where` clause on a column of that name, so a typo here fails as an empty page, not an error.
 - **The options are not declared in this repo.** `GET /products/filters`
-  (`useProductFiltersQuery`) returns the categories, brands, sizes, genders, stores, price range and
-  rating buckets that exist in the live catalogue, each with a count. Sellers list whatever they
-  like, so which of those exist is a property of the data — a vendor opening a new category appears
-  in the panel with no frontend change. Don't reintroduce a hardcoded list; three such components
-  were deleted for exactly this reason.
+  (`useProductFiltersQuery`) returns what exists in the live catalogue, each with a count (root
+  `CLAUDE.md` has the contract). Don't reintroduce a hardcoded list; three such components were
+  deleted for exactly this reason.
 - **Both queries take the SAME `queryParams`.** That is what keeps the counts honest — they are
   computed from the current selection, not the whole catalogue. The counts are disjunctive
   server-side, so ticking one brand leaves the others tickable.
@@ -344,22 +372,21 @@ state machinery:
 
 **Use `setFilters` (plural), not two `setFilter` calls,** when moving more than one param at once.
 Both build their `URLSearchParams` from the same render's snapshot, so the second silently discards
-the first — a price min/max pair loses its min. `PriceFilter` never applies per movement, for the same class of reason:
-it is a `react-slider-range` slider that applies on release via `onChangeCommitted` (dragging
-fires `onChange` on every pixel). The package's stylesheet is imported
-in `globals.css` **into `layer(components)`** — unlayered, it would beat every Tailwind utility put
-on the slider. A side left at its facet bound is sent as "no limit", not as that number.
+the first — a price min/max pair loses its min. `PriceFilter` is a `react-slider-range` slider that
+applies once, on release (`onChangeCommitted`; `onChange` fires every pixel). Its stylesheet is
+imported in `globals.css` **into `layer(components)`** — unlayered, it would beat every Tailwind
+utility on the slider. A side left at its facet bound is sent as "no limit", not as that number.
 
 `app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>` — Next 15 requires it for
 `useSearchParams`, and without it the route opts out of static rendering at build time.
 
 **Both navbar search boxes feed this page** through `layouts/navbar/use-navbar-search.ts`, which
-pushes `/products?search=<q>` and **mirrors that param back into the input**. The URL is the single
-source of truth for both boxes; the hook keeps a local draft only for what has been typed and not
-yet submitted. Skipping that sync is a visible bug — search from the navbar, clear the catalogue
-toolbar, and the navbar goes on advertising a search that is no longer running.
-
-The sync is a **reset-on-change during render**, not a `useEffect`:
+pushes the bare `/products?search=<q>` (a fresh result set, not merged into leftover filters) and
+**mirrors that param back into the input** — the URL is the single source of truth, and the hook
+keeps a local draft only for unsubmitted typing. Without the sync, clearing the catalogue toolbar
+leaves the navbar advertising a search that is no longer running. The sync is a
+**reset-on-change during render**, not a `useEffect` (an effect repaints the stale term for a
+frame; an unconditional `setQuery` clobbers the shopper mid-word):
 
 ```ts
 const [query, setQuery] = useState(urlTerm);
@@ -367,57 +394,48 @@ const [syncedTerm, setSyncedTerm] = useState(urlTerm);
 if (urlTerm !== syncedTerm) { setSyncedTerm(urlTerm); setQuery(urlTerm); }
 ```
 
-An effect would repaint the stale term for a frame, and a plain `setQuery(urlTerm)` on every render
-would clobber the shopper mid-word. `urlTerm` only moves on navigation, so a draft survives typing.
-
 `useSearchParams` in the navbar is safe **here specifically**: `Navbar` is mounted in
-`app/(root)/layout.tsx`, not the global root layout, and `Providers` gates the whole tree behind
-`PersistGate loading={null}` — so no page has meaningful prerendered HTML to lose in the first
-place. `pnpm build` confirms it: `/about-us`, `/cart`, `/checkout` and `/products` all stay
-`○ Static`. Re-check that route table if the navbar moves up a layout or `PersistGate` goes away.
+`app/(root)/layout.tsx`, not the root layout, and `Providers` gates the tree behind
+`PersistGate loading={null}`, so no page has meaningful prerendered HTML to lose. `pnpm build`
+confirms `/about-us`, `/cart`, `/checkout` and `/products` stay `○ Static` — re-check that table if
+the navbar moves up a layout or `PersistGate` goes away.
 
-Off `/products` the box shows nothing, because no search is running there. A navbar search also
-pushes the bare path, so it starts a fresh result set rather than merging into filters left behind.
-
-### The home page is eleven self-hiding sections
+### The home page is twelve self-hiding sections
 
 `app/(root)/page.tsx` composes `features/home/components/`. Two rules keep it stable as the
 marketplace grows:
 
-- **A section with no data renders `null`.** With zero completed orders there are no best sellers;
-  with no markdowns there are no deals. A confident heading over an empty shelf reads as a broken
-  page. This is why each rail fetches its own data — the decision to disappear happens after the
-  fetch, not in the page.
-- **Rails are broken up, never stacked.** Four product carousels in a row read as one scroll and
-  the lower ones are never seen, so the tiles and the full-bleed banner sit between them.
+- **A section with no data renders `null`** — a heading over an empty shelf reads as a broken page.
+  That is why each rail fetches its own data: the decision to disappear happens after the fetch.
+- **Break rails up.** A run of product carousels reads as one scroll and the lower ones are never
+  seen, so the tiles and the full-bleed banner sit between them.
 
-`product-rail.tsx` is the shared shelf; `rails.tsx` holds the four queries bound to it (separate
-components because hooks cannot be chosen at runtime). Every rail's "View all" is a real filtered
-catalogue URL built from the same params the rail queried, so it always lands on the wider set the
-shelf previewed — which also means **a new rail filter must be registered in
+`product-rail.tsx` is the shared shelf; `rails.tsx` holds the six rails bound to it (separate
+components because hooks cannot be chosen at runtime). A rail's "View all" is a real filtered
+catalogue URL built from the same params the rail queried (Deals → `?onSale=true`), so it lands on
+the wider set the shelf previewed — which also means **a new rail filter must be registered in
 `PRODUCT_FILTER_KEYS`** or `useTableFilters` drops it from `queryParams` and the link silently
-shows everything.
+shows everything. Recently viewed has no "View all" (Featured: below); Best sellers has no catalogue
+equivalent (there is no units-sold sort) and links to top-rated instead.
 
-**The Featured rail is curated from the admin product table.** Featuring is a per-row action —
-the Featured column's star and the row menu, both via `useToggleFeatured` →
-`PATCH /products/:id/feature` (admin-only). It is **not** a form field: `isFeatured` is gone from
-`ProductForm`, its schema and `mapProductToFormValues`, and the backend strips it from every
-create/edit. Products → **Featured** (`/admin/product-list/featured`) is the same `ProductTable`
-with `featuredOnly` (which makes `isFeatured=true` the filter *default*), under `FeaturedSummary`.
-That summary runs the rail's own `featuredRailQuery` (`features/products/constants/featured.ts`), so
-"On the home page now" is exactly what shoppers see. The old `/admin/featured-products` is a 308 in
-`next.config.ts`. The rail has no "View all": `isFeatured` is not in `PRODUCT_FILTER_KEYS`, so a
-catalogue link would silently show everything.
+**The Featured rail is curated from the admin product table**, per row — the Featured column's star
+and the row menu, both `useToggleFeatured` → `PATCH /products/:id/feature` (admin-only). It is
+**not** a form field: `isFeatured` is gone from `ProductForm`, its schema and
+`mapProductToFormValues`, and the backend strips it from every create/edit. Products → **Featured
+Products** (`/admin/product-list/featured`; the old `/admin/featured-products` is a 308) is the same
+`ProductTable` with `featuredOnly` (making `isFeatured=true` the filter *default*) under
+`FeaturedSummary`, which runs the rail's own `featuredRailQuery` (`products/constants/featured.ts`)
+so "On the home page now" is exactly what shoppers see. The rail has no "View all": `isFeatured` is
+not in `PRODUCT_FILTER_KEYS`, so a catalogue link would silently show everything.
 
 **`CategoryTiles` reads `GET /products/filters`, not `GET /categories`.** The taxonomy is
-admin-owned and aspirational — it carries Belt, Bag, Heels and a dozen more nobody has listed a
-product in. Tiling all of them hands the shopper seventeen doors, most opening onto "no products
-found". The facets endpoint returns only categories with live stock, with counts and (since the
-`Category.image` migration) artwork. Tiles link to **top-level** categories, which works because
-the backend matches `categoryId` against the category *or its children*.
+admin-owned and aspirational — most categories have no products, so tiling them all sends shoppers
+to empty pages. The facet returns only categories with live stock, with counts and `image`. Tiles
+link to **top-level** categories, which works because the backend matches `categoryId` against the
+category *or its children*.
 
 ### Tables (centralized `DataTable`)
-Admin/customer lists are all built from one generic table in `src/shared/components/table`
+Admin, vendor and buyer lists are all built from one generic table in `src/shared/components/table`
 (import from its `index.ts` barrel). Three pieces work together:
 
 1. **`useTableFilters`** (`src/shared/hooks/use-table-filters.ts`) — single source of truth for
@@ -427,8 +445,10 @@ Admin/customer lists are all built from one generic table in `src/shared/compone
 2. **`DataTable<T, S>`** — renders `TableToolbar` (when `filters`, `title`, `description` or
    `actions` is passed), the table body, `TableLoading` skeleton (when `isFetching`), `NoDataFound`
    when empty, `QueryError` when given `error` (with `onRetry`), and `Pagination` (only when
-   `meta.totalPages > 1` and there is no error). Optional `expandable` config
-   renders nested `DataTableSubRows`.
+   `meta.totalPages > 1` and there is no error). Over an empty, unfiltered page 1 it hides the
+   search/sort/filter controls but keeps the header strip; once a filter has emptied the list the
+   controls stay, as the only way back. Optional `expandable` config renders nested
+   `DataTableSubRows`.
 3. **`<resource>-columns.tsx`** — columns are defined as `DataTableColumn<T>[]` in a sibling file,
    exported either as a const or as a **factory taking row handlers** (`brandColumns({ handleEdit, handleDelete })`).
    A column with no `cell` falls back to `row[col.key]`, and `align` / `width` / `headerClassName`
@@ -454,8 +474,10 @@ const { data, isFetching, error, refetch } = useAllBrandQuery(filters.queryParam
 ```
 
 Sort dropdown options are shared presets in `src/shared/constants/sort-options.ts`. Row-level
-edit is commonly driven by a URL param (`?id=…`) opening a `TDSheet`, and delete by local state
-opening a `TDModal`.
+edit is driven by a URL param (`?id=…`) opening a `TDSheet`, and delete by local state opening a
+`TDModal`. **Open and close that sheet with `useUrlParam("id")`** (`shared/hooks/use-url-param.ts`
+→ `{ value, set, clear }`), never a hand-built `router.push("?id=…")`: it touches only its own key,
+so the table's page, limit, search, sort and filters survive — a bare `?id=` used to reset them.
 
 **The toolbar takes any number of filters — never hand-roll a select beside a table.** Declare the
 extra query params as `defaultFilters` on the hook and describe them as `toolbarFilters` on the
@@ -480,12 +502,11 @@ const filters = useTableFilters({
 />
 ```
 
-**Many filters → mark most of them `placement: "advanced"`.** Primary filters render inline
-beside search; advanced ones go in a collapsible panel opened from a "Filters" button in the
-header strip (beside "Columns"), which shows the active count and opens itself when the URL already
-carries one. In the panel every filter is a select, so it takes the same space with
-2 options or 200; `display: "chips"` is opt-in for a short fixed list only. Keep a big table's filter config in a
-`use-<resource>-filters` hook that returns `{ filters, toolbarFilters }` — see
+**Many filters → mark most of them `placement: "advanced"`.** Primary filters render inline beside
+search; advanced ones go in a collapsible panel behind a "Filters" button (showing the active count,
+opening itself when the URL already carries one). There every filter is a select, so it takes the
+same space with 2 options or 200; `display: "chips"` is for a short fixed list only. Keep a big
+table's config in a `use-<resource>-filters` hook returning `{ filters, toolbarFilters }` — see
 `features/products/hooks/use-admin-product-filters.ts`.
 
 **The admin and seller product tables share cells, not columns.** `product-table/product-cells.tsx`
@@ -514,7 +535,8 @@ list with no error (FE-15 / BE-44). Before giving a `DataTable` `filters`, check
 list service calls `.search()`, and make the `placeholder` name the fields it actually matches.
 
 `ahooks` / `@ahooks.js/use-url-state` are in `package.json` but **unused** — URL state is hand-rolled
-in `useTableFilters` with `next/navigation` + `use-debounce`. Don't introduce a second mechanism.
+in `useTableFilters` (list state, `router.replace`) and `useUrlParam` (one open/close param,
+`router.push`) with `next/navigation` + `use-debounce`. Don't introduce a third mechanism.
 
 ### Redux store
 `src/store/store.ts` combines `baseApi.reducer` with a `cart` slice that is **persisted to
@@ -558,9 +580,17 @@ Per-domain types live in `features/<feature>/types/*.types.ts` and are prefixed 
   (`features/<feature>/components/`), with the zod schema co-located in
   `schemas/<resource>-form.schema.ts` and its inferred type exported as `T<Resource>FormValues` — those
   inferred types double as the RTK Query mutation payload types.
-- Status pills go through `StatusBadge` / `getStatusBadge` (`shared/ui/status-badge.tsx`) driven
-  by the maps in `features/orders/constants/status-maps.ts` (`orderStatusMap`, `paymentStatusMap`).
-  Never hand-roll a status class table. The status unions themselves are defined **once**, in
+- **Status pills: colour comes from the status VALUE, wording from the domain.**
+  `TDStatusBadge` (`shared/components/td-status-badge.tsx`) maps every backend value to a tone
+  (`STATUS_TONES` → `getStatusTone`), and each tone is a `--status-<tone>` bg/fg/border triple in
+  `globals.css`, light and dark — so PENDING looks the same on an order, a payout and a store. The
+  maps in `features/orders/constants/status-maps.ts` (order, payment, product, vendor, payout,
+  refund) and `refunds/constants/buyer-refund-status.ts` carry **labels only**; render them with
+  `StatusBadge statusMap={…}` (`shared/ui/status-badge.tsx`). A new status value goes in
+  `STATUS_TONES`; pass `tone` only to override deliberately. Never hand-roll a status class table.
+- A "who" cell (avatar + name + email) is `TdUserInfo` (`shared/components/td-user-info.tsx`), with
+  `nameFallback` for a missing name.
+- The status unions themselves are defined **once**, in
   `shared/types/status.types.ts`, mirroring the Prisma enums. A feature may re-export one, but
   must not declare a copy: a third `PaymentStatus` copy missing `PARTIALLY_REFUNDED` is how a
   part-refunded order came to render as Pending (FE-28).
@@ -582,19 +612,18 @@ destroy a live asset. Client-side limit is 2MB. `next.config.ts` allows any http
 `deleteTempImage` is a raw `fetch` that sends **no `authorization` header** — one of the two
 deliberate exceptions to "all server data goes through RTK Query". The backend route is
 correspondingly unauthenticated, so adding a guard there without also sending the token here breaks
-every image replace and remove. See `docs/FEATURE-GAPS.md` XR-notes and the backend's BE-04.
+every image replace and remove. See the backend's BE-04 / BE-41 / BE-42.
 
 ## Known gaps
 
 `docs/FEATURE-GAPS.md` is the prioritized audit of what is missing, stubbed or drifted from
 the backend, with every item anchored to a `file:line`. Worth a glance before building a new
-screen — several already have their RTK Query endpoint defined and unused, and `/products`,
-the navbar search and the home page are much less finished than they look.
+screen — several already have their RTK Query endpoint defined and unused (FE-23).
 
 ## Environment
 Copy **`.env.example`** to `.env.local`. It lists all ten variables with comments, and every one
-is required. They are validated with Zod at build time and at page load, and fail naming the
-variable (FE-30):
+is required. Nine are validated with Zod at build time and at page load, and fail naming the
+variable (FE-30); the tenth, `NEXTAUTH_URL`, is read by NextAuth itself:
 
 - **`src/shared/config/env-config.ts`** is the **public** config (`envConfig`) and is safe in client
   code. It holds typed values for `NEXT_PUBLIC_BACKEND_URL` (must include `/api/v1`),
@@ -608,11 +637,9 @@ variable (FE-30):
 - **`src/shared/config/server-env.ts`** holds the **secrets** (`serverEnv`): `NEXT_AUTH_SECRET`,
   `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. **Import it only from server code**
   (`auth-options.ts`, `middleware.ts`). These are undefined in a browser, so importing it from a
-  client component throws on every page. `NEXTAUTH_URL` is read by NextAuth itself.
+  client component throws on every page.
 
 **Never read `process.env` anywhere else.** Add a new variable to the right schema and to
-`.env.example` together.
-
-The shipping values are **fallbacks only.** Shipping is per store and comes from each cart item's
-`vendorShippingFee` / `vendorFreeShippingThreshold`. The env values apply only to a cart persisted
-before the marketplace conversion, or a product payload missing its vendor.
+`.env.example` together. The shipping values are **fallbacks only** — see **The marketplace
+model**; they apply to a cart persisted before stores existed, or a product payload missing its
+vendor.
