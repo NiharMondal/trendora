@@ -15,13 +15,18 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import EditAddress from "./edit-address";
 import QueryError from "@/shared/components/query-error";
+import ConfirmModal from "@/shared/components/confirm-modal";
 
 export default function AddressList() {
-	const [deletingId, setDeletingId] = useState<string | null>(null);
+	// The address awaiting confirmation; the modal is open while this is set.
+	const [addressToDelete, setAddressToDelete] = useState<TAddress | null>(
+		null,
+	);
 	const [selectedAddress, setSelectedAddress] = useState<TAddress | null>(
 		null,
 	);
-	const [deleteAddress] = useDeleteAddressMutation();
+	const [deleteAddress, { isLoading: isDeleting }] =
+		useDeleteAddressMutation();
 	const {
 	    data: addresses,
 	    isLoading,
@@ -37,15 +42,15 @@ export default function AddressList() {
 		setSelectedAddress(address);
 	};
 
-	const handleDelete = async (id: string) => {
+	const confirmDelete = async () => {
+		if (!addressToDelete) return;
 		try {
-			setDeletingId(id);
-			await deleteAddress(id).unwrap();
+			await deleteAddress(addressToDelete.id).unwrap();
 			toast.success("Address deleted successfully");
-		} catch (error) {
+			setAddressToDelete(null);
+		} catch {
+			// Keep the modal open so the user can retry or cancel.
 			toast.error("Failed to delete address");
-		} finally {
-			setDeletingId(null);
 		}
 	};
 
@@ -103,8 +108,7 @@ export default function AddressList() {
 								variant="destructive"
 								size="icon"
 								aria-label={`Delete address: ${address.street}, ${address.city}`}
-								onClick={() => handleDelete(address.id)}
-								isLoading={deletingId === address.id}
+								onClick={() => setAddressToDelete(address)}
 							>
 								<Trash />
 							</TDButton>
@@ -127,6 +131,19 @@ export default function AddressList() {
 					/>
 				)}
 			</TDSheet>
+
+			<ConfirmModal
+				open={!!addressToDelete}
+				onOpenChange={(open) => !open && setAddressToDelete(null)}
+				onConfirm={confirmDelete}
+				isLoading={isDeleting}
+				title="Delete this address?"
+				description={
+					addressToDelete
+						? `${addressToDelete.fullName}, ${addressToDelete.street}, ${addressToDelete.city} will be removed from your saved addresses. This action cannot be undone.`
+						: undefined
+				}
+			/>
 		</React.Fragment>
 	);
 }

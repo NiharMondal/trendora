@@ -145,6 +145,9 @@ export const adminDashboardLinks: TSidebarLink[] = [
     { title: "Reviews", url: "/admin/reviews", icon: Star },
     // Read-only: backend environment config, compared with the frontend's.
     { title: "Settings", url: "/admin/settings", icon: Settings },
+    // An admin can check out too (every buyer route accepts ADMIN), so their
+    // own saved shipping addresses need a way in.
+    { title: "My Addresses", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Home", url: "/", icon: Home },
 ];
 
@@ -188,6 +191,8 @@ export const vendorDashboardLinks: TSidebarLink[] = [
     { title: "My Orders", url: "/dashboard/my-orders", icon: FilePlus },
     // A seller is a shopper too — these are refunds on orders they PLACED.
     { title: "My Refunds", url: "/dashboard/my-refunds", icon: ReceiptText },
+    // The shipping addresses offered at checkout — a seller buys too.
+    { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
     { title: "Home", url: "/", icon: Home },
