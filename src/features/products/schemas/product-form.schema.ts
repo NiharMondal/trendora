@@ -72,10 +72,16 @@ export const productSchema = z
                 "Discount price must be greater than 0",
             )
             .optional(),
-        stockQuantity: z.coerce
-            .number({ error: "Stock quantity must be a number" })
-            .int("Stock quantity must be an integer")
-            .min(0, "Stock quantity cannot be negative"),
+        // An empty input must be an error, not 0: `z.coerce.number("")` is 0,
+        // so a cleared field used to save the product as out of stock with
+        // no message. `0` typed on purpose is still valid.
+        stockQuantity: z.preprocess(
+            (val) => (val === "" || val === null ? undefined : val),
+            z.coerce
+                .number({ error: "Stock quantity is required" })
+                .int("Stock quantity must be an integer")
+                .min(0, "Stock quantity cannot be negative"),
+        ),
         gender: z
             .string({ error: "Gender is required" })
             .nonempty({ error: "Gender is required" }),
@@ -115,3 +121,5 @@ export const productSchema = z
         }
     });
 export type TProductFormValues = z.infer<typeof productSchema>;
+/** What the inputs hold before parsing — e.g. `stockQuantity` may be "". */
+export type TProductFormInput = z.input<typeof productSchema>;

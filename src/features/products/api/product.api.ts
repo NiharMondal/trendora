@@ -113,6 +113,20 @@ export const productApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["products"],
         }),
+        // Remove one variant. `PATCH /products/:id` cannot express "remove
+        // them all" — it treats an empty `variants` array as "unchanged" —
+        // so the edit form deletes removed variants through this endpoint.
+        // Soft delete on the backend; the last one resets stockQuantity to 0.
+        deleteProductVariant: builder.mutation<
+            TServerResponse<unknown>,
+            { productId: string; variantId: string }
+        >({
+            query: ({ productId, variantId }) => ({
+                url: `/products/${productId}/variants/${variantId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["products"],
+        }),
         // delete product
         deleteProduct: builder.mutation<TServerResponse<TProduct>, string>({
             query: (id) => ({
@@ -253,6 +267,7 @@ export const {
     useBestSellersQuery,
     useCreateProductMutation,
     useDeleteProductMutation,
+    useDeleteProductVariantMutation,
     useProductByIdQuery,
     useProductBySlugQuery,
     useUpdateProductMutation,

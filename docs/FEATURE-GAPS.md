@@ -1942,6 +1942,14 @@ quantity; the product form shows the variant total read-only. Existing rows are 
 `prisma/migrations/20260929120000_sync_variant_stock` (at time of writing, 3 of 4 variant products
 had drifted, e.g. Levi's 501: 299 vs 200).
 
+**Follow-ups the same day, in the product form:** the create form no longer starts with an empty
+variant row (it had to be deleted before a variant-less product could be saved), and the edit form
+now deletes removed variants through `DELETE /products/:id/variants/:variantId`
+(`useDeleteProductVariantMutation`) before the PATCH — the PATCH alone treats `variants: []` as
+"unchanged", so removing the last variant used to keep them all and overwrite the typed stock with
+their total. `update-product.tsx` also `.unwrap()`s now; before, a failed save still toasted
+"Product updated successfully".
+
 
 **Now:** a sale of a variant decrements only `ProductVariant.stock`; `Product.stockQuantity` is
 decremented only for products with no variant (`backend/src/helpers/create-order.ts:68-90`), and

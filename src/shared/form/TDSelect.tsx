@@ -31,6 +31,9 @@ type TDSelectProps<T extends FieldValues> = {
     className?: string;
     required?: boolean;
     size?: "sm" | "default" | "lg";
+    disabled?: boolean;
+    /** Shown as the only (disabled) item when `options` is empty. */
+    emptyText?: string;
 };
 
 export default function TDSelect<T extends FieldValues>({
@@ -42,6 +45,8 @@ export default function TDSelect<T extends FieldValues>({
     className,
     required,
     size="default",
+    disabled,
+    emptyText = "No option available",
 }: TDSelectProps<T>) {
     return (
 		<FormField
@@ -62,6 +67,7 @@ export default function TDSelect<T extends FieldValues>({
 						<Select
 							value={field.value}
 							onValueChange={field.onChange}
+							disabled={disabled}
 						>
 							<SelectTrigger
 								className={cn(className)}
@@ -81,7 +87,7 @@ export default function TDSelect<T extends FieldValues>({
 									))
 								) : (
 									<SelectItem value="a" disabled>
-										No option available
+										{emptyText}
 									</SelectItem>
 								)}
 							</SelectContent>

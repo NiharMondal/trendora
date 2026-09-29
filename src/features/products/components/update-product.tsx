@@ -7,6 +7,7 @@ import { TProductFormValues } from "@/features/products/schemas/product-form.sch
 import GeneralLoading from "@/shared/components/loading/general-loading";
 import { mapProductToFormValues } from "@/features/products/utils/map-product-form-values";
 import {
+    useDeleteProductVariantMutation,
     useMyVendorProductByIdQuery,
     useUpdateProductMutation,
 } from "@/features/products/api/product.api";
@@ -27,6 +28,8 @@ export default function UpdateProduct({ productId }: { productId: string }) {
     // update product mutation
     const [updateProduct, { isLoading: updateLoading }] =
         useUpdateProductMutation();
+    const [deleteVariant, { isLoading: deleteVariantLoading }] =
+        useDeleteProductVariantMutation();
 
     const defaultValues = useMemo(
         () => (product ? mapProductToFormValues(product.result) : undefined),
@@ -35,10 +38,25 @@ export default function UpdateProduct({ productId }: { productId: string }) {
 
     const handleUpdateProduct = async (values: TProductFormValues) => {
         try {
+            // Variants the vendor removed in the form are deleted one by one
+            // BEFORE the save. The PATCH alone cannot remove the last one (an
+            // empty array means "unchanged"), which left the variants in place
+            // and let their total overwrite the stock just typed in.
+            const keptIds = new Set(
+                (values.variants ?? []).map((v) => v.id).filter(Boolean),
+            );
+            const removedIds = (defaultValues?.variants ?? [])
+                .map((v) => v.id)
+                .filter((id): id is string => !!id && !keptIds.has(id));
+
+            for (const variantId of removedIds) {
+                await deleteVariant({ productId, variantId }).unwrap();
+            }
+
             await updateProduct({
                 id: productId,
                 payload: values,
-            });
+            }).unwrap();
             toast.success("Product updated successfully");
         } catch (error) {
             toast.error(getApiErrorMessage(error));
@@ -66,7 +84,7 @@ export default function UpdateProduct({ productId }: { productId: string }) {
                 defaultValues={defaultValues}
                 onSubmit={handleUpdateProduct}
                 productId={productId}
-                isLoading={updateLoading}
+                isLoading={updateLoading || deleteVariantLoading}
             />
         </div>
     );

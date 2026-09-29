@@ -1,4 +1,4 @@
-import { Layers, Plus, Trash2 } from "lucide-react";
+import { Info, Layers, Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import TDInput from "@/shared/form/TDInput";
@@ -11,8 +11,17 @@ type ProductVariantProps = {
         label: string;
         value: string;
     }[];
+    /**
+     * Why no size can be picked yet (no category chosen, still loading, or a
+     * category without a size group). While set, the size selects are
+     * disabled and this is shown above the variants.
+     */
+    sizeHint?: string;
 };
-export default function ProductVariant({ options }: ProductVariantProps) {
+export default function ProductVariant({
+    options,
+    sizeHint,
+}: ProductVariantProps) {
     const form = useFormContext<TProductFormValues>();
     const {
         fields: variantFields,
@@ -59,6 +68,16 @@ export default function ProductVariant({ options }: ProductVariantProps) {
                 </Button>
             </header>
 
+            {sizeHint && (
+                <p
+                    role="status"
+                    className="flex items-start gap-2 rounded-lg border border-dashed bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+                >
+                    <Info className="mt-px size-3.5 shrink-0" aria-hidden="true" />
+                    {sizeHint}
+                </p>
+            )}
+
             <div className="space-y-3">
                 {variantFields.map((field, index) => {
                     const color = form.watch(`variants.${index}.color`);
@@ -104,8 +123,14 @@ export default function ProductVariant({ options }: ProductVariantProps) {
                                     form={form}
                                     name={`variants.${index}.sizeId`}
                                     label="Size"
-                                    placeholder="Select Size"
+                                    placeholder={
+                                        sizeHint
+                                            ? "Choose a category first"
+                                            : "Select Size"
+                                    }
                                     options={options}
+                                    disabled={!!sizeHint}
+                                    emptyText="No sizes for this category"
                                     className="w-full"
                                     size="sm"
                                     required

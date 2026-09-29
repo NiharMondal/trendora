@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 import TDSeparator from "@/shared/components/td-separator";
@@ -19,7 +19,11 @@ import {
 import { productGenderOptions } from "@/shared/constants/mock-products";
 import TDButton from "@/shared/components/td-button";
 import ImageVariant from "./image-variant";
-import { productSchema, TProductFormValues } from "@/features/products/schemas/product-form.schema";
+import {
+    productSchema,
+    TProductFormInput,
+    TProductFormValues,
+} from "@/features/products/schemas/product-form.schema";
 import ProductVariant from "./product-variant";
 
 type ProductFormProps = {
@@ -55,9 +59,10 @@ export default function ProductForm({
         value: category.id,
     }));
 
-    const { data: categoryDetails } = useCategoryByIdQuery(categoryId, {
-        skip: !categoryId,
-    });
+    const { data: categoryDetails, isFetching: sizesLoading } =
+        useCategoryByIdQuery(categoryId, {
+            skip: !categoryId,
+        });
     const sizeGroupOptions = categoryDetails?.result?.sizeGroup?.sizes?.map(
         (size) => ({
             label: size.name,
@@ -68,7 +73,7 @@ export default function ProductForm({
         label: brand.name,
         value: brand.id,
     }));
-    const form = useForm({
+    const form = useForm<TProductFormInput, unknown, TProductFormValues>({
         resolver: zodResolver(productSchema),
         defaultValues: defaultValues ?? {
             name: "",
@@ -77,11 +82,16 @@ export default function ProductForm({
             categoryId: "",
             description: "",
             gender: "",
-            stockQuantity: 200,
+            // Empty, not a made-up figure: without variants the vendor must
+            // enter the real stock (the schema rejects an empty field).
+            stockQuantity: "",
             brandId: "",
             vendorId: "",
             submitForReview: true,
-            variants: [{ stock: 0, price: 0, color: "", sizeId: "" }],
+            // No variant row by default: a product without sizes/colours
+            // is valid and sells from `stockQuantity`. A pre-filled empty row
+            // made that impossible to save without first deleting it.
+            variants: [],
             images: [{ isMain: true, url: "" }],
         },
     });
@@ -95,13 +105,38 @@ export default function ProductForm({
         (sum, v) => sum + (Number(v?.stock) || 0),
         0,
     );
+    const hadVariants = useRef(hasVariants);
     useEffect(() => {
         if (hasVariants) {
             form.setValue("stockQuantity", variantStockTotal);
+        } else if (hadVariants.current) {
+            // The last variant was just removed. The field still holds the
+            // variants' old total, which is not stock this product owns —
+            // clear it so the vendor has to enter the real figure.
+            form.setValue("stockQuantity", "", { shouldValidate: true });
         }
+        hadVariants.current = hasVariants;
     }, [form, hasVariants, variantStockTotal]);
 
+    // Sizes come from the category's size group, so a variant's size can only
+    // be picked once a category is chosen — and only if it has a size group.
+    const sizeHint = !categoryId
+        ? "Select a category first — the sizes you can choose come from its size group."
+        : sizesLoading
+          ? "Loading sizes for this category…"
+          : !sizeGroupOptions?.length
+            ? "This category has no sizes, so variants can't be sized. Pick a different category, or ask an admin to attach a size group to it."
+            : undefined;
+
     const handleCategoryChange = (value: string) => {
+        // A size belongs to the old category's size group; keeping it would
+        // submit a size the new category does not offer (and the select would
+        // show it blank). Clear them so the vendor re-picks.
+        if (value !== categoryId) {
+            form.getValues("variants")?.forEach((_, index) =>
+                form.setValue(`variants.${index}.sizeId`, ""),
+            );
+        }
         setCategoryId(value);
     };
     const handleProductSubmit = (values: TProductFormValues) => {
@@ -154,7 +189,7 @@ export default function ProductForm({
                             description={
                                 hasVariants
                                     ? "Total of the variants below — set stock per variant."
-                                    : undefined
+                                    : ""
                             }
                         />
                         <TDCombobox
@@ -231,7 +266,10 @@ export default function ProductForm({
                     <TDSeparator className="my-10" />
 
                     {/** product variants */}
-                    <ProductVariant options={sizeGroupOptions || []} />
+                    <ProductVariant
+                        options={sizeGroupOptions || []}
+                        sizeHint={sizeHint}
+                    />
                     <TDButton type="submit" isLoading={isLoading}>
                         {productId ? "Update Product" : "Create Product"}
                     </TDButton>
