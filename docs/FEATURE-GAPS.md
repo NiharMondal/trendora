@@ -70,7 +70,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-38 | ~~No order tracking timeline~~ — carrier link, public tracking, invoice, newsletter left | 🟡 **PARTIAL** 2026-09-28 | M | orders |
 | FE-39 | ~~Committed build artefacts~~ (never were); no Prettier config | P2 | S | cleanup |
 | ~~FE-40~~ | ~~Home page and `/products` crash in the browser (server env in the client bundle)~~ | ✅ **FIXED** 2026-09-24 | — | auth |
-| FE-41 | Admin order screens show a fake (`test@gmail.com`) or blank buyer email | P1 | S | orders |
+| ~~FE-41~~ | ~~Admin order screens show a fake (`test@gmail.com`) or blank buyer email~~ | ✅ **FIXED** 2026-09-29 | — | orders |
 | FE-42 | Buyer order screens use the operator's refund wording | P2 | S | orders |
 | FE-43 | Cancelling a parcel leaves the refund lists stale | P2 | S | api |
 | FE-44 | A pre-marketplace persisted cart is never migrated | P2 | S | cart |
@@ -813,8 +813,17 @@ need a flag or a lookup per review.
 
 ---
 
-### FE-41 · Admin order screens show a fake or blank buyer email
-**P1 · S · orders** — found 2026-09-29
+### ~~FE-41~~ · Admin order screens show a fake or blank buyer email
+**✅ FIXED — 2026-09-29 · orders**
+
+**Now:** fixed backend-side, the way BE-20 did for `GET /users`. `flattenBuyerEmail` in
+`backend/src/modules/order/order.service.ts` returns `user.email` flat on the admin order list, the
+order detail and the analytics `recentOrders`, so every screen that already read `row.user.email`
+now gets it. The `test@gmail.com` fallback is gone; the detail page shows "—" for a user with no
+`Auth` row, and `TOrder.user.email` is `string | null`. Vendor screens still read the nested
+`owner.auth.email` from the vendor endpoints, which were left as they are.
+
+**Was (original entry):**
 
 **Now:** the backend nests the buyer's email under `auth` on both admin order reads
 (`backend/src/modules/order/order.service.ts:252-262` for the list, `:395-405` for the detail:
@@ -1745,7 +1754,7 @@ Most of these are **our** type declarations being wrong, not the backend being w
 | --- | --- |
 | `TProductVariant.size` required (`products/types/product.types.ts:23-26`) | the backend includes the `size` relation only on `findBySlug` and the vendor read — **not** on `GET /products` or `GET /products/:id`. `variant.size.name` throws on those |
 | `TProductImage.productId`, `.publicId`, `.isDeleted` required (`:30-38`) | list reads select only `{id, url, isMain}` |
-| `TOrder.user.email` flat (`orders/types/order.types.ts:104-109`) | the backend nests it as `user.auth.email` — always `undefined` here. **Now user-visible: FE-41** |
+| `TOrder.user.email` flat (`orders/types/order.types.ts:104-109`) | ✅ fixed 2026-09-29 (FE-41): the backend now returns it flat on every order read |
 | `TOrder.user` required | `GET /orders/my-orders` does not include `user` at all |
 | ~~`TOrderPaymentResponse` nine fields required~~ | **fixed 2026-09-24** (`61bd54b`): the nullable/partial ones are optional now (`:45-65`) |
 | Order money fields required `string` (`:80-84`) | deliberately `undefined` for a VENDOR viewing an order — the vendor sees only their own slice |

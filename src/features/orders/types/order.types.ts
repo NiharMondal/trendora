@@ -104,7 +104,8 @@ export type TOrder = {
 	user: {
 		id: string;
 		name: string;
-		email: string;
+		/** Flat since backend FE-41; null only for a user with no Auth row. */
+		email: string | null;
 		avatar: string;
 	};
 	createdAt: string;

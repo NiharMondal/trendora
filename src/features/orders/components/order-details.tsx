@@ -134,7 +134,7 @@ export default function OrderDetails({ slug }: { slug: string }) {
                                 />
                                 <RowText
                                     title="Email"
-                                    value={order?.user.email}
+                                    value={order?.user.email ?? "—"}
                                     titleClassName="text-gray-800 font-medium"
                                 />
                                 <RowText

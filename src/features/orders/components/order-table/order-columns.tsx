@@ -20,7 +20,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
             return (
                 <TdUserInfo
                     name={row.user.name}
-                    email={row.user.email || "test@gmail.com" }
+                    email={row.user.email}
                     avatar={row.user.avatar}
                 />
             );
