@@ -1,0 +1,140 @@
+import { FileSearch } from "lucide-react";
+import moment from "moment";
+import Link from "next/link";
+
+import { DataTableColumn } from "@/shared/components/table/table-types";
+import { TOrder } from "@/features/orders/types/order.types";
+import { Button } from "@/shared/ui/button";
+import { EnumOrderStatus, getOrderStatusStyles } from "@/features/orders/utils/order-status";
+import {
+    EnumPaymentStatus,
+    getPaymentStatusStyles,
+} from "@/features/orders/utils/payment-status";
+
+export const orderColumns: DataTableColumn<TOrder>[] = [
+    {
+        key: "userInfo",
+        header: "Customer",
+        cell: (row) => {
+            return (
+                <div className="flex items-center gap-2">
+                    <img
+                        src={row.user.avatar}
+                        alt={row.user.name}
+                        className="size-10 rounded-full object-cover ring-1 ring-primary/25"
+                    />
+                    <div>
+                        <p className="font-medium">{row.user.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                            {row.user.email}
+                        </p>
+                    </div>
+                </div>
+            );
+        },
+    },
+    {
+        key: "orderNumber",
+        header: "Order ID",
+        cell: (row) => {
+            const order = row;
+            return <span>{order.orderNumber}</span>;
+        },
+    },
+
+    {
+        key: "vendorOrders",
+        header: "Stores",
+        cell: (row) => {
+            const count = row.vendorOrders?.length ?? 0;
+            return (
+                <div className="text-xs">
+                    <p>
+                        {count} {count === 1 ? "store" : "stores"}
+                    </p>
+                    {count > 0 && (
+                        <p className="text-muted-foreground line-clamp-1 max-w-[160px]">
+                            {row.vendorOrders
+                                ?.map((slice) => slice.vendor?.storeName)
+                                .filter(Boolean)
+                                .join(", ")}
+                        </p>
+                    )}
+                </div>
+            );
+        },
+    },
+    {
+        key: "subtotal",
+        header: "Total Amount",
+        cell: (row) => {
+            const order = row;
+            return <span>${order.totalAmount}</span>;
+        },
+    },
+    {
+        // Rolled up from the per-store parcels; the authoritative per-parcel
+        // state is on the order detail page.
+        key: "orderStatus",
+        header: "Status (rollup)",
+        cell: (row) => {
+            const order = row;
+            return (
+                <span
+                    className={getOrderStatusStyles(
+                        order.orderStatus as EnumOrderStatus,
+                    )}
+                >
+                    {order.orderStatus}
+                </span>
+            );
+        },
+    },
+    {
+        key: "paymentMethod",
+        header: "Payment Method",
+        cell: (row) => {
+            const order = row;
+            return <span>{order.paymentMethod.split("_").join(" ")}</span>;
+        },
+    },
+    {
+        key: "paymentStatus",
+        header: "Payment Status",
+        cell: (row) => {
+            const order = row;
+            return (
+                <span
+                    className={getPaymentStatusStyles(
+                        order.paymentStatus as EnumPaymentStatus,
+                    )}
+                >
+                    {order.paymentStatus}
+                </span>
+            );
+        },
+    },
+    {
+        key: "createdAt",
+        header: "Ordered At",
+        cell: (row) => {
+            const order = row;
+            return <span>{moment(order.createdAt).format("ll")}</span>;
+        },
+    },
+    {
+        key: "actions",
+        header: "Actions",
+        cell: (row) => {
+            const order = row;
+            return (
+                <Link href={`/admin/order-details/${order.id}`}>
+                    <Button variant="outline" size="sm">
+                        <FileSearch />
+                        Details
+                    </Button>
+                </Link>
+            );
+        },
+    },
+];

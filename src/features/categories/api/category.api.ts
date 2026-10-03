@@ -1,0 +1,81 @@
+import { TCategoryFormValues } from "@/features/categories/schemas/category-form.schema";
+import { TCategory } from "@/features/categories/types/category.types";
+import { TServerResponse } from "@/shared/types/common.types";
+
+import { buildQueryParams } from "@/shared/utils/build-query-params";
+import { baseApi } from "@/store/api/base-api";
+type TCategoryInput = {
+    name: string;
+    parentId?: string | null;
+};
+export const categoryApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        // create category
+        createCategory: builder.mutation<
+            TServerResponse<TCategory>,
+            TCategoryInput
+        >({
+            query: (payload) => {
+                return {
+                    url: "/categories",
+                    method: "POST",
+                    body: payload,
+                };
+            },
+            invalidatesTags: ["categories"],
+        }),
+
+        // get all categories
+        allCategory: builder.query<
+            TServerResponse<TCategory[]>,
+            Record<string, string>
+        >({
+            query: (query) => {
+                return {
+                    url: "/categories",
+                    method: "GET",
+                    params: buildQueryParams(query),
+                };
+            },
+            providesTags: ["categories"],
+        }),
+
+        //get category by ID
+        categoryById: builder.query<TServerResponse<TCategory>, string>({
+            query: (id) => ({
+                url: `/categories/${id}`,
+                method: "GET",
+            }),
+            providesTags: ["categories"],
+        }),
+
+        // update category
+        updateCategory: builder.mutation<
+            TServerResponse<TCategory>,
+            { payload: TCategoryFormValues; id: string }
+        >({
+            query: ({ payload, id }) => ({
+                url: `/categories/${id}`,
+                method: "PATCH",
+                body: payload,
+            }),
+            invalidatesTags: ["categories"],
+        }),
+        // delete category
+        deleteCategory: builder.mutation<TServerResponse<TCategory>, string>({
+            query: (id) => ({
+                url: `/categories/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["categories"],
+        }),
+    }),
+});
+
+export const {
+    useAllCategoryQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useDeleteCategoryMutation,
+    useCategoryByIdQuery,
+} = categoryApi;

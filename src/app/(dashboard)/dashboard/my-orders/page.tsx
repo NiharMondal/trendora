@@ -1,4 +1,4 @@
-import MyOrdersList from "@/components/@dashboard/customer/my-orders-list/my-orders-list";
+import MyOrdersList from "@/features/orders/components/my-orders/my-orders-list";
 
 export default function MyOrdersListPage() {
     return (
