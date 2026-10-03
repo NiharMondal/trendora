@@ -137,6 +137,15 @@ export function useTableFilters({
         setSortBy: (s: string) => updateParams({ sortBy: s, page: "1" }),
         setFilter: (key: string, value: string) =>
             updateParams({ [key]: value, page: "1" }),
+        /**
+         * Several filters in one URL write. Two `setFilter` calls in the same
+         * tick both build from the same `searchParams` snapshot, so the second
+         * silently discards the first — a price min/max pair would lose its
+         * min. Anything that moves more than one param at a time must come
+         * through here.
+         */
+        setFilters: (updates: Record<string, string>) =>
+            updateParams({ ...updates, page: "1" }),
         handleLimitChange: (l: string) => updateParams({ limit: l, page: "1" }),
         handleResetFilters: () =>
             updateParams(

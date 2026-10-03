@@ -1,5 +1,6 @@
 import { TServerResponse } from "@/shared/types/common.types";
 import { TProduct } from "@/features/products/types/product.types";
+import { TProductFacets } from "@/features/products/types/product-filter.types";
 
 import { TProductFormValues } from "@/features/products/schemas/product-form.schema";
 import { buildQueryParams } from "@/shared/utils/build-query-params";
@@ -34,6 +35,23 @@ export const productApi = baseApi.injectEndpoints({
                     params: buildQueryParams(query),
                 };
             },
+            providesTags: ["products"],
+        }),
+
+        /**
+         * The storefront filter panel's options, built from the live
+         * catalogue. Takes the SAME params as `allProducts`, so the counts
+         * narrow as the shopper filters — pass `queryParams` straight through.
+         */
+        productFilters: builder.query<
+            TServerResponse<TProductFacets>,
+            Record<string, string>
+        >({
+            query: (query) => ({
+                url: "/products/filters",
+                method: "GET",
+                params: buildQueryParams(query),
+            }),
             providesTags: ["products"],
         }),
 
@@ -187,6 +205,7 @@ export const productApi = baseApi.injectEndpoints({
 
 export const {
     useAllProductsQuery,
+    useProductFiltersQuery,
     useCreateProductMutation,
     useDeleteProductMutation,
     useProductByIdQuery,

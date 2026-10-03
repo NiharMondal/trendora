@@ -28,3 +28,17 @@ export const reviewSortOptions = [
     { label: "Rating (Low to High)", value: "rating:asc" },
     { label: "Rating (High to Low)", value: "rating:desc" },
 ];
+
+/**
+ * Storefront catalogue sort. `basePrice` is deliberate: Prisma cannot order by
+ * "discountPrice where there is one, basePrice otherwise" without a generated
+ * column, so a discounted item sorts by its pre-discount price even though the
+ * price FILTER matches on what the shopper is shown.
+ */
+export const storefrontSortOptions = [
+    { label: "Newest first", value: "createdAt:desc" },
+    { label: "Price (Low to High)", value: "basePrice:asc" },
+    { label: "Price (High to Low)", value: "basePrice:desc" },
+    { label: "Top rated", value: "averageRating:desc" },
+    { label: "Name (A-Z)", value: "name:asc" },
+];
