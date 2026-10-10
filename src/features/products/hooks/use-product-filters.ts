@@ -21,6 +21,7 @@ export const PRODUCT_FILTER_KEYS = [
     "maxPrice",
     "minRating",
     "inStock",
+    "onSale",
 ] as const;
 
 export type TProductFilterKey = (typeof PRODUCT_FILTER_KEYS)[number];

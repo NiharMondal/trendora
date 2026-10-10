@@ -31,7 +31,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | --- | --- | --- | --- | --- |
 | ~~FE-01~~ | ~~`/products` has no filters, sort, search or pagination~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-02~~ | ~~Both navbar search boxes are inert~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
-| FE-03 | The home page renders only the hero slider | P0 | M | storefront |
+| ~~FE-03~~ | ~~The home page renders only the hero slider~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | FE-04 | Forgot-password form submits to `console.log` (backend now ready) | P0 | M | auth |
 | FE-05 | No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere | P0 | M | robustness |
 | FE-06 | Only one component in the app handles `isError` | P0 | M | robustness |
@@ -53,7 +53,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
 | FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
 | FE-24 | Two RTK tags are never provided; one is misdeclared | P2 | S | api |
-| FE-25 | 11 orphaned component files | P2 | S | cleanup |
+| FE-25 | 2 orphaned component files (was 11) | P2 | S | cleanup |
 | FE-26 | Five stray `console.log`s | P2 | S | cleanup |
 | FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
 | FE-28 | Duplicate type definitions across features | P2 | S | types |
@@ -153,18 +153,55 @@ panel autofocuses its input, and Escape closes it.
 
 ---
 
-### FE-03 · The home page renders only the hero slider
-**P0 · M · storefront**
+### ~~FE-03~~ · The home page renders only the hero slider
+**✅ FIXED 2026-09-23 · storefront**
 
-**Now:** `src/app/(root)/page.tsx` renders `<HeroSlider />` and nothing else.
+**Was:** `(root)/page.tsx` rendered `<HeroSlider />` and nothing else, above five orphaned
+components. Only one of those five actually worked — `featured-product.tsx` was an empty grid,
+`showcase.tsx` was three hardcoded "Hello World" cards, and `trending-product.tsx` read
+`mock-products.ts` with `ProductCard` commented out. This was a build, not a wire-up.
 
-**Gap:** Five built home sections are orphaned files that no route imports:
-`src/features/home/components/{featured-product,new-arrivals,offer,showcase,trending-product}.tsx`.
-The landing page of the storefront is a carousel above empty space.
+**Now:** ten sections, composed in `(root)/page.tsx`:
 
-**Fix:** Compose the sections into `(root)/page.tsx`. Two caveats before doing so:
-`trending-product.tsx:12` reads from `src/shared/constants/mock-products.ts` and needs a real
-query first, and `new-arrivals.tsx:17` swallows its error into a `console.log`.
+```
+HeroSlider → TrustStrip → CategoryTiles → DealsRail → PromoBanner
+           → BestSellersRail → NewArrivalsRail → TopRatedRail → BrandStrip → TopStores
+```
+
+The ordering is the design, not the count. Four product rails stacked together read as one
+scroll and the lower ones never get seen, so they are broken up by the tiles and the full-bleed
+banner, closing on the sellers — the one section a single-vendor shop could not have.
+
+**Every section renders `null` when it has no data.** A marketplace with no completed orders has
+no best sellers and shows nine sections, not ten; one with no markdowns has no deals. A confident
+heading over an empty shelf reads as a broken page. This is also why each rail fetches its own
+data — the decision to disappear has to happen after the fetch, not in the page that composes them.
+
+New files under `features/home/components/`: `product-rail.tsx` (the shared carousel, used by four
+sections), `rails.tsx` (the four queries bound to it), `trust-strip.tsx`, `category-tiles.tsx`,
+`brand-strip.tsx`, `top-stores.tsx`, `promo-banner.tsx`. The five orphans were deleted.
+
+**Category tiles come from `GET /products/filters`, not `GET /categories`** — deliberately. The
+taxonomy is admin-owned and aspirational: it carries Belt, Bag, Heels, Dress and a dozen more
+nobody has listed a product in. Tiling all of them handed the shopper seventeen doors, most opening
+onto "no products found". The facets endpoint returns only categories with live stock, with counts.
+
+**Backend work this needed** (repo `trendora-backend`, branch `BE-home-storefront-sections`):
+
+| | why |
+| --- | --- |
+| `?onSale=true` | `discountPrice IS NOT NULL` cannot be expressed as a column filter. Also adds a real "On sale" checkbox to `/products`. |
+| `GET /products/best-sellers` | `topProducts` existed only inside **admin-only** `GET /orders/analytics`. Ranks by units sold over 90 days, excluding cancelled parcels, re-filtered through `publicProductFilter`. |
+| `Category.image` + `imagePublicId` | Migration, validation, Cloudinary temp-folder handshake, and the upload field in the admin category form. |
+| `categoryId` matches self **or children** | Found in verification: products hang off leaf categories, so tiles linking to "Footwear" returned 0 results and the active-filter chip rendered a raw UUID. |
+
+**Also fixed in passing:** `ProductCard` rendered a broken frame for a row whose image URL no longer
+resolves. One seeded product has a `/temp/` publicId whose asset has since been deleted — the
+backend's BE-41 hazard, in live data. The card now falls back to a "No image" placeholder.
+
+**Known data artifacts, not bugs:** Best sellers is hidden because the database has zero orders
+(the ranking was verified against temporary rows, then cleaned up). Top rated shows a single
+product because only one has a rating — the rail fills as reviews arrive.
 
 ---
 
@@ -547,18 +584,16 @@ the entire list cache for that resource. Acceptable at this scale, worth knowing
 
 ---
 
-### FE-25 · Seven orphaned component files
+### FE-25 · Two orphaned component files
 **P2 · S · cleanup**
 
-`features/home/components/{featured-product,new-arrivals,offer,showcase,trending-product}.tsx`
-(FE-03), `features/users/components/user-management-table.tsx` (FE-08),
+`features/users/components/user-management-table.tsx` (FE-08) and
 `shared/components/td-drawer.tsx`.
 
-Five of the seven are wanted by FE-03 — wire them up rather than delete them.
-
-The four `products/components/filters/*` files this list used to name are **resolved**: FE-01
-rewrote `price-filter.tsx` and deleted `brand`, `category` and `size` — each hardcoded a list the
-server now serves as a facet.
+The other nine are **resolved**. FE-01 rewrote `products/components/filters/price-filter.tsx` and
+deleted `brand`, `category` and `size` — each hardcoded a list the server now serves as a facet.
+FE-03 deleted all five `features/home/components/*` orphans: four were empty shells or mock data,
+and the fifth (`new-arrivals.tsx`) was replaced by an RTK Query rail.
 
 ---
 

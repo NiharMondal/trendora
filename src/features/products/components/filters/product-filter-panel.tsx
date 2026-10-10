@@ -85,7 +85,11 @@ export default function ProductFilterPanel({
                     value: category.id,
                     label: category.name,
                     count: category.count,
+                    // The server returns each parent immediately followed by
+                    // its children, so indenting is all the nesting needs.
+                    indent: Boolean(category.parentId),
                 }))}
+                visibleCount={8}
                 isSelected={(value) => isSelected("categoryId", value)}
                 onToggle={(value) => toggleValue("categoryId", value)}
             />
@@ -151,19 +155,38 @@ export default function ProductFilterPanel({
                 onChange={(value) => setFilter("minRating", value)}
             />
 
-            <label
-                htmlFor="filter-in-stock"
-                className="flex cursor-pointer items-center gap-2 py-3 text-sm text-muted-foreground hover:text-foreground"
-            >
-                <Checkbox
-                    id="filter-in-stock"
-                    checked={columnFilters.inStock === "true"}
-                    onCheckedChange={(checked) =>
-                        setFilter("inStock", checked ? "true" : "")
-                    }
-                />
-                In stock only
-            </label>
+            <div className="py-3">
+                <label
+                    htmlFor="filter-in-stock"
+                    className="flex cursor-pointer items-center gap-2 py-1 text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <Checkbox
+                        id="filter-in-stock"
+                        checked={columnFilters.inStock === "true"}
+                        onCheckedChange={(checked) =>
+                            setFilter("inStock", checked ? "true" : "")
+                        }
+                    />
+                    In stock only
+                </label>
+
+                {/* "Discounted" is not a value any column equals, so it is a
+                    server-side clause (`discountPrice IS NOT NULL`) rather
+                    than a facet with options — same shape as In stock. */}
+                <label
+                    htmlFor="filter-on-sale"
+                    className="flex cursor-pointer items-center gap-2 py-1 text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <Checkbox
+                        id="filter-on-sale"
+                        checked={columnFilters.onSale === "true"}
+                        onCheckedChange={(checked) =>
+                            setFilter("onSale", checked ? "true" : "")
+                        }
+                    />
+                    On sale
+                </label>
+            </div>
         </div>
     );
 }

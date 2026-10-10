@@ -29,14 +29,26 @@ export default function EditCategory({
 	const [updateCategory, { isLoading: isUpdating }] =
 		useUpdateCategoryMutation();
 
-	const defaultValues = useMemo(
-		() => ({
-			name: selectedCategory?.result?.name,
-			sizeGroupId: selectedCategory?.result?.sizeGroupId || "",
-			parentId: selectedCategory?.result?.parentId || "",
-		}),
-		[selectedCategory],
-	);
+	const defaultValues = useMemo(() => {
+		const category = selectedCategory?.result;
+
+		return {
+			name: category?.name,
+			sizeGroupId: category?.sizeGroupId || "",
+			parentId: category?.parentId || "",
+			// Round-trip the existing image. Omitting it sends `undefined`,
+			// which the backend reads as "leave it alone" — but the upload
+			// widget would then start blank and an admin replacing the picture
+			// would have no idea one was already set.
+			image:
+				category?.image && category?.imagePublicId
+					? {
+							url: category.image,
+							publicId: category.imagePublicId,
+						}
+					: null,
+		};
+	}, [selectedCategory]);
 
 	const categoryOptions =
 		categories?.map((c) => ({
