@@ -55,6 +55,32 @@ export const productApi = baseApi.injectEndpoints({
             providesTags: ["products"],
         }),
 
+        /** The 10 most recently listed products — the home page rail. */
+        newArrivals: builder.query<TServerResponse<TProduct[]>, void>({
+            query: () => ({
+                url: "/products/new-arrival",
+                method: "GET",
+            }),
+            providesTags: ["products"],
+        }),
+
+        /**
+         * Ranked by units actually sold in a rolling window, cancelled parcels
+         * excluded. Returns [] on a marketplace with no completed orders yet —
+         * the rail hides itself rather than rendering an empty shelf.
+         */
+        bestSellers: builder.query<
+            TServerResponse<TProduct[]>,
+            Record<string, string> | void
+        >({
+            query: (query) => ({
+                url: "/products/best-sellers",
+                method: "GET",
+                params: query ? buildQueryParams(query) : undefined,
+            }),
+            providesTags: ["products"],
+        }),
+
         //get product by slug
         productBySlug: builder.query<TServerResponse<TProduct>, string>({
             query: (slug) => ({
@@ -206,6 +232,8 @@ export const productApi = baseApi.injectEndpoints({
 export const {
     useAllProductsQuery,
     useProductFiltersQuery,
+    useNewArrivalsQuery,
+    useBestSellersQuery,
     useCreateProductMutation,
     useDeleteProductMutation,
     useProductByIdQuery,

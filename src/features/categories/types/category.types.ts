@@ -7,6 +7,9 @@ export type TCategory = {
 	sizeGroupId: string | null;
 	parentId: string | null;
 	parent?: TCategory | null;
+	/** Merchandising artwork for the storefront's category tiles. */
+	image: string | null;
+	imagePublicId: string | null;
 	sizeGroup?: {
 		id: string;
 		name: string;
