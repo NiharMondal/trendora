@@ -44,12 +44,19 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
 ### Route groups (`src/app`)
 - `(root)` — public storefront (products, categories, cart, checkout, wish-list, about-us, plus
   `stores` / `stores/[slug]` — the seller directory and storefronts).
-- `(auth)` — login, register, forgot-password.
+- `(auth)` — login, register, forgot-password, reset-password (the emailed `?token=` link; kept
+  out of `AuthSync`'s bounce list so a signed-in user can still follow it).
 - `(dashboard)` — authenticated area split three ways: `admin` (ADMIN), `vendor` (VENDOR, the
   seller portal) and `dashboard` (CUSTOMER). `(dashboard)/layout.tsx` reads the session server-side
   via `getServerSession(authOptions)` and renders the role-appropriate sidebar (the three link sets
   are in `layouts/dashboard/dashboard-navlink.ts`).
 - `api/auth/[...nextauth]` — NextAuth handler.
+
+**Error and loading boundaries.** Each route group has an `error.tsx` rendering the shared
+`shared/components/error-state.tsx` — use that rather than a bespoke error screen. `app/error.tsx`
+catches a throw in a group *layout* (a group's own boundary sits inside its layout, so it cannot),
+`app/global-error.tsx` catches the root layout and must not depend on `Providers`, and
+`app/not-found.tsx` serves every unmatched URL outside all group chrome.
 
 **The dashboard sidebar is flat — a resource gets exactly one row.** `dashboard-navlink.ts` still
 groups a resource's screens under `children`, but those children are no longer sub-rows: they are
