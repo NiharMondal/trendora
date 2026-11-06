@@ -58,8 +58,7 @@ code — those flows changed shape, and `backend/CLAUDE.md` has the server-side 
 `shared/components/error-state.tsx` — use that rather than a bespoke error screen. `app/error.tsx`
 catches a throw in a group *layout* (a group's own boundary sits inside its layout, so it cannot),
 `app/global-error.tsx` catches the root layout and must not depend on `Providers`, and
-`app/not-found.tsx` serves every unmatched URL outside all group chrome. Those boundaries catch
-*render throws*; a failed *request* is handled inline — see **Failed requests** below.
+`app/not-found.tsx` serves every unmatched URL outside all group chrome.
 
 **The dashboard sidebar is flat — a resource gets exactly one row.** `dashboard-navlink.ts` still
 groups a resource's screens under `children`, but those children are no longer sub-rows: they are
