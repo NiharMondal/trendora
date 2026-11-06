@@ -24,7 +24,7 @@ import {
 } from "@/shared/utils/api-error";
 import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
-import type { TOrderStatus, TProductModerationStatus } from "@/features/orders/types/status.types";
+import type { TOrderStatus, TProductModerationStatus } from "@/shared/types/status.types";
 
 /**
  * The seller's overview.

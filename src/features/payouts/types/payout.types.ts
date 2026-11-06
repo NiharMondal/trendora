@@ -1,4 +1,6 @@
-export type TPayoutStatus = "PENDING" | "PROCESSING" | "PAID" | "FAILED";
+// Defined once in `shared/types/status.types.ts` (FE-28).
+import type { TPayoutStatus } from "@/shared/types/status.types";
+export type { TPayoutStatus };
 
 export type TPayout = {
     id: string;

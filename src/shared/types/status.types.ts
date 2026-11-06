@@ -1,3 +1,18 @@
+/**
+ * The ONE definition of every status vocabulary the backend sends. Each union
+ * mirrors a Prisma enum in `backend/prisma/schema.prisma` (and its Zod mirror
+ * in `backend/src/helpers/enum.ts`) — the three must agree.
+ *
+ * Lives in `shared/` because it is cross-feature and imports nothing: orders,
+ * vendors, payouts, refunds and analytics all read it. Feature type files may
+ * re-export from here, but must never declare their own copy — that is how
+ * `PaymentStatus` came to exist three times with one copy missing
+ * `PARTIALLY_REFUNDED` (FE-28 / XR-09).
+ *
+ * Deleted as phantoms (no backend counterpart): `TUserStatus` (a `User` has
+ * only `isDeleted`), `TCouponStatus` (no `Coupon` model), and the
+ * pre-marketplace `TProductStatus` — use `TProductModerationStatus`.
+ */
 export type TOrderStatus =
     | "PENDING"
     | "PROCESSING"
@@ -12,15 +27,6 @@ export type TPaymentStatus =
     /** Some parcels of a multi-vendor order refunded, others not. */
     | "PARTIALLY_REFUNDED"
     | "REFUNDED";
-
-export type TUserStatus =
-    | "ACTIVE"
-    | "INACTIVE";
-
-export type TProductStatus =
-    | "ACTIVE"
-    | "INACTIVE"
-    | "OUT_OF_STOCK"
 
 /** Admin moderation state of a listing (backend `ProductStatus`). */
 export type TProductModerationStatus =
@@ -42,11 +48,6 @@ export type TPayoutStatus =
     | "PROCESSING"
     | "PAID"
     | "FAILED";
-
-export type TCouponStatus =
-    | "ACTIVE"
-    | "EXPIRED"
-    | "INACTIVE";
 
 /** State of one attempt to move money back to a buyer (backend `RefundStatus`). */
 export type TRefundStatus =

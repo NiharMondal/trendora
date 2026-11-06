@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useUpdateVendorOrderStatusMutation } from "@/features/vendors/api/vendor-order.api";
 import { vendorOrderStatusSchema } from "@/features/vendors/schemas/vendor-form.schema";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
-import type { TOrderStatus } from "@/features/orders/types/status.types";
+import type { TOrderStatus } from "@/shared/types/status.types";
 import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
 import TDInput from "@/shared/form/TDInput";

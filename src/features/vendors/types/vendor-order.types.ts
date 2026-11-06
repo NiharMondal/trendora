@@ -1,5 +1,5 @@
 import { TVendorCard } from "@/features/vendors/types/vendor.types";
-import { TOrderStatus } from "@/features/orders/types/status.types";
+import { TOrderStatus } from "@/shared/types/status.types";
 import { TRefund } from "@/features/refunds/types/refund.types";
 
 /**

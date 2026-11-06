@@ -6,7 +6,7 @@ import Link from "next/link";
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { useOrderAnalyticsQuery } from "@/features/orders/api/order.api";
 import { vendorStatusMap } from "@/features/orders/constants/status-maps";
-import type { TVendorStatus } from "@/features/orders/types/status.types";
+import type { TVendorStatus } from "@/shared/types/status.types";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { Skeleton } from "@/shared/ui/skeleton";
 import QueryError from "@/shared/components/query-error";

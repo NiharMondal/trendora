@@ -5,7 +5,7 @@ import type {
     TVendorStatus,
     TPayoutStatus,
     TRefundStatus,
-} from "@/features/orders/types/status.types";
+} from "@/shared/types/status.types";
 
 type BadgeConfig = {
     label: string;
