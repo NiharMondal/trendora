@@ -35,6 +35,9 @@ export default function ProductCard({ product }: Props) {
 
 	const href = `/products/${product.slug}`;
 	const isSoldOut = product.stockQuantity <= 0;
+	// A product with variants is bought by size/colour, so the card cannot add
+	// it blind — the backend rejects a cart line with no variant.
+	const needsOption = (product.variants?.length ?? 0) > 0;
 	const discountPercent = getDiscountPercent(
 		product.basePrice,
 		product.discountPrice,
@@ -112,17 +115,30 @@ export default function ProductCard({ product }: Props) {
 
 				{/* Add to cart — always shown on touch, revealed on hover/focus on desktop */}
 				<div className="absolute inset-x-3 bottom-3 transition duration-300 lg:translate-y-4 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100">
-					<Button
-						type="button"
-						variant="ghost"
-						onClick={handleAddToCart}
-						disabled={isSoldOut}
-						aria-label={`Add ${product.name} to cart`}
-						className="h-10 w-full cursor-pointer rounded-full bg-white/95 text-foreground shadow-md backdrop-blur hover:bg-foreground hover:text-background disabled:opacity-70"
-					>
-						<ShoppingBag className="size-4" aria-hidden="true" />
-						{isSoldOut ? "Sold out" : "Quick add"}
-					</Button>
+					{needsOption && !isSoldOut ? (
+						<Button
+							asChild
+							variant="ghost"
+							className="h-10 w-full cursor-pointer rounded-full bg-white/95 text-foreground shadow-md backdrop-blur hover:bg-foreground hover:text-background"
+						>
+							<Link href={href} aria-label={`Choose options for ${product.name}`}>
+								<ShoppingBag className="size-4" aria-hidden="true" />
+								Choose options
+							</Link>
+						</Button>
+					) : (
+						<Button
+							type="button"
+							variant="ghost"
+							onClick={handleAddToCart}
+							disabled={isSoldOut}
+							aria-label={`Add ${product.name} to cart`}
+							className="h-10 w-full cursor-pointer rounded-full bg-white/95 text-foreground shadow-md backdrop-blur hover:bg-foreground hover:text-background disabled:opacity-70"
+						>
+							<ShoppingBag className="size-4" aria-hidden="true" />
+							{isSoldOut ? "Sold out" : "Quick add"}
+						</Button>
+					)}
 				</div>
 			</div>
 

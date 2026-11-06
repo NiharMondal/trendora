@@ -58,6 +58,7 @@ export default function ProductCommonDetails({
             id: variant.id,
             price: variant.price,
         });
+        setQuantity((q) => Math.max(1, Math.min(q, variant.stock)));
     };
     const handleResetVariantInfo = () => {
         setVariantInfo({ id: null, price: null });
@@ -78,6 +79,13 @@ export default function ProductCommonDetails({
     const Title = quickView ? "h2" : "h1";
     const variants = product?.variants ?? [];
     const selectedVariant = variants.find((v) => v.id === variantInfo.id);
+    // With variants, stock is counted per variant and the backend refuses a
+    // line that names none — so an option must be picked before adding.
+    const needsOption = variants.length > 0 && !selectedVariant;
+    const availableStock = selectedVariant
+        ? selectedVariant.stock
+        : (product?.stockQuantity ?? 0);
+    const isSoldOut = !needsOption && availableStock <= 0;
     const discountPercent = getDiscountPercent(
         product?.basePrice,
         product?.discountPrice,
@@ -167,6 +175,7 @@ export default function ProductCommonDetails({
                     >
                         {variants.map((variant) => {
                             const isSelected = variant.id === variantInfo.id;
+                            const variantSoldOut = variant.stock <= 0;
                             return (
                                 <Button
                                     type="button"
@@ -174,6 +183,7 @@ export default function ProductCommonDetails({
                                     onClick={() => handleVariantInfo(variant)}
                                     key={variant.id}
                                     aria-pressed={isSelected}
+                                    disabled={variantSoldOut}
                                     className={cn(
                                         "h-auto cursor-pointer flex-col items-start justify-start gap-0.5 whitespace-normal rounded-lg px-3 py-2.5 text-left shadow-none hover:border-foreground/40 hover:bg-background hover:text-foreground",
                                         isSelected &&
@@ -187,7 +197,9 @@ export default function ProductCommonDetails({
                                         {variant.color}
                                     </span>
                                     <span className="text-xs font-medium">
-                                        ${variant.price}
+                                        {variantSoldOut
+                                            ? "Sold out"
+                                            : `$${variant.price}`}
                                     </span>
                                 </Button>
                             );
@@ -203,7 +215,11 @@ export default function ProductCommonDetails({
                     <div className="flex flex-wrap items-center gap-3">
                         <ProductQuantity
                             quantity={quantity}
-                            onIncrease={() => setQuantity((q) => q + 1)}
+                            onIncrease={() =>
+                                setQuantity((q) =>
+                                    needsOption ? q + 1 : Math.min(q + 1, availableStock),
+                                )
+                            }
                             onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
                             className="h-12 rounded-full px-3"
                         />
@@ -211,9 +227,14 @@ export default function ProductCommonDetails({
                             size="lg"
                             className="h-12 min-w-44 flex-1 cursor-pointer rounded-full text-base"
                             onClick={() => handleAddToCart(product)}
+                            disabled={needsOption || isSoldOut}
                         >
                             <ShoppingBag />
-                            Add to cart
+                            {needsOption
+                                ? "Select an option"
+                                : isSoldOut
+                                  ? "Sold out"
+                                  : "Add to cart"}
                         </Button>
                         <Button
                             variant="outline"

@@ -174,6 +174,17 @@ export default function PayoutAdminTable() {
                     );
                 }
 
+                // FAILED is final too: its earnings went back to the pool and
+                // belong to the next payout, so marking this one paid would
+                // count the money twice (backend BE-51 now refuses it).
+                if (row.status === "FAILED") {
+                    return (
+                        <span className="text-xs text-muted-foreground">
+                            Failed — earnings released to the next payout
+                        </span>
+                    );
+                }
+
                 return (
                     <div className="flex items-center gap-1">
                         <Button
