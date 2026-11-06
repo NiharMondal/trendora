@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
     Banknote,
     Boxes,
     Package,
     Star,
+    Store,
     TrendingUp,
     Wallet,
 } from "lucide-react";
@@ -13,11 +15,20 @@ import {
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { orderStatusMap, productStatusMap } from "@/features/orders/constants/status-maps";
 import { useVendorDashboardQuery } from "@/features/vendors/api/vendor.api";
+import VendorSalesTrend from "@/features/vendors/components/vendor-sales-trend";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
+import DateRangeSelect, {
+    useDateRange,
+} from "@/shared/components/date-range-select";
+import QueryError from "@/shared/components/query-error";
+import {
+    getApiErrorMessage,
+    getApiErrorStatus,
+} from "@/shared/utils/api-error";
 import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
-import type { TOrderStatus, TProductModerationStatus } from "@/features/orders/types/status.types";
+import type { TOrderStatus, TProductModerationStatus } from "@/shared/types/status.types";
 
 /**
  * The seller's overview.
@@ -27,24 +38,50 @@ import type { TOrderStatus, TProductModerationStatus } from "@/features/orders/t
  * will actually be paid — not gross sales.
  */
 export default function VendorDashboard() {
-    const { data, isLoading, isError } = useVendorDashboardQuery();
+    const router = useRouter();
+    const { range, setRangeValue } = useDateRange();
+    const { data, isLoading, isFetching, error, refetch } =
+        useVendorDashboardQuery(range.params);
 
     if (isLoading) return <SpinnerLoading />;
 
-    const dashboard = data?.result;
-
-    if (isError || !dashboard) {
+    // The backend answers 403 with an actionable message for every store that
+    // is not approved yet — none, pending, rejected (with the reason) or
+    // suspended — so show that message verbatim. Anything else is a real
+    // failure: telling an approved seller to "apply" because the network
+    // blipped was the old behaviour.
+    if (getApiErrorStatus(error) === 403) {
         return (
             <NoDataFound
-                title="No store yet"
-                description="Apply to sell on Trendora to get a seller dashboard."
-                actionLabel="Apply now"
+                icon={Store}
+                title="No active store"
+                description={getApiErrorMessage(error)}
+                actionLabel="Go to seller application"
+                onAction={() => router.push("/vendor/apply")}
+            />
+        );
+    }
+    if (error) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load your dashboard"
             />
         );
     }
 
-    const { store, overview, ordersByStatus, productsByStatus, topProducts } =
-        dashboard;
+    const dashboard = data?.result;
+    if (!dashboard) return null;
+
+    const {
+        store,
+        overview,
+        ordersByStatus,
+        productsByStatus,
+        topProducts,
+        salesTrend,
+    } = dashboard;
 
     return (
         <div className="space-y-5">
@@ -74,13 +111,28 @@ export default function VendorDashboard() {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/vendor/products/add">
-                        <Button>Add product</Button>
-                    </Link>
-                    <Link href="/vendor/orders">
-                        <Button variant="outline">View orders</Button>
-                    </Link>
+                    <Button asChild>
+                        <Link href="/vendor/products/add">Add product</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                        <Link href="/vendor/orders">View orders</Link>
+                    </Button>
                 </div>
+            </div>
+
+            {/* Everything below is scoped to this range except "Ready for
+                payout", which is a balance, not a period figure. */}
+            <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                    {range.value === "all"
+                        ? "Showing all-time figures."
+                        : `Showing ${range.label.toLowerCase()}.`}
+                </p>
+                <DateRangeSelect
+                    value={range.value}
+                    onChange={setRangeValue}
+                    isFetching={isFetching}
+                />
             </div>
 
             {/* Money */}
@@ -102,7 +154,7 @@ export default function VendorDashboard() {
                     icon={<Banknote className="size-5" />}
                     label="Ready for payout"
                     value={currencyFormatter(overview.pendingPayoutAmount)}
-                    hint={`${overview.pendingPayoutOrders} delivered order(s)`}
+                    hint={`${overview.pendingPayoutOrders} delivered order(s) · current balance`}
                 />
                 <StatCard
                     icon={<Package className="size-5" />}
@@ -111,6 +163,13 @@ export default function VendorDashboard() {
                     hint={`Avg ${currencyFormatter(overview.averageOrderValue)}`}
                 />
             </div>
+
+            <VendorSalesTrend
+                points={salesTrend ?? []}
+                // With no range the headline is all-time but the series is
+                // the backend's default 30-day window, so say which.
+                caption={range.value === "all" ? "Last 30 days" : range.label}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 {/* Order pipeline */}

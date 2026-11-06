@@ -10,11 +10,12 @@ import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { Input } from "@/shared/ui/input";
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
+import QueryError from "@/shared/components/query-error";
 
 /** Browse every approved store on the marketplace. */
 export default function StoreDirectory() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const { data, isLoading } = useAllStoresQuery(
+    const { data, isLoading, error, refetch } = useAllStoresQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -32,6 +33,7 @@ export default function StoreDirectory() {
                 </div>
                 <Input
                     placeholder="Search stores..."
+                    aria-label="Search stores"
                     defaultValue={filters.search}
                     onChange={(event) => filters.setSearch(event.target.value)}
                     className="sm:max-w-xs bg-white"
@@ -40,6 +42,12 @@ export default function StoreDirectory() {
 
             {isLoading ? (
                 <SpinnerLoading />
+            ) : error ? (
+                <QueryError
+                    error={error}
+                    onRetry={refetch}
+                    title="Could not load stores"
+                />
             ) : stores.length === 0 ? (
                 <NoDataFound
                     title="No stores found"

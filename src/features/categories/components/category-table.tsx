@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -19,11 +19,11 @@ import {
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { categoryColumns } from "./category-columns";
 import EditCategory from "./edit-category";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const categoryId = searchParams.get("categoryId");
+    const editParam = useUrlParam("categoryId");
+    const categoryId = editParam.value;
 
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
@@ -38,13 +38,15 @@ export default function CategoryTable() {
         data: categories,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllCategoryQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TCategory) => {
-        router.push(`?categoryId=${category.id}`, { scroll: false });
+        editParam.set(category.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (category: TCategory) => {
         setDeleteCategoryId(category.id);
@@ -56,8 +58,8 @@ export default function CategoryTable() {
             await deleteCategory(deleteCategoryId).unwrap();
             toast.success("Category deleted successfully");
             setDeleteCategoryId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;
@@ -67,6 +69,8 @@ export default function CategoryTable() {
                 columns={categoryColumns({ handleEdit, handleDelete })}
                 data={categories?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={categories?.meta}

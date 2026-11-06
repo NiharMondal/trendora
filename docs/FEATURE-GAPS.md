@@ -1,6 +1,7 @@
 # Feature Gaps & Technical Debt — Frontend
 
 _Audited 2026-09-22 against `update-table-toolbar-and-page-restructuring` @ `4c17594`._
+_Re-verified 2026-09-29 against `39716b8`: every open item re-checked, anchors corrected, FE-41 → FE-47 and XR-12 / XR-13 added._
 _Re-run this audit whenever the marketplace layer changes._
 
 Every item below is anchored to a `file:line` that was read during the audit. Nothing here is
@@ -32,42 +33,54 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-01~~ | ~~`/products` has no filters, sort, search or pagination~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-02~~ | ~~Both navbar search boxes are inert~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-03~~ | ~~The home page renders only the hero slider~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
-| ~~FE-04~~ | ~~Forgot-password form submits to `console.log`~~ | ✅ **FIXED** 2026-09-24 | — | auth |
+| FE-04 | Forgot-password form submits to `console.log` — **fixed on branch `FE-04-…` (`b28f2f4`), not merged** | P1 | — | auth |
 | ~~FE-05~~ | ~~No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
-| FE-06 | Only one component in the app handles `isError` | P0 | M | robustness |
-| FE-07 | Placeholder pages wired into live navigation | P1 | M | dashboard |
-| FE-08 | `/admin/user-management` is empty; the real table is unlinked | P1 | S | admin |
-| FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
-| FE-10 | Footer links to nine routes that do not exist | P1 | M | storefront |
-| FE-11 | Three admin dashboard widgets are demo fixtures | P1 | M | analytics |
+| ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
+| ~~FE-07~~ | ~~Placeholder pages wired into live navigation~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
+| ~~FE-08~~ | ~~`/admin/user-management` is empty; the real table is unlinked~~ | ✅ **FIXED** 2026-09-24 | — | admin |
+| ~~FE-09~~ | ~~Hardcoded "Your Balance $12627" on every dashboard page~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
+| FE-10 | Footer links to six routes that do not exist (was nine) | P1 | M | storefront |
+| ~~FE-11~~ | ~~Three admin dashboard widgets are demo fixtures~~ | ✅ **FIXED** 2026-09-28 | — | analytics |
 | FE-12 | SEO metadata is on the wrong pages; none on the storefront | P1 | M | seo |
 | FE-13 | No `sitemap.ts`, `robots.ts` or OpenGraph | P1 | S | seo |
-| FE-14 | No admin hero-slider screen despite full CRUD API | P1 | M | admin |
-| FE-15 | Five search boxes are silent no-ops | P1 | S | tables |
-| FE-16 | Admin user actions are inert buttons | P1 | S | admin |
+| ~~FE-14~~ | ~~No admin hero-slider screen despite full CRUD API~~ | ✅ **FIXED** 2026-09-24 | — | admin |
+| ~~FE-15~~ | ~~Five search boxes are silent no-ops~~ | ✅ **FIXED** 2026-09-24 | — | tables |
+| ~~FE-16~~ | ~~Admin user actions — backend ready, UI not wired~~ | ✅ **FIXED** 2026-09-24 | — | admin |
 | FE-17 | `next.config.ts` allows any https image host | P1 | S | security |
-| FE-18 | No customer-facing refunds view | P1 | M | orders |
-| FE-19 | No vendor store-review screen | P1 | M | vendor |
-| FE-20 | Two wishlist pages, one of them an empty shell | P1 | S | storefront |
-| FE-21 | Product reviews are not gated on purchase | P1 | M | reviews |
-| FE-22 | Customer `/dashboard` is a link grid, not a dashboard | P2 | M | dashboard |
-| FE-23 | 18 defined-but-never-called endpoints | P2 | M | api |
-| FE-24 | Two RTK tags are never provided; one is misdeclared | P2 | S | api |
-| FE-25 | 2 orphaned component files (was 11) | P2 | S | cleanup |
-| FE-26 | Five stray `console.log`s | P2 | S | cleanup |
-| FE-27 | 39 `any`s, eight of them in type definitions | P2 | M | types |
-| FE-28 | Duplicate type definitions across features | P2 | S | types |
-| FE-29 | No `.env.example`; README is scaffold boilerplate | P2 | S | onboarding |
-| FE-30 | No env validation — a missing tax rate silently means 0% | P2 | S | config |
-| FE-31 | 13 raw `<img>` tags bypass `next/image` | P2 | S | performance |
-| FE-32 | Accessibility: three `aria-*` attributes in the whole app | P2 | L | a11y |
+| ~~FE-18~~ | ~~No customer-facing refunds view~~ | ✅ **FIXED** 2026-09-24 | — | orders |
+| ~~FE-19~~ | ~~No vendor store-review screen~~ | ✅ **FIXED** 2026-09-24 | — | vendor |
+| ~~FE-20~~ | ~~Two wishlist pages, one of them an empty shell~~ | ✅ **FIXED** 2026-09-24 | — | storefront |
+| ~~FE-21~~ | ~~Product reviews are not gated on purchase~~ | ✅ **FIXED** 2026-09-24 | — | reviews |
+| ~~FE-22~~ | ~~Customer `/dashboard` is a link grid, not a dashboard~~ | ✅ **FIXED** 2026-09-24 | — | dashboard |
+| FE-23 | Eight defined-but-never-called endpoints (was 18) | P2 | M | api |
+| ~~FE-24~~ | ~~Two RTK tags are never provided (the misdeclared one fixed in FE-14)~~ | ✅ **FIXED** 2026-09-24 | — | api |
+| ~~FE-25~~ | ~~1 orphaned component file (was 11)~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
+| ~~FE-26~~ | ~~Five stray `console.log`s~~ | ✅ **FIXED** 2026-09-24 | — | cleanup |
+| ~~FE-27~~ | ~~39 `any`s, eight of them in type definitions~~ | ✅ **FIXED** 2026-09-24 | — | types |
+| ~~FE-28~~ | ~~Duplicate type definitions across features~~ | ✅ **FIXED** 2026-09-24 | — | types |
+| ~~FE-29~~ | ~~No `.env.example`; README is scaffold boilerplate~~ | ✅ **FIXED** 2026-09-24 | — | onboarding |
+| ~~FE-30~~ | ~~No env validation — a missing tax rate silently means 0%~~ | ✅ **FIXED** 2026-09-24 | — | config |
+| FE-31 | 11 raw `<img>` tags bypass `next/image` (was 13) | P2 | S | performance |
+| ~~FE-32~~ | ~~Accessibility: three `aria-*` attributes in the whole app~~ | ✅ **FIXED** 2026-09-24 | — | a11y |
 | FE-33 | No test runner, no CI | P2 | L | ops |
-| FE-34 | No vendor analytics, order detail or profile screens | P2 | M | vendor |
-| FE-35 | No admin settings or vendor detail screens | P2 | M | admin |
+| FE-34 | ~~No vendor analytics, order detail or profile screens~~ — tooling left | 🟡 **PARTIAL** 2026-09-24 | M | vendor |
+| FE-35 | ~~No admin settings or vendor detail screens~~ — coupons, email, audit log left | 🟡 **PARTIAL** 2026-09-24 | M | admin |
 | FE-36 | No coupon field, guest checkout, multi-currency or i18n | P2 | L | storefront |
-| FE-37 | No category or brand browsing | P2 | M | storefront |
-| FE-38 | No order tracking timeline or per-order invoice | P2 | M | orders |
-| FE-39 | Committed build artefacts; no Prettier config | P2 | S | cleanup |
+| FE-37 | ~~No category or brand browsing~~ — compare left | 🟡 **PARTIAL** 2026-09-24 | M | storefront |
+| FE-38 | ~~No order tracking timeline~~ — carrier link, public tracking, invoice, newsletter left | 🟡 **PARTIAL** 2026-09-28 | M | orders |
+| FE-39 | ~~Committed build artefacts~~ (never were); no Prettier config | P2 | S | cleanup |
+| ~~FE-40~~ | ~~Home page and `/products` crash in the browser (server env in the client bundle)~~ | ✅ **FIXED** 2026-09-24 | — | auth |
+| ~~FE-41~~ | ~~Admin order screens show a fake (`test@gmail.com`) or blank buyer email~~ | ✅ **FIXED** 2026-09-29 | — | orders |
+| FE-42 | Buyer order screens use the operator's refund wording | P2 | S | orders |
+| FE-43 | Cancelling a parcel leaves the refund lists stale | P2 | S | api |
+| FE-44 | A pre-marketplace persisted cart is never migrated | P2 | S | cart |
+| FE-45 | Product-table category filter offers categories that never match | P2 | S | tables |
+| FE-46 | Admin "Recent Orders" / "New Comments" show the oldest five | P1 | S | analytics |
+| FE-47 | Best sellers "View all" opens the top-rated list | P2 | S | storefront |
+
+Cross-repo items (XR-01 → XR-13) are not in this table; see **Cross-repo contract**. Open there:
+XR-02, XR-03 (frontend half), XR-05, XR-06, XR-07, XR-08, XR-10 (backend half), **XR-12**
+(per-category tax, P1) and **XR-13** (variant stock, P1).
 
 ---
 
@@ -205,8 +218,13 @@ product because only one has a rating — the rail fills as reviews arrive.
 
 ---
 
-### ~~FE-04~~ · The forgot-password form submits to `console.log`
-**✅ FIXED 2026-09-24 · auth**
+### FE-04 · The forgot-password form submits to `console.log`
+**Built 2026-09-24 on `FE-04-Forgot-password-form-submits-to-console-log` (`b28f2f4`) — NOT merged · P1 · auth**
+
+**Checked 2026-09-29:** the commit is on no other branch, including `origin/main` and
+`customise-dashboard-design-with-api-data`. On those, `forgot-password-form.tsx:24` still
+`console.log`s, `auth.api.ts` has no reset mutations and there is no `(auth)/reset-password` route,
+so the link the backend emails 404s. Everything below describes the unmerged branch.
 
 **Was:** `forgot-password-form.tsx:24` was `const onSubmit = (data) => { console.log(data); }`, and
 the `/reset-password` page the emailed link points at did not exist.
@@ -262,133 +280,187 @@ with a failed query. It does not get this 404.
 
 ---
 
-### FE-06 · Only one component in the entire app handles `isError`
-**P0 · M · robustness**
+### ~~FE-06~~ · Only one component in the entire app handles `isError`
+**✅ FIXED 2026-09-24 · robustness**
 
-**Now:** The only `isError` read in the codebase is
-`src/features/vendors/components/vendor-dashboard.tsx:30`.
+**Was:** the only `isError` read was `vendor-dashboard.tsx:30`, and even that one got it wrong: any
+failure rendered "No store yet — Apply now", so a network blip told an approved seller to apply
+to sell. Its "Apply now" button also did nothing, because `NoDataFound` renders the action only
+when `onAction` is passed as well. Everywhere else, a failed request looked exactly like an empty
+list. `admin/product-list/[id]/page.tsx` returned `undefined` while loading and then **threw** on a
+product with no images (`images[selectedImage].url`).
 
-**Gap:** Everywhere else a failed request renders as an empty list — indistinguishable from "you
-have no orders". The user is told nothing went wrong, so they do not retry.
+**Now there is one pattern, in three pieces:**
 
 Worst case: `src/app/(dashboard)/admin/(products)/product-list/[id]/page.tsx:19` is
 `if (isLoading) return;` — returning `undefined` renders nothing — and then `:27` dereferences
 `product?.result?.images[selectedImage].url`, which **throws on a product with no images**. With
 FE-05 fixed, that now lands on `(dashboard)/error.tsx` rather than a blank screen — but it still throws.
 
-**Fix:** Establish one error pattern and apply it to the list/detail screens. `DataTable` already
-renders `NoDataFound` when empty; give it an error state too, so every table inherits the fix.
-Fix the unguarded array index at `product-list/[id]/page.tsx:27` regardless.
+**Where it is applied:**
+
+| | |
+| --- | --- |
+| Tables | all 18 `DataTable` consumers pass `error={listError} onRetry={refetchList}`. `order-table.tsx` fed `isLoading` into `isFetching`, so a retry or page change showed no skeleton; fixed. `recent-orders-table.tsx` had no loading state at all; fixed. |
+| Detail pages | `(root)/products/[slug]`, `admin/product-list/[id]` (plus the image crash: a "No image" placeholder), `store-front.tsx` (the store and, separately, its product grid) and `order-details.tsx`. Each shows "not found" copy on a 404 and a retry otherwise. |
+| Edit forms | brand, category, size, size group, review, `update-product`, `vendor-update-product`, `profile-component` and `store-settings-form`. **A failed load no longer renders the form.** Its blank defaults would have been saved over the real record. `profile-component` also gained the loading gate it never had. |
+| Lists and widgets | wishlist, addresses, store directory, outstanding balances, featured table and `marketplace-overview`, which rendered every tile as `0` on failure. |
+| `vendor-dashboard.tsx` | a **403** shows the backend's message verbatim. `requireApprovedVendor` sends an actionable one for each case: no store, pending, rejected (with the reason) or suspended. It comes with a working link to `/vendor/apply`. Any other failure is a real error with a retry. |
+
+Render-time throws are a separate concern and belong to the FE-05 boundaries. `QueryError` is for
+the part of a page that a query feeds.
+
+**Deliberately left:**
+
+- The home-page sections still render `null` on failure. They self-hide by design, and one
+  missing shelf is better than an error box on the landing page.
+- Option lists inside forms (category, size, product and billing selects) still show an empty
+  dropdown when their request fails.
+- Nothing calls `notFound()` (see FE-05).
 
 ---
 
 ## P1 — a user hits this
 
-### FE-07 · Placeholder pages wired into live navigation
-**P1 · M · dashboard**
+### ~~FE-07~~ · Placeholder pages wired into live navigation
+**✅ FIXED 2026-09-24 · dashboard**
+
+**Was:** four routes rendered a bare word: `/admin/hot-offers` (`<div>HotOffers</div>`, with a
+sidebar row), `/admin/order-history` (orphaned), `/categories/[slug]` (`<div>page</div>`) and
+`/about-us` (`<div>AboutUs</div>`, linked from the footer).
+
+**Correction to the original audit:** `/categories/[slug]` was **not** "on every category link on
+the storefront". Since FE-03, the home-page tiles link to `/products?categoryId=<id>`, and nothing
+in `src/` linked to `/categories/…`. It could only be reached by typing the URL.
 
 **Now:**
 
-| Route | Renders | Reachable? |
-| --- | --- | --- |
-| `/admin/hot-offers` | `<div>HotOffers</div>` | **Yes — sidebar row** (`src/layouts/dashboard/dashboard-navlink.ts:141`) |
-| `/admin/order-history` | `<div>OrderHistory</div>` | Orphan — the sidebar's "Order History" points at `/admin/order-list` |
-| `/categories/[slug]` | `<div>page</div>` | Yes — every category link on the storefront |
-| `/about-us` | `<div>AboutUs</div>` | Yes — footer |
+| Route | Resolution |
+| --- | --- |
+| `/admin/hot-offers` | **Deleted**, along with its `dashboard-navlink.ts` row and the `Coffee` icon import. The backend has no offers concept beyond a product's `discountPrice`, and markdowns already surface on the storefront (`?onSale=true`, `DealsRail`). If an admin promotions screen is wanted, it needs a backend model first (BE-29 covers coupons). |
+| `/admin/order-history` | **Deleted.** The sidebar's "Order History" row already points at the real `/admin/order-list`. |
+| `/categories/[slug]` | **A readable alias for the catalogue, not a second product list.** `features/categories/components/category-redirect.tsx` resolves the slug through `GET /categories?slug=<slug>`, because `GET /categories/:id` takes an id only and the list endpoint's generic column filter does the lookup. It then `router.replace`s to `/products?categoryId=<id>`, which already has the facets, sort, search and pagination, and matches the category *or its children*. An unknown slug shows "Category not found" with a "Browse all products" action, and a failed lookup shows `QueryError`. |
+| `/about-us` | **Built:** `features/home/components/about-us.tsx`. A hero, "How it works" (independent reviewed stores, one checkout with per-store shipping, per-parcel tracking and cancellation with automatic refunds), the home page's `TrustStrip`, and a "Sell on Trendora" CTA to `/vendor/apply`. Every claim describes behaviour the code implements, and there are no invented figures. It has page `metadata` and is still `○ Static`. |
 
-**Gap:** An admin clicking "Hot Offers" lands on the word "HotOffers". A shopper clicking any
-category lands on the word "page". These are the most visible unfinished edges in the product.
-
-**Fix:** Build them, or remove the nav entries and routes until they exist. `/categories/[slug]`
-is the urgent one — it is on the shopper's main path and the data layer
-(`useAllProductsQuery` with a `categoryId` filter) already supports it.
+**Not verified live:** the slug lookup was not exercised against a running backend. It relies on
+`PrismaQueryBuilder.filter()`, which `category.service.ts` applies to the list read.
 
 ---
 
-### FE-08 · `/admin/user-management` is empty; the working table is unlinked
-**P1 · S · admin**
+### ~~FE-08~~ · `/admin/user-management` is empty; the working table is unlinked
+**✅ FIXED 2026-09-24 · admin**
 
-**Now:** `src/app/(dashboard)/admin/user-management/page.tsx` renders **only a `<Headline>`** — and
-it is the sidebar target (`dashboard-navlink.ts:132`). The working 134-line user table lives at
-`/admin/user`, which nothing links to. A third implementation,
-`src/features/users/components/user-management-table.tsx`, is orphaned.
+**Was:** the sidebar target `/admin/user-management` rendered only a `<Headline>`. A hand-rolled
+table lived at the unlinked `/admin/user`, and the `DataTable` version,
+`user-management-table.tsx`, was orphaned. That makes three implementations of one screen.
 
-**Gap:** Admin user management appears to be broken, because the screen the nav points at is
-blank. Three implementations of one screen exist and the wrong one is wired up.
+**Now:**
 
-**Fix:** Keep `user-management-table.tsx` (it uses the shared `DataTable`), render it from
-`/admin/user-management`, and delete `/admin/user` — which hand-rolls its own table, `Select`,
-`Input` and `Pagination` in defiance of the centralised table convention. That also resolves
-FE-16.
+- `/admin/user-management` renders `UserManagementTable`: the shared `DataTable` with a header
+  strip, URL-synced search, sort and pagination, and the FE-06 error state.
+  `user-management-table.tsx` also gained the `"use client"` it lacked. It uses hooks and had never
+  been mounted, so nothing had noticed.
+- **`/admin/user` is deleted.** It hand-rolled its own table, `Select`, `Input` and `Pagination`.
+  It rendered `NoDataFound` for a search with no results, which hid the search box that caused it.
+  It showed a fabricated `"Dhaka, Bangladesh"` on every row, and its Eye and Block buttons did
+  nothing.
+- **`user-management-columns.tsx` was rewritten.** It has four columns: an avatar with an initial
+  fallback (it had been `<img src="">`), name and email, phone, a role pill, and joined date. Its
+  Edit and Delete buttons had no handlers and were removed. Real actions arrived in FE-16.
+- **`TUser.email` and `TUser.role` are `string | null`**, per the XR-05 caveat. A user with no
+  `Auth` row renders "No login credentials" and a `-` role.
+- The search placeholder now says what the backend searches: name, email and phone.
 
----
-
-### FE-09 · Hardcoded "Your Balance $12627" on every dashboard page
-**P1 · S · dashboard**
-
-**Now:** `src/app/(dashboard)/layout.tsx:41-44`. It is in the chrome, so it renders for **admin,
-vendor and customer alike**, on every dashboard route. The same layout has a decorative "Search
-anything…" input with no handler at `:29-33`.
-
-**Gap:** A fabricated money figure shown to every logged-in user on every page, next to real
-money. A seller could reasonably read it as their payout balance.
-
-**Fix:** Remove it, or replace it with a real value per role — the vendor case has
-`useMyBalanceQuery` (`src/features/payouts/api/payout.api.ts`) ready. The fake search input beside
-it can be removed, or wired the way FE-02 wired the navbar — `useNavbarSearch`
-(`layouts/navbar/use-navbar-search.ts`) is reusable for it.
+The lint baseline dropped to 50, because the deleted page carried a raw `<img>` warning.
 
 ---
 
-### FE-10 · The footer links to nine routes that do not exist
+### ~~FE-09~~ · Hardcoded "Your Balance $12627" on every dashboard page
+**✅ FIXED 2026-09-24 · dashboard**
+
+**Was:** `(dashboard)/layout.tsx` put a fabricated "Your Balance **$12627**" in the chrome of every
+dashboard route, for admins, vendors and customers alike. Beside it were a "Search anything…"
+input with no handler and a `cursor-pointer` notification bell with no handler.
+
+**Now:**
+
+- **The balance is real and vendor-only.** `layouts/dashboard/vendor-balance.tsx` is mounted only
+  when the session role is `VENDOR`. It shows `availableForPayout` from `useMyBalanceQuery`
+  (`GET /payouts/me/balance`) and links to `/vendor/payouts`. That figure is money from delivered,
+  paid parcels not yet in a payout, with commission and tax already removed, so it is what the store
+  will actually be paid. Admins and customers see nothing, because they have no balance.
+  - It renders `null` on error. The backend 403s a pending, rejected or suspended store, and the
+    vendor dashboard already explains that (FE-06).
+  - It shows a small skeleton while loading.
+- **The search input was removed**, not wired. `useNavbarSearch` pushes `/products?search=`, which
+  would throw an admin out of the dashboard into the storefront. Every dashboard table already has
+  its own URL-synced search.
+- **The bell was removed.** There is no notifications backend.
+
+A VENDOR sees their balance on `/dashboard/*` (their shopper pages) too. That is deliberate: it
+is the same person, and it is still true there.
+
+---
+
+### FE-10 · The footer links to six routes that do not exist (was nine)
 **P1 · M · storefront**
 
-**Now:** `src/shared/constants/footer.ts` lists `/shipping-and-return` (:3), `/contact-us` (:4),
-`/not-found` (:5), `/maintenance` (:6), `/faq` (:10), `/privacy-policy` (:11), `/cookie-policy`
-(:12, twice), `/terms-and-conditions` (:13) and `/dashboard-wishlist` (:19).
+**Now (re-checked 2026-09-29):** `src/shared/constants/footer.ts` lists `/shipping-and-return`
+(:11), `/contact-us` (:12), `/faq` (:17), `/privacy-policy` (:18), `/cookie-policy` (:19) and
+`/terms-and-conditions` (:20). The newsletter band links the last two again inline
+(`layouts/footer.tsx:57-68`). ~~`/not-found`~~, ~~`/maintenance`~~ and the duplicate
+~~`/cookie-policy`~~ were dropped in the footer redesign (`78abdeb`, 2026-09-25);
+~~`/dashboard-wishlist`~~ was fixed in FE-20. `/about-us` is real (FE-07).
 
 **Gap:** Every one is a hard 404 — now at least the branded `not-found.tsx` (FE-05). The last
 is a typo for `/dashboard/wishlist`. A site with no privacy policy or terms page is also a
 compliance problem before launch.
 
-**Fix:** Fix the `/dashboard-wishlist` typo now (one character). Write the four legal/help pages
-(privacy, terms, cookies, FAQ) and a contact page. Delete the `/not-found` and `/maintenance`
-entries — those were demo links to template pages.
+**Fix:** Write the four legal/help pages (privacy, terms, cookies, FAQ), a shipping-and-returns
+page and a contact page — or drop the links until they exist.
 
 ---
 
-### FE-11 · Three admin dashboard widgets are demo fixtures
-**P1 · M · analytics**
+### ~~FE-11~~ · Three admin dashboard widgets are demo fixtures
+**✅ FIXED 2026-09-28 · analytics**
+
+**Was:** `OrderChart`, `TopProducts` and `ProductsOverview` rendered invoice fixtures
+(`INV001…INV007`, `"Product name here"`, `9481324190`, `$11.32`) beside the real
+`MarketplaceOverview`, with no signal which numbers were invented.
 
 **Now:**
-- `src/features/analytics/components/order-chart.tsx:11-54` — seven recharts demo rows
-  (`{name: "Page A", uv: 4000, pv: 2400}`), titled "Recent Orders".
-- `src/features/analytics/components/top-products.tsx:6-49` — an `INV001…INV007` invoice fixture,
-  with `"Product name here"` hardcoded at `:69`.
-- `src/features/analytics/components/products-overview.tsx:13-56` — the same fixture, plus
-  hardcoded `9481324190`, `$11.32`, `121` and `Available` at `:86-91`.
 
-**Gap:** The admin's first screen mixes real numbers with invented ones and gives no signal which
-is which. `MarketplaceOverview` beside them is real (`useOrderAnalyticsQuery`), which makes the
-fixtures more misleading, not less.
+- `order-chart.tsx` is "Sales over time", backed by the new `GET /orders/analytics/sales-trend`
+  (`useSalesTrendQuery`, `8b992eb`) and drawn with the shadcn `ChartContainer`. One metric at a
+  time (gross sales / commission / orders), so there is never a second y-axis; its own range
+  picker, daily buckets up to 90 days and monthly beyond. That endpoint was backend **BE-37**.
+- `top-products.tsx` is a ranked `DataTable` (no toolbar, no pagination) over `topProducts` from
+  `GET /orders/analytics` (`c200e54`), which gained `revenue`, `image`, `slug` and the store, and
+  no longer counts units in cancelled parcels. It calls `useOrderAnalyticsQuery()` with no range
+  (`top-products.tsx:23`), so it is all-time and ignores `MarketplaceOverview`'s picker.
+- `ProductsOverview` is **no longer rendered** (`969e767`). `admin/page.tsx` renders
+  `MarketplaceOverview`, `OrderChart`, `TopProducts`, `RecentOrdersTable` and `NewComments`, all
+  on RTK Query.
 
-**Fix:** Back them with real endpoints, or remove them until an endpoint exists. Note the backend
-has only two analytics endpoints (`GET /orders/analytics`, `GET /vendors/me/dashboard`) and
-neither returns a time series — a real order chart needs backend **BE-37** first.
+**Left behind:** `analytics/components/products-overview.tsx` still exists with its fixture, and
+`admin/page.tsx:4` still imports it — an orphan, not a live widget. Delete both, or back it with
+`GET /products/admin/all` if a product overview is wanted. `new-comments.tsx:29-30` still falls
+back to the shadcn demo avatar (`github.com/shadcn.png`).
 
-**Correction:** the root `CLAUDE.md` also lists `RecentOrdersTable` and `NewComments` as mock.
-That is **stale** — both now use real RTK Query hooks
-(`recent-orders-table.tsx:8`, `new-comments.tsx:8`). Only the three above are fixtures.
-`new-comments.tsx:30` does still fall back to the shadcn demo avatar.
+**Correction:** earlier revisions of the root `CLAUDE.md` listed `RecentOrdersTable` and
+`NewComments` as mock; both use real hooks (`recent-orders/recent-orders-table.tsx:13`,
+`new-comments.tsx:8`).
 
 ---
 
 ### FE-12 · SEO metadata is on exactly the wrong pages
 **P1 · M · seo**
 
-**Now:** 18 of 58 pages export `metadata`, and they are **almost all `(dashboard)` pages** — which
-should never be indexed. The public storefront pages that need it have none: `(root)/page.tsx`,
-`products/page.tsx`, `products/[slug]`, `categories/[slug]`, `stores/[slug]`, `cart`, `about-us`.
+**Now (re-counted 2026-09-29):** 28 of 66 pages export `metadata`, and most are `(dashboard)`
+pages — which should never be indexed. The static storefront pages have caught up (`about-us`,
+`brands`, `categories`, `stores`, `checkout`, `payment-success`, `payment-cancel`), but the ones
+that matter for search still have none: `(root)/page.tsx`, `products/page.tsx`,
+`products/[slug]`, `categories/[slug]`, `stores/[slug]` and `cart`.
 There is no `generateMetadata` anywhere, and the storefront detail pages are `"use client"`
 (`src/app/(root)/products/[slug]/page.tsx:1`), so they cannot produce per-item titles as written.
 The root description is still `"Generated by create next app"` (`src/app/layout.tsx:24`).
@@ -396,7 +468,7 @@ The root description is still `"Generated by create next app"` (`src/app/layout.
 **Gap:** Every product and store shares one generic title and the scaffold description. For a
 storefront whose traffic depends on product pages ranking, this is a significant miss.
 
-**Fix:** Add `generateMetadata` to `products/[slug]`, `categories/[slug]` and `stores/[slug]`,
+**Fix:** Add `generateMetadata` to `products/[slug]` and `stores/[slug]` (`categories/[slug]` only redirects, so it needs none),
 which means splitting each into a server page shell plus the existing client component — the
 `src/app` convention already expects the page to be a thin shell. Add `metadataBase` and a real
 root description. Mark the dashboard route groups `robots: { index: false }`.
@@ -415,67 +487,142 @@ endpoints, `src/app/robots.ts` disallowing `/admin`, `/vendor` and `/dashboard`,
 
 ---
 
-### FE-14 · No admin hero-slider screen, despite a complete CRUD API
-**P1 · M · admin**
+### ~~FE-14~~ · No admin hero-slider screen, despite a complete CRUD API
+**✅ FIXED 2026-09-24 · admin** (backend half: **BE-43**, branch `BE-slides-admin`)
 
-**Now:** `src/features/home/api/slide.api.ts` defines `createSlide` (:9), `slideById` (:32),
-`updateSlide` (:41) and `deleteSlide` (:55). **All four hooks are imported by nothing.** There is
-no `/admin/slides` route and no sidebar entry.
+**Was:** `slide.api.ts` defined create/by-id/update/delete and nothing imported them. There was no
+route and no sidebar entry, so the storefront hero could only be changed in the database.
 
-**Gap:** The hero carousel — the first thing on the storefront — can only be changed through the
-database. The API work is already done on both sides.
+**The API was not in fact complete.** The audit's "backend is ready" was wrong in one way that
+mattered. `Slide` stored a bare `photoUrl` with no publicId, and nothing promoted an upload out
+of Cloudinary's `temp/`. Wiring `TDImageUpload` to it would have saved every new banner as a
+`temp/` asset, which anyone can delete through the unauthenticated `/cloudinary/delete-temp`
+(BE-41). `PATCH /slides/:id` was also unvalidated. Both were fixed backend-side first (**BE-43**).
+**Writes now send `photo: { url, publicId }`, not `photoUrl`.**
 
-**Fix — backend is ready as of 2026-09-22.** Add `/admin/(slides)/slide-list` + `add-slide`
-following the brand pattern (`src/features/brands/components/brand-table.tsx` is the canonical
-wiring), and one `dashboard-navlink.ts` entry.
+**Now:**
 
-`isActive` and `sortOrder` now work (backend **BE-16**), and the listing the screen needs already
-exists: **`GET /slides/admin/all`** (ADMIN) returns every non-deleted slide *including deactivated
-ones*. Use that, not `GET /slides` — the public list hard-filters `isActive: true`, so a management
-screen built on it could never show or restore a slide the operator had hidden. The frontend's
-`slide.api.ts` currently only calls the public list, so this needs a new endpoint entry.
+- **`/admin/slide-list`** (`features/home/components/slides/slide-table.tsx`) reads the new
+  `allSlidesForAdmin` endpoint (`GET /slides/admin/all`), so hidden slides stay manageable.
+  - It is a `DataTable` sorted by display order, with a Live/Hidden toolbar filter
+    (`?isActive=`, which the query builder coerces to a boolean) and search over title and
+    subtitle.
+  - Each row has a thumbnail. The row menu offers Edit (a `TDSheet` driven by `?id=`), Hide/Show
+    (a one-field `PATCH` of `isActive`) and Delete (confirmed in a `TDModal`, whose copy points at
+    Hide for a temporary takedown).
+- **`/admin/add-slide`** (`add-slide.tsx`) uses the shared `slide-form.tsx`:
+  - title, subtitle and button link (a `/path` or `http(s)` URL);
+  - sort order and "Show on the storefront";
+  - `TDImageUpload` into `slides/`.
+  - `slide-form.schema.ts` mirrors the backend `slideSchema` exactly.
+  - The form resets only after a **successful** save. The brand form resets and closes even when
+    the save fails.
+- **`edit-slide.tsx`** does not render the form on a failed load (FE-06). An image hosted
+  elsewhere (the seeded Unsplash banners) round-trips with an empty `publicId`.
+- **Sidebar:** a "Hero Slides" row with Slides / Add Slide tabs.
+- **`TSlide`** gained `photoPublicId`, `sortOrder` and `isActive` (XR-05).
+- **`slideById` provided the `products` tag.** It provides `slides` now (FE-24).
+
+**Verified:** `pnpm lint` (50 warnings, unchanged) and `pnpm build` pass. Every request shape this
+screen sends was exercised against the live backend: create, admin list with an inactive slide,
+the `isActive` toggle, validation errors and 401 without a token.
+
+**Not verified:** the screen was not clicked through in a browser, and a real upload's `temp/`
+promotion could not be run from the sandbox, which cannot reach Cloudinary. Add one slide with an
+uploaded image and check that the stored `photoPublicId` contains no `/temp/`.
 
 ---
 
-### FE-15 · Five search boxes are silent no-ops
-**P1 · S · tables**
+### ~~FE-15~~ · Five search boxes are silent no-ops
+**✅ FIXED 2026-09-24 · tables** (backend half: **BE-44**, branch `BE-list-search`)
 
-**Now:** The admin orders table (`order-table.tsx:13`), my-orders (`my-orders-list.tsx:31`), the
-admin payout table (`payout-admin-table.tsx:32`), vendor payouts (`vendor-payouts.tsx:33`) and the
-refund console (`refund-admin-console.tsx:45`) all render a search input bound to `filters.search`.
-But `order.service.ts`, `payout.service.ts` and `refund.service.ts` on the backend **never call**
-`PrismaQueryBuilder.search()`.
+**Was:** the admin orders, my-orders, admin payouts, vendor payouts and refund console tables all
+sent `?search=`. `order.service.ts`, `payout.service.ts` and `refund.service.ts` never called
+`PrismaQueryBuilder.search()`, so the unfiltered list came back and no error was reported. **The
+audit missed a sixth:** the vendor's own order table (`vendor-order-table.tsx`) had the same
+problem.
 
-**Gap:** Typing sends `?search=…`, which the backend accepts as a reserved param and ignores. The
-box looks functional, returns the unfiltered list, and reports no error.
+**Fixed backend-side, as the audit recommended.** Each list now calls `.search()`, and
+`search()` relation paths nest (`user.auth.email`). See BE-44 for the per-endpoint fields and
+the live verification, including the check that a vendor's search cannot reach another store's
+parcels.
 
-**Fix:** Add `.search([...])` to those three backend services (a one-line change each), or remove
-the `filters` prop from those five tables. The backend fix is preferable — users expect search
-there.
+**Here:** each placeholder now says what the box actually searches. The old ones promised things
+the backend never matched. The admin orders box said "Search by name", for example.
+
+| Table | Placeholder |
+| --- | --- |
+| `order-table.tsx` (admin) | Search order number, buyer name or email... |
+| `my-orders-list.tsx` | Search by order number... |
+| `vendor-order-table.tsx` | Search order or parcel number, tracking, buyer... |
+| `payout-admin-table.tsx` | Search store, reference, method or notes... |
+| `vendor-payouts.tsx` | Search reference, method or notes... |
+| `refund-admin-console.tsx` | Search order or parcel number, Stripe refund id, reason... |
+
+**Keep them in step:** a placeholder is a claim about the backend's `.search()` field list. Change
+one, change the other.
 
 ---
 
-### FE-16 · Admin user actions are inert buttons
-**P1 · S · admin**
+### ~~FE-16~~ · Admin user actions
+**✅ FIXED 2026-09-24 · admin** (backend half: **BE-45**, branch `BE-user-admin-list`)
 
-**Now:** `src/app/(dashboard)/admin/user/page.tsx:105-112` renders Eye and Block buttons with
-**no `onClick`**. Every row hardcodes the location `"Dhaka, Bangladesh"` at `:97`.
-`useDeleteUserMutation` exists (`src/features/users/api/user.api.ts:48`) and is used nowhere — and
-would 404 anyway, since the backend has no `DELETE /users/:id` (**XR-02**).
+**Was:** the Eye and Block buttons on `/admin/user` had no `onClick`. FE-08 removed them and left
+the table read-only, although BE-34 had shipped disable, restore and role change.
 
-**Gap:** An admin sees View and Block controls that do nothing, beside a fabricated address on
-every row.
+**Found while building it:** restore was unreachable. `GET /users` applied
+`withDefaultFilter({ isDeleted: false })`, and the query builder ANDs the default with everything
+else. So `?isDeleted=true` asked for `isDeleted: false AND true` and matched nothing: a disabled
+account could never be listed, and so never restored. This was fixed backend-side as **BE-45**.
 
-**Fix:** Resolved largely by FE-08. The backend needs a user-management surface first
-(**BE-34**) — there is currently no ban, no role change and no delete endpoint, so there is
-nothing to wire these buttons to.
+**Now**, in `/admin/user-management`:
+
+- **Row actions** (`user-management-columns.tsx`, now a factory taking handlers):
+  - An active user gets a menu with **Change role** and **Disable**.
+  - A disabled user gets a **Restore** button.
+  - **The signed-in admin's own row shows "You" and no actions.** The backend refuses self-disable
+    and self re-role anyway. `session.user.id` is the User id (`auth.userId`), the same id
+    `assertNotSelf` compares.
+- **A Status toolbar filter** switches between active accounts (the default, `""`) and **disabled
+  accounts** (`?isDeleted=true`). Search works inside either list.
+- **Disable** is confirmed in a `TDModal` that states the consequences. The user is out on their
+  next request. **A seller's store is suspended and its listings leave the storefront.** Restoring
+  the account does not reinstate the store.
+- **Restore** has a confirm that repeats the store caveat.
+- **Change role** offers only CUSTOMER and ADMIN (`TAssignableRole`). VENDOR is deliberately
+  absent: the backend accepts it only for an account that already has an approved store, and store
+  approval sets it anyway. Choosing ADMIN shows a warning line. A row with no `Auth` record
+  (`role: null`) has the action disabled.
+- Every refusal is shown **verbatim** through `getApiErrorMessage`. The backend's are actionable,
+  for example "This account still owns an approved store. Suspend the store first".
+- `user.api.ts`: `deleteUser` became **`disableUser`**. It invalidates `vendors` too, because it
+  can suspend a store. New mutations are **`restoreUser`** and **`updateUserRole`**.
+  `TUser.isDeleted` was added.
+
+**Verified live**, reversibly, against the seeded accounts. 14 of 14 checks passed:
+
+- Self-disable and self re-role are refused.
+- Demoting vendor1 is refused while their store is approved.
+- A bad `isDeleted` value gets a 400.
+- The customer was disabled: they dropped out of the active list, appeared under Disabled (and
+  were searchable there), and could not log in. They were then restored and could log in again.
+- CUSTOMER → ADMIN → CUSTOMER round-trips.
+
+The end state was identical to the start. The screens were not clicked through in a browser.
+
+**Rough edges left:**
+
+- A disabled user's login error reads "User has been deleted". That is backend copy, and the
+  account is disabled, not deleted.
+- The demote refusal quotes an API path (`PATCH /vendors/:id/suspend`) at the admin. A link to the
+  vendor list would serve them better.
 
 ---
 
 ### FE-17 · `next.config.ts` allows any https image host
 **P1 · S · security**
 
-**Now:** `next.config.ts:6` — `remotePatterns: [{ hostname: "*", protocol: "https" }]`.
+**Now:** `next.config.ts:27` — `remotePatterns: [{ hostname: "*", protocol: "https" }]`.
 
 **Gap:** The Next image optimizer will fetch and re-serve an image from **any** https origin on
 the internet, on request. That is an open proxy: a bandwidth and cost vector, and a way to launder
@@ -487,229 +634,613 @@ for Google avatars, and `github.com` if the shadcn fallback avatar stays. Add `f
 
 ---
 
-### FE-18 · No customer-facing refunds view
-**P1 · M · orders**
+### ~~FE-18~~ · No customer-facing refunds view
+**✅ FIXED 2026-09-24 · orders** (backend half: **BE-46**, branch `BE-refunds-buyer-scope`)
 
-**Now:** `useMyRefundsQuery` (`src/features/refunds/api/refund.api.ts:21`) and
-`useRefundByIdQuery` (`:57`) are defined and used nowhere. `features/refunds` has exactly one
-component, and it is the admin console.
+**Was:** `useMyRefundsQuery` was defined and used by nothing. A buyer whose parcel was cancelled
+could only see the refund as an inline badge on `my-orders-list.tsx`. There was no list and no
+history.
 
-**Gap:** A buyer whose order was cancelled has no screen showing whether their money came back.
-`my-orders-list.tsx` does render `slice.refund.status` inline — which is the important half — but
-there is no list, no history and no detail.
+**Found while building it:** for a **VENDOR**, `GET /refunds/me` returned refunds on parcels they
+*sold*. It had no way to return refunds on orders they *bought*. A vendor is a shopper (their
+sidebar already links to `/dashboard/my-orders`), so a shared "My refunds" page would have shown a
+seller the wrong list, and their own refunds could not be listed at all. The backend fix is
+**BE-46**: an explicit `?as=buyer|seller`.
 
-**Fix:** Add `/dashboard/my-refunds` backed by `useMyRefundsQuery`, plus a sidebar entry in
-`customerDashboardLinks`. Keep the existing rule visible: a `CANCELED` parcel whose refund is
-`FAILED` is a buyer who has **not** been paid — never present cancellation as settled.
+**Now:**
+
+- **`/dashboard/my-refunds`** (`features/refunds/components/my-refunds-list.tsx`) is a
+  `DataTable` with search by order or parcel number, a Status toolbar filter, pagination and the
+  FE-06 error state. **It always sends `as: "buyer"`.**
+  - It shows the parcel number and "Shipped by <store>" ("Whole order" for an order-level manual
+    refund), the amount, the status, where it went (original card / cash / bank transfer), and the
+    requested and completed dates.
+- **Buyer-worded statuses** live in `features/refunds/constants/buyer-refund-status.ts`. The
+  existing `refundStatusMap` is the operator's vocabulary ("Owed", "Abandoned"). The buyer's map
+  is Processing, On its way, Refunded, **Delayed** and Not refunded. Each has a one-line hint
+  under the badge.
+  - **FAILED reads as "Delayed — our team can see this", never as settled.** A cancelled parcel
+    with a failed refund is a buyer who has not been paid. The hint does not promise an automatic
+    retry, because nothing schedules the retry sweep (see `backend/CLAUDE.md`).
+- **Sidebar:** "My Refunds" is in **both** `customerDashboardLinks` and `vendorDashboardLinks`,
+  next to My Orders.
+
+**Verified live.** vendor1, shopping, placed a cash-on-delivery order from **vendor2's** store and
+cancelled it. The admin recorded a manual refund on that parcel. 13 of 13 checks passed:
+
+- vendor1 `as=buyer` sees it, and vendor1's default seller view does not.
+- vendor2 (the seller) sees it, and vendor2 `as=buyer` does not.
+- The customer sees nothing.
+- A customer asking `as=seller` gets a 403, and `as=bogus` gets a 400.
+- Search by parcel number and `status=SUCCEEDED` / `FAILED` narrow correctly.
+- The row carries the parcel, the store and `gateway: "cash"`, and does not include
+  `gatewayResponse`.
+
+Everything was deleted afterwards, and stock was confirmed back at its starting value. The page was
+not clicked through in a browser.
+
+**Still open:** ~~a **seller-side** refunds screen~~ — built as `/vendor/refunds` in FE-34.
 
 ---
 
-### FE-19 · No vendor store-review screen
-**P1 · M · vendor**
+### ~~FE-19~~ · No vendor store-review screen
+**✅ FIXED 2026-09-24 · vendor** (frontend only, with no backend change)
 
-**Now:** `useMyStoreReviewsQuery` (`src/features/vendors/api/vendor.api.ts:205`) is used by no
-component. `vendorDashboardLinks` (`dashboard-navlink.ts:163-180`) has no Reviews entry.
+**Was:** there was no `/vendor/reviews` and no Reviews entry in `vendorDashboardLinks`. The audit
+said to build it on `useMyStoreReviewsQuery`, and that **would have been wrong.** The hook hits
+`GET /vendor-reviews/my-reviews`, which is `where: { userId }`: the store reviews the user
+**wrote as a buyer**. A seller screen on it would have listed their reviews of *other* stores.
 
-**Gap:** Buyers rate stores and the ratings show on the storefront, but a seller cannot list their
-own reviews. Their only route is visiting their public `/stores/[slug]` as a shopper. (This gap is
-already noted in `CLAUDE.md`; it is confirmed and quantified here.)
+**Now:**
 
-**Fix:** Add `/vendor/reviews` using `useMyStoreReviewsQuery` and the shared `DataTable`, plus one
-`dashboard-navlink.ts` entry. The backend endpoint exists; only the screen is missing.
+- **`/vendor/reviews`** (`features/vendors/components/vendor-store-reviews.tsx`) reads the
+  **public** `GET /vendor-reviews/store/:slug` via `useStoreReviewsQuery`, with the slug from
+  `useMyStoreQuery` (`/vendors/me`). That is the list shoppers see on the storefront, which is the
+  point: it shows the buyer, a 1–5 star rating, the comment ("Rating only" if there is none) and the
+  date.
+  - It is a `DataTable` with search over the comment (the only field the backend searches),
+    pagination and the FE-06 error state.
+- **A summary strip** shows the store's `averageRating` and `totalReviews`, with a link to the
+  public storefront.
+- **No store** (a 404; an ADMIN can reach `/vendor/*`) and **an unusable store** (an actionable
+  403) render the backend's message, not a failure with a retry.
+- **Sidebar:** "Reviews" in `vendorDashboardLinks`.
+- **The misleading hook was renamed** `myStoreReviews` → **`myWrittenStoreReviews`**
+  (`useMyWrittenStoreReviewsQuery`), with a comment saying what it returns. It had no callers.
+
+**Verified live (read-only)** as vendor1 and vendor2:
+
+- `/vendors/me` and the store's review list return 200, and a no-match search returns 0.
+- `/my-reviews` confirmed to return reviews the user wrote.
+- A customer's `/vendors/me` is a 404, which is how the no-store case above was found.
+
+**Found in the data, not fixed:** vendor1's store (Urban Threads) carries `averageRating: 5,
+totalReviews: 1`, but has **zero `VendorReview` rows**, not even soft-deleted ones. So the
+storefront and this screen's summary both show "5.0 · 1 review" over an empty list. The cause is
+backend **BE-47**: `VendorReview.vendorOrder` is `onDelete: Cascade`, so hard-deleting an order
+silently deletes its reviews without calling `recomputeVendorRating`. To repair the dev data, set
+that vendor's `averageRating = null, totalReviews = 0`.
 
 ---
 
-### FE-20 · Two wishlist pages, one an empty shell
-**P1 · S · storefront**
+### ~~FE-20~~ · Two wishlist pages, one an empty shell
+**✅ FIXED 2026-09-24 · storefront**
 
-**Now:** `/dashboard/wishlist` is the real one. `src/app/(root)/wish-list/page.tsx:8` renders a
-heading above an empty `<div>` grid.
+**Was:** `/dashboard/wishlist` is the real wishlist. `src/app/(root)/wish-list/page.tsx` rendered
+a "wish list" heading over an empty grid, whatever the shopper had saved. Nothing in `src/` linked
+to it, so it was reachable only by old links or bookmarks. The footer's Wishlist link pointed at
+a third URL, `/dashboard-wishlist`, a typo that 404s (FE-10).
 
-**Gap:** A public `/wish-list` URL that always looks like an empty wishlist, regardless of
-contents. The footer's broken `/dashboard-wishlist` link (FE-10) suggests the split confused
-someone already.
+**Now:**
 
-**Fix:** Delete `(root)/wish-list` and redirect it to `/dashboard/wishlist`, or render the same
-component in both.
+- **`(root)/wish-list` is deleted.** `next.config.ts` `redirects()` sends `/wish-list` **308 →
+  `/dashboard/wishlist`**. A signed-out visitor continues through the middleware to
+  `/login?callbackUrl=/dashboard/wishlist`, so they land on their wishlist after signing in.
+- **Why a config redirect and not `permanentRedirect()` in a page:** it is a real HTTP 308,
+  answered before any rendering, and it needs no page file.
+- **The footer typo is fixed**: `footer.ts` now links `/dashboard/wishlist`. That closes the
+  one-character part of FE-10.
+
+**Verified** against `pnpm start`:
+
+- `/wish-list` returns 308 with `location: /dashboard/wishlist`.
+- Followed while signed out, the chain ends at `/login?callbackUrl=%2Fdashboard%2Fwishlist`.
+- `/dashboard-wishlist` is still a 404, as expected, since nothing links there now.
+
+The footer link itself could not be checked from served HTML, because `PersistGate
+loading={null}` means no page prerenders its body. The constant was checked instead.
 
 ---
 
-### FE-21 · Product reviews are not gated on purchase
-**P1 · M · reviews**
+### ~~FE-21~~ · Product reviews are not gated on purchase
+**✅ FIXED 2026-09-24 · reviews** (backend half: **BE-48**, branch `BE-review-purchase-gate`)
 
-**Now:** `src/features/reviews/components/review-section/review-section.tsx:51` gates
-`WriteReview` on being logged in, and nothing more.
+**Was:** `review-section.tsx` showed `WriteReview` to anyone signed in. The backend's create
+checked only that the product was public, so **any account could review any product, any number
+of times**. Store reviews were already tied to a delivered parcel, so products were the
+inconsistent path.
 
-**Gap:** Any signed-in user can review any product they have never bought. Store reviews are
-correctly gated — `VendorReview` is tied to a delivered vendor order, one per order — so the
-product path is the inconsistent one.
+**Backend first (BE-48):**
 
-**Fix:** Needs a backend rule first: verify a delivered `OrderItem` for this `(userId, productId)`
-before accepting a `Review`. Then hide `WriteReview` unless the product appears in the user's
-delivered orders.
+- A product review needs a **DELIVERED** parcel containing the product, bought by this user.
+- There is **one active review per user per product**. Buying again does not earn a second one.
+- `GET /reviews/eligibility/:productId` returns `{ canReview, reason, reviewId? }`, using the same
+  function the create route enforces.
+
+**Here:**
+
+- `useReviewEligibilityQuery` (it provides `reviews`, so posting a review refetches it).
+- `review-section.tsx` shows the form only when `canReview`. Otherwise `ReviewGate` explains why,
+  with a next step:
+
+  | `reason` | Shown |
+  | --- | --- |
+  | `ALREADY_REVIEWED` | "You have reviewed this product", with a link to edit it in My Reviews |
+  | `NOT_DELIVERED` | "Your order is on its way", with a link to My Orders |
+  | `NOT_PURCHASED` | "Reviews are from verified buyers" |
+
+  If the eligibility request itself fails, the column stays empty rather than showing an error
+  box. Reviewing is optional, and the backend refuses an ineligible review anyway. Signed-out
+  visitors still get the login prompt.
+- XR-04 is fixed on both sides in the same pass (see below). The FE-27 catch in `write-review.tsx`
+  is fixed too, so lint is at **49**.
+
+**Verified live.** One temporary order went PENDING → PROCESSING → SHIPPED → DELIVERED, and 15 of
+15 checks passed:
+
+- The response moved NOT_PURCHASED → NOT_DELIVERED (pending and shipped) → canReview.
+- Creating before delivery is a 403.
+- A rating-only review is a 201, and a second review is a 409.
+- Eligibility then reports ALREADY_REVIEWED with the review id.
+- vendor2, who never bought the product, gets a 403, and a missing token gets a 401.
+- Deleting the review restores the product's rating.
+
+The order, review and address were deleted afterwards, and stock and rating were confirmed at
+their starting values. The product page was not clicked through in a browser.
+
+**Not addressed:** reviews written **before** this gate are kept. Some may be from accounts that
+never bought the product, and nothing marks them as unverified. A "Verified buyer" badge would
+need a flag or a lookup per review.
+
+---
+
+### ~~FE-41~~ · Admin order screens show a fake or blank buyer email
+**✅ FIXED — 2026-09-29 · orders**
+
+**Now:** fixed backend-side, the way BE-20 did for `GET /users`. `flattenBuyerEmail` in
+`backend/src/modules/order/order.service.ts` returns `user.email` flat on the admin order list, the
+order detail and the analytics `recentOrders`, so every screen that already read `row.user.email`
+now gets it. The `test@gmail.com` fallback is gone; the detail page shows "—" for a user with no
+`Auth` row, and `TOrder.user.email` is `string | null`. Vendor screens still read the nested
+`owner.auth.email` from the vendor endpoints, which were left as they are.
+
+**Was (original entry):**
+
+**Now:** the backend nests the buyer's email under `auth` on both admin order reads
+(`backend/src/modules/order/order.service.ts:252-262` for the list, `:395-405` for the detail:
+`user: { id, name, avatar, auth: { email } }`). Every screen here reads it flat, as
+`TOrder.user.email` declares (`orders/types/order.types.ts:104-109`, already listed in XR-05):
+
+- `order-table/order-columns.tsx:23` — `email={row.user.email || "test@gmail.com"}`. The admin
+  order list shows **`test@gmail.com` for every buyer**, which reads as real data;
+- `order-details.tsx:137` — the "Email" row on `/admin/order-list/[slug]` is always blank;
+- `analytics/components/recent-orders/recent-order-columns.tsx:17` — the admin home's recent
+  orders render no email.
+
+The `TdUserInfo` refactor (`cda1084`) moved the fallback but did not introduce it.
+
+**Fix:** read `user.auth?.email` (and type `TOrder.user` as the backend sends it), and drop the
+`test@gmail.com` fallback — show nothing, or "—", when there is no email. Alternatively flatten it
+backend-side the way BE-20 did for `GET /users`; either way both sides have to agree.
+
+---
+
+### FE-46 · The admin home's "Recent Orders" and "New Comments" show the oldest five
+**P1 · S · analytics** — found 2026-09-29
+
+**Now:** both widgets ask for `{ limit: "5", sortBy: "createdAt", orderBy: "desc" }`
+(`analytics/components/recent-orders/recent-orders-table.tsx:13-17`, `new-comments.tsx:8-12`).
+The backend's `PrismaQueryBuilder.sort()` reads only `sortBy` / `sort` and splits it on `:`
+(`backend/src/lib/PrismaQueryBuilder.ts:429-433`); a missing direction is **`asc`** (`:459`).
+`orderBy` is a reserved name, so it is dropped from the filters (`:304-307`) and never read as a
+direction. The service's own `.sort("createdAt", "desc")` default applies only when no `sortBy`
+arrives at all (`:476-477`), and `buildQueryParams` sends `"createdAt"` because it is not the
+`"createdAt:desc"` default.
+
+**Failure:** on a marketplace with more than five orders or reviews, the admin's first screen lists
+the five **oldest**, under "Recent" and "New". The rows are real, so nothing looks wrong.
+
+Also in `new-comments.tsx`: it destructures only `data` (`:8`), so a failed request renders
+"No comments found." rather than an error (the one widget FE-06 missed), and it still falls back to
+the shadcn demo avatar (`:29-30`). No other caller sends `orderBy`.
+
+**Fix:** send `sortBy: "createdAt:desc"` (or omit it — it is the default and `buildQueryParams`
+drops it), drop `orderBy`, and give `NewComments` the `QueryError` + retry the other widgets have.
 
 ---
 
 ## P2 — cleanup, and features never started
 
-### FE-22 · Customer `/dashboard` is a link grid, not a dashboard
-**P2 · M · dashboard**
+### ~~FE-22~~ · Customer `/dashboard` is a link grid, not a dashboard
+**✅ FIXED 2026-09-24 · dashboard** (backend half: **BE-49**, branch `BE-buyer-summary`)
 
-`src/app/(dashboard)/dashboard/page.tsx` maps over `customerDashboardLinks` and renders one card
-per sidebar entry — a second copy of the navigation. No order count, no spend, no recent activity,
-no open refunds. The vendor dashboard beside it is a real dashboard.
+**Was:** `(dashboard)/dashboard/page.tsx` mapped over `customerDashboardLinks` and rendered one card
+per sidebar entry, a second copy of the navigation. It showed no numbers at all.
+
+**Needed from the backend:** lifetime spend has no endpoint, and computing it here would mean paging
+every order down. **`GET /orders/my-summary`** (BE-49) aggregates it server-side.
+
+**Now:** `features/orders/components/buyer-dashboard.tsx` shows:
+
+- **A greeting** with the shopper's first name.
+- **Four tiles** (`useMyOrderSummaryQuery`):
+  - Orders, linking to My Orders.
+  - **Total spent**: completed payments minus money actually refunded.
+  - **On the way**: parcels pending, processing or shipped, with the delivered count as a hint.
+  - **Refunds owed**: amount and count, styled as a warning when any are open, linking to My
+    Refunds (FE-18).
+- **Up to three "next steps"**, each shown only when it is true:
+  - Unreviewed delivered products first, **each linking to its product page**, where a product
+    review is written (FE-21).
+  - Wishlist items saved.
+  - "Start shopping", if the buyer has never ordered.
+- **Recent orders**: the last three, with order number, date, parcel count, rollup status and
+  total.
+- Loading skeletons, the FE-06 error state on each query, and empty states.
+
+`myOrderSummary` provides `orders`, `refunds` and `reviews`, so cancelling a parcel, a refund
+landing or posting a review all refresh the tiles.
+
+**A VENDOR landing on `/dashboard` sees their purchases, not their sales.** The endpoint is scoped
+to the caller as a buyer, and `/vendor` is the seller dashboard.
+
+**Verified live** with two temporary cash-on-delivery orders, one delivered and one pending. 8 of
+8 checks passed:
+
+- Orders, on-the-way and delivered each move by the right amount.
+- **Spend counts only the paid order**: +152.45, exactly A's total, and nothing for the pending B.
+- The delivered product appears under awaiting-review with its slug.
+- The *seller* vendor1's own summary stays at 0.
+- Cancelling B moves it from on-the-way to cancelled.
+- There is a 401 without a token.
+
+Both orders and their addresses were deleted afterwards, and stock was confirmed at its starting
+values. The page was not clicked through in a browser.
 
 ---
 
-### FE-23 · Eighteen defined-but-never-called endpoints
+### FE-23 · Eight defined-but-never-called endpoints (was eighteen)
 **P2 · M · api**
 
-Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19:
+Each is a screen that was planned and not built. Beyond FE-14, FE-18 and FE-19 — re-checked
+2026-09-29 by grepping every generated hook for a caller outside `features/*/api/`:
 
 | Hook | Defined at | Missing screen |
 | --- | --- | --- |
-| `useRecordManualRefundMutation` | `refunds/api/refund.api.ts:82` | manual (cash) refund entry |
-| `useDeleteUserMutation` | `users/api/user.api.ts:48` | user delete — and it would 404 (XR-02) |
+| ~~`useRecordManualRefundMutation`~~ | — | **wired in FE-35** (`refunds/components/manual-refund-modal.tsx`) |
+| ~~`useDeleteUserMutation`~~ | — | **wired in FE-16**, renamed `useDisableUserMutation` |
 | `useDeleteVendorMutation` | `vendors/api/vendor.api.ts:172` | vendor delete |
-| `useVendorByIdForAdminQuery` | `vendor.api.ts:110` | admin vendor detail |
-| `usePayoutByIdQuery` | `payouts/api/payout.api.ts:40` | payout detail |
-| `useVendorOrderByIdQuery` | `vendors/api/vendor-order.api.ts:32` | vendor order detail |
-| `useProductByIdQuery` | `products/api/product.api.ts:50` | unused — the admin detail page correctly uses the vendor endpoint instead, since `/products/:id` 404s on a draft |
+| ~~`useVendorByIdForAdminQuery`~~ | — | **wired in FE-35** (`vendor-admin-details.tsx`) |
+| ~~`usePayoutByIdQuery`~~ | — | **wired in FE-34** (`vendor-payout-details.tsx`) |
+| ~~`useVendorOrderByIdQuery`~~ | — | **wired in FE-34** (`vendor-order-details.tsx`) |
+| `useProductByIdQuery` | `products/api/product.api.ts:94` | unused — the admin detail page correctly uses the vendor endpoint instead, since `/products/:id` 404s on a draft |
 | `useAllAddressQuery`, `useAddressByIdQuery` | `addresses/api/address.api.ts:25,42` | admin address list; carries the repo's only `TODO` at `:24` |
-| `useLoginUserMutation`, `useOAuthLoginMutation` | `auth/api/auth.api.ts:26,38` | dead duplicates — login really goes through NextAuth. `useOAuthLoginMutation` points at a nonexistent route (XR-02) |
+| `useLoginUserMutation`, `useOAuthLoginMutation` | `auth/api/auth.api.ts:25,36` | dead duplicates — login really goes through NextAuth. `useOAuthLoginMutation` points at a nonexistent route (XR-02) |
+| `useMyWrittenStoreReviewsQuery` | `vendors/api/vendor.api.ts:211` | store reviews the user *wrote* (XR-02) |
+| `useRefundByIdQuery` | `refunds/api/refund.api.ts:57` | refund detail |
 
 **Fix:** For each, either build the screen or delete the endpoint. Leaving them is how
 `useOAuthLoginMutation` came to carry a wrong URL nobody noticed.
 
 ---
 
-### FE-24 · Two RTK tags are never provided; one is misdeclared
-**P2 · S · api**
+### ~~FE-24~~ · Two RTK tags are never provided; one is misdeclared
+**✅ FIXED 2026-09-24 · api** (the misdeclared `slideById` tag was already fixed in FE-14)
 
-`base-api.ts:56-76` declares 18 tag types.
-- `"auth"` (:57) is invalidated four times (`auth.api.ts:24,35,43,51`) and **provided zero times**.
-- `"payments"` (:62) is invalidated four times by refund mutations (`refund.api.ts:70,78,91,103`)
-  and **provided zero times** — there is no `payment.api.ts`, and the backend has no payments read
-  endpoint (**BE-28**).
-- `src/features/home/api/slide.api.ts:37` declares `providesTags: ["products"]` where it means
-  `["slides"]` — so updating a slide does not refresh `slideById`, and reading one needlessly
-  couples to the product cache.
+**Was:** `base-api.ts` declared 18 tag types. Two were invalidated but **provided by nothing**, and
+invalidating an unprovided tag is a silent no-op:
+
+- `"auth"` was invalidated by all four mutations in `auth.api.ts` (register, the dead
+  `loginUser` / `oAuthLogin`, and change-password). No query provides it, and none of those
+  mutations change anything a query caches.
+- `"payments"` was invalidated by all four refund mutations. There is no payments read endpoint
+  (backend BE-28). The payment state the UI shows (`paymentStatus`, `refundAmount`) arrives
+  **inside order payloads**, and every one of those mutations **already** invalidated `"orders"`.
+
+**Now:** both tags are removed from `tagTypes`, all four `["auth"]` invalidations are removed, and
+`"payments"` is dropped from the refund mutations, which keep `["refunds", "orders"]`. No screen's
+refresh behaviour changes, because nothing was listening. A comment on `tagTypes` states the rule
+(every tag must be provided) and says where payment state is refreshed.
+
+Checked before removing `"payments"`: no vendor or payout screen renders refund state (the only
+vendor-side mention is help text in `vendor-order-status-modal.tsx`), so `"vendorOrders"` did not
+need adding.
+
+**Verified:** a script audit of every `providesTags` / `invalidatesTags` in `src/` finds all **16**
+remaining tags provided by at least one query. `pnpm build` passes, and since `invalidatesTags` is
+typed against `tagTypes`, any leftover reference to a removed tag would fail to compile. Lint is
+unchanged at 49.
 
 All invalidation is coarse whole-tag; no `{ type, id }` is used anywhere, so any mutation drops
 the entire list cache for that resource. Acceptable at this scale, worth knowing.
 
 ---
 
-### FE-25 · Two orphaned component files
-**P2 · S · cleanup**
+### ~~FE-25~~ · Orphaned component files
+**✅ FIXED 2026-09-24 · cleanup** (branch `FE-25-26-orphan-and-console-cleanup`)
 
-`features/users/components/user-management-table.tsx` (FE-08) and
-`shared/components/td-drawer.tsx`.
+The audit's last orphan, and one it missed, are both deleted:
 
-The other nine are **resolved**. FE-01 rewrote `products/components/filters/price-filter.tsx` and
-deleted `brand`, `category` and `size` — each hardcoded a list the server now serves as a facet.
-FE-03 deleted all five `features/home/components/*` orphans: four were empty shells or mock data,
-and the fifth (`new-arrivals.tsx`) was replaced by an RTK Query rail.
+- **`shared/components/td-drawer.tsx`**: not a reusable wrapper. It was the shadcn demo pasted
+  in: a hardcoded "Open me" trigger, "Are you absolutely sure?" copy, and Submit/Cancel buttons
+  with no handlers. Nothing imported it.
+- **`features/auth/hooks/use-client-session.ts`**: found by a fresh scan. It duplicated
+  `useUserInfoClient()` (`auth/utils/user-info.ts`), the hook the app actually uses, but returned
+  the whole session behind an unchecked `as TSessionResponse` cast. Nothing imported it, and
+  `features/auth/hooks/` is now empty and gone.
 
----
+The other ten were resolved earlier:
 
-### FE-26 · Five stray `console.log`s
-**P2 · S · cleanup**
+- FE-01 rewrote `price-filter.tsx` and deleted the hardcoded `brand`, `category` and `size`
+  filters.
+- FE-03 deleted the five `features/home/components/*` shells.
+- FE-08 mounted `user-management-table.tsx`.
 
-~~`forgot-password-form.tsx:24`~~ (removed by FE-04),
-`brands/components/edit-brand.tsx:44` (harmless leftover after a working mutation),
-`products/components/product-details/related-products.tsx:21`,
-`home/components/new-arrivals.tsx:17` (swallows a fetch error),
-`shared/lib/delete-temp-image.ts:13` (swallows the error).
-
-The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legitimate.
-
----
-
-### FE-27 · Thirty-nine `any`s, eight of them in type definitions
-**P2 · M · types**
-
-`pnpm lint` passes at **52 warnings / 0 errors**; treat that as the baseline and do not add to it.
-
-- **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
-  `reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
-  optional chaining, so a network failure throws inside the catch block.
-- **8 are `any` in type definitions**, which defeats the point of the type layer:
-  `orders/types/order.types.ts:51-57` (`transactionId`, `paymentGateway`, `gatewayResponse`,
-  `failureReason`, `paidAt`, `refundedAt`, `refundAmount`) and `auth/types/auth.types.ts:5`
-  (`phone: any`).
-- 4 are `as any` around `form.setValue` in `shared/form/TDImageUpload.tsx:57,58,139,140`.
-
-**Fix:** Extract one `getApiErrorMessage(error)` helper and replace all 26 catches — that alone
-clears roughly half the lint baseline. Then type the eight definition fields from the Prisma
-schema.
+**Verified by a script** that walks every `@/…` and relative import in `src/`. Nothing outside
+`shared/ui/` is unimported now, apart from route entry files (page, layout, route, error,
+loading, not-found, middleware). **`shared/ui/` is exempt on purpose:** those are vendored shadcn
+primitives, kept whether or not they are used, and `breadcrumb`, `card`, `chart`, `drawer` and
+`stepper` currently are not. With `td-drawer` gone, nothing renders `shared/ui/drawer.tsx`, so the
+`vaul` dependency is currently unused. It is left in place; remove both together if no drawer is
+planned.
 
 ---
 
-### FE-28 · Duplicate type definitions across features
-**P2 · S · types**
+### ~~FE-26~~ · Stray `console.log`s
+**✅ FIXED 2026-09-24 · cleanup** (branch `FE-25-26-orphan-and-console-cleanup`)
 
-`VendorStatus`, `PayoutStatus` and `RefundStatus` each exist twice — once in
-`features/orders/types/status.types.ts` and once in the owning feature's types file. Values agree
-today. `PaymentStatus` exists twice and the two **disagree** — see **XR-09**, which is the reason
-this matters.
+| Was | Now |
+| --- | --- |
+| `edit-brand.tsx`: `console.log(values)` after every save, beside a `catch (error: any)` | log removed; the catch uses `getApiErrorMessage` (one fewer `any`, so lint is 48) |
+| `related-products.tsx`: `console.log(count)` on every render | removed. `count` itself is real, because it drives the carousel dots. |
+| `delete-temp-image.ts`: `console.log(error)` in a swallowing catch | a deliberate **`console.warn`** with the publicId. It also warns on a non-2xx response, which `fetch` never throws for, so a failed cleanup had been invisible. Swallowing is kept on purpose: an orphaned temp upload costs storage, and throwing would break the image replace or remove the user asked for. |
+| `home/components/new-arrivals.tsx` | already deleted in FE-03 |
+| `forgot-password-form.tsx:24` | **fixed by FE-04, on the `FE-04-…` branch.** It still appears on branches cut before FE-04 merges, and was deliberately not touched here to avoid a merge conflict. |
 
-**Fix:** Keep `status.types.ts` as the single source and re-export from it.
+The `console.error`s in `auth-options.ts` (3) and `TDImageUpload.tsx` (1) are legitimate and stay.
 
 ---
 
-### FE-29 · No `.env.example`; README is scaffold boilerplate
-**P2 · S · onboarding**
+### ~~FE-27~~ · Thirty-nine `any`s, eight of them in type definitions
+**✅ FIXED 2026-09-24 · types** (branch `FE-27-anys-in-catches-and-types`)
 
-There is no `.env.example` — only a gitignored `.env.local`. A fresh clone cannot be configured
-without reading `CLAUDE.md`. The six required variables are `NEXT_PUBLIC_BACKEND_URL`,
-`NEXT_PUBLIC_TAX_RATE`, `NEXT_PUBLIC_SHIPPING_COST`, `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD`,
-`NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, plus the two Cloudinary keys read
-directly from `process.env`.
+**Was:** 39 `any`s. By the time this was picked up, earlier items (FE-04, FE-21, FE-26 and others)
+had already removed a few, leaving 37 `no-explicit-any` warnings out of a 48-warning lint.
 
-`README.md` is still the untouched `create-next-app` output, and `package.json` is still
+- **27 were `catch (error: any)`**, followed by some mix of `error?.data?.message`,
+  `error.data?.message` and `error.data.message`, with or without a fallback. Without optional
+  chaining, a network failure threw inside the catch. Without a fallback, it toasted `undefined`,
+  an empty toast.
+- **8 were `any` in type definitions**: seven `TOrderPaymentResponse` fields and
+  `TAuthRegisterResponse.phone`.
+- **4 were `"" as any`** in `TDImageUpload`.
+
+**Now: zero `any`s in `src/`. Lint went from 48 warnings to 11.**
+
+- **All 27 catches** (in 24 files) are `catch (error)` plus `getApiErrorMessage(error, …)`. This
+  was done by a codemod that **kept every existing fallback string**. Catches with no fallback
+  now get the helper's default instead of an empty toast.
+- `login-form.tsx` and `TDImageUpload.tsx` catch *thrown JS errors* (`signIn`, a Cloudinary
+  upload), not API envelopes, so those two narrow with `error instanceof Error`. `pnpm build`
+  caught the second: `error?.message` stopped compiling once `error` was `unknown`, which is the
+  point.
+- **Payment fields**, taken from the backend `Payment` model:
+  - `transactionId`, `paymentGateway`, `failureReason`, `paidAt`, `refundedAt` and `refundAmount`
+    are optional `string | null`. They are nullable columns, and list reads select only some of
+    them (XR-05).
+  - `gatewayResponse` is optional **`unknown`**. It is the raw Stripe payload, ADMIN-only
+    (`sanitizePayment` strips it for buyers and sellers), and must be narrowed before reading.
+  - The build confirms no consumer assumed those fields were always strings.
+- `TAuthRegisterResponse.phone` is `string | null`, matching `User.phone String?`.
+- `TDImageUpload` clears its fields with one named `EMPTY` cast to `PathValue<T, Path<T>>`. That
+  is the path's own value type, not `any`. react-hook-form cannot prove `""` fits an arbitrary
+  generic path, so a single typed cast is the honest form.
+
+**The 11 left are not `any`s:** six raw `<img>` tags (FE-31) and five unused variables:
+
+- an unused `Headline` import;
+- an unused `moment` import;
+- an unused `index` parameter;
+- two unused `error` bindings in `address-list.tsx` and `edit-review.tsx`.
+
+### ~~FE-28~~ · Duplicate type definitions across features
+**✅ FIXED 2026-09-24 · types** (branch `FE-28-Duplicate-type-definitions-across-features`; closes XR-09's frontend half)
+
+**Was:**
+
+- `TVendorStatus`, `TPayoutStatus` and `TRefundStatus` were each declared twice: in
+  `orders/types/status.types.ts` and in the owning feature's types file.
+- `PaymentStatus` existed **three** times. The third copy, `orders/utils/payment-status.ts`'s
+  `EnumPaymentStatus`, was missing `PARTIALLY_REFUNDED`, so a part-refunded order rendered with
+  *Pending* styling in the admin order table.
+- The same folder held an `EnumOrderStatus` with its own style table: a second `TOrderStatus` and
+  a second `orderStatusMap`.
+
+**Now:**
+
+- **`src/shared/types/status.types.ts` is the single definition** of every status union
+  (`git mv`'d from `orders/types/`). Status vocabulary is cross-feature, since orders, vendors,
+  payouts, refunds and analytics all read it. It imports nothing, and `orders` ↔ `vendors` already
+  import each other's types, so `shared/` is the right home rather than a feature. All 7 importers
+  were repointed.
+- `vendor.types.ts`, `payout.types.ts` and `refund.types.ts` **re-export** their status from it,
+  instead of declaring a copy, so existing imports keep working.
+- **`orders/utils/payment-status.ts` and `order-status.ts` are deleted.** Their only consumer,
+  `order-columns.tsx`, now renders both columns with `StatusBadge` + `orderStatusMap` /
+  `paymentStatusMap`, like every other table. The payment column now handles
+  `PARTIALLY_REFUNDED` and shows labels, not raw enum text.
+- **The three phantom types are deleted**, all of them unused: `TUserStatus`, `TCouponStatus`, and
+  the pre-marketplace `TProductStatus`.
+
+**Verified by script:**
+
+- All six unions **match their Prisma enums exactly**: `OrderStatus`, `PaymentStatus`,
+  `ProductStatus` (as `TProductModerationStatus`), `VendorStatus`, `PayoutStatus` and
+  `RefundStatus`.
+- All six maps in `status-maps.ts` cover every value of their union.
+- `pnpm build` passes, and lint is unchanged at 11.
+
+### ~~FE-29~~ · No `.env.example`; README is scaffold boilerplate
+**✅ FIXED 2026-09-24 · onboarding** (branch `FE-29-30-env-example-readme-and-env-validation`)
+
+**Was:** there was no `.env.example`, so a fresh clone could only be configured by reading
+`CLAUDE.md`. `README.md` was untouched `create-next-app` output, and `package.json` was
 `"name": "client"`.
 
-**Also verify `.env.local` is gitignored** — it is present on disk with a real
-`NEXT_AUTH_SECRET` and `GOOGLE_CLIENT_SECRET`.
+**Now:**
+
+- **`.env.example`** lists all **ten** variables, each with a comment and a placeholder value. The
+  audit said six; it missed `NEXTAUTH_URL`, and counted the Cloudinary pair and the Google pair
+  once each. It also notes what must match the backend (`TAX_RATE`, and the shipping fallbacks)
+  and the port-3000 CORS constraint. **Its keys were checked to be exactly the keys in the real
+  `.env.local`**, and no value was copied from it.
+- **`.gitignore` had `.env*`, which also ignored the new template.** It is re-included with
+  `!.env.example`.
+- **Verified:** `.env.local` is gitignored (`git check-ignore`) and appears in no commit
+  (`git ls-files`). Its real `NEXT_AUTH_SECRET` and `GOOGLE_CLIENT_SECRET` have never been
+  tracked.
+- **`README.md` was rewritten** for a developer setting up for the first time. It covers:
+  - what the app is and how it relates to the backend repo;
+  - prerequisites (Node 18.18+, checked against Next 15's `engines`), setup order, the seeded
+    logins and port 3000;
+  - which env values must match the backend, and the scripts, including why `pnpm build` must
+    be the script;
+  - pointers to `CLAUDE.md` and this audit.
+- **`package.json`** is renamed `"trendora-frontend"`. The lockfile does not record the name.
 
 ---
 
-### FE-30 · No env validation — a missing tax rate silently means 0%
-**P2 · S · config**
+### ~~FE-30~~ · No env validation — a missing tax rate silently means 0%
+**✅ FIXED 2026-09-24 · config** (same branch; closes XR-01's frontend half)
 
-`src/shared/config/env-config.ts` exposes every value as `string | undefined`, and
-`calculate-order-total.ts:26` does `Number(envConfig.tax_rate) || 0`.
+**Was:** `env-config.ts` exposed every value as `string | undefined`, and
+`calculate-order-total.ts` did `Number(envConfig.tax_rate) || 0`. A deploy without
+`NEXT_PUBLIC_TAX_RATE` quoted 0% tax while the backend charged its own rate. The Cloudinary keys
+were read raw from `process.env`, and `envConfig` also carried the Google secrets even though it is
+imported by client code.
 
-A deploy that omits `NEXT_PUBLIC_TAX_RATE` shows **0% tax in the cart** while the backend charges
-its own rate — the buyer is billed more than quoted, with no error anywhere. See **XR-01**.
+**Now, two validated modules** (Zod, at module load):
 
-**Fix:** Parse the public env through a Zod schema at module load and throw on a missing required
-value.
+- **`shared/config/env-config.ts`** is **public** and safe in the browser.
+  - It validates `NEXT_PUBLIC_BACKEND_URL` (an absolute URL that **includes `/api/v1`**),
+    `NEXT_PUBLIC_TAX_RATE` (a fraction, 0 to 1), the two shipping fallbacks (≥ 0) and both
+    Cloudinary keys.
+  - Each is read by its **literal** `process.env.NEXT_PUBLIC_…` name, because Next inlines only
+    literal references.
+  - **A blank value counts as missing.** Otherwise `z.coerce.number()` reads `""` as `0`, which is
+    the original bug.
+  - `envConfig` now holds typed numbers and strings, and no secrets.
+- **`shared/config/server-env.ts`** holds **secrets**: `NEXT_AUTH_SECRET`, `GOOGLE_CLIENT_ID` and
+  `GOOGLE_CLIENT_SECRET`. It is imported **only** by `auth-options.ts` and `middleware.ts`, because
+  those values are always undefined in a browser. The Google provider previously fell back to
+  `?? ""`.
+- **Every `process.env` read in `src/` now goes through one of the two.** The consumers were
+  repointed: the cart math (with its `|| 0` fallbacks gone), the Cloudinary upload, NextAuth and
+  the middleware.
+
+**Verified:**
+
+- **Failing builds** (a shell env var overrides `.env.local`):
+
+  | Override | Build output |
+  | --- | --- |
+  | `NEXT_PUBLIC_TAX_RATE=""` | `NEXT_PUBLIC_TAX_RATE: is missing` |
+  | `NEXT_PUBLIC_BACKEND_URL=http://localhost:5001`, `NEXT_PUBLIC_TAX_RATE=5`, `NEXT_PUBLIC_SHIPPING_COST=""` | one line each: "must include the API base path … (got "http://localhost:5001")", "is a fraction — 0.05 means 5% (got "5")" and "is missing" |
+  | `GOOGLE_CLIENT_SECRET=""` | `Invalid server environment configuration … GOOGLE_CLIENT_SECRET: is missing` |
+
+- **Client inlining:** the client bundle contains the literal backend URL, and no chunk reads
+  `process.env.NEXT_PUBLIC_TAX_RATE` at runtime. Missed inlining would have thrown in every browser
+  while the server build passed.
+- **Pages:** with the real `.env.local`, `/`, `/products`, `/cart` and `/login` all return 200 on
+  `pnpm start`, with no env error.
+- Lint is unchanged at 11.
+
+**Consequence to know:** a misconfigured deploy now **fails loudly** at build or first load,
+instead of running with a wrong tax rate. That is the intent.
 
 ---
 
-### FE-31 · Thirteen raw `<img>` tags bypass `next/image`
+### FE-31 · Eleven raw `<img>` tags bypass `next/image` (was thirteen)
 **P2 · S · performance**
 
-Including `(root)/products/[slug]/page.tsx:62`, `store-front.tsx:56,68`,
-`store-directory.tsx:70,83`, `checkout-form.tsx:146` and six table column files. Five carry an
-`eslint-disable-next-line @next/next/no-img-element`.
+Re-counted 2026-09-29: `store-front.tsx:80,92`, `store-directory.tsx:78,91`,
+`home/components/top-stores.tsx:70`, `brand-strip.tsx:52`, `checkout-form.tsx:147`,
+`order-details.tsx:443`, and three table columns (`slide-columns.tsx:33`,
+`vendor-admin-table.tsx:54`, `my-reviews-columns.tsx:31`). The product page's is gone — its
+`product-gallery.tsx` (`4b6a8bf`) uses `next/image`. Nine carry an
+`eslint-disable-next-line @next/next/no-img-element`; the other two are the lint warnings.
 
 No lazy loading, no responsive `srcset`, no format negotiation — on the storefront pages where
-images dominate the payload.
+images dominate the payload. Fixing FE-17 first matters: switching these to `next/image` today
+routes them through the open optimizer.
 
 ---
 
-### FE-32 · Accessibility
-**P2 · L · a11y**
+### ~~FE-32~~ · Accessibility
+**✅ FIXED 2026-09-24 · a11y** (branch `FE-32-accessibility-pass`)
 
-Three `aria-*` attributes in all of `src/features`, `src/app` and `src/layouts` combined.
-Icon-only buttons with no accessible name (e.g. `admin/user/page.tsx:105`). Search inputs with no
-`<label>` and no `<form>`. `lang="en"` hardcoded at `src/app/layout.tsx:31`. No skip link, no
-focus management on the `TDSheet`/`TDModal` overlays.
+**Was:** three `aria-*` attributes in the app at audit time. By the time the pass started, earlier
+items had added some, bringing it to 34. Icon-only buttons had no name, search inputs had no label,
+there was no skip link, and clicks were bound to `<div>`s and `<img>`s.
 
----
+**How it was inventoried.** Hand-rolled regexes proved unreliable (`() =>` fooled the first one),
+so there were two tools:
+
+1. **`eslint-plugin-jsx-a11y`**, already installed and registered by `next/core-web-vitals` but
+   with only a few rules enabled, was run with its full rule set. It found 17 issues.
+2. **A JSX-aware script** for what the plugin *cannot* see: an icon-only **shadcn `<Button>`**,
+   which is a React component rather than a DOM `<button>`. It found 19 nameless buttons.
+
+**Fixed:**
+
+| Problem | Fix |
+| --- | --- |
+| **19 nameless buttons** | Every icon-only button now has an `aria-label`. Row menus are row-specific ("Actions for Nike"), not ten identical "More actions". Carousel dots say "Go to slide 2 of 5", with `aria-current` on the active dot. The wishlist heart has `aria-pressed`, since its tooltip is not an accessible name. Also labelled: quantity ±, cart remove, address edit/delete, sheet close, image remove and back. |
+| **17 buttons nested in `<Link>`** | `<Link><Button>` is a button inside a link: invalid HTML, announced as two controls. A codemod converted 16 to `<Button asChild><Link>`, and the hero's "Shop Now" (a `TDButton`, which has no `asChild`) was converted by hand. |
+| **Click targets keyboard users could not reach** | Real `<button>`s with state: the admin and **public** product-image thumbnails (`aria-pressed`; the public ones were clickable `next/image`s the plugin could not see), **variant pickers** (`aria-pressed`), **checkout's saved-address picker** (`role="radiogroup"` / `role="radio"` + `aria-checked`), and the upload "click to browse" area. Block `<p>`s inside those buttons became `<span className="block">`, because `<p>` is invalid in a button. |
+| **Unlabelled inputs** | `aria-label` on the store-directory and featured-table searches and the payout reference. The footer newsletter field is `type="email"`, labelled, with `autoComplete`, and its decorative icon is `aria-hidden`. |
+| **Bad `alt` text** | The public product page's main image had `alt={productId}`, so a screen reader read out a UUID. It now uses the product name. The admin image uses the product name. Thumbnails inside labelled buttons use `alt=""`, because the button carries the name. |
+| **No skip link, no `<main>`** | A "Skip to main content" link is the first element in `<body>` (`app/layout.tsx`), visible on focus. Each route-group layout renders `<main id="main-content" tabIndex={-1}>`, as does the 404. The home page's own `<main>` became a `<div>`, since two are invalid. |
+| **Overlays** | Verified that `TDModal` and `TDSheet` are Radix Dialog with nothing overriding its focus trap, Escape or focus return, and each has a title. Both now pass `aria-describedby={undefined}` when there is no description, replacing an empty `sr-only` `SheetDescription` and Radix's "Missing Description" warning. `TDSheet` gained an optional `description` prop. |
+| Also | `type="button"` on the quantity ± buttons, which submitted any enclosing form. A no-op `onClick={() => setCurrentIndex(currentIndex)}` was removed. |
+
+**Kept on purpose, with a rule-specific `eslint-disable` and a comment:**
+
+- Escape-to-close on the mobile search `<form>`.
+- `autoFocus` on the search panel the user just opened.
+- The upload's drag-and-drop listeners. There is no keyboard way to drag a file, and the keyboard
+  path is the button inside.
+
+**Now enforced:** `eslint.config.mjs` enables 12 jsx-a11y rules as **errors** for `src/**/*.tsx`
+(`shared/ui/` excepted, as vendored shadcn). The app is at **0**, so a new clickable `<div>` or
+unlabelled field fails `pnpm lint`. `label-has-associated-control` is told `Input` is a control, so
+an implicit `<label>` around it passes. **The rules still cannot see inside our own components**, so
+an icon-only `<Button>` needs its `aria-label` by hand.
+
+**Verified:**
+
+- `pnpm lint` is 0 errors, and the warning baseline is unchanged at 11.
+- `pnpm build` passes, and the nameless-button script reports 0.
+- `aria-*` attributes went from 34 to 69.
+- On `pnpm start`, the skip link is in the served HTML on `/`, `/products`, `/login` and the 404.
+
+**Known limitation:** the `#main-content` target is inside `Providers`, and `PersistGate
+loading={null}` means **no page content is server-rendered**. Between first paint and hydration,
+the skip link has nothing to jump to; after hydration it works. The fix is the `PersistGate` gating
+itself, which blanks prerendered content for every page, and was out of scope here.
+
+**Not covered:** colour contrast was not measured, and no screen reader or keyboard walkthrough was
+done in a browser. `lang="en"` stays as it is, because the app has no other locale (FE-36).
 
 ### FE-33 · No test runner, no CI
 **P2 · L · ops**
@@ -723,53 +1254,379 @@ money, and it has already diverged from its backend twin once (**XR-07**).
 ---
 
 ### FE-34 · Vendor dashboard gaps
-**P2 · M · vendor**
+**🟡 PARTIAL 2026-09-24 · vendor** (frontend + two small backend additions)
 
-Beyond FE-19: no vendor analytics or time series (`orderAnalytics` is admin-only); no vendor order
-detail page (`useVendorOrderByIdQuery` unused — the table is the only view); no payout detail; no
-Profile entry in `vendorDashboardLinks`, unlike admin and customer; no rejection-reason surface, so
-a seller sees a REJECTED badge without the reason; no view of refunds against their own orders; no
-low-stock alerts, bulk import/export or promotion tooling.
+**Was:** FE-19 had added store reviews. Still missing: vendor analytics over time
+(`orderAnalytics` is admin-only), a vendor order detail page (`useVendorOrderByIdQuery` unused), a
+payout detail page, a Profile entry in `vendorDashboardLinks`, a rejection-reason surface, a
+seller view of refunds on parcels they sold, and low-stock / bulk import-export / promotion
+tooling.
 
-What does exist is solid: `/vendor` handles both `isLoading` and `isError`, and products, orders,
-payouts, settings and apply are all real.
+**Now:**
+
+- **Sales over time on `/vendor`.** A range picker (all time, 7 / 30 / 90 days, 12 months) scopes
+  every figure except "Ready for payout", which is a balance, not a period figure. Below the stat
+  cards, `vendor-sales-trend.tsx` charts daily gross sales and net earnings.
+  - **Backend:** `GET /vendors/me/dashboard` gained **`salesTrend`**, one zero-filled point per
+    **UTC** day (`{ date, orders, grossSales, netEarnings }`). The money follows the `overview`
+    rule (paid, not cancelled), so the series foots to the headline figures. With no range the
+    headline stays all-time and the trend covers the last 30 days; the chart caption says which.
+    The endpoint now 400s on an invalid date, a start after the end, or a window over 366 days.
+    Before, a bad date was a Prisma 500.
+  - The range's query args are computed **once, when it is picked**. A `new Date()` built during
+    render would change the cache key every render and refetch in a loop. The start is **UTC
+    midnight**; a local midnight made "last 7 days" come back as 8 points.
+- **`/vendor/orders/[id]`** (`vendor-order-details.tsx`), linked from the parcel number in the
+  queue. It shows items, the ship-to snapshot, the buyer's note, carrier and tracking, and the
+  status timeline. It offers the same `VENDOR_TRANSITIONS` actions as the table, through the same
+  modal.
+  - The money block runs from what the buyer paid, less commission and less tax (which the platform
+    remits), down to **You earn**. It links to the payout that settled the parcel.
+  - **Backend:** the detail read now includes the parcel's `refund` (`id`, `amount`, `status`,
+    `processedAt`), the narrow projection the buyer already gets. So a cancelled parcel shows
+    whether its money went back.
+- **`/vendor/payouts/[id]`** (`vendor-payout-details.tsx`), linked from the payout history. It
+  shows the transfer (method, reference, settled date), the failure reason and the parcels
+  settled. Each parcel shows its subtotal, shipping, commission and earning, and they foot to the
+  payout amount.
+- **`/vendor/refunds`** (`seller-refunds-list.tsx`) is refunds on parcels the store **sold**. It
+  sends `as: "seller"` explicitly, uses the operator-worded `refundStatusMap` with a
+  "nothing for you to do" hint per state, and is read-only, since every refund mutation is
+  admin-only. "My Refunds" stays in the sidebar as the buyer view.
+- **Sidebar:** "Refunds" and "Profile" in `vendorDashboardLinks`. Profile points at the shared
+  `/dashboard/profile`, which is the owner's account, not the store's; `/vendor/settings` is the
+  store.
+- **Rejection reason on the edit screen.** The list already showed it (`vendor-product-columns.tsx`).
+  `vendor-update-product.tsx` now puts it in a banner above the form, with a **Submit for review**
+  button.
+  - **Saving a REJECTED listing does not resubmit it.** The backend re-queues only an APPROVED
+    listing on a material edit (`needsReReview`), so resubmitting has to be an explicit step.
+
+**Verified live** against the dev backend with one COD order (`ORD-202609-254303`, vendor1, one
+pair of jeans) walked PENDING → DELIVERED as vendor1:
+
+- **The trend foots to the headline.** Gross 152.45 and net 142.10 match for both the default and a
+  7-day window. 142.10 = 152.45 − 6.90 commission − 3.45 tax.
+- Ranges return exactly 7 / 30 / 365 points.
+- The parcel detail carries the snapshot, the note, a four-step history with no IP or actor, and
+  `refund: null`. vendor2 gets a 404 on it.
+- `startDate=garbage`, a reversed range and a six-year range each return the intended 400.
+
+**Not verified:**
+
+- The screens were **not clicked through in a browser**.
+- A refund row on the parcel detail and the payout detail were **not seen with data**. The dev DB
+  has no Stripe-paid cancellations and no payouts; the endpoints behind both pre-date this change.
+
+The test order was left in the dev DB.
+
+**Still open:** low-stock alerts, bulk import/export, and promotion tooling. None has a backend
+endpoint.
 
 ---
 
 ### FE-35 · Admin dashboard gaps
-**P2 · M · admin**
+**🟡 PARTIAL 2026-09-24 · admin** (frontend + backend)
 
-Beyond FE-08, FE-11, FE-14 and FE-16: no settings screen of any kind (commission rate, tax rate,
-shipping defaults, platform config — all DB-only); no admin vendor detail page; no manual-refund
-entry; no coupons; no email/notification management; no audit log; no date-range picker on
-analytics.
+**Was:** beyond FE-08, FE-11, FE-14 and FE-16, the admin area had none of these:
+
+- a settings screen (commission, tax, shipping defaults and platform config were all backend-only);
+- an admin vendor detail page (`useVendorByIdForAdminQuery` was unused);
+- a manual-refund entry (`useRecordManualRefundMutation` was unused);
+- coupons, email/notification management and an audit log;
+- a date-range picker on analytics.
+
+**Now:**
+
+- **`/admin/vendor-list/[id]`** (`vendors/components/admin/vendor-admin-details.tsx`), linked from
+  the store name in the vendor table and from "Top stores" on the admin home. It shows:
+  - owner, login and role; business contacts and tax id; the applied / approved / suspended dates;
+  - the rejection or suspension reason, with the banner title matching the store's status;
+  - commercial terms, and product / parcel / payout counts;
+  - payout details (the scalar fields of `payoutDetails`);
+  - the full **moderation trail**, with actor and IP, which only the admin read carries.
+- **Moderation actions are one component now.** `vendor-moderation-actions.tsx`
+  (approve / reject / suspend / reinstate / commercial terms) is used by both the table and the
+  detail page, so the two cannot offer different moves. The table's icon-only terms button gained
+  a row-specific `aria-label` (FE-32).
+- **Manual refunds from the admin order page.** A parcel with no refund row, on an order whose
+  money was collected, shows **Record manual refund** (`refunds/components/manual-refund-modal.tsx`).
+  - The amount defaults to the parcel total and is capped client-side at what is still
+    unrefunded. The method is cash / bank transfer / mobile money / other.
+  - It records a fact and sends nothing. The modal says so, and warns about BE-50.
+  - **Backend guards added to `recordManualRefund`:**
+    - it refuses an order whose money was never collected. An unpaid COD order used to be
+      "refunded" and flipped to REFUNDED. This shares one `wasCollected` rule with the automatic
+      path;
+    - it refuses a `vendorOrderId` from a different order, which used to attach the refund to a
+      stranger's parcel and block that parcel's own refund.
+- **Date range on the admin home.** `MarketplaceOverview` has the same picker as the vendor
+  dashboard, now shared as `shared/components/date-range-select.tsx` (`useDateRange`). It scopes the
+  tiles and top stores. "Stores by status" is a current count and the backend does not date-filter
+  it. The three mock widgets (FE-08) ignore the picker.
+  - **Backend:** both analytics endpoints parse their range through one `helpers/date-range.ts`, so
+    `GET /orders/analytics` now 400s on a bad or reversed date instead of a Prisma 500.
+- **`/admin/settings`** (`features/settings/`), backed by a new ADMIN-only **`GET /settings`**. It
+  is **read-only on purpose.** Every value is backend environment config, and the tax rate is
+  compiled into checkout's estimate. A rate edited in the database would make every cart quote a
+  total the backend then refuses to charge.
+  - Instead, the screen compares the backend's `TAX_RATE` with this build's `NEXT_PUBLIC_TAX_RATE`
+    and raises an alert when they differ. It raises the same alert when any category has its own
+    tax rate, which the cart still ignores (BE-38).
+  - It also lists the new-store defaults, the checkout-draft TTL, integrations on/off (no secret is
+    returned), per-category tax overrides, and every store whose terms differ from the defaults.
+
+**Verified live** against the dev backend, as admin:
+
+- `GET /settings` returns the values above; a vendor gets 403.
+  - It lists all three seeded stores as custom: Sole Society 12%/150/2000, Trendora Official
+    0%/100/1000, and Urban Threads 10%/**80/800**, whose fee and threshold differ from the defaults.
+- `GET /orders/analytics` with a September range returns the FE-34 test order's 152.45 / 6.90 /
+  142.10. A bad date and a reversed range each return 400.
+- The vendor detail payload carries owner, auth, counts and trail, and a random id is a 404. The
+  seeded stores' trails are empty: they predate `VendorStatusHistory`, and the page says so.
+- **Manual refund**, recorded against the FE-34 test order's parcel:
+  - A parcel from another order → 404, and an amount over the unrefunded balance → 400, both
+    before anything is written.
+  - A 5.00 cash refund → `SUCCEEDED`, `gateway: "cash"`; the order became `PARTIALLY_REFUNDED`.
+  - A second refund on the same parcel → 409.
+  - That refund is also what **reproduced BE-50:** Urban Threads' outstanding payout went from
+    142.10 to 0.
+- The "unpaid order" guard was not exercised live. No unpaid order existed, and making one means
+  another test order.
+- The screens were **not clicked through in a browser**.
+
+**Found, not fixed — backend BE-50 (P1):** any successful refund flips the order to
+`PARTIALLY_REFUNDED`, and payout eligibility requires `PAID`. So the order's other, delivered and
+un-refunded parcels are never paid out. Automatic Stripe refunds on multi-store carts hit this
+too. The fix needs a business decision (does a goodwill refund on a delivered parcel reduce the
+store's earning?), so it was logged rather than guessed at.
+
+**Still open:**
+
+- **Editable** platform settings, which would need a settings model *and* a way for the frontend's
+  tax estimate to read it at runtime;
+- coupons (BE-29);
+- email/notification management;
+- a platform-wide audit log (only the per-store moderation trail exists);
+- filtering the admin product and order lists by store, so the vendor detail's counts could link
+  through.
 
 ---
 
 ### FE-36 → FE-38 · Storefront capabilities not started
-**P2 · L · storefront**
+**P2 · L · storefront** — FE-38's buyer timeline done 2026-09-28
 
 | ID | Missing | Note |
 | --- | --- | --- |
 | FE-36 | Coupon field at checkout | zero occurrences of coupon/promo in `src/`; backend has no `Coupon` model (**BE-29**) |
-| FE-36 | Guest checkout | `checkout-form.tsx:53-64` accepts an inline address, but `base-api.ts:17-23` attaches a session token to every call — effectively logged-in only |
-| FE-36 | Multi-currency | `currencyFormatter` hardcodes `en-US`/`USD` (`calculate-order-total.ts:103-108`) |
+| FE-36 | Guest checkout | `checkout-form.tsx:52-64` accepts an inline address, but `base-api.ts:17-23` attaches a session token to every call — effectively logged-in only |
+| FE-36 | Multi-currency | `currencyFormatter` hardcodes `en-US`/`USD` (`calculate-order-total.ts:104-109`) |
 | FE-36 | i18n | no `next-intl`, no `[locale]` segment, `lang="en"` fixed |
-| FE-37 | Category browsing | `/categories/[slug]` is a placeholder (FE-07); no `/categories` index |
-| FE-37 | Brand browsing | no route at all, though `/brands` exists on the backend |
-| FE-37 | Compare, recently viewed | nothing |
-| FE-38 | Order tracking timeline | the tracking *number* renders (`my-orders-list.tsx:124`, `order-details.tsx:286`) but there is no carrier link, no status timeline and no public track-by-number page. The backend has the data in `OrderStatusHistory` and never exposes it (**BE-13**) |
+| ~~FE-37~~ | ~~Category browsing~~ | ✅ `/categories` index — see FE-37 below |
+| ~~FE-37~~ | ~~Brand browsing~~ | ✅ `/brands` index — see FE-37 below |
+| FE-37 | Compare | nothing yet; recently viewed is done (FE-37 below) |
+| ~~FE-38~~ | ~~Order tracking timeline~~ | ✅ **2026-09-28** (`3b90b4e`): `/dashboard/my-orders/[id]` (`my-order-details.tsx`) shows each parcel's progress, carrier, tracking and a collapsible status history (`:402-409`), read from `GET /orders/:orderId`, which sanitises `statusHistory` per caller. The BE-13 premise (history never exposed) was wrong on the backend side too |
+| FE-38 | Carrier link, public tracking | carrier and number render as text only (`my-parcel-columns.tsx:72-80`, `my-order-details.tsx:360-363`, `order-details.tsx:347-352`); no carrier URL and no public track-by-number page |
 | FE-38 | Per-order invoice | the PDF export (`orders/components/my-orders/pdf-download-print.tsx`) is a bulk "my-orders.pdf" list, not a per-order invoice |
-| FE-38 | Newsletter | `layouts/footer.tsx:74-77` has the heading and input, no submit and no API |
+| FE-38 | Newsletter | `layouts/footer.tsx:27-54` has the heading and input, no submit and no API |
 
 ---
 
-### FE-39 · Committed build artefacts; no Prettier config
+### FE-37 · Category and brand browsing
+**🟡 PARTIAL 2026-09-24 · storefront** (frontend only, with no backend change)
+
+**Was:** `/categories/[slug]` redirected into the catalogue, but there was no `/categories` index,
+no brand route at all, and no compare or recently-viewed.
+
+**Now:**
+
+- **`/categories`** (`products/components/browse/category-directory.tsx`) is every category with
+  live stock, as a two-level tree. Each top-level card has its artwork or a gradient and a rolled-up
+  count, with its subcategories listed beneath.
+- **`/brands`** (`browse/brand-directory.tsx`) runs A–Z with counts and logos where they exist. It
+  shows letter jump links and a local name filter once the list is long enough to need them.
+- **Both read `GET /products/filters`, not `/categories` or `/brands`,** for the reason
+  `CategoryTiles` documents: the admin-owned tables hold names nobody sells, and a directory of
+  doors onto "no products found" is worse than none. Every entry links to the catalogue
+  (`/products?categoryId=` / `?brandId=`), never to a second product list.
+  - **A brand has no slug** (`Brand` has `name` only), so there is no `/brands/<slug>` alias like
+    the category one. Adding one needs a slug column on the backend.
+- **The directories live in `products`, not in `categories` / `brands`.** `products` already imports
+  both of those (product types and form), so a directory there that reads the products facets
+  would have made a circular module dependency.
+- **Recently viewed** (`products/hooks/use-recently-viewed.ts`). The product page records a view
+  once the listing has loaded, so a 404 never enters the trail. It is shown in two places:
+  - as a **rail on the home page**, between the brand strip and the sellers, so it never stacks on
+    another shelf;
+  - as a **row under a product** (`product-details/recently-viewed.tsx`), which leaves out the
+    product being viewed.
+  - **Only ids are stored** (up to 12, in `localStorage`). They are re-fetched in one request as
+    `GET /products?id=a,b,c`, which reaches the backend's generic column filter as an `IN`, still
+    behind the public visibility gate. So prices are current and a delisted product silently
+    drops out.
+  - Every storage access is guarded; with storage blocked or corrupt, the rail renders nothing.
+  - `ProductRail`'s `href` is optional now, because there is no catalogue URL for "what I looked
+    at".
+- **Entry points:**
+  - "All categories" beside the home tiles, and "All brands" beside the brand strip;
+  - a new **Shop** column in the footer (All Products / Categories / Brands / Stores). The navbar
+    has only search.
+
+**Verified in headless Chrome** against the dev servers:
+
+- `/categories` lists the 8 live categories in their tree with counts.
+- `/brands` lists 6 brands; clicking one lands on `/products?brandId=…`.
+- **Recently viewed:**
+  - a fresh profile's home page has no "Recently viewed" heading;
+  - after viewing two products, storage holds both ids, newest first, and the second product's page
+    shows only the first;
+  - the home page then shows the rail;
+  - corrupting the stored value hides the rail with no error.
+- The batch lookup returned only the live products when sent a random uuid and a malformed id
+  alongside them. There was no hidden product in the dev DB, so the visibility drop itself was not
+  exercised.
+- `/`, `/categories` and `/brands` still build as static.
+
+That check is also what found **FE-40** below: before it was fixed, the home page could not be
+tested at all.
+
+**Seen, not fixed:** one product image 404s because its URL still points into
+`trendora/temp/products/`, an asset that was never promoted and is gone (backend **BE-41**).
+
+**Still open:** compare. It needs a product-to-product attribute model that does not exist yet
+(variants carry size and colour only).
+
+---
+
+### ~~FE-40~~ · Home page and `/products` crash in the browser
+**✅ FIXED 2026-09-24 · auth** — found while verifying FE-37
+
+**Was:** `features/auth/utils/user-info.ts` held both `useUserInfoClient` and a
+`useUserInfoServer` helper that imported `authOptions`. `authOptions` reads the validated
+`serverEnv` (FE-30), whose secrets are undefined in a browser. So any client module importing the
+hook evaluated the server schema on load and threw "Invalid server environment configuration".
+
+`useWishlistToggle` imports the hook, and **every product card** uses that toggle. As a result `/`,
+`/products` and the product pages all rendered the error boundary ("Something went wrong").
+`/stores`, `/about-us` and pages without product cards were unaffected. It had been broken since
+`3c73c36`. `pnpm build` could not catch it, because the throw happens at module evaluation in the
+browser, not at compile time.
+
+**Now:** the file is split.
+
+- `user-info.ts` holds only the client hook, with a comment saying why it must never import
+  `auth-options`.
+- **`user-info-server.ts`** holds `getUserInfoServer()`, renamed because it is not a hook. It had no
+  callers.
+
+Verified in headless Chrome: `/` and `/products` render their content again, with no
+server-env error.
+
+**Hardening not done:** adding the `server-only` package would make a repeat a build error. It is
+not installed, and adding a dependency was left as a decision.
+
+---
+
+### FE-39 · ~~Committed build artefacts~~; no Prettier config
 **P2 · S · cleanup**
 
-`tsconfig.tsbuildinfo` (313 KB) and `.DS_Store` are present in the repo root. Indentation is
-inconsistent (tabs in `product-wrapper.tsx`, `recent-orders-table.tsx`, `brand-list/page.tsx`;
-four spaces elsewhere) with no Prettier config to settle it.
+**Correction 2026-09-29:** `tsconfig.tsbuildinfo` and `.DS_Store` sit in the working tree but were
+**never committed** — `.gitignore:24` and `:41` cover both, and `git log --all` has no history for
+either. That half was a false positive from reading the directory rather than `git ls-files`.
+
+**Still open:** indentation is inconsistent (tabs in `product-wrapper.tsx`, `recent-orders-table.tsx`,
+`brand-list/page.tsx`, `brand-form.tsx`, `order.types.ts`; four spaces elsewhere) with no
+Prettier config to settle it.
+
+---
+
+### FE-42 · Buyer order screens use the operator's refund wording
+**P2 · S · orders** — found 2026-09-29
+
+**Now:** the buyer's order detail and parcel table pass `refundStatusMap`
+(`my-order-details.tsx:12,259`, `my-parcel-columns.tsx:4,62`), the map written for the admin
+console (`orders/constants/status-maps.ts:62-68`: PENDING "Owed", FAILED "Failed", CANCELED
+"Abandoned"). The buyer-worded `buyerRefundStatusMap` (`refunds/constants/buyer-refund-status.ts:14-18`:
+"Processing", "Delayed", "Not refunded") is used only by `my-refunds-list.tsx:53`.
+
+**Failure:** a buyer cancels a paid parcel, the Stripe refund fails, and their order page says
+**"Failed"** — a buyer reads that as "you will not get your money", when the operator is retrying
+it (`/admin/refunds`). The same refund reads "Delayed" on `/dashboard/my-refunds`, so the two
+buyer screens disagree about one row.
+
+**Fix:** use `buyerRefundStatusMap` on both buyer screens. `vendor-order-details.tsx:262` and
+`seller-refunds-list.tsx:61` are seller views and are right to use the operator map.
+
+---
+
+### FE-43 · Cancelling a parcel leaves the refund lists stale
+**P2 · S · api** — found 2026-09-29
+
+**Now:** `updateVendorOrderStatus` (`vendors/api/vendor-order.api.ts:51-57`) invalidates
+`vendorOrders`, `orders`, `products`, `payouts` and `vendors` — not `refunds`. Cancelling a paid
+parcel creates a `Refund` row server-side (`backend/src/modules/order/order.service.ts:810-818`).
+
+**Failure:** a buyer opens `/dashboard/my-refunds`, goes to the order, cancels a paid parcel and
+comes back: the new refund is missing until the cached query expires (RTK Query's default 60s
+after the last subscriber leaves) or the page is reloaded. The same applies to the seller's
+`/vendor/refunds` and the admin refunds console. `retryRefund` already invalidates `refunds`.
+
+**Fix:** add `"refunds"` to the mutation's `invalidatesTags`.
+
+---
+
+### FE-44 · A cart persisted before the marketplace conversion is never migrated
+**P2 · S · cart** — listed in the root `CLAUDE.md`, logged here 2026-09-29
+
+**Now:** the cart is persisted by `redux-persist` at `version: 1` with no `migrate`
+(`src/store/store.ts:16-20`). A line saved by the pre-marketplace build has no `vendorId` or
+store snapshot, so `groupCartByVendor` buckets it on its own (`calculate-order-total.ts:40`) and
+prices its shipping from the env fallbacks (`:56-60`, `NEXT_PUBLIC_SHIPPING_COST` /
+`NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD`).
+
+**Failure:** a returning shopper with two old lines from one store sees two shipping fees at the
+env default; the backend charges one, at the store's own fee. The cart quotes a total the order
+does not charge, and the "Shipped by" group reads "Trendora" (`:74`). The same staleness hits any
+cart line whose store changed its fee after it was added (`cart.types.ts:11` notes it), though
+that one self-corrects on re-add.
+
+**Fix:** bump the persist `version` with a `migrate` that drops lines without a `vendorId`, or
+refresh every line's snapshot from `GET /products?id=…` when the cart page mounts (the batch
+lookup FE-37's recently-viewed already uses).
+
+---
+
+### FE-45 · Product-table category filter offers categories that never match
+**P2 · S · tables** — found 2026-09-29
+
+**Now:** the admin and vendor product tables list every category from `GET /categories`
+(`use-admin-product-filters.ts:120-129`, `use-vendor-product-filters.ts:37,90`), but
+`findAllForAdmin` and `findMyProducts` send `categoryId` through the generic column `filter()`,
+an exact match. Products hang off leaf categories. Both hooks' comments admit it
+(`use-admin-product-filters.ts:31`, `use-vendor-product-filters.ts:19`).
+
+**Failure:** picking a parent such as "Footwear" returns an empty table every time, on a
+marketplace that has footwear.
+
+**Fix:** offer leaves only, or have the backend apply the storefront's self-or-children rule to
+these two reads too.
+
+---
+
+### FE-47 · The Best sellers rail's "View all" opens the top-rated list
+**P2 · S · storefront** — found 2026-09-29
+
+**Now:** `BestSellersRail` links to `/products?sortBy=averageRating:desc`
+(`home/components/rails.tsx:72`), the same catalogue view as `TopRatedRail`. `GET /products` has
+no units-sold sort — the ranking exists only in `GET /products/best-sellers`, and `unitsSold` is
+not a column the query builder can order by.
+
+**Failure:** a shopper clicks "View all" under "Best sellers" and gets a different list, ordered
+by rating, under no heading that says so.
+
+**Fix:** drop the rail's `href` (it is optional since FE-37) until a best-sellers catalogue view
+exists, or add a `sortBy=unitsSold:desc` alias backend-side.
 
 ---
 
@@ -778,8 +1635,10 @@ four spaces elsewhere) with no Prettier config to settle it.
 _Mirrored in `docs/FEATURE-GAPS.md` of the backend repo. The two repos share only HTTP, so a
 change here is always two commits on two branches._
 
-### XR-01 · Tax defaults disagree across four files
-**P1 · S · config**
+### ~~XR-01~~ · Tax defaults disagree across four files
+**✅ FIXED · config** — backend half 2026-09-22 (`3ea39ea`, found only on the 2026-09-29 re-check), frontend half 2026-09-24 (FE-30)
+
+**Was:**
 
 | Source | `TAX_RATE` |
 | --- | --- |
@@ -788,14 +1647,24 @@ change here is always two commits on two branches._
 | `frontend/.env.local` (`NEXT_PUBLIC_TAX_RATE`) | **0.05** |
 | `src/features/cart/utils/calculate-order-total.ts:26` (code fallback) | **0** |
 
-The running pair agrees at 0.05, so checkout is correct today. But a deploy that forgets the
-variable shows **0% tax in the cart while the backend charges 8%** — the buyer is billed more than
-they were quoted, and silently, because the backend recomputes from DB prices and never trusts the
-client.
+A deploy that forgot the variable showed **0% tax in the cart while the backend charged 8%**.
 
-`SHIPPING_COST` (100) and `FREE_SHIPPING_THRESHOLD` (1000) agree across all four places.
+**Now:**
 
-**Fix:** See FE-30 — make the tax rate required rather than defaulted, on both sides.
+- **Here:** `NEXT_PUBLIC_TAX_RATE` is required and validated (FE-30), so there is no `0` fallback;
+  `calculate-order-total.ts:28` reads `envConfig.tax_rate`, and a build without it fails.
+- **Backend:** its boot-time env validation (BE-19) replaced the `0.08` with
+  `numeric("TAX_RATE", 0.05)`, range-checked 0–1 (`backend/src/config/env-config.ts:84-85`). The
+  fallback now equals `.env.example`, so a backend deploy that omits it charges the same 5% this
+  build quotes.
+
+**Residual, not a gap today:** the backend still *defaults* rather than *requires*. If the
+frontend's `NEXT_PUBLIC_TAX_RATE` is ever set to anything but 0.05 and the backend's `TAX_RATE`
+is forgotten, the two diverge again — `/admin/settings` raises an alert when they do (FE-35).
+The backend's `PORT` fallback is still `5000` against `.env`'s `5001`
+(`backend/src/config/env-config.ts:70`); that is backend-side only.
+
+The per-category tax rate is a different mismatch: see **XR-12**.
 
 ---
 
@@ -803,14 +1672,18 @@ client.
 **P2 · S · contract**
 
 **Calls here that would 404** — both currently unmounted, so latent rather than live:
-- `GET /auth/google` (`src/features/auth/api/auth.api.ts:38-43`) — wrong path *and* wrong verb.
-  The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:127` calls correctly.
-- `DELETE /users/:id` (`src/features/users/api/user.api.ts:48-53`) — no such backend route.
+- `GET /auth/google` (`src/features/auth/api/auth.api.ts:36-41`) — wrong path *and* wrong verb.
+  The real endpoint is `POST /auth/oauth-login`, which `auth-options.ts:128` calls correctly.
+- ~~`DELETE /users/:id`~~ — **exists and is wired** (BE-34; FE-16), with `PATCH /:id/restore` and `/:id/role`.
 
-**Backend routes nothing here calls:** `GET /products/:productId/variants` and `/images` (both arrive nested on the product);
-`GET /wishlists/:id`; `PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews`
-(FE-19); `GET /address` admin list; the slide write CRUD (FE-14); `GET /payouts/:id`;
-`GET /refunds/:id` (FE-18). See FE-23.
+**Backend routes nothing here calls** (re-checked 2026-09-29): the per-row product sub-resources
+`GET|POST /products/:productId/variants`, `PATCH|DELETE …/variants/:variantId` and the same four for
+`/images` (BE-26) — the product form still round-trips whole arrays through `PATCH /products/:id`
+(`update-product.tsx:38-40`, `vendor-update-product.tsx:86`), which is the delete-on-missing-id
+footgun in "Verified NOT a gap"; moving the form onto these retires it. Also `GET /wishlists/:id`;
+`PATCH`/`DELETE /vendor-reviews/:id`; `GET /vendor-reviews/my-reviews` (reviews the user *wrote*,
+hook `useMyWrittenStoreReviewsQuery`, no screen); `GET /address` admin list; `GET /refunds/:id`
+(FE-18). ~~`GET /payouts/:id`~~ is called since FE-34. See FE-23.
 
 ---
 
@@ -828,27 +1701,38 @@ here" verdict was wrong.**
 **Still open here:** `brand-form.tsx` carries `logo` in its zod schema and default values but
 **renders no input for it** — only a `name` field and the submit button. So the value posted is
 always `""`, and an admin has no way to set a brand logo even though the API now accepts one.
-`edit-brand.tsx` still has its logo default commented out.
+`edit-brand.tsx:35` still has its logo default commented out (re-checked 2026-09-29; the default
+is `brand-form.tsx:26`). Editing does not wipe a logo set some other way: the edit form's values
+omit `logo`, and the backend's update schema leaves an absent field alone.
 
 **Fix here:** give `BrandForm` an image upload control. `Brand.logo` is a **plain URL string**, not
 the `{ url, publicId }` pair that vendor/product images use — send the Cloudinary secure URL only.
 
 ---
 
-### XR-04 · A rating-only review always 400s
-**P1 · S · contract**
+### ~~XR-04~~ · A rating-only review always 400s
+**✅ FIXED 2026-09-24 on both sides · contract** (with FE-21 / BE-48)
 
-`write-review.tsx:23` initialises `comment: ""` and `:33` submits the form values verbatim. The
-backend declares `comment: z.string().min(5).max(400).trim().optional()` — an empty string is
-*present*, so `.optional()` does not apply and `.min(5)` fires.
+**Was:** the form initialised `comment: ""` and submitted it verbatim. The backend's
+`comment: z.string().min(5)…optional()` treats an empty string as *present*, so `.optional()` did
+not apply and every rating-only review got a 400 reading "Min length is 2", which did not even
+match the rule. The frontend's catch read `error.data.message` without optional chaining, so a
+network failure threw inside the catch.
 
-Every buyer who rates a product without writing a comment gets a 400 whose message reads
-**"Min length is 2"**. And `:36` catches it with `error.data.message` — no optional chaining — so
-a network error throws inside the catch.
+**Now, both halves:**
 
-**Fix here:** strip an empty `comment` before submitting, and use `error?.data?.message`.
-**Fix there:** preprocess empty-to-undefined and correct the message string. Either alone closes
-it.
+- **Backend:** `review.validation.ts` has one shared `optionalComment`, used by create *and*
+  update. It preprocesses a blank string to `undefined`, and the rule is 2–400 characters with
+  messages that say so.
+- **Frontend:** `write-review.tsx` drops an empty comment before sending, reports errors through
+  `getApiErrorMessage`, and resets the form on success. `review-form.schema.ts` checks the same
+  2–400 rule client-side.
+
+Verified live: a rating-only review with `comment: ""` returns 201 with `comment` stored as `null`,
+and a one-character comment is a 400 with "A comment should be at least 2 characters".
+
+**Side effect on edit:** a blank comment in `PATCH /reviews/:id` now means "leave it unchanged". A
+comment cannot be removed by clearing it. It needs an explicit `null` if that is ever wanted.
 
 ---
 
@@ -861,13 +1745,14 @@ Most of these are **our** type declarations being wrong, not the backend being w
 | --- | --- |
 | `TProductVariant.size` required (`products/types/product.types.ts:23-26`) | the backend includes the `size` relation only on `findBySlug` and the vendor read — **not** on `GET /products` or `GET /products/:id`. `variant.size.name` throws on those |
 | `TProductImage.productId`, `.publicId`, `.isDeleted` required (`:30-38`) | list reads select only `{id, url, isMain}` |
-| `TOrder.user.email` flat (`orders/types/order.types.ts:97-102`) | the backend nests it as `user.auth.email` — always `undefined` here |
+| `TOrder.user.email` flat (`orders/types/order.types.ts:104-109`) | ✅ fixed 2026-09-29 (FE-41): the backend now returns it flat on every order read |
 | `TOrder.user` required | `GET /orders/my-orders` does not include `user` at all |
-| `TOrderPaymentResponse` nine fields (`:45-60`) | `my-orders` selects five; only `getOrderById` returns the full row |
-| Order money fields required `string` (`:73-77`) | deliberately `undefined` for a VENDOR viewing an order — the vendor sees only their own slice |
-| `TReview.rating: number` (`reviews/types/review.types.ts:6`) | Prisma `Decimal` → JSON **string**. `edit-review.tsx:26` feeds it to a `z.number()` resolver, so the edit form's rating is invalid on load. Every other decimal here is correctly typed `string`, including `TVendorReview.rating` |
-| `TVendor._count.payouts` (`vendor.types.ts:83`) | never selected |
-| `TSlide` has no `sortOrder`/`isActive` | both exist on the backend model and should drive ordering |
+| ~~`TOrderPaymentResponse` nine fields required~~ | **fixed 2026-09-24** (`61bd54b`): the nullable/partial ones are optional now (`:45-65`) |
+| Order money fields required `string` (`:80-84`) | deliberately `undefined` for a VENDOR viewing an order — the vendor sees only their own slice |
+| `TReview.rating: number` (`reviews/types/review.types.ts:6`) | Prisma `Decimal` → JSON **string**. `edit-review.tsx:32` feeds it to a `z.number()` resolver (`review-form.schema.ts:4`), so the edit form's rating is invalid on load. Every other decimal here is correctly typed `string`, including `TVendorReview.rating` |
+| `TVendor._count.payouts` (`vendor.types.ts:85`) | never selected |
+| `TRefund.vendorOrder` (`refunds/types/refund.types.ts:44-46`) | `GET /orders/:orderId` fetches `refunds` with no `vendorOrder` include (`backend/src/modules/order/order.service.ts:393`), so the admin order page's refund ledger never shows which parcel a refund belongs to (`order-details.tsx:268-272` is guarded, so it is blank, not a crash). Found 2026-09-29 |
+| ~~`TSlide` has no `sortOrder`/`isActive`~~ | **fixed in FE-14**, along with `photoPublicId` |
 | `ShippingSnapshot.state` required, no `email` (`order.types.ts:5-19`) | `Address.state` is nullable and `email` is required. `TAddress.state?` gets this right — the two are internally inconsistent |
 
 **~~Two are~~ One is genuinely backend-side:** the missing `size` include.
@@ -878,12 +1763,11 @@ already declares them. The backend chose flattening over nesting under `auth` sp
 side would not have to change: `TUser` was right and the API was wrong. `row.email` and `row.role`
 in `user-management-columns.tsx` render real values now, and `DataTable` gets its pagination.
 
-Two caveats for whoever picks up **FE-08**:
+Two caveats, both handled by **FE-08**:
 - **The search box now honours its own placeholder.** *"Search by name, email…"* previously
   searched name and phone only; `?search=` now also matches email, case-insensitively.
 - **`email` and `role` may be `null`** on a user with no `Auth` row (an account that cannot sign
-  in at all). `TUser` types both as required `string`; treat them as `string | null` if you touch
-  that type.
+  in at all). `TUser` now types both as `string | null`.
 
 ---
 
@@ -898,7 +1782,7 @@ Two caveats for whoever picks up **FE-08**:
 - **Product gender** is typed `z.string()` (`product-form.schema.ts:79-81`) rather than an enum,
   and its options live in a file named `shared/constants/mock-products.ts`. A bad value only fails
   at the backend with a 400. *(Fix here.)*
-- **Vendor `payoutDetails`:** the backend's apply schema accepts it; `vendorApplySchema`
+- **Vendor `payoutDetails`:** the backend's apply schema accepts it (`vendor.validation.ts:42`); `vendorApplySchema`
   (`vendor-form.schema.ts:20-40`) never sends it, so a seller cannot supply bank details at
   application time. *(Either side.)*
 - ~~**Profile name:** the backend's unused `userUpdateSchema` requires `min(5)`; this form requires
@@ -910,11 +1794,11 @@ Two caveats for whoever picks up **FE-08**:
 ### XR-07 · Free shipping diverges when the threshold is `0`
 **P1 · S · money**
 
-`calculate-order-total.ts:61-62` requires `freeShippingThreshold > 0 && subtotal >= threshold`.
-The backend (`helpers/order.ts:238-241`) requires only `subtotal >= threshold`, which at `0` is
-always true.
+`calculate-order-total.ts:62-63` requires `freeShippingThreshold > 0 && subtotal >= threshold`.
+The backend (`helpers/order.ts:252-257`) requires only `subtotal >= threshold`, which at `0` is
+always true. Still open 2026-09-29.
 
-So a store with `freeShippingThreshold = 0` — which `vendor-form.schema.ts:11` explicitly permits
+So a store with `freeShippingThreshold = 0` — which `vendor-form.schema.ts:9-11` explicitly permits
 via `.min(0)` — gets **free shipping from the backend and a full shipping fee in this cart.** The
 buyer is over-quoted and charged less than displayed. Harmless in direction, but `CLAUDE.md`
 promises the two agree to the cent, and they do not.
@@ -936,7 +1820,7 @@ param that would become a bogus `where` clause.** Two caveats:
   falls back to 10 — the right answer by coincidence. If either default moves independently, the
   limit selector starts lying.
 - ~~⚠️ **LIVE BUG as of 2026-09-22**~~ — **resolved backend-side the same day, no change needed
-  here.** `shared/constants/sort-options.ts:16-23` (`userSortOptions`) offers
+  here.** `shared/constants/sort-options.ts:30-37` (`userSortOptions`) offers
   `email:asc`/`email:desc`, and `email` lives on the backend's `Auth` model, not `User` — so for a
   few hours, between BE-14/BE-15 and BE-20, picking **Email** in the admin user table returned
   `400 Cannot sort by "email"`. BE-20 taught the backend's query builder about declared relation
@@ -946,44 +1830,30 @@ param that would become a bogus `where` clause.** Two caveats:
 
 ---
 
-### XR-09 · Enum drift
-**P2 · S · contract**
+### ~~XR-09~~ · Enum drift
+**✅ FIXED 2026-09-24 · contract** (frontend half in FE-28; the backend half was already fixed as BE-25)
 
-The backend's Prisma enums and its Zod mirrors agree on all nine mirrored enums. The drift is on
-this side:
-
-- **`PaymentStatus` exists twice here and the copies disagree.**
-  `features/orders/utils/payment-status.ts:3-8` is **missing `PARTIALLY_REFUNDED`**, and
-  `PAYMENT_STATUS_STYLES` (`:10-15`) is keyed on that union — so a partially-refunded order falls
-  through the `??` at `:19` and renders with **Pending** styling. The other copy
-  (`orders/types/status.types.ts:8-14` + `constants/status-maps.ts:17-42`) is correct. Since
-  `PARTIALLY_REFUNDED` exists precisely so that refunding one parcel of three is not misreported,
-  rendering it as *Pending* defeats the point.
-- **Three phantom types** describe backend concepts that do not exist:
-  `TUserStatus = ACTIVE | INACTIVE` (`status.types.ts:16-18`; the backend `User` has only
-  `isDeleted`), `TCouponStatus` (`:46-49`; there is no `Coupon` model), and a pre-marketplace
-  `TProductStatus = ACTIVE | INACTIVE | OUT_OF_STOCK` (`:20-23`) sitting beside the correct
-  `TProductModerationStatus`.
-- `EnumUserRole.SUPER_ADMIN` exists only here — deliberate; see "Verified NOT a gap".
-
-**Fix:** Delete `payment-status.ts` and use `status-maps.ts` everywhere (FE-28). Delete the three
-phantom types.
+- **`PaymentStatus` duplication:** there was a third copy, missing `PARTIALLY_REFUNDED`, which
+  styled a part-refunded order as Pending. It is **deleted**. There is now one definition in
+  `shared/types/status.types.ts`, and `order-columns.tsx` renders through `paymentStatusMap`.
+- **Phantom types:** `TUserStatus`, `TCouponStatus` and the old `TProductStatus` are **deleted**.
+- **A script check** confirms all six frontend status unions match their Prisma enums exactly.
+- `EnumUserRole.SUPER_ADMIN` still exists only here, deliberately. See "Verified NOT a gap".
 
 ---
 
-### XR-10 · CORS is hardcoded; this repo has no `.env.example`
+### XR-10 · CORS is hardcoded — ✅ the `.env.example` half fixed 2026-09-24
 **P1 · S · config**
 
-The backend pins `origin: ["http://localhost:3000"]` in source (`app.ts:18`) while `FRONTEND_URL`
+The backend pins `origin: ["http://localhost:3000"]` in source (`app.ts:42`, re-checked 2026-09-29) while `FRONTEND_URL`
 sits in its env unused — so **this app cannot be deployed to any other origin** without a backend
-source edit.
+source edit. *Still open, backend side.*
 
-Symmetrically, this repo has no `.env.example` (FE-29), so its six required variables are
-documented only in `CLAUDE.md`.
-
+~~This repo has no `.env.example`~~: **added in FE-29**, with all ten variables. It notes the
+port-3000 constraint above.
 ---
 
-### XR-11 · Password reset — ✅ both sides done 2026-09-24
+### XR-11 · Password reset — backend done; frontend built on an unmerged branch (see FE-04)
 **P1 · M · auth**
 
 **Updated 2026-09-22.** The backend half has landed; **this side is now the only thing missing.**
@@ -993,8 +1863,8 @@ documented only in `CLAUDE.md`.
 | `POST /auth/forgot-password` | ✅ emails a single-use link, generic 200, token never in the body |
 | `POST /auth/reset-password` | ✅ redeems the token and sets the new password |
 | Email delivery + token storage | ✅ SHA-256 hashed, TTL, single-use, supersede, per-account cooldown |
-| Forgot-password form here | ✅ wired (FE-04) |
-| `/reset-password` page here | ✅ built (FE-04) |
+| Forgot-password form here | ⚠️ wired on `FE-04-…` only, not merged |
+| `/reset-password` page here | ⚠️ built on `FE-04-…` only, not merged |
 
 **What to build, and the contract it must meet:**
 
@@ -1030,6 +1900,79 @@ Concretely:
 **Note:** a social-only (Google) account is skipped silently by the backend — it has no password to
 reset, so the generic "link sent" comes back and no mail arrives. Worth a line of copy on the
 confirmation screen pointing Google users at the Google button.
+
+---
+
+### XR-12 · The cart quotes one platform tax rate; the backend charges per category
+**P1 · S · money** — logged 2026-09-29 (backend **BE-38**, shipped 2026-09-22)
+
+**Now:** the backend taxes each line at `category.taxRate ?? TAX_RATE`
+(`backend/src/helpers/order.ts:196-200`) and sums per parcel (`:270-275`); `null` means the
+platform rate and `0` means zero-rated. Every product read returns `category.taxRate`
+(`backend/src/modules/product/product.service.ts:255,601,628,671,689,1159`). This side still
+computes `tax = round2(subtotal * TAX_RATE)` per store (`calculate-order-total.ts:69`, documented
+at `:14`), and neither `TCartItem` (`cart/types/cart.types.ts`) nor `toCartItem`
+(`cart/utils/to-cart-item.ts:38-57`) carries a rate.
+
+**Failure:** today every seeded category is `null`, so both sides agree. The moment an admin sets
+any `Category.taxRate` (the backend's category validation accepts it; no screen here sets it), a
+cart holding that category quotes tax the backend will not charge — silently, since the backend
+never trusts client amounts. `/admin/settings` already raises an alert when an override exists
+(FE-35), which is the only signal.
+
+**Fix:** snapshot `category.taxRate` onto the cart line in `toCartItem`, and in
+`groupCartByVendor` sum `round2(Σ line subtotal × (line.taxRate ?? TAX_RATE))`, rounding once as
+the backend does. Treat `0` as a real rate. FE-44's stale-snapshot problem applies to it too.
+
+---
+
+### ~~XR-13~~ · Variant products' stock is `stockQuantity`, which nothing keeps current
+**P1 · M · contract** — found 2026-09-29
+
+**✅ FIXED 2026-09-29 (code; backfill migration written, not yet applied).** `Product.stockQuantity`
+is now DERIVED for any product with live variants: `syncVariantStock` (`backend/src/helpers/product.ts`)
+sets it to the sum of live variant stock inside the same transaction as every write that moves it —
+the sale (`persistOrder`), the cancellation restock, product create/update (overriding any
+client-sent value) and the `/variants` sub-resource; deleting the last variant resets it to 0.
+`validateAndCalculateOrder` now 400s on a cart line with no `variantId` for a product that has
+variants — that path used to sell straight from `stockQuantity`, bypassing every variant. The
+seed re-derives it too. Frontend: product card and wishlist send variant products to the product
+page ("Choose options"); the product page requires an option, disables sold-out variants and caps
+quantity; the product form shows the variant total read-only. Existing rows are corrected by
+`prisma/migrations/20260929120000_sync_variant_stock` (at time of writing, 3 of 4 variant products
+had drifted, e.g. Levi's 501: 299 vs 200).
+
+**Follow-ups the same day, in the product form:** the create form no longer starts with an empty
+variant row (it had to be deleted before a variant-less product could be saved), and the edit form
+now deletes removed variants through `DELETE /products/:id/variants/:variantId`
+(`useDeleteProductVariantMutation`) before the PATCH — the PATCH alone treats `variants: []` as
+"unchanged", so removing the last variant used to keep them all and overwrite the typed stock with
+their total. `update-product.tsx` also `.unwrap()`s now; before, a failed save still toasted
+"Product updated successfully".
+
+
+**Now:** a sale of a variant decrements only `ProductVariant.stock`; `Product.stockQuantity` is
+decremented only for products with no variant (`backend/src/helpers/create-order.ts:68-90`), and
+availability is checked against the variant (`helpers/order.ts:151-170`). Nothing sums the
+variants back into the product, and the product form stamps its own value (default **200**,
+`product-form.tsx:80`). Yet every stock surface reads the product column:
+
+- admin and vendor tables — the Stock column (`product-columns.tsx:133-135`,
+  `vendor-product-columns.tsx:174-176`), the "Out of stock" filter (`stockQuantity=0`,
+  `use-admin-product-filters.ts:106-112`, `use-vendor-product-filters.ts:66-71`) and the stock
+  sorts (`shared/constants/sort-options.ts:19-20`);
+- the storefront's **In stock** filter, backend-side: `inStock=true` is
+  `stockQuantity > 0` (`backend/src/helpers/product-filter.ts:166-167`).
+
+**Failure:** a vendor sells out every variant of a jacket. The table still says "200 units", "Out of
+stock" does not find it, the storefront's "In stock" filter still shows it, and the buyer gets
+"Insufficient stock" at checkout. The reverse also happens: a variant product saved with
+`stockQuantity: 0` is hidden by "In stock" while its variants have units.
+
+**Fix:** decide what `stockQuantity` means for a variant product. The clean answer is
+backend-side — keep it as the sum of live variant stock (or compute it on read), so the filters and
+sort work unchanged here. Until then the tables can at least display the variant sum from
+`row.variants`, which both list reads include.
 
 ---
 
@@ -1078,3 +2021,14 @@ reading the reasoning.
   and `pnpm stripe:listen` all use `5001`.
 - The root `CLAUDE.md` gives the backend `TAX_RATE` default as `0.08`; that is a code fallback
   which disagrees with `.env.example` (XR-01).
+
+**2026-09-29 re-check**, against the root `CLAUDE.md` as it stood that day:
+
+- "`ProductsOverview` renders a hardcoded fixture" — it is **not rendered** since `969e767`; only
+  an orphan file and a dangling import remain (FE-11). No admin widget is mock data any more.
+- "The backend still falls back to `0.08`" — it falls back to **`0.05`** since `3ea39ea`
+  (2026-09-22), matching `.env.example` (XR-01).
+- "The frontend has not been updated" for per-category tax — still true; now logged as **XR-12**.
+- `STOREFRONT_FILTER_KEYS` / `PRODUCT_FILTER_KEYS` also carry **`onSale`**; the root doc's list
+  omits it. The two arrays match exactly.
+- FE-39's "committed build artefacts" were never committed (`.gitignore` covers both).

@@ -1,6 +1,7 @@
 "use client";
 
 import { Banknote, Clock, Wallet } from "lucide-react";
+import Link from "next/link";
 
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { payoutStatusMap } from "@/features/orders/constants/status-maps";
@@ -29,7 +30,13 @@ import { StatusBadge } from "@/shared/ui/status-badge";
 export default function VendorPayouts() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
     const { data: balanceData, isLoading: balanceLoading } = useMyBalanceQuery();
-    const { data: payoutData, isLoading, isFetching } = useMyPayoutsQuery(
+    const {
+        data: payoutData,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useMyPayoutsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -39,7 +46,15 @@ export default function VendorPayouts() {
         {
             key: "createdAt",
             header: "Created",
-            cell: (row) => <span>{formatDate(row.createdAt, "ll")}</span>,
+            cell: (row) => (
+                <Link
+                    href={`/vendor/payouts/${row.id}`}
+                    className="font-medium hover:underline"
+                    aria-label={`Payout of ${currencyFormatter(Number(row.amount))} created ${formatDate(row.createdAt, "ll")}`}
+                >
+                    {formatDate(row.createdAt, "ll")}
+                </Link>
+            ),
         },
         {
             key: "period",
@@ -144,10 +159,12 @@ export default function VendorPayouts() {
                     columns={columns}
                     data={payoutData?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={payoutData?.meta}
-                    placeholder="Search payouts..."
+                    placeholder="Search reference, method or notes..."
                 />
             </div>
         </div>

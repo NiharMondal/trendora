@@ -28,7 +28,13 @@ const apiMessage = (error: unknown) =>
 /** Every payout run, and the controls to settle or fail one. */
 export default function PayoutAdminTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const { data, isLoading, isFetching } = useAllPayoutsQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllPayoutsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -168,6 +174,17 @@ export default function PayoutAdminTable() {
                     );
                 }
 
+                // FAILED is final too: its earnings went back to the pool and
+                // belong to the next payout, so marking this one paid would
+                // count the money twice (backend BE-51 now refuses it).
+                if (row.status === "FAILED") {
+                    return (
+                        <span className="text-xs text-muted-foreground">
+                            Failed — earnings released to the next payout
+                        </span>
+                    );
+                }
+
                 return (
                     <div className="flex items-center gap-1">
                         <Button
@@ -210,10 +227,12 @@ export default function PayoutAdminTable() {
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}
-                placeholder="Search payouts..."
+                placeholder="Search store, reference, method or notes..."
             />
 
             <TDModal
@@ -234,6 +253,7 @@ export default function PayoutAdminTable() {
                         value={reference}
                         onChange={(event) => setReference(event.target.value)}
                         placeholder="Bank / gateway reference"
+                        aria-label="Bank or gateway reference"
                     />
                     <div className="flex justify-end gap-2">
                         <Button

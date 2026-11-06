@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import React from "react";
 
 import { DataTable } from "@/shared/components/table";
@@ -15,9 +15,8 @@ import EditReview from "./edit-review";
 import { reviewColumns } from "./review-columns";
 
 export default function ReviewTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const reviewId = searchParams.get("reviewId");
+    const editParam = useUrlParam("reviewId");
+    const reviewId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -25,14 +24,16 @@ export default function ReviewTable() {
         data: reviews,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllReviewQuery(filters.queryParams as Record<string, string>);
 
     const handleAction = (review: TReview) => {
-        router.push(`?reviewId=${review.id}`, { scroll: false });
+        editParam.set(review.id);
     };
 
     const handleCloseDrawer = () => {
-        router.push("?", { scroll: false });
+        editParam.clear();
     };
     if (isLoading) return <TableLoading />;
     return (
@@ -42,6 +43,8 @@ export default function ReviewTable() {
                     columns={reviewColumns(handleAction)}
                     data={reviews?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={reviews?.meta}

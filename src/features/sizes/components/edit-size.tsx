@@ -6,13 +6,20 @@ import SizeForm from "@/features/sizes/components/size-form";
 import { TSizeFormValues } from "@/features/sizes/schemas/size-form.schema";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import { useSizeByIdQuery, useUpdateSizeMutation } from "@/features/sizes/api/size.api";
+import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 type EditSizeProps = {
     onClose: () => void;
 };
 export default function EditSize({ onClose }: EditSizeProps) {
     const searchParams = useSearchParams();
     const sizeId = searchParams.get("id");
-    const { data: selectedSize, isLoading } = useSizeByIdQuery(sizeId!, {
+    const {
+        data: selectedSize,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useSizeByIdQuery(sizeId!, {
         skip: !sizeId,
     });
     const [updateSize, { isLoading: isUpdating }] = useUpdateSizeMutation();
@@ -33,12 +40,21 @@ export default function EditSize({ onClose }: EditSizeProps) {
                 id: sizeId,
             }).unwrap();
             toast.success("Size updated successfully");
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (!sizeId) return null;
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this size"
+            />
+        );
+    }
     return (
         <div>
             <SizeForm

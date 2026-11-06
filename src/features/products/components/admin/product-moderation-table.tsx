@@ -45,7 +45,13 @@ export default function ProductModerationTable({
     const [rejectTarget, setRejectTarget] = useState<TProduct | null>(null);
     const [reason, setReason] = useState("");
 
-    const { data, isLoading, isFetching } = useAllProductsForAdminQuery({
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllProductsForAdminQuery({
         ...(filters.queryParams as Record<string, string>),
         ...(statusFilter !== "ALL" ? { status: statusFilter } : {}),
     });
@@ -171,11 +177,11 @@ export default function ProductModerationTable({
             header: "Actions",
             cell: (row) => (
                 <div className="flex items-center gap-1">
-                    <Link href={`/admin/product-list/${row.id}`}>
-                        <Button variant="ghost" size="icon" title="Inspect">
+                    <Button variant="ghost" size="icon" title="Inspect" asChild>
+                        <Link href={`/admin/product-list/${row.id}`}>
                             <Eye className="size-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
 
                     {row.status !== "APPROVED" && (
                         <Button
@@ -219,6 +225,8 @@ export default function ProductModerationTable({
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

@@ -10,6 +10,8 @@ import {
 	useCategoryByIdQuery,
 	useUpdateCategoryMutation,
 } from "@/features/categories/api/category.api";
+import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 type EditCategoryProps = {
 	onClose: () => void;
 	categories: TCategory[];
@@ -20,7 +22,12 @@ export default function EditCategory({
 }: EditCategoryProps) {
 	const searchParams = useSearchParams();
 	const categoryId = searchParams.get("categoryId");
-	const { data: selectedCategory, isLoading } = useCategoryByIdQuery(
+	const {
+	    data: selectedCategory,
+	    isLoading,
+	    error: loadError,
+	    refetch: retryLoad,
+	} = useCategoryByIdQuery(
 		categoryId!,
 		{
 			skip: !categoryId,
@@ -34,8 +41,10 @@ export default function EditCategory({
 
 		return {
 			name: category?.name,
-			sizeGroupId: category?.sizeGroupId || "",
-			parentId: category?.parentId || "",
+			// `null`, never "": the backend writes "" into the foreign key and
+			// Postgres rejects it, so every edit of a top-level category failed.
+			sizeGroupId: category?.sizeGroupId ?? null,
+			parentId: category?.parentId ?? null,
 			// Round-trip the existing image. Omitting it sends `undefined`,
 			// which the backend reads as "leave it alone" — but the upload
 			// widget would then start blank and an admin replacing the picture
@@ -57,19 +66,30 @@ export default function EditCategory({
 		})) || [];
 
 	const handleUpdateCategory = async (values: TCategoryFormValues) => {
-		if (!categoryId) return;
+		if (!categoryId) return false;
 		try {
 			await updateCategory({
 				payload: values,
 				id: categoryId,
 			}).unwrap();
 			toast.success("Category updated successfully");
-		} catch (error: any) {
-			toast.error(error?.data?.message);
+			return true;
+		} catch (error) {
+			toast.error(getApiErrorMessage(error));
+			return false;
 		}
 	};
 	if (!categoryId) return null;
 	if (isLoading) return <SpinnerLoading />;
+	if (loadError) {
+		return (
+			<QueryError
+				error={loadError}
+				onRetry={retryLoad}
+				title="Could not load this category"
+			/>
+		);
+	}
 	return (
 		<div>
 			<CategoryForm

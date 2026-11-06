@@ -13,7 +13,7 @@ import { cn } from "@/shared/lib/utils";
 import { useAllSlideQuery } from "@/features/home/api/slide.api";
 
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
-import TDButton from "@/shared/components/td-button";
+import { Button } from "@/shared/ui/button";
 
 export function HeroSlider() {
 	const { data, isLoading } = useAllSlideQuery({ limit: "5" });
@@ -56,14 +56,13 @@ export function HeroSlider() {
 								<p className="font-inter font-medium">
 									{item.subtitle}
 								</p>
-								<Link href={item.url}>
-									<TDButton
-										size="lg"
-										className="text-2xl font-semibold"
-									>
-										Shop Now
-									</TDButton>
-								</Link>
+								<Button
+									size="lg"
+									className="text-2xl font-semibold"
+									asChild
+								>
+									<Link href={item.url}>Shop Now</Link>
+								</Button>
 							</div>
 						</CarouselItem>
 					))}
@@ -73,6 +72,9 @@ export function HeroSlider() {
 				{scrollSnaps.map((_, index) => (
 					<button
 						key={index}
+						type="button"
+						aria-label={`Go to slide ${index + 1} of ${scrollSnaps.length}`}
+						aria-current={selectedIndex === index ? "true" : undefined}
 						onClick={() => api?.scrollTo(index)}
 						className={cn("size-3 bg-muted rounded-full", {
 							"ring-2 ring-primary border-2 border-primary ring-offset-2 bg-white":

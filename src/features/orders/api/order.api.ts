@@ -1,9 +1,11 @@
 import { TServerResponse } from "@/shared/types/common.types";
 import {
+    TBuyerSummary,
     TCreateOrderPayload,
     TCreateOrderResult,
     TOrder,
     TOrderAnalytics,
+    TSalesTrend,
 } from "@/features/orders/types/order.types";
 
 import { buildQueryParams } from "@/shared/utils/build-query-params";
@@ -35,6 +37,15 @@ export const orderApi = baseApi.injectEndpoints({
                 };
             },
             providesTags: ["orders"],
+        }),
+
+        /**
+         * The shopper dashboard's numbers. Provides every tag whose mutations
+         * move them — cancelling a parcel, a refund landing, posting a review.
+         */
+        myOrderSummary: builder.query<TServerResponse<TBuyerSummary>, void>({
+            query: () => ({ url: "/orders/my-summary", method: "GET" }),
+            providesTags: ["orders", "refunds", "reviews"],
         }),
 
         getMyOrders: builder.query<
@@ -73,6 +84,19 @@ export const orderApi = baseApi.injectEndpoints({
             providesTags: ["orders"],
         }),
 
+        /** Orders, GMV and commission per day (or per month past 90 days). ADMIN. */
+        salesTrend: builder.query<
+            TServerResponse<TSalesTrend>,
+            Record<string, string> | void
+        >({
+            query: (query) => ({
+                url: "/orders/analytics/sales-trend",
+                method: "GET",
+                params: query ? buildQueryParams(query) : undefined,
+            }),
+            providesTags: ["orders"],
+        }),
+
         // NOTE: there is deliberately no updateOrder/deleteOrder here.
         // `PATCH /orders/:id` and `DELETE /orders/:id` do not exist on the
         // backend — fulfilment happens per store through
@@ -83,9 +107,11 @@ export const orderApi = baseApi.injectEndpoints({
 });
 
 export const {
+    useMyOrderSummaryQuery,
     useAllOrderQuery,
     useCreateOrderMutation,
     useGetMyOrdersQuery,
     useOrderByIdQuery,
     useOrderAnalyticsQuery,
+    useSalesTrendQuery,
 } = orderApi;

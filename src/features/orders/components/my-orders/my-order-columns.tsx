@@ -1,3 +1,6 @@
+import { Eye } from "lucide-react";
+import Link from "next/link";
+
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import {
     orderStatusMap,
@@ -6,6 +9,9 @@ import {
 import { TOrder } from "@/features/orders/types/order.types";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { formatDate } from "@/shared/lib/format-date-time";
+import { Button } from "@/shared/ui/button";
+
+const detailsHref = (order: TOrder) => `/dashboard/my-orders/${order.id}`;
 
 /**
  * Buyer's order list.
@@ -19,6 +25,14 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
         {
             key: "orderNumber",
             header: "Order ID",
+            cell: (row) => (
+                <Link
+                    href={detailsHref(row)}
+                    className="font-medium hover:underline"
+                >
+                    {row.orderNumber}
+                </Link>
+            ),
         },
         {
             key: "createdAt",
@@ -86,6 +100,17 @@ export const myOrderColumns = (): DataTableColumn<TOrder>[] => {
             key: "totalAmount",
             header: "Total",
             cell: (row) => <span>${row?.totalAmount}</span>,
+        },
+        {
+            key: "actions",
+            header: "",
+            cell: (row) => (
+                <Button variant="ghost" size="icon" title="View details" asChild>
+                    <Link href={detailsHref(row)}>
+                        <Eye className="size-4" />
+                    </Link>
+                </Button>
+            ),
         },
     ];
 };

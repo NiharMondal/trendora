@@ -16,7 +16,6 @@ export const mapProductToFormValues = (
 
         stockQuantity: product.stockQuantity,
 
-        isFeatured: product.isFeatured ?? false,
 
         categoryId: product.categoryId,
         brandId: product.brandId,

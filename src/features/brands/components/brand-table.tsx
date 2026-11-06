@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -15,11 +15,11 @@ import { useAllBrandQuery, useDeleteBrandMutation } from "@/features/brands/api/
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { brandColumns } from "./brand-columns";
 import EditBrand from "./edit-brand";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function BrandTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const brandId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const brandId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -30,13 +30,15 @@ export default function BrandTable() {
         data: brands,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllBrandQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TBrand) => {
-        router.push(`?id=${category.id}`, { scroll: false });
+        editParam.set(category.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (category: TBrand) => {
         setDeleteBrandId(category.id);
@@ -48,8 +50,8 @@ export default function BrandTable() {
             await deleteBrand(deleteBrandId).unwrap();
             toast.success("Category deleted successfully");
             setDeleteBrandId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;
@@ -59,6 +61,8 @@ export default function BrandTable() {
                 columns={brandColumns({ handleEdit, handleDelete })}
                 data={brands?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={brands?.meta}

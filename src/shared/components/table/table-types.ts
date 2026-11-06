@@ -15,6 +15,28 @@ export type DataTableColumn<T> = {
     align?: ColumnAlign;
     /** Tailwind width utility for the column, e.g. `"w-40"`. */
     width?: string;
+    /**
+     * Name in the "Columns" menu. Defaults to `header` when that is a string;
+     * set it when the header is an icon or other node.
+     */
+    label?: string;
+    /**
+     * Whether the "Columns" menu may hide this column. Defaults to `true`;
+     * set `false` for the column that identifies the row and for actions.
+     */
+    hideable?: boolean;
+    /** Start hidden until the viewer turns it on in the "Columns" menu. */
+    defaultHidden?: boolean;
+};
+
+/**
+ * Turns on the toolbar's "Columns" menu. The viewer's choice is remembered
+ * in this browser under `storageKey` — a per-viewer convenience, so it is
+ * fine for it to be lost; the table renders its defaults without it.
+ */
+export type ColumnConfig = {
+    /** Unique per table, e.g. `"admin-products"`. */
+    storageKey: string;
 };
 
 export type ExpandableConfig<T, S> = {
@@ -48,6 +70,19 @@ export type ToolbarFilter = {
     hideAllOption?: boolean;
     icon?: ComponentType<{ className?: string }>;
     className?: string;
+    /**
+     * `primary` (default) renders inline beside search. `advanced` goes in
+     * the collapsible "Filters" panel — use it once a table has more filters
+     * than fit on one row, keeping the one or two most-used ones primary.
+     */
+    placement?: "primary" | "advanced";
+    /**
+     * How an advanced filter is drawn. `select` (default) takes the same space
+     * however many options there are. `chips` is opt-in, and only sensible for
+     * a short FIXED list (two or three values) — never for data-driven options
+     * like brands or stores, which would wrap into a wall of buttons.
+     */
+    display?: "select" | "chips";
 };
 
 export type EmptyStateConfig = {
@@ -72,6 +107,8 @@ export type TableFilters = {
     /** Current value of every extra column filter, keyed by query-param name. */
     columnFilters?: Record<string, string>;
     setFilter?: (key: string, value: string) => void;
+    /** Several filters in ONE URL write — see `useTableFilters.setFilters`. */
+    setFilters?: (updates: Record<string, string>) => void;
     /** The values a filter is compared against to decide whether it is "active". */
     defaults?: Record<string, string>;
     activeFilterCount?: number;
@@ -85,6 +122,14 @@ export type DataTableProps<T, S = unknown> = {
     rowClassName?: (row: T) => string;
     onRowClick?: (row: T) => void;
     isFetching?: boolean;
+    /**
+     * The query hook's `error`. When set the table renders an error state with
+     * the backend's message instead of rows — even if stale `data` from a
+     * previous page is still cached — so a failure never reads as "no data".
+     */
+    error?: unknown;
+    /** Retry for the error state; pass the hook's `refetch`. */
+    onRetry?: () => void;
     expandable?: ExpandableConfig<T, S>;
     /** Pass the object returned by `useTableFilters` to render the toolbar. */
     filters?: TableFilters;
@@ -107,5 +152,7 @@ export type DataTableProps<T, S = unknown> = {
     emptyState?: EmptyStateConfig;
     /** Skeleton rows rendered while fetching. Defaults to 5. */
     loadingRows?: number;
+    /** Adds a "Columns" menu to show and hide columns — see `ColumnConfig`. */
+    columnConfig?: ColumnConfig;
     className?: string;
 };

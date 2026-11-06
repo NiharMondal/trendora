@@ -3,6 +3,7 @@ import { TAddressFormValues } from "@/features/addresses/schemas/address-form.sc
 import { TAddress } from "@/features/addresses/types/address.types";
 import { useUpdateAddressMutation } from "@/features/addresses/api/address.api";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function EditAddress({
     handleCloseDrawer,
@@ -19,8 +20,8 @@ export default function EditAddress({
                 toast.success(res?.message);
                 return true;
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message || "Something went wrong!");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Something went wrong!"));
             return false;
         }
     };

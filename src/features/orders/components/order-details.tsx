@@ -14,6 +14,14 @@ import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { formatDate } from "@/shared/lib/format-date-time";
 import Link from "next/link";
+import Headline from "@/shared/components/headline";
+import QueryError from "@/shared/components/query-error";
+import ManualRefundModal from "@/features/refunds/components/manual-refund-modal";
+import { Button } from "@/shared/ui/button";
+import { useState } from "react";
+import VendorOrderStatusModal, {
+    ADMIN_TRANSITIONS,
+} from "@/features/vendors/components/vendor-order-status-modal";
 
 /**
  * Admin view of one order.
@@ -24,19 +32,52 @@ import Link from "next/link";
  * (what each store earns, what the platform keeps) is shown per parcel.
  */
 export default function OrderDetails({ slug }: { slug: string }) {
-    const { data: orderData, isLoading } = useOrderByIdQuery(slug);
+    const {
+        data: orderData,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useOrderByIdQuery(slug);
     const order = orderData?.result;
     const shippingSnapshot = order?.shippingSnapshot;
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this order"
+                notFound={{
+                    title: "Order not found",
+                    description:
+                        "It may belong to another account, or the link is wrong.",
+                }}
+            />
+        );
+    }
 
     const vendorOrders = order?.vendorOrders ?? [];
 
+    // What can still be handed back by hand: only money actually collected,
+    // less what has already been refunded. Zero hides the manual-refund entry.
+    const collected =
+        order?.paymentStatus === "PAID" ||
+        order?.paymentStatus === "PARTIALLY_REFUNDED";
+    const refundable = collected
+        ? Math.max(
+              0,
+              Number(order?.payment?.amount ?? 0) -
+                  Number(order?.payment?.refundAmount ?? 0),
+          )
+        : 0;
+
     return (
         <div className="space-y-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white padding border-radius">
-                <div className="flex items-center gap-3">
-                    <h3>Order Details</h3>
+            <Headline
+                title="Order Details"
+                showBackButton
+                titleExtra={
                     <div className="space-y-0.5">
                         <StatusBadge
                             statusMap={orderStatusMap}
@@ -47,7 +88,8 @@ export default function OrderDetails({ slug }: { slug: string }) {
                             {vendorOrders.length === 1 ? "" : "s"}
                         </p>
                     </div>
-                </div>
+                }
+            >
                 <div className="flex items-center gap-4">
                     <StatusBadge
                         statusMap={paymentStatusMap}
@@ -60,7 +102,7 @@ export default function OrderDetails({ slug }: { slug: string }) {
                         </span>
                     </p>
                 </div>
-            </div>
+            </Headline>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 <div className="lg:col-span-2 space-y-5">
@@ -69,6 +111,8 @@ export default function OrderDetails({ slug }: { slug: string }) {
                         <VendorOrderCard
                             key={vendorOrder.id}
                             vendorOrder={vendorOrder}
+                            orderId={order?.id ?? ""}
+                            refundable={refundable}
                         />
                     ))}
 
@@ -90,7 +134,7 @@ export default function OrderDetails({ slug }: { slug: string }) {
                                 />
                                 <RowText
                                     title="Email"
-                                    value={order?.user.email}
+                                    value={order?.user.email ?? "—"}
                                     titleClassName="text-gray-800 font-medium"
                                 />
                                 <RowText
@@ -261,8 +305,25 @@ export default function OrderDetails({ slug }: { slug: string }) {
 }
 
 /** One store's parcel: its items, its fulfilment state, and its money split. */
-function VendorOrderCard({ vendorOrder }: { vendorOrder: TVendorOrder }) {
+function VendorOrderCard({
+    vendorOrder,
+    orderId,
+    refundable,
+}: {
+    vendorOrder: TVendorOrder;
+    orderId: string;
+    refundable: number;
+}) {
     const items = vendorOrder.items ?? [];
+    const [recording, setRecording] = useState(false);
+    // A parcel holds at most one refund (the column is unique), so the entry
+    // disappears once one exists — automatic or manual.
+    const canRecordRefund = !vendorOrder.refund && refundable > 0;
+    // The backend treats an ADMIN as able to move any parcel, whichever store
+    // ships it — including Trendora Official, which the admin account owns.
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+    const canUpdateStatus =
+        (ADMIN_TRANSITIONS[vendorOrder.orderStatus] ?? []).length > 0;
 
     return (
         <div className="bg-white padding border-radius space-y-3">
@@ -320,6 +381,49 @@ function VendorOrderCard({ vendorOrder }: { vendorOrder: TVendorOrder }) {
                         </p>
                     )}
                 </div>
+            )}
+
+            {/* For money returned outside the gateway — cash handed back on a
+                COD parcel, or a bank transfer. Records a fact; sends nothing. */}
+            {(canUpdateStatus || canRecordRefund) && (
+                <div className="flex justify-end gap-2">
+                    {canUpdateStatus && (
+                        <Button
+                            size="sm"
+                            onClick={() => setUpdatingStatus(true)}
+                        >
+                            Update status
+                        </Button>
+                    )}
+                    {canRecordRefund && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setRecording(true)}
+                        >
+                            Record manual refund
+                        </Button>
+                    )}
+                </div>
+            )}
+            {updatingStatus && (
+                <VendorOrderStatusModal
+                    vendorOrder={vendorOrder}
+                    transitions={ADMIN_TRANSITIONS}
+                    open
+                    onOpenChange={setUpdatingStatus}
+                />
+            )}
+            {recording && (
+                <ManualRefundModal
+                    orderId={orderId}
+                    vendorOrderId={vendorOrder.id}
+                    parcelLabel={`#${vendorOrder.vendorOrderNumber}${vendorOrder.vendor ? ` · ${vendorOrder.vendor.storeName}` : ""}`}
+                    suggestedAmount={Number(vendorOrder.totalAmount)}
+                    refundable={refundable}
+                    open
+                    onOpenChange={setRecording}
+                />
             )}
 
             <div className="border border-muted border-radius">

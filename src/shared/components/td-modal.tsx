@@ -35,6 +35,9 @@ export function TDModal({
             <DialogContent
                 className={cn("sm:max-w-sm md:max-w-md lg:max-w-lg", className)}
                 onClick={(e) => e.stopPropagation()}
+                // Radix links the description automatically; with none, say so
+                // explicitly rather than point aria-describedby at nothing.
+                {...(!description && { "aria-describedby": undefined })}
             >
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>

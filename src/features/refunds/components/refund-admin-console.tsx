@@ -41,7 +41,13 @@ export default function RefundAdminConsole() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
     const { data: outstanding, isLoading: outstandingLoading } =
         useOutstandingRefundsQuery();
-    const { data, isLoading, isFetching } = useAllRefundsQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllRefundsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -105,7 +111,7 @@ export default function RefundAdminConsole() {
             cell: (row) => (
                 <div>
                     <Link
-                        href={`/admin/order-details/${row.orderId}`}
+                        href={`/admin/order-list/${row.orderId}`}
                         className="font-medium hover:underline"
                     >
                         {row.order?.orderNumber ?? row.orderId.slice(0, 8)}
@@ -338,10 +344,12 @@ export default function RefundAdminConsole() {
                     columns={columns}
                     data={data?.result || []}
                     rowKey={(row) => row.id}
+                    error={listError}
+                    onRetry={refetchList}
                     isFetching={isFetching}
                     filters={filters}
                     meta={data?.meta}
-                    placeholder="Search refunds..."
+                    placeholder="Search order or parcel number, Stripe refund id, reason..."
                 />
             </div>
 

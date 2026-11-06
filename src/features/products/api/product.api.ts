@@ -113,6 +113,20 @@ export const productApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["products"],
         }),
+        // Remove one variant. `PATCH /products/:id` cannot express "remove
+        // them all" — it treats an empty `variants` array as "unchanged" —
+        // so the edit form deletes removed variants through this endpoint.
+        // Soft delete on the backend; the last one resets stockQuantity to 0.
+        deleteProductVariant: builder.mutation<
+            TServerResponse<unknown>,
+            { productId: string; variantId: string }
+        >({
+            query: ({ productId, variantId }) => ({
+                url: `/products/${productId}/variants/${variantId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["products"],
+        }),
         // delete product
         deleteProduct: builder.mutation<TServerResponse<TProduct>, string>({
             query: (id) => ({
@@ -198,6 +212,23 @@ export const productApi = baseApi.injectEndpoints({
             invalidatesTags: ["products"],
         }),
 
+        /**
+         * Admin-only: put a listing in (or out of) the home page's Featured
+         * rail. Its own endpoint — the general product edit ignores
+         * `isFeatured` entirely.
+         */
+        setProductFeatured: builder.mutation<
+            TServerResponse<TProduct>,
+            { id: string; isFeatured: boolean }
+        >({
+            query: ({ id, isFeatured }) => ({
+                url: `/products/${id}/feature`,
+                method: "PATCH",
+                body: { isFeatured },
+            }),
+            invalidatesTags: ["products"],
+        }),
+
         approveProduct: builder.mutation<TServerResponse<TProduct>, string>({
             query: (id) => ({
                 url: `/products/${id}/approve`,
@@ -236,6 +267,7 @@ export const {
     useBestSellersQuery,
     useCreateProductMutation,
     useDeleteProductMutation,
+    useDeleteProductVariantMutation,
     useProductByIdQuery,
     useProductBySlugQuery,
     useUpdateProductMutation,
@@ -248,6 +280,7 @@ export const {
     useSetProductPublishedMutation,
     //
     useAllProductsForAdminQuery,
+    useSetProductFeaturedMutation,
     useApproveProductMutation,
     useRejectProductMutation,
 } = productApi;

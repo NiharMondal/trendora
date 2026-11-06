@@ -7,7 +7,9 @@ import TrustStrip from "@/features/home/components/trust-strip";
 import {
     BestSellersRail,
     DealsRail,
+    FeaturedRail,
     NewArrivalsRail,
+    RecentlyViewedRail,
     TopRatedRail,
 } from "@/features/home/components/rails";
 
@@ -27,9 +29,12 @@ import {
  */
 export default function Home() {
     return (
-        <main>
+        // The <main> landmark is in (root)/layout.tsx; a second one here is invalid.
+        <div>
             <HeroSlider />
             <TrustStrip />
+            {/* Curated picks lead; the tiles keep them off the Deals shelf. */}
+            <FeaturedRail />
             <CategoryTiles />
             <DealsRail />
             <PromoBanner />
@@ -37,7 +42,9 @@ export default function Home() {
             <NewArrivalsRail />
             <TopRatedRail />
             <BrandStrip />
+            {/* Between two non-rail sections, so it never stacks on a shelf. */}
+            <RecentlyViewedRail />
             <TopStores />
-        </main>
+        </div>
     );
 }

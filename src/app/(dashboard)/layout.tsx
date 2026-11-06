@@ -1,4 +1,3 @@
-import { Bell } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 
@@ -23,32 +22,25 @@ export default async function DashboardLayout({
                 session={session as TSessionResponse}
                 role={role as EnumUserRole}
             />
-            <section className="w-full">
-                <div className="flex items-center justify-between border-b py-5 md:px-2 pr-2 text-foreground/70 sticky top-0 right-0 bg-white z-20">
-                    <SidebarTrigger className="cursor-pointer" />
-                    <div className="">
-                        <input
-                            type="text"
-                            placeholder="Search anything..."
-                            className="outline-none border-none ring ring-neutral-dark/20 focus:ring-2 focus:ring-accent/50 rounded-full px-4 py-2 xl:min-w-xl"
-                        />
-                    </div>
-                    <div className="flex items-center gap-x-4 xl:gap-x-10">
-                        <div className="p-2 bg-gray-100 rounded-full cursor-pointer">
-                            <Bell />
-                        </div>
-                        <div className="hidden md:block">
-                            <p>Your Balance</p>
-                            <p>
-                                <strong>$12627</strong>
-                            </p>
-                        </div>
-                    </div>
+            <section className="w-full min-w-0 flex-1">
+                {/* Desktop has no top bar: the trigger lives in the sidebar
+                    header, and the vendor balance in the sidebar footer. On
+                    mobile the sidebar is a closed drawer, so a trigger inside
+                    it could never open it — this slim bar is the way in. */}
+                <div className="sticky top-0 z-20 flex h-12 items-center border-b bg-white px-2 md:hidden">
+                    <SidebarTrigger
+                        className="size-9 cursor-pointer"
+                        aria-label="Open navigation"
+                    />
                 </div>
-                <div className="p-2 sm:px-3 md:p-5 bg-neutral-light">
+                <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className="p-2 sm:px-3 md:p-5 bg-neutral-light outline-none"
+                >
                     <DashboardTabs role={role as EnumUserRole} />
                     {children}
-                </div>
+                </main>
             </section>
         </SidebarProvider>
     );

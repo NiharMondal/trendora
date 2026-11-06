@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { useAllBrandQuery } from "@/features/brands/api/brand.api";
@@ -24,7 +25,16 @@ export default function BrandStrip() {
     return (
         <section className="py-10">
             <Container className="space-y-6">
-                <h2 className="text-2xl font-semibold">Shop by brand</h2>
+                <div className="flex items-end justify-between gap-4">
+                    <h2 className="text-2xl font-semibold">Shop by brand</h2>
+                    <Link
+                        href="/brands"
+                        className="group flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                    >
+                        All brands
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                </div>
 
                 <div className="flex flex-wrap gap-3">
                     {isLoading

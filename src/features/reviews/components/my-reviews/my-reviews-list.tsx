@@ -19,9 +19,16 @@ import {
 } from "@/features/reviews/api/review.api";
 
 import { myReviewColumns } from "./my-reviews-columns";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function MyReviewsList() {
-	const { data: reviews, isLoading, isFetching } = useGetMyReviewsQuery();
+	const {
+	    data: reviews,
+	    isLoading,
+	    isFetching,
+	    error: listError,
+	    refetch: refetchList,
+	} = useGetMyReviewsQuery();
 
 	const [editReview, setEditReview] = useState<TReview | null>(null);
 	const [deleteReview, setDeleteReview] = useState<TReview | null>(null);
@@ -46,8 +53,8 @@ export default function MyReviewsList() {
 			}).unwrap();
 			toast.success("Review updated successfully");
 			setEditReview(null);
-		} catch (error: any) {
-			toast.error(error?.data?.message ?? "Failed to update review");
+		} catch (error) {
+			toast.error(getApiErrorMessage(error, "Failed to update review"));
 		}
 	};
 
@@ -57,8 +64,8 @@ export default function MyReviewsList() {
 			await removeReview(deleteReview.id).unwrap();
 			toast.success("Review deleted successfully");
 			setDeleteReview(null);
-		} catch (error: any) {
-			toast.error(error?.data?.message ?? "Failed to delete review");
+		} catch (error) {
+			toast.error(getApiErrorMessage(error, "Failed to delete review"));
 		}
 	};
 
@@ -82,6 +89,8 @@ export default function MyReviewsList() {
 			<DataTable<TReview>
 				data={reviewList}
 				rowKey={(row) => row.id}
+				error={listError}
+				onRetry={refetchList}
 				columns={myReviewColumns({ handleEdit, handleDelete })}
 				isFetching={isFetching}
 			/>

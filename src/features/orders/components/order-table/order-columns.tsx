@@ -5,11 +5,12 @@ import Link from "next/link";
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import { TOrder } from "@/features/orders/types/order.types";
 import { Button } from "@/shared/ui/button";
-import { EnumOrderStatus, getOrderStatusStyles } from "@/features/orders/utils/order-status";
 import {
-    EnumPaymentStatus,
-    getPaymentStatusStyles,
-} from "@/features/orders/utils/payment-status";
+    orderStatusMap,
+    paymentStatusMap,
+} from "@/features/orders/constants/status-maps";
+import { StatusBadge } from "@/shared/ui/status-badge";
+import TdUserInfo from "@/shared/components/td-user-info";
 
 export const orderColumns: DataTableColumn<TOrder>[] = [
     {
@@ -17,19 +18,11 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         header: "Customer",
         cell: (row) => {
             return (
-                <div className="flex items-center gap-2">
-                    <img
-                        src={row.user.avatar}
-                        alt={row.user.name}
-                        className="size-10 rounded-full object-cover ring-1 ring-primary/25"
-                    />
-                    <div>
-                        <p className="font-medium">{row.user.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                            {row.user.email}
-                        </p>
-                    </div>
-                </div>
+                <TdUserInfo
+                    name={row.user.name}
+                    email={row.user.email}
+                    avatar={row.user.avatar}
+                />
             );
         },
     },
@@ -80,13 +73,7 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <span
-                    className={getOrderStatusStyles(
-                        order.orderStatus as EnumOrderStatus,
-                    )}
-                >
-                    {order.orderStatus}
-                </span>
+                <StatusBadge statusMap={orderStatusMap} status={order.orderStatus} />
             );
         },
     },
@@ -104,13 +91,10 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <span
-                    className={getPaymentStatusStyles(
-                        order.paymentStatus as EnumPaymentStatus,
-                    )}
-                >
-                    {order.paymentStatus}
-                </span>
+                // The canonical map includes PARTIALLY_REFUNDED; the deleted
+                // `utils/payment-status.ts` did not, so a part-refunded order
+                // used to render with Pending styling (XR-09).
+                <StatusBadge statusMap={paymentStatusMap} status={order.paymentStatus} />
             );
         },
     },
@@ -128,12 +112,12 @@ export const orderColumns: DataTableColumn<TOrder>[] = [
         cell: (row) => {
             const order = row;
             return (
-                <Link href={`/admin/order-details/${order.id}`}>
-                    <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/admin/order-list/${order.id}`}>
                         <FileSearch />
                         Details
-                    </Button>
-                </Link>
+                    </Link>
+                </Button>
             );
         },
     },

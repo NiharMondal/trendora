@@ -1,6 +1,7 @@
 "use client";
 
 import NoDataFound from "@/shared/components/no-data-found";
+import QueryError from "@/shared/components/query-error";
 import {
     Table,
     TableBody,
@@ -10,6 +11,7 @@ import {
     TableRow,
 } from "@/shared/ui/table";
 import { cn } from "@/shared/lib/utils";
+import { useColumnVisibility } from "@/shared/hooks/use-column-visibility";
 import { ChevronRight } from "lucide-react";
 import { Fragment, ReactNode, useState } from "react";
 
@@ -35,6 +37,8 @@ export default function DataTable<T, S = unknown>({
     rowClassName,
     onRowClick,
     isFetching,
+    error,
+    onRetry,
     expandable,
     filters,
     meta,
@@ -48,8 +52,19 @@ export default function DataTable<T, S = unknown>({
     actions,
     emptyState,
     loadingRows,
+    columnConfig,
     className,
 }: DataTableProps<T, S>) {
+    const columnVisibility = useColumnVisibility(
+        columns,
+        columnConfig?.storageKey,
+    );
+    // Without `columnConfig` every column is shown, whatever `defaultHidden`
+    // says — there would be no menu to bring a hidden one back.
+    const shownColumns = columnConfig
+        ? columnVisibility.visibleColumns
+        : columns;
+
     const initialExpanded = () => {
         if (!expandable?.defaultExpanded || !data) return new Set<string>();
         const seed = new Set<string>();
@@ -74,28 +89,43 @@ export default function DataTable<T, S = unknown>({
         });
     };
 
-    const totalCols = columns.length + (expandable ? 1 : 0);
-    const showPagination = !!filters && !!meta && meta.totalPages > 1;
+    const totalCols = shownColumns.length + (expandable ? 1 : 0);
+    const showPagination =
+        !error && !!filters && !!meta && meta.totalPages > 1;
+    // Search, sort, limit and filters mean nothing over an empty list — but
+    // only when nothing is applied: if a search or filter emptied the list,
+    // the controls are the only way to undo it, so they stay.
+    const isEmpty = !isFetching && !error && (!data || data.length === 0);
+    const hideControls =
+        isEmpty &&
+        !filters?.activeFilterCount &&
+        (filters?.currentPage ?? 1) <= 1;
+    const toolbarState = hideControls ? undefined : filters;
+
+    const hasHeader = !!title || !!description || !!actions;
     // The header strip stands on its own, so a table with a title but no
     // `filters` still gets a toolbar (just without the controls row).
-    const showToolbar = !!filters || !!title || !!description || !!actions;
+    const showToolbar = hideControls
+        ? hasHeader
+        : !!filters || hasHeader || !!columnConfig;
 
     return (
         <div className={cn("space-y-5", className)}>
             {showToolbar ? (
                 <TableToolbar
-                    search={filters?.search}
-                    limit={filters?.limit}
-                    sortBy={filters?.sortBy}
-                    setSearch={filters?.setSearch}
-                    setLimit={filters?.handleLimitChange}
-                    setSortBy={filters?.setSortBy}
-                    onReset={filters?.handleResetFilters}
-                    columnFilters={filters?.columnFilters}
-                    setFilter={filters?.setFilter}
-                    defaults={filters?.defaults}
-                    activeFilterCount={filters?.activeFilterCount}
-                    toolbarFilters={toolbarFilters}
+                    search={toolbarState?.search}
+                    limit={toolbarState?.limit}
+                    sortBy={toolbarState?.sortBy}
+                    setSearch={toolbarState?.setSearch}
+                    setLimit={toolbarState?.handleLimitChange}
+                    setSortBy={toolbarState?.setSortBy}
+                    onReset={toolbarState?.handleResetFilters}
+                    columnFilters={toolbarState?.columnFilters}
+                    setFilter={toolbarState?.setFilter}
+                    setFilters={toolbarState?.setFilters}
+                    defaults={toolbarState?.defaults}
+                    activeFilterCount={toolbarState?.activeFilterCount}
+                    toolbarFilters={hideControls ? undefined : toolbarFilters}
                     sortByOptions={sortByOptions}
                     limitOptions={limitOptions}
                     placeholder={placeholder}
@@ -103,14 +133,32 @@ export default function DataTable<T, S = unknown>({
                     description={description}
                     icon={icon}
                     actions={actions}
+                    columnMenu={
+                        columnConfig && !hideControls
+                            ? {
+                                  options: columnVisibility.options,
+                                  onToggle: columnVisibility.toggleColumn,
+                                  onReset: columnVisibility.resetColumns,
+                                  isCustomised: !columnVisibility.isDefault,
+                              }
+                            : undefined
+                    }
                 />
             ) : null}
 
-            <div className="overflow-hidden rounded-xl border border-muted bg-white shadow-xs">
+            <div className="overflow-hidden rounded-md border border-muted bg-white shadow-xs">
                 {isFetching ? (
                     <TableLoading
                         columnCount={totalCols}
                         rowCount={loadingRows}
+                        showToolbar={false}
+                        className="rounded-none border-0"
+                    />
+                ) : error ? (
+                    <QueryError
+                        error={error}
+                        onRetry={onRetry}
+                        title="Could not load this list"
                         className="rounded-none border-0"
                     />
                 ) : !data || data.length === 0 ? (
@@ -125,7 +173,7 @@ export default function DataTable<T, S = unknown>({
                                 {expandable ? (
                                     <TableHead className="w-10" />
                                 ) : null}
-                                {columns?.map((col) => (
+                                {shownColumns.map((col) => (
                                     <TableHead
                                         key={col.key as string}
                                         className={cn(
@@ -198,7 +246,7 @@ export default function DataTable<T, S = unknown>({
                                                 </TableCell>
                                             ) : null}
 
-                                            {columns.map((col) => (
+                                            {shownColumns.map((col) => (
                                                 <TableCell
                                                     key={col.key as string}
                                                     className={columnClasses(

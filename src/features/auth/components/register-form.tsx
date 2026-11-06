@@ -13,6 +13,7 @@ import { useRegisterUserMutation } from "@/features/auth/api/auth.api";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { registerSchema, TRegisterValues } from "@/features/auth/schemas/register.schema";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -35,8 +36,8 @@ export default function RegisterForm() {
                 form.reset();
                 router.push("/login");
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message || "Something went wrong!");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Something went wrong!"));
         }
     };
     return (

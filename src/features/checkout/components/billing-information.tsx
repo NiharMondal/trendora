@@ -50,11 +50,21 @@ export default function BillingInformation() {
         <div className="space-y-4">
             {hasAddresses && mode === "SELECT" && (
                 <>
-                    <div className="space-y-3">
+                    {/* A radio group: one address is chosen from several. Each was a
+                        clickable <div>, unreachable by keyboard. */}
+                    <div
+                        className="space-y-3"
+                        role="radiogroup"
+                        aria-label="Shipping address"
+                    >
                         {addresses.map((address) => (
-                            <div
+                            <button
+                                type="button"
+                                role="radio"
+                                aria-checked={selectedId === address.id}
                                 key={address.id}
                                 className={cn(
+                                    "w-full text-left",
                                     "border rounded-md p-3 cursor-pointer transition",
                                     selectedId === address.id
                                         ? "ring-2 ring-primary border-primary"
@@ -62,18 +72,18 @@ export default function BillingInformation() {
                                 )}
                                 onClick={() => handleSelectAddress(address.id)}
                             >
-                                <p className="font-medium">
+                                <span className="block font-medium">
                                     {address.fullName}
-                                </p>
-                                <p className="text-sm text-gray-500">
+                                </span>
+                                <span className="block text-sm text-gray-500">
                                     {address.phone}
-                                </p>
-                                <p className="text-sm text-gray-500">
+                                </span>
+                                <span className="block text-sm text-gray-500">
                                     {address.street}, {address.city},{" "}
                                     {address.state}, {address.postalCode},{" "}
                                     {address.country}
-                                </p>
-                            </div>
+                                </span>
+                            </button>
                         ))}
                     </div>
                     {errors.shippingAddressId && (

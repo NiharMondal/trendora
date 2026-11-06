@@ -12,6 +12,7 @@ import {
 } from "@/features/users/schemas/profile-form.schema";
 import { useUpdateMyProfileMutation } from "@/features/users/api/user.api";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 type TProfileFormProps = {
     defaultValues: TProfileFormValues | undefined;
     isSubmitting?: boolean;
@@ -36,8 +37,8 @@ export default function ProfileForm({ defaultValues }: TProfileFormProps) {
             if (res?.success) {
                 toast.success(res?.message);
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     return (

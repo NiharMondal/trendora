@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -15,11 +15,11 @@ import { useAllSizesQuery, useDeleteSizeMutation } from "@/features/sizes/api/si
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSize from "./edit-size";
 import { sizeColumns } from "./size-columns";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function SizeTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const categoryId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const categoryId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -30,13 +30,15 @@ export default function SizeTable() {
         data: sizes,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllSizesQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (size: TSize) => {
-        router.push(`?id=${size.id}`, { scroll: false });
+        editParam.set(size.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (size: TSize) => {
         setDeleteSizeId(size.id);
@@ -48,8 +50,8 @@ export default function SizeTable() {
             await deleteSize(deleteSizeId).unwrap();
             toast.success("Size deleted successfully");
             setDeleteSizeId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;
@@ -59,6 +61,8 @@ export default function SizeTable() {
                 columns={sizeColumns({ handleEdit, handleDelete })}
                 data={sizes?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={sizes?.meta}

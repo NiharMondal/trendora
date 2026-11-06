@@ -7,10 +7,11 @@ import { toast } from "sonner";
 import { useUpdateVendorOrderStatusMutation } from "@/features/vendors/api/vendor-order.api";
 import { vendorOrderStatusSchema } from "@/features/vendors/schemas/vendor-form.schema";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
-import type { TOrderStatus } from "@/features/orders/types/status.types";
+import type { TOrderStatus } from "@/shared/types/status.types";
 import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
 import TDInput from "@/shared/form/TDInput";
+import TDSelect from "@/shared/form/TDSelect";
 import TDTextArea from "@/shared/form/TDTextArea";
 import { Button } from "@/shared/ui/button";
 import { Form } from "@/shared/ui/form";
@@ -32,6 +33,16 @@ const VENDOR_TRANSITIONS: Record<TOrderStatus, TOrderStatus[]> = {
     CANCELED: [],
 };
 
+/**
+ * An ADMIN may do everything the state machine allows — including cancelling
+ * a shipped parcel, which is the refund-dispute case a seller cannot touch.
+ * Mirrors `allowedTransitions` in the backend's `allowedTransition.ts`.
+ */
+const ADMIN_TRANSITIONS: Record<TOrderStatus, TOrderStatus[]> = {
+    ...VENDOR_TRANSITIONS,
+    SHIPPED: ["DELIVERED", "CANCELED"],
+};
+
 const LABELS: Record<TOrderStatus, string> = {
     PENDING: "Pending",
     PROCESSING: "Mark as processing",
@@ -40,33 +51,47 @@ const LABELS: Record<TOrderStatus, string> = {
     CANCELED: "Cancel this parcel",
 };
 
+/**
+ * `nextStatus` fixes the transition (the details page opens one modal per
+ * button). Leave it out and the modal offers a picker over the transitions
+ * allowed from the parcel's current status instead.
+ */
 export default function VendorOrderStatusModal({
     vendorOrder,
     nextStatus,
     open,
     onOpenChange,
+    transitions = VENDOR_TRANSITIONS,
 }: {
     vendorOrder: TVendorOrder;
-    nextStatus: TOrderStatus | null;
+    nextStatus?: TOrderStatus | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    /** Which moves to offer; the admin order screen passes ADMIN_TRANSITIONS. */
+    transitions?: Record<TOrderStatus, TOrderStatus[]>;
 }) {
     const [updateStatus, { isLoading }] = useUpdateVendorOrderStatusMutation();
+
+    const options = transitions[vendorOrder.orderStatus] ?? [];
+    const isPicker = !nextStatus;
 
     const form = useForm({
         resolver: zodResolver(vendorOrderStatusSchema),
         defaultValues: {
-            orderStatus: (nextStatus ?? "PROCESSING") as TOrderStatus,
+            orderStatus: (nextStatus ?? options[0] ?? "PROCESSING") as TOrderStatus,
             trackingNumber: vendorOrder.trackingNumber ?? "",
             carrier: vendorOrder.carrier ?? "",
             cancelReason: "",
         },
     });
 
-    if (!nextStatus) return null;
+    const pickedStatus = form.watch("orderStatus");
+    const status = nextStatus ?? pickedStatus;
 
-    const isShipping = nextStatus === "SHIPPED";
-    const isCancelling = nextStatus === "CANCELED";
+    if (!options.includes(status)) return null;
+
+    const isShipping = status === "SHIPPED";
+    const isCancelling = status === "CANCELED";
 
     const handleSubmit = async (
         values: Parameters<typeof updateStatus>[0]["payload"],
@@ -75,9 +100,9 @@ export default function VendorOrderStatusModal({
             await updateStatus({
                 vendorOrderId: vendorOrder.id,
                 payload: {
-                    // The status comes from the button that opened the modal,
-                    // not from the form, so it cannot drift.
-                    orderStatus: nextStatus,
+                    // A fixed status comes from the button that opened the
+                    // modal, not from the form, so it cannot drift.
+                    orderStatus: status,
                     trackingNumber: isShipping
                         ? values.trackingNumber || undefined
                         : undefined,
@@ -101,7 +126,7 @@ export default function VendorOrderStatusModal({
         <TDModal
             open={open}
             onOpenChange={onOpenChange}
-            title={LABELS[nextStatus]}
+            title={isPicker ? "Update parcel status" : LABELS[status]}
             description={`Parcel #${vendorOrder.vendorOrderNumber}`}
         >
             <Form {...form}>
@@ -109,6 +134,18 @@ export default function VendorOrderStatusModal({
                     className="space-y-5"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
+                    {isPicker && (
+                        <TDSelect
+                            form={form}
+                            name="orderStatus"
+                            label="New status"
+                            options={options.map((value) => ({
+                                value,
+                                label: LABELS[value],
+                            }))}
+                        />
+                    )}
+
                     {isShipping && (
                         <>
                             <TDInput
@@ -138,8 +175,8 @@ export default function VendorOrderStatusModal({
                                 placeholder="Out of stock, cannot ship to this address…"
                             />
                             <p className="text-xs text-muted-foreground">
-                                Stock for this parcel goes back to your
-                                inventory, and the buyer is refunded for it.
+                                Stock for this parcel goes back to the
+                                store&apos;s inventory, and the buyer is refunded for it.
                                 Their other parcels are unaffected.
                             </p>
                         </>
@@ -148,7 +185,7 @@ export default function VendorOrderStatusModal({
                     {!isShipping && !isCancelling && (
                         <p className="text-sm text-muted-foreground">
                             This tells the buyer their parcel is
-                            {nextStatus === "PROCESSING"
+                            {status === "PROCESSING"
                                 ? " being prepared."
                                 : " with them."}
                         </p>
@@ -176,4 +213,4 @@ export default function VendorOrderStatusModal({
     );
 }
 
-export { VENDOR_TRANSITIONS, LABELS as STATUS_ACTION_LABELS };
+export { VENDOR_TRANSITIONS, ADMIN_TRANSITIONS, LABELS as STATUS_ACTION_LABELS };

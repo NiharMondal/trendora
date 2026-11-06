@@ -1,9 +1,11 @@
 "use client";
 
+import { Eye, RefreshCw } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { orderStatusMap, paymentStatusMap } from "@/features/orders/constants/status-maps";
-import type { TOrderStatus, TPaymentStatus } from "@/features/orders/types/status.types";
+import type { TPaymentStatus } from "@/shared/types/status.types";
 import { useMyVendorOrdersQuery } from "@/features/vendors/api/vendor-order.api";
 import { TVendorOrder } from "@/features/vendors/types/vendor-order.types";
 import { DataTable, TableLoading } from "@/shared/components/table";
@@ -14,7 +16,6 @@ import { Button } from "@/shared/ui/button";
 import { StatusBadge } from "@/shared/ui/status-badge";
 
 import VendorOrderStatusModal, {
-    STATUS_ACTION_LABELS,
     VENDOR_TRANSITIONS,
 } from "./vendor-order-status-modal";
 
@@ -26,14 +27,17 @@ import VendorOrderStatusModal, {
  */
 export default function VendorOrderTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const { data, isLoading, isFetching } = useMyVendorOrdersQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useMyVendorOrdersQuery(
         filters.queryParams as Record<string, string>,
     );
 
-    const [target, setTarget] = useState<{
-        vendorOrder: TVendorOrder;
-        nextStatus: TOrderStatus;
-    } | null>(null);
+    const [target, setTarget] = useState<TVendorOrder | null>(null);
 
     const columns: DataTableColumn<TVendorOrder>[] = [
         {
@@ -41,7 +45,12 @@ export default function VendorOrderTable() {
             header: "Parcel",
             cell: (row) => (
                 <div>
-                    <p className="font-medium">{row.vendorOrderNumber}</p>
+                    <Link
+                        href={`/vendor/orders/${row.id}`}
+                        className="font-medium hover:underline"
+                    >
+                        {row.vendorOrderNumber}
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                         Order {row.order?.orderNumber}
                     </p>
@@ -134,41 +143,33 @@ export default function VendorOrderTable() {
             key: "actions",
             header: "Actions",
             cell: (row) => {
-                // Only offer transitions the backend will accept for a vendor.
-                const nexts = VENDOR_TRANSITIONS[row.orderStatus] ?? [];
-
-                if (nexts.length === 0) {
-                    return (
-                        <span className="text-xs text-muted-foreground">
-                            No action
-                        </span>
-                    );
-                }
+                // Only offer an update when the backend will accept one.
+                const canUpdate =
+                    (VENDOR_TRANSITIONS[row.orderStatus] ?? []).length > 0;
 
                 return (
-                    <div className="flex flex-wrap gap-1">
-                        {nexts.map((next) => (
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            title="View details"
+                            asChild
+                        >
+                            <Link href={`/vendor/orders/${row.id}`}>
+                                <Eye className="size-4" />
+                            </Link>
+                        </Button>
+
+                        {canUpdate && (
                             <Button
-                                key={next}
                                 size="sm"
-                                variant={
-                                    next === "CANCELED"
-                                        ? "destructive"
-                                        : "secondary"
-                                }
-                                onClick={() =>
-                                    setTarget({
-                                        vendorOrder: row,
-                                        nextStatus: next,
-                                    })
-                                }
+                                variant="secondary"
+                                onClick={() => setTarget(row)}
                             >
-                                {STATUS_ACTION_LABELS[next].replace(
-                                    "Mark as ",
-                                    "",
-                                )}
+                                <RefreshCw className="size-3.5" />
+                                Update status
                             </Button>
-                        ))}
+                        )}
                     </div>
                 );
             },
@@ -191,18 +192,19 @@ export default function VendorOrderTable() {
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}
-                placeholder="Search orders..."
+                placeholder="Search order or parcel number, tracking, buyer..."
             />
 
             {target && (
                 <VendorOrderStatusModal
                     // Remount per target so the form picks up fresh defaults.
-                    key={`${target.vendorOrder.id}-${target.nextStatus}`}
-                    vendorOrder={target.vendorOrder}
-                    nextStatus={target.nextStatus}
+                    key={target.id}
+                    vendorOrder={target}
                     open={!!target}
                     onOpenChange={(open) => !open && setTarget(null)}
                 />

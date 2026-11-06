@@ -80,9 +80,9 @@ export default function VendorApplyGate() {
             title={`${store.storeName} is live`}
             body="Head to your seller dashboard to manage products and orders."
             action={
-                <Link href="/vendor">
-                    <Button>Go to seller dashboard</Button>
-                </Link>
+                <Button asChild>
+                    <Link href="/vendor">Go to seller dashboard</Link>
+                </Button>
             }
         />
     );

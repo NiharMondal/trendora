@@ -3,9 +3,8 @@ import {
     Banknote,
     Blend,
     Boxes,
-    Coffee,
-    Feather,
     FilePlus,
+    GalleryHorizontal,
     Heart,
     Home,
     Key,
@@ -13,6 +12,8 @@ import {
     LayoutDashboard,
     type LucideIcon,
     MapPinHouse,
+    ReceiptText,
+    RotateCcw,
     Scaling,
     ScrollText,
     Settings,
@@ -101,9 +102,10 @@ export const adminDashboardLinks: TSidebarLink[] = [
         children: [
             { title: "All Products", url: "/admin/product-list", index: true },
             { title: "Add Product", url: "/admin/add-product" },
+            { title: "Featured Products", url: "/admin/product-list/featured" },
         ],
     },
-    { title: "Order History", url: "/admin/order-list", icon: FilePlus },
+    { title: "Order List", url: "/admin/order-list", icon: FilePlus },
     {
         title: "Vendors",
         icon: Store,
@@ -133,12 +135,19 @@ export const adminDashboardLinks: TSidebarLink[] = [
         icon: User2,
     },
     {
-        title: "Featured Products",
-        url: "/admin/featured-products",
-        icon: Feather,
+        title: "Hero Slides",
+        icon: GalleryHorizontal,
+        children: [
+            { title: "Slides", url: "/admin/slide-list", index: true },
+            { title: "Add Slide", url: "/admin/add-slide" },
+        ],
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
-    { title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
+    // Read-only: backend environment config, compared with the frontend's.
+    { title: "Settings", url: "/admin/settings", icon: Settings },
+    // An admin can check out too (every buyer route accepts ADMIN), so their
+    // own saved shipping addresses need a way in.
+    { title: "My Addresses", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Home", url: "/", icon: Home },
 ];
 
@@ -146,6 +155,7 @@ export const customerDashboardLinks: TSidebarLink[] = [
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Cart", url: "/cart", icon: ShoppingCart },
     { title: "My Orders", url: "/dashboard/my-orders", icon: ScrollText },
+    { title: "My Refunds", url: "/dashboard/my-refunds", icon: ReceiptText },
     { title: "My Reviews", url: "/dashboard/my-reviews", icon: Stars },
     { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
@@ -172,8 +182,17 @@ export const vendorDashboardLinks: TSidebarLink[] = [
     },
     { title: "Orders", url: "/vendor/orders", icon: ScrollText },
     { title: "Payouts", url: "/vendor/payouts", icon: Banknote },
+    // Refunds on parcels this store SOLD. "My Refunds" below is the buyer view.
+    { title: "Refunds", url: "/vendor/refunds", icon: RotateCcw },
+    { title: "Reviews", url: "/vendor/reviews", icon: Star },
     { title: "Store Settings", url: "/vendor/settings", icon: Settings },
+    // The owner's own account (name, phone, avatar), not the store's.
+    { title: "Profile", url: "/dashboard/profile", icon: User2 },
     { title: "My Orders", url: "/dashboard/my-orders", icon: FilePlus },
+    // A seller is a shopper too — these are refunds on orders they PLACED.
+    { title: "My Refunds", url: "/dashboard/my-refunds", icon: ReceiptText },
+    // The shipping addresses offered at checkout — a seller buys too.
+    { title: "Address", url: "/dashboard/address", icon: MapPinHouse },
     { title: "Wishlist", url: "/dashboard/wishlist", icon: Heart },
     { title: "Change Password", url: "/dashboard/change-password", icon: Key },
     { title: "Home", url: "/", icon: Home },

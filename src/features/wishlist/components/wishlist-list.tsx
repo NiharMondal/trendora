@@ -16,9 +16,16 @@ import {
 } from "@/features/wishlist/api/wishlist.api";
 
 import WishlistCard from "./wishlist-card";
+import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function WishlistList() {
-    const { data: wishlist, isLoading } = useMyWishlistQuery();
+    const {
+        data: wishlist,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useMyWishlistQuery();
     const [removeFromWishlist, { isLoading: isRemoving }] =
         useRemoveFromWishlistMutation();
 
@@ -32,12 +39,21 @@ export default function WishlistList() {
             await removeFromWishlist(selected.id).unwrap();
             toast.success("Removed from wishlist");
             setSelected(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message ?? "Failed to remove item");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Failed to remove item"));
         }
     };
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load your wishlist"
+            />
+        );
+    }
 
     if (wishlistItems.length === 0) {
         return (

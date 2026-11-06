@@ -1,44 +1,103 @@
-import { Edit, EllipsisVertical, Eye, Trash } from "lucide-react";
+import {
+    Edit,
+    EllipsisVertical,
+    ExternalLink,
+    Eye,
+    EyeOff,
+    Star,
+    Trash,
+} from "lucide-react";
 import Link from "next/link";
 
-import { productStatusMap } from "@/features/orders/constants/status-maps";
-import { DataTableColumn } from "@/shared/components/table/table-types";
-import { StatusBadge } from "@/shared/ui/status-badge";
-import TDPopover from "@/shared/components/td-popover";
+import FeaturedToggle from "@/features/products/components/featured/featured-toggle";
+import StockPill from "@/features/products/components/stock-pill";
+import { useToggleFeatured } from "@/features/products/hooks/use-toggle-featured";
 import { TProduct } from "@/features/products/types/product.types";
-import { Button } from "@/shared/ui/button";
+import { isProductLive } from "@/features/products/utils/product-visibility";
+import { DataTableColumn } from "@/shared/components/table/table-types";
+import TDPopover from "@/shared/components/td-popover";
 import { cn } from "@/shared/lib/utils";
-import Image from "next/image";
+import { Button } from "@/shared/ui/button";
 
+import {
+    optionalProductColumns,
+    PriceCell,
+    ProductIdentityCell,
+    ReviewStatusCell,
+} from "./product-cells";
+
+/**
+ * Feature / unfeature from the row menu — the same action as the Featured
+ * column's star, for when that column is hidden.
+ */
+function FeatureMenuItem({ product }: { product: TProduct }) {
+    const { toggle, isLoading } = useToggleFeatured(product);
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            className="justify-start truncate"
+            onClick={toggle}
+            disabled={isLoading}
+        >
+            <Star className={cn(product.isFeatured && "fill-current")} />
+            {product.isFeatured ? "Unfeature" : "Feature on home page"}
+        </Button>
+    );
+}
+
+/** Live / awaiting approval / hidden — read-only, the seller owns the switch. */
+function VisibilityPill({ product }: { product: TProduct }) {
+    const live = isProductLive(product);
+    return (
+        <span
+            className={cn(
+                "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium",
+                live
+                    ? "bg-success-50 text-success-600"
+                    : product.isPublished
+                      ? "bg-warning-50 text-warning-600"
+                      : "bg-muted text-muted-foreground",
+            )}
+            // Published but not approved is the confusing case: the seller
+            // has switched it on and shoppers still cannot see it.
+            title={
+                live
+                    ? "On the storefront"
+                    : product.isPublished
+                      ? "Published by the store, waiting on approval"
+                      : "Hidden by the store"
+            }
+        >
+            {live ? (
+                <Eye className="size-3" aria-hidden="true" />
+            ) : (
+                <EyeOff className="size-3" aria-hidden="true" />
+            )}
+            {live ? "Live" : product.isPublished ? "Awaiting approval" : "Hidden"}
+        </span>
+    );
+}
+
+/**
+ * Admin catalogue columns. The product and actions columns are pinned; the
+ * rest can be shown or hidden from the toolbar's "Columns" menu, and the
+ * less-used ones (`optionalProductColumns`) start hidden. Shared cells live
+ * in `product-cells.tsx` so this table and the seller's read the same.
+ */
 export const productColumns = (
     handleDeleteProduct: (id: string) => void,
 ): DataTableColumn<TProduct>[] => [
     {
         key: "name",
         header: "Product",
-        cell: (row) => {
-            const isMain = row?.images?.find((image) => image.isMain);
-            return (
-                <div className="flex items-center gap-x-2">
-                    <div className="size-12 flex items-center justify-center bg-gray-100 rounded-md">
-                        <Image
-                            src={isMain?.url || ""}
-                            alt={row.name}
-                            className="size-full rounded-md"
-                            loading="lazy"
-                            width={60}
-                            height={60}
-                        />
-                    </div>
-                    <Link
-                        href={`/products/${row.slug}`}
-                        className="font-medium hover:underline"
-                    >
-                        <p className="font-medium">{row.name}</p>
-                    </Link>
-                </div>
-            );
-        },
+        hideable: false,
+        cell: (row) => (
+            <ProductIdentityCell
+                product={row}
+                href={`/admin/product-list/${row.id}`}
+            />
+        ),
     },
     {
         key: "vendor",
@@ -47,7 +106,7 @@ export const productColumns = (
             row.vendor ? (
                 <Link
                     href={`/stores/${row.vendor.slug}`}
-                    className="text-sm hover:underline"
+                    className="whitespace-nowrap text-sm hover:underline"
                 >
                     {row.vendor.storeName}
                 </Link>
@@ -58,106 +117,97 @@ export const productColumns = (
     {
         key: "status",
         header: "Review",
-        cell: (row) => (
-            <StatusBadge statusMap={productStatusMap} status={row.status} />
-        ),
+        cell: (row) => <ReviewStatusCell product={row} />,
     },
     {
         key: "isPublished",
-        header: "Live",
-        cell: (row) => (
-            <span
-                className={cn(
-                    "px-3 py-0.5 bg-success/10 text-success rounded-full text-xs",
-                    { "bg-warning/5 text-warning": !row.isPublished },
-                )}
-            >
-                {row.isPublished ? "Yes" : "No"}
-            </span>
-        ),
-    },
-    {
-        key: "category",
-        header: "Category",
-        cell: (row) => <span>{row.category?.name}</span>,
+        header: "Visibility",
+        cell: (row) => <VisibilityPill product={row} />,
     },
     {
         key: "basePrice",
-        header: "Base Price",
-    },
-    {
-        key: "brand",
-        header: "Brand",
-        cell: (row) => <span>{row.brand?.name}</span>,
-    },
-    {
-        key: "discountPrice",
-        header: "Discount Price",
-        cell: (row) => (
-            <span>{row.discountPrice ? row.discountPrice : "N/A"}</span>
-        ),
+        header: "Price",
+        cell: (row) => <PriceCell product={row} />,
     },
     {
         key: "stockQuantity",
-        header: "Quantity",
+        header: "Stock",
+        cell: (row) => <StockPill quantity={row.stockQuantity} />,
     },
-
     {
         key: "isFeatured",
         header: "Featured",
-        cell: (row) => (
-            <span
-                className={cn(
-                    "px-3 py-0.5 bg-success/10 text-success rounded-full",
-                    {
-                        "bg-warning/5 text-warning": !row.isFeatured,
-                    },
-                )}
-            >
-                {row.isFeatured ? "Yes" : "No"}
-            </span>
-        ),
+        // Featuring happens here, on the row — there is no separate screen
+        // for it. The "Featured" tab is this table pre-filtered.
+        cell: (row) => <FeaturedToggle product={row} />,
     },
+    ...optionalProductColumns,
     {
         key: "actions",
         header: "Actions",
+        hideable: false,
+        align: "right",
         cell: (row) => (
             <TDPopover
                 trigger={
-                    <Button variant="ghost" size="icon">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Actions for ${row.name}`}
+                    >
                         <EllipsisVertical />
                     </Button>
                 }
-                className="max-w-[150px]"
+                className="w-60"
+                
             >
-                <div className="flex flex-col gap-2">
-                    <Link href={`/products/${row.slug}`} className="min-w-full">
-                        <Button
-                            variant={"secondary"}
-                            size={"sm"}
-                            className="w-full"
-                        >
-                            <Eye />
-                            View
-                        </Button>
-                    </Link>
-                    <Link
-                        href={`/admin/product-list/update-product/${row.id}`}
-                        className="min-w-full"
+                <div className="flex flex-col gap-1">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start"
+                        asChild
                     >
+                        <Link href={`/admin/product-list/${row.id}`}>
+                            <Eye />
+                            View details
+                        </Link>
+                    </Button>
+                    {isProductLive(row) && (
                         <Button
-                            variant={"outline"}
-                            size={"sm"}
-                            className=" min-w-full"
+                            variant="ghost"
+                            size="sm"
+                            className="justify-start"
+                            asChild
+                        >
+                            <Link
+                                href={`/products/${row.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <ExternalLink />
+                                View on storefront
+                            </Link>
+                        </Button>
+                    )}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start"
+                        asChild
+                    >
+                        <Link
+                            href={`/admin/product-list/update-product/${row.id}`}
                         >
                             <Edit />
                             Edit
-                        </Button>
-                    </Link>
-
+                        </Link>
+                    </Button>
+                    <FeatureMenuItem product={row} />
                     <Button
-                        variant={"destructive"}
-                        size={"sm"}
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => handleDeleteProduct(row.id)}
                     >
                         <Trash />

@@ -1,5 +1,6 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { ComponentType, useState } from "react";
 import { toast } from "sonner";
 
@@ -19,11 +20,12 @@ import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSizeGroup from "./edit-size-group";
 import { sizeGroupColumns } from "./size-group-columns";
 import { PackageIcon, PlusIcon } from "lucide-react";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const sizeGroupId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const sizeGroupId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -36,13 +38,15 @@ export default function CategoryTable() {
         data: sizeGroups,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllSizeGroupsQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (sizeGroup: TSizeGroup) => {
-        router.push(`?id=${sizeGroup.id}`, { scroll: false });
+        editParam.set(sizeGroup.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (sizeGroup: TSizeGroup) => {
         setDeleteSizeGroupId(sizeGroup.id);
@@ -54,8 +58,8 @@ export default function CategoryTable() {
             await deleteSizeGroup(deleteSizeGroupId).unwrap();
             toast.success("Size group deleted successfully");
             setDeleteSizeGroupId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;
@@ -65,6 +69,8 @@ export default function CategoryTable() {
                 columns={sizeGroupColumns({ handleEdit, handleDelete })}
                 data={sizeGroups?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={sizeGroups?.meta}

@@ -1,14 +1,13 @@
-import { Menu, Search, ShoppingBasket, User, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 import Container from "@/shared/components/container";
-import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-
 import { useNavbarSearch } from "./use-navbar-search";
+import NavbarActions from "./navbar-actions";
 
 export default function MobileNavbar({
 	cartQuantity = 0,
@@ -50,18 +49,7 @@ export default function MobileNavbar({
 						className="h-20 w-[130px] hover:scale-105 duration-300"
 					/>
 				</Link>
-				<div className="flex gap-x-4">
-					<div className="relative">
-						<ShoppingBasket className="hover:text-accent/80 hover:scale-110 duration-200" />
-						<Badge
-							className="text-accent/90 size-5 rounded-full border-none absolute -top-2 -right-4"
-							variant={"outline"}
-						>
-							{cartQuantity}
-						</Badge>
-					</div>
-					<User className="hover:text-accent/80 hover:scale-110 duration-200" />
-				</div>
+				<NavbarActions cartQuantity={cartQuantity} compact />
 			</Container>
 			{isSearched && (
 				<motion.div
@@ -78,6 +66,9 @@ export default function MobileNavbar({
 					className="absolute top-20 left-0 right-0 h-20  border-b z-50 bg-gray-100"
 				>
 					<div className="h-full flex items-center justify-between gap-x-5 p-5 z-50">
+						{/* Escape-to-close listens on the form so it catches the key from
+							the input inside it; the form itself is not a click target. */}
+						{/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
 						<form
 							role="search"
 							onSubmit={handleSubmit}
@@ -94,6 +85,7 @@ export default function MobileNavbar({
 								// The panel only exists because the shopper just
 								// tapped the search icon, so the keyboard should
 								// already be up by the time it lands.
+								// eslint-disable-next-line jsx-a11y/no-autofocus -- opened by the user's tap on the search icon
 								autoFocus
 								value={query}
 								onChange={(event) =>

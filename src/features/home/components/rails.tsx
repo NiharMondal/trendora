@@ -5,11 +5,13 @@ import {
     useBestSellersQuery,
     useNewArrivalsQuery,
 } from "@/features/products/api/product.api";
+import { featuredRailQuery } from "@/features/products/constants/featured";
+import { useRecentlyViewedProducts } from "@/features/products/hooks/use-recently-viewed";
 
 import ProductRail from "./product-rail";
 
 /**
- * The four product shelves, each a query bound to the shared `ProductRail`.
+ * The product shelves, each a query bound to the shared `ProductRail`.
  *
  * They are separate components rather than one parameterised by an endpoint
  * because each calls a different hook, and hooks cannot be selected at
@@ -20,6 +22,25 @@ import ProductRail from "./product-rail";
  * rail itself uses, so "View all" always lands on exactly the wider set the
  * shelf was a preview of.
  */
+
+/**
+ * Hand-picked by admins (star on `/admin/product-list`; the Featured tab lists them). No "View all":
+ * `isFeatured` is not a storefront filter key (PRODUCT_FILTER_KEYS /
+ * STOREFRONT_FILTER_KEYS), so a `/products?isFeatured=true` link would be
+ * dropped by `useTableFilters` and land on the whole catalogue.
+ */
+export function FeaturedRail() {
+    const { data, isLoading } = useAllProductsQuery(featuredRailQuery);
+
+    return (
+        <ProductRail
+            title="Featured"
+            description="Hand-picked from across the marketplace."
+            products={data?.result}
+            isLoading={isLoading}
+        />
+    );
+}
 
 export function DealsRail() {
     const { data, isLoading } = useAllProductsQuery({
@@ -82,6 +103,24 @@ export function TopRatedRail() {
             description="Highest rated by buyers who actually received them."
             href="/products?sortBy=averageRating:desc&minRating=1"
             products={data?.result}
+            isLoading={isLoading}
+        />
+    );
+}
+
+/**
+ * The shopper's own trail, from this browser's storage. It has no "View all":
+ * there is no catalogue URL for "what I looked at". Renders nothing on a first
+ * visit, like every other shelf with no data.
+ */
+export function RecentlyViewedRail() {
+    const { products, isLoading } = useRecentlyViewedProducts();
+
+    return (
+        <ProductRail
+            title="Recently viewed"
+            description="Pick up where you left off."
+            products={products}
             isLoading={isLoading}
         />
     );
