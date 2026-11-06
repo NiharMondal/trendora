@@ -84,6 +84,27 @@ export type TVendor = {
         vendorOrders?: number;
         payouts?: number;
     };
+    /**
+     * Where settlements are sent. Free-form JSON from the application form;
+     * returned to the owner and to an admin.
+     */
+    payoutDetails?: Record<string, unknown> | null;
+    /**
+     * The moderation trail. Newest first on the admin read, oldest first on
+     * `/vendors/me`. `actor` and `ipAddress` are present for an ADMIN only.
+     */
+    statusHistory?: TVendorStatusEvent[];
+};
+
+export type TVendorStatusEvent = {
+    id: string;
+    /** Null for the application itself. */
+    oldStatus: TVendorStatus | null;
+    newStatus: TVendorStatus;
+    note?: string | null;
+    createdAt: string;
+    ipAddress?: string | null;
+    actor?: { id: string; name: string } | null;
 };
 
 /** `GET /vendors/me/dashboard`. */
