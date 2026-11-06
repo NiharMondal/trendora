@@ -15,6 +15,7 @@ import {
 
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { productColumns } from "./product-columns";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function ProductTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
@@ -42,8 +43,8 @@ export default function ProductTable() {
             await deleteProduct(deleteProductId).unwrap();
             toast.success("Product deleted successfully");
             setDeleteProductId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     const handleDeleteProduct = async (id: string) => {

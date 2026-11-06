@@ -48,13 +48,20 @@ export type TOrderPaymentResponse = {
 	amount: string;
 	method: string;
 	status: string;
-	transactionId: any;
-	paymentGateway: any;
-	gatewayResponse: any;
-	failureReason: any;
-	paidAt: any;
-	refundedAt: any;
-	refundAmount: any;
+	// Nullable columns on the backend's `Payment`, and optional because list
+	// reads select only some of them (XR-05).
+	transactionId?: string | null;
+	paymentGateway?: string | null;
+	/**
+	 * The raw gateway payload. ADMIN only — `sanitizePayment` strips it for
+	 * buyers and sellers — and deliberately `unknown`: narrow before reading.
+	 */
+	gatewayResponse?: unknown;
+	failureReason?: string | null;
+	paidAt?: string | null;
+	refundedAt?: string | null;
+	/** Money that actually went back (Prisma Decimal, so a string). */
+	refundAmount?: string | null;
 	createdAt: string;
 	updatedAt: string;
 };

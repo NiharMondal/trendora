@@ -7,6 +7,7 @@ import {
     useAllCategoryQuery,
     useCreateCategoryMutation,
 } from "@/features/categories/api/category.api";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function AddCategory() {
     const [addCategory, { isLoading }] = useCreateCategoryMutation();
@@ -22,8 +23,8 @@ export default function AddCategory() {
         try {
             await addCategory(values).unwrap();
             toast.success("Category added successfully");
-        } catch (error: any) {
-            toast.error(error.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     return (

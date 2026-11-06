@@ -19,6 +19,7 @@ import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import EditSizeGroup from "./edit-size-group";
 import { sizeGroupColumns } from "./size-group-columns";
 import { PackageIcon, PlusIcon } from "lucide-react";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
     const router = useRouter();
@@ -56,8 +57,8 @@ export default function CategoryTable() {
             await deleteSizeGroup(deleteSizeGroupId).unwrap();
             toast.success("Size group deleted successfully");
             setDeleteSizeGroupId(null);
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
     if (isLoading) return <TableLoading />;

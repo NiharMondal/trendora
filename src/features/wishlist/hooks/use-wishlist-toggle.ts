@@ -9,6 +9,7 @@ import {
     useRemoveFromWishlistMutation,
 } from "@/features/wishlist/api/wishlist.api";
 import { useUserInfoClient } from "@/features/auth/utils/user-info";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 /**
  * Encapsulates the "add / remove product from wishlist" toggle so the heart
@@ -44,8 +45,8 @@ export const useWishlistToggle = (productId: string) => {
                 await addToWishlist({ productId }).unwrap();
                 toast.success("Added to wishlist");
             }
-        } catch (error: any) {
-            toast.error(error?.data?.message ?? "Something went wrong");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Something went wrong"));
         }
     };
 

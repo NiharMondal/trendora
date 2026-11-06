@@ -11,6 +11,7 @@ import {
     useUpdateProductMutation,
 } from "@/features/products/api/product.api";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function UpdateProduct({ productId }: { productId: string }) {
     // Read through the vendor/admin endpoint, not the public one: an ADMIN
@@ -39,8 +40,8 @@ export default function UpdateProduct({ productId }: { productId: string }) {
                 payload: values,
             });
             toast.success("Product updated successfully");
-        } catch (error: any) {
-            toast.error(error?.data?.message);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error));
         }
     };
 

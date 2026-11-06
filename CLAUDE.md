@@ -15,12 +15,16 @@ pnpm lint     # eslint (see caveat below)
 
 There is no test runner configured in this project.
 
-`pnpm lint` passes (exit 0) with **48 warnings, 0 errors** — mostly `@typescript-eslint/no-explicit-any`,
-plus `@next/next/no-img-element` and a few `no-unused-vars`. `any` is used freely across the older
-code (`error: any` in catch blocks, `(row as any)[col.key]` in the table renderer), so treat the
-warning count as a baseline: don't add to it, and don't expect a clean run. Newer marketplace code
-uses `getApiErrorMessage(error)` (`shared/utils/api-error.ts`) instead of `error: any` — prefer
-that in new code.
+`pnpm lint` passes (exit 0) with **11 warnings, 0 errors**: six `@next/next/no-img-element`
+(FE-31) and five `no-unused-vars`. There are **no `no-explicit-any` warnings** since FE-27, so keep it
+that way. Treat 11 as the baseline, and don't add to it.
+
+- **A catch reads its message with `getApiErrorMessage(error, "fallback")`**
+  (`shared/utils/api-error.ts`), never `catch (error: any)` + `error.data.message`. That older
+  pattern threw inside the catch when `data` was missing, and without a fallback it toasted an
+  empty message.
+- A thrown JS error (`signIn`, a Cloudinary upload) is narrowed with `error instanceof Error`.
+- An unknown payload from the backend is typed `unknown`, not `any`.
 
 **`pnpm build` must be run as the script (`next build --turbopack`).** A bare `next build` uses
 webpack and fails on `@react-pdf/renderer`'s ESM-only package in

@@ -10,6 +10,7 @@ import {
 	useUpdateSizeGroupMutation,
 } from "@/features/size-groups/api/size-group.api";
 import QueryError from "@/shared/components/query-error";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 type EditSizeGroupProps = {
 	onClose: () => void;
@@ -47,8 +48,8 @@ export default function EditSizeGroup({ onClose }: EditSizeGroupProps) {
 				id: sizeGroupId,
 			}).unwrap();
 			toast.success("Size group updated successfully");
-		} catch (error: any) {
-			toast.error(error?.data?.message);
+		} catch (error) {
+			toast.error(getApiErrorMessage(error));
 		}
 	};
 	if (!sizeGroupId) return null;
