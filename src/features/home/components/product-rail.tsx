@@ -22,7 +22,8 @@ type ProductRailProps = {
     title: string;
     description?: string;
     /** Where "View all" goes — always a real, filtered catalogue URL. */
-    href: string;
+    /** The wider set this shelf previews. Omit when there is none. */
+    href?: string;
     products?: TProduct[];
     isLoading: boolean;
     className?: string;
@@ -76,13 +77,15 @@ export default function ProductRail({
                         )}
                     </div>
 
-                    <Link
-                        href={href}
-                        className="group flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                    >
-                        View all
-                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
+                    {href && (
+                        <Link
+                            href={href}
+                            className="group flex shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                        >
+                            View all
+                            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                    )}
                 </div>
 
                 {isLoading ? (

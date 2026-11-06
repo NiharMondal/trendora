@@ -1,13 +1,13 @@
-import { Search, ShoppingCart } from "lucide-react";
+import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 import Container from "@/shared/components/container";
 import { cn } from "@/shared/lib/utils";
-import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 
+import NavbarActions from "./navbar-actions";
 import { useNavbarSearch } from "./use-navbar-search";
 
 export default function DesktopNavbar({
@@ -65,23 +65,7 @@ export default function DesktopNavbar({
                     </Button>
                 </form>
 
-                <div className="flex items-center gap-x-10">
-                    <div className="relative">
-                        <Link href="/cart">
-                            <ShoppingCart className="hover:text-accent/80 hover:scale-110 duration-200" />
-                        </Link>
-                        <Badge
-                            className="text-accent/90 size-5 rounded-full border-none absolute -top-1 -right-4"
-                            variant={"outline"}
-                        >
-                            {cartQuantity}
-                        </Badge>
-                    </div>
-
-                    <Button asChild className="px-8">
-                        <Link href="/login">Login</Link>
-                    </Button>
-                </div>
+                <NavbarActions cartQuantity={cartQuantity} />
             </Container>
         </nav>
     );
