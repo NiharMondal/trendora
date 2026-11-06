@@ -221,7 +221,7 @@ export default function PayoutAdminTable() {
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}
-                placeholder="Search payouts..."
+                placeholder="Search store, reference, method or notes..."
             />
 
             <TDModal
