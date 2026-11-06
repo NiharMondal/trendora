@@ -41,7 +41,7 @@ export default function TDSelect<T extends FieldValues>({
     options = [],
     className,
     required,
-    size,
+    size="default",
 }: TDSelectProps<T>) {
     return (
 		<FormField

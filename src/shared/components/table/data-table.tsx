@@ -110,7 +110,7 @@ export default function DataTable<T, S = unknown>({
                 />
             ) : null}
 
-            <div className="overflow-hidden rounded-xl border border-muted bg-white shadow-xs">
+            <div className="overflow-hidden rounded-md border border-muted bg-white shadow-xs">
                 {isFetching ? (
                     <TableLoading
                         columnCount={totalCols}

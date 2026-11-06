@@ -36,7 +36,7 @@ export default function TDInput<T extends FieldValues>({
     disabled,
     ornament,
     required,
-    inputSize,
+    inputSize = "default",
 }: TDInputProps<T>) {
     return (
         <FormField
