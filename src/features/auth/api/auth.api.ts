@@ -22,7 +22,6 @@ export const authApi = baseApi.injectEndpoints({
                     body: payload,
                 };
             },
-            invalidatesTags: ["auth"],
         }),
         loginUser: builder.mutation<
             TServerResponse<TAuthLoginResponse>,
@@ -33,7 +32,6 @@ export const authApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["auth"],
         }),
 
         oAuthLogin: builder.mutation({
@@ -41,7 +39,6 @@ export const authApi = baseApi.injectEndpoints({
                 url: `/auth/google`,
                 method: "GET",
             }),
-            invalidatesTags: ["auth"],
         }),
         changePassword: builder.mutation({
             query: (payload) => ({
@@ -49,7 +46,6 @@ export const authApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["auth"],
         }),
         // Always a generic 200 — the response is identical whether or not the
         // account exists, so callers must never branch on it (XR-11).

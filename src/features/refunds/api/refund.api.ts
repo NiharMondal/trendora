@@ -67,7 +67,7 @@ export const refundApi = baseApi.injectEndpoints({
         retryRefund: builder.mutation<TServerResponse<TRefund>, string>({
             query: (id) => ({ url: `/refunds/${id}/retry`, method: "PATCH" }),
             // A successful refund changes the payment status, so orders go stale.
-            invalidatesTags: ["refunds", "orders", "payments"],
+            invalidatesTags: ["refunds", "orders"],
         }),
 
         retryAllRefunds: builder.mutation<
@@ -75,7 +75,7 @@ export const refundApi = baseApi.injectEndpoints({
             void
         >({
             query: () => ({ url: "/refunds/retry-all", method: "POST" }),
-            invalidatesTags: ["refunds", "orders", "payments"],
+            invalidatesTags: ["refunds", "orders"],
         }),
 
         /** Money already returned outside the gateway (cash, bank transfer). */
@@ -88,7 +88,7 @@ export const refundApi = baseApi.injectEndpoints({
                 method: "POST",
                 body: payload,
             }),
-            invalidatesTags: ["refunds", "orders", "payments"],
+            invalidatesTags: ["refunds", "orders"],
         }),
 
         cancelRefund: builder.mutation<
@@ -100,7 +100,7 @@ export const refundApi = baseApi.injectEndpoints({
                 method: "PATCH",
                 body: payload,
             }),
-            invalidatesTags: ["refunds", "orders", "payments"],
+            invalidatesTags: ["refunds", "orders"],
         }),
     }),
 });

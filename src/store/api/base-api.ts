@@ -53,13 +53,16 @@ export const baseApi = createApi({
     reducerPath: "baseApi",
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
+    // Every tag here must be PROVIDED by some query. Invalidating a tag that
+    // nothing provides is a silent no-op: "auth" and "payments" were declared
+    // and invalidated eight times between them while refreshing nothing (FE-24).
+    // Payment state arrives inside order payloads, so refund mutations refresh
+    // it by invalidating "orders".
     tagTypes: [
-        "auth",
         "products",
         "users",
         "categories",
         "orders",
-        "payments",
         "brands",
         "address",
         "slides",
