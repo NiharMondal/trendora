@@ -14,6 +14,7 @@ import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import { formatDate } from "@/shared/lib/format-date-time";
 import Link from "next/link";
+import QueryError from "@/shared/components/query-error";
 
 /**
  * Admin view of one order.
@@ -24,11 +25,30 @@ import Link from "next/link";
  * (what each store earns, what the platform keeps) is shown per parcel.
  */
 export default function OrderDetails({ slug }: { slug: string }) {
-    const { data: orderData, isLoading } = useOrderByIdQuery(slug);
+    const {
+        data: orderData,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useOrderByIdQuery(slug);
     const order = orderData?.result;
     const shippingSnapshot = order?.shippingSnapshot;
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this order"
+                notFound={{
+                    title: "Order not found",
+                    description:
+                        "It may belong to another account, or the link is wrong.",
+                }}
+            />
+        );
+    }
 
     const vendorOrders = order?.vendorOrders ?? [];
 

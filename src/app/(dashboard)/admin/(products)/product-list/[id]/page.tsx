@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { use, useState } from "react";
 
+import SpinnerLoading from "@/shared/components/loading/spinner-loading";
+import QueryError from "@/shared/components/query-error";
 import { cn } from "@/shared/lib/utils";
 import { useMyVendorProductByIdQuery } from "@/features/products/api/product.api";
 
@@ -13,23 +15,52 @@ export default function ProductDetailsPage({
     const { id } = use(params);
     // Admin endpoint: the public one hides unapproved listings, which are
     // exactly the ones being inspected here.
-    const { data: product, isLoading } = useMyVendorProductByIdQuery(id);
+    const {
+        data: product,
+        isLoading,
+        error,
+        refetch,
+    } = useMyVendorProductByIdQuery(id);
     const [selectedImage, setSelectedImage] = useState(0);
 
-    if (isLoading) return;
+    if (isLoading) return <SpinnerLoading />;
+    if (error || !product?.result) {
+        return (
+            <QueryError
+                error={error}
+                onRetry={refetch}
+                title="Could not load this product"
+                notFound={{
+                    title: "Product not found",
+                    description:
+                        "It may have been deleted, or the link is wrong.",
+                }}
+            />
+        );
+    }
+
+    // A listing can have no images at all; indexing into an empty array used
+    // to throw here and blank the page.
+    const mainImage = product.result.images?.[selectedImage]?.url;
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/** Image section */}
             <div className="space-y-2">
                 <div className="bg-transparent rounded-2xl overflow-hidden">
-                    <Image
-                        src={product?.result?.images[selectedImage].url || ""}
-                        alt="top-product-image"
-                        height={600}
-                        width={700}
-                        className="aspect-auto "
-                    />
+                    {mainImage ? (
+                        <Image
+                            src={mainImage}
+                            alt="top-product-image"
+                            height={600}
+                            width={700}
+                            className="aspect-auto "
+                        />
+                    ) : (
+                        <div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-muted text-sm text-muted-foreground">
+                            No image
+                        </div>
+                    )}
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                     {product?.result.images.map((image, index) => (

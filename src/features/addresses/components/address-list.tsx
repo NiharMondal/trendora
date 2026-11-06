@@ -14,6 +14,7 @@ import {
 import React, { useState } from "react";
 import { toast } from "sonner";
 import EditAddress from "./edit-address";
+import QueryError from "@/shared/components/query-error";
 
 export default function AddressList() {
 	const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -21,7 +22,12 @@ export default function AddressList() {
 		null,
 	);
 	const [deleteAddress] = useDeleteAddressMutation();
-	const { data: addresses, isLoading } = useMyAddressQuery(undefined);
+	const {
+	    data: addresses,
+	    isLoading,
+	    error: loadError,
+	    refetch: retryLoad,
+	} = useMyAddressQuery(undefined);
 
 	const handleCloseDrawer = () => {
 		setSelectedAddress(null);
@@ -44,6 +50,15 @@ export default function AddressList() {
 	};
 
 	if (isLoading) return <SpinnerLoading />;
+	if (loadError) {
+		return (
+			<QueryError
+				error={loadError}
+				onRetry={retryLoad}
+				title="Could not load your addresses"
+			/>
+		);
+	}
 
 	const addressList = addresses?.result ?? [];
 

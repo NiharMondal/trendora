@@ -262,23 +262,43 @@ with a failed query. It does not get this 404.
 
 ---
 
-### FE-06 · Only one component in the entire app handles `isError`
-**P0 · M · robustness**
+### ~~FE-06~~ · Only one component in the entire app handles `isError`
+**✅ FIXED 2026-09-24 · robustness**
 
-**Now:** The only `isError` read in the codebase is
-`src/features/vendors/components/vendor-dashboard.tsx:30`.
+**Was:** the only `isError` read was `vendor-dashboard.tsx:30`, and even that one got it wrong: any
+failure rendered "No store yet — Apply now", so a network blip told an approved seller to apply
+to sell. Its "Apply now" button also did nothing, because `NoDataFound` renders the action only
+when `onAction` is passed as well. Everywhere else, a failed request looked exactly like an empty
+list. `admin/product-list/[id]/page.tsx` returned `undefined` while loading and then **threw** on a
+product with no images (`images[selectedImage].url`).
 
-**Gap:** Everywhere else a failed request renders as an empty list — indistinguishable from "you
-have no orders". The user is told nothing went wrong, so they do not retry.
+**Now there is one pattern, in three pieces:**
 
 Worst case: `src/app/(dashboard)/admin/(products)/product-list/[id]/page.tsx:19` is
 `if (isLoading) return;` — returning `undefined` renders nothing — and then `:27` dereferences
 `product?.result?.images[selectedImage].url`, which **throws on a product with no images**. With
 FE-05 fixed, that now lands on `(dashboard)/error.tsx` rather than a blank screen — but it still throws.
 
-**Fix:** Establish one error pattern and apply it to the list/detail screens. `DataTable` already
-renders `NoDataFound` when empty; give it an error state too, so every table inherits the fix.
-Fix the unguarded array index at `product-list/[id]/page.tsx:27` regardless.
+**Where it is applied:**
+
+| | |
+| --- | --- |
+| Tables | all 18 `DataTable` consumers pass `error={listError} onRetry={refetchList}`. `order-table.tsx` fed `isLoading` into `isFetching`, so a retry or page change showed no skeleton; fixed. `recent-orders-table.tsx` had no loading state at all; fixed. |
+| Detail pages | `(root)/products/[slug]`, `admin/product-list/[id]` (plus the image crash: a "No image" placeholder), `store-front.tsx` (the store and, separately, its product grid) and `order-details.tsx`. Each shows "not found" copy on a 404 and a retry otherwise. |
+| Edit forms | brand, category, size, size group, review, `update-product`, `vendor-update-product`, `profile-component` and `store-settings-form`. **A failed load no longer renders the form.** Its blank defaults would have been saved over the real record. `profile-component` also gained the loading gate it never had. |
+| Lists and widgets | wishlist, addresses, store directory, outstanding balances, featured table and `marketplace-overview`, which rendered every tile as `0` on failure. |
+| `vendor-dashboard.tsx` | a **403** shows the backend's message verbatim. `requireApprovedVendor` sends an actionable one for each case: no store, pending, rejected (with the reason) or suspended. It comes with a working link to `/vendor/apply`. Any other failure is a real error with a retry. |
+
+Render-time throws are a separate concern and belong to the FE-05 boundaries. `QueryError` is for
+the part of a page that a query feeds.
+
+**Deliberately left:**
+
+- The home-page sections still render `null` on failure. They self-hide by design, and one
+  missing shelf is better than an error box on the landing page.
+- Option lists inside forms (category, size, product and billing selects) still show an empty
+  dropdown when their request fails.
+- Nothing calls `notFound()` (see FE-05).
 
 ---
 
@@ -629,7 +649,7 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
 ### FE-27 · Thirty-nine `any`s, eight of them in type definitions
 **P2 · M · types**
 
-`pnpm lint` passes at **52 warnings / 0 errors**; treat that as the baseline and do not add to it.
+`pnpm lint` passes at **51 warnings / 0 errors** (was 52 before FE-04); treat that as the baseline and do not add to it.
 
 - **26 are `catch (error: any)`** followed by `error?.data?.message`, with no shared helper.
   `reviews/components/review-section/write-review.tsx:36` uses `error.data.message` **without**
@@ -640,7 +660,7 @@ The four `console.error`s in `auth-options.ts` and `TDImageUpload.tsx` are legit
   (`phone: any`).
 - 4 are `as any` around `form.setValue` in `shared/form/TDImageUpload.tsx:57,58,139,140`.
 
-**Fix:** Extract one `getApiErrorMessage(error)` helper and replace all 26 catches — that alone
+**Fix:** The helper now exists — `getApiErrorMessage(error)` in `shared/utils/api-error.ts` (FE-06). Replace all 26 catches with it — that alone
 clears roughly half the lint baseline. Then type the eight definition fields from the Prisma
 schema.
 

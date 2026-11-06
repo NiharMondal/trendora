@@ -10,6 +10,7 @@ import { TProductFormValues } from "@/features/products/schemas/product-form.sch
 import { mapProductToFormValues } from "@/features/products/utils/map-product-form-values";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
+import QueryError from "@/shared/components/query-error";
 
 /**
  * A vendor editing their own listing.
@@ -23,11 +24,30 @@ import NoDataFound from "@/shared/components/no-data-found";
  * disappearing from the storefront after an edit is alarming otherwise.
  */
 export default function VendorUpdateProduct({ id }: { id: string }) {
-    const { data, isLoading } = useMyVendorProductByIdQuery(id);
+    const {
+        data,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useMyVendorProductByIdQuery(id);
     const [updateProduct, { isLoading: isUpdating }] =
         useUpdateProductMutation();
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load this product"
+                notFound={{
+                    title: "Product not found",
+                    description:
+                        "It may have been deleted, or it belongs to another store.",
+                }}
+            />
+        );
+    }
 
     const product = data?.result;
 

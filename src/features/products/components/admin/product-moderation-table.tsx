@@ -45,7 +45,13 @@ export default function ProductModerationTable({
     const [rejectTarget, setRejectTarget] = useState<TProduct | null>(null);
     const [reason, setReason] = useState("");
 
-    const { data, isLoading, isFetching } = useAllProductsForAdminQuery({
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllProductsForAdminQuery({
         ...(filters.queryParams as Record<string, string>),
         ...(statusFilter !== "ALL" ? { status: statusFilter } : {}),
     });
@@ -219,6 +225,8 @@ export default function ProductModerationTable({
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

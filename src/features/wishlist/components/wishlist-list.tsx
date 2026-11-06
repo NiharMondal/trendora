@@ -16,9 +16,15 @@ import {
 } from "@/features/wishlist/api/wishlist.api";
 
 import WishlistCard from "./wishlist-card";
+import QueryError from "@/shared/components/query-error";
 
 export default function WishlistList() {
-    const { data: wishlist, isLoading } = useMyWishlistQuery();
+    const {
+        data: wishlist,
+        isLoading,
+        error: loadError,
+        refetch: retryLoad,
+    } = useMyWishlistQuery();
     const [removeFromWishlist, { isLoading: isRemoving }] =
         useRemoveFromWishlistMutation();
 
@@ -38,6 +44,15 @@ export default function WishlistList() {
     };
 
     if (isLoading) return <SpinnerLoading />;
+    if (loadError) {
+        return (
+            <QueryError
+                error={loadError}
+                onRetry={retryLoad}
+                title="Could not load your wishlist"
+            />
+        );
+    }
 
     if (wishlistItems.length === 0) {
         return (

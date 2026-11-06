@@ -38,6 +38,8 @@ export default function CategoryTable() {
         data: categories,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllCategoryQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (category: TCategory) => {
@@ -67,6 +69,8 @@ export default function CategoryTable() {
                 columns={categoryColumns({ handleEdit, handleDelete })}
                 data={categories?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={categories?.meta}

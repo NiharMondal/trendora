@@ -12,6 +12,8 @@ export default function UserManagementTable() {
         data: users,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllUserQuery(filters.queryParams as Record<string, string>);
 
     if (isLoading) return <TableLoading />;
@@ -21,6 +23,8 @@ export default function UserManagementTable() {
             columns={userManagementColumns}
             data={users?.result || []}
             rowKey={(row) => row.id}
+            error={listError}
+            onRetry={refetchList}
             isFetching={isFetching}
             filters={filters}
             meta={users?.meta}

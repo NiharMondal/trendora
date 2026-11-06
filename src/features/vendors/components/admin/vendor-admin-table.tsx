@@ -50,7 +50,13 @@ export default function VendorAdminTable({
     } | null>(null);
     const [settingsTarget, setSettingsTarget] = useState<TVendor | null>(null);
 
-    const { data, isLoading, isFetching } = useAllVendorsForAdminQuery({
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllVendorsForAdminQuery({
         ...(filters.queryParams as Record<string, string>),
         ...(statusFilter ? { status: statusFilter } : {}),
     });
@@ -256,6 +262,8 @@ export default function VendorAdminTable({
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

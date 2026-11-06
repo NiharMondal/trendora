@@ -21,7 +21,13 @@ import {
 import { myReviewColumns } from "./my-reviews-columns";
 
 export default function MyReviewsList() {
-	const { data: reviews, isLoading, isFetching } = useGetMyReviewsQuery();
+	const {
+	    data: reviews,
+	    isLoading,
+	    isFetching,
+	    error: listError,
+	    refetch: refetchList,
+	} = useGetMyReviewsQuery();
 
 	const [editReview, setEditReview] = useState<TReview | null>(null);
 	const [deleteReview, setDeleteReview] = useState<TReview | null>(null);
@@ -82,6 +88,8 @@ export default function MyReviewsList() {
 			<DataTable<TReview>
 				data={reviewList}
 				rowKey={(row) => row.id}
+				error={listError}
+				onRetry={refetchList}
 				columns={myReviewColumns({ handleEdit, handleDelete })}
 				isFetching={isFetching}
 			/>

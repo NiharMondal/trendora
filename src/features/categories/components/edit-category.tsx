@@ -10,6 +10,7 @@ import {
 	useCategoryByIdQuery,
 	useUpdateCategoryMutation,
 } from "@/features/categories/api/category.api";
+import QueryError from "@/shared/components/query-error";
 type EditCategoryProps = {
 	onClose: () => void;
 	categories: TCategory[];
@@ -20,7 +21,12 @@ export default function EditCategory({
 }: EditCategoryProps) {
 	const searchParams = useSearchParams();
 	const categoryId = searchParams.get("categoryId");
-	const { data: selectedCategory, isLoading } = useCategoryByIdQuery(
+	const {
+	    data: selectedCategory,
+	    isLoading,
+	    error: loadError,
+	    refetch: retryLoad,
+	} = useCategoryByIdQuery(
 		categoryId!,
 		{
 			skip: !categoryId,
@@ -70,6 +76,15 @@ export default function EditCategory({
 	};
 	if (!categoryId) return null;
 	if (isLoading) return <SpinnerLoading />;
+	if (loadError) {
+		return (
+			<QueryError
+				error={loadError}
+				onRetry={retryLoad}
+				title="Could not load this category"
+			/>
+		);
+	}
 	return (
 		<div>
 			<CategoryForm

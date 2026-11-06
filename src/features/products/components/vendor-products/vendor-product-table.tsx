@@ -40,7 +40,13 @@ export default function VendorProductTable({
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
-    const { data, isLoading, isFetching } = useMyVendorProductsQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useMyVendorProductsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -113,6 +119,8 @@ export default function VendorProductTable({
                 })}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

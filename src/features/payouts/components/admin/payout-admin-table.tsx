@@ -28,7 +28,13 @@ const apiMessage = (error: unknown) =>
 /** Every payout run, and the controls to settle or fail one. */
 export default function PayoutAdminTable() {
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
-    const { data, isLoading, isFetching } = useAllPayoutsQuery(
+    const {
+        data,
+        isLoading,
+        isFetching,
+        error: listError,
+        refetch: refetchList,
+    } = useAllPayoutsQuery(
         filters.queryParams as Record<string, string>,
     );
 
@@ -210,6 +216,8 @@ export default function PayoutAdminTable() {
                 columns={columns}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}

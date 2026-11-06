@@ -30,6 +30,8 @@ export default function ProductTable() {
         data: products,
         isLoading,
         isFetching,
+        error: listError,
+        refetch: refetchList,
     } = useAllProductsForAdminQuery(
         filters.queryParams as Record<string, string>,
     );
@@ -56,6 +58,8 @@ export default function ProductTable() {
                 columns={productColumns(handleDeleteProduct)}
                 data={products?.result || []}
                 rowKey={(row) => row.id}
+                error={listError}
+                onRetry={refetchList}
                 isFetching={isFetching}
                 filters={filters}
                 meta={products?.meta}
