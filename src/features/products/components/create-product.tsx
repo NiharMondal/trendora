@@ -47,7 +47,6 @@ export default function CreateProduct() {
             isLoading={isLoading}
             vendorOptions={vendorOptions}
             showSubmitForReview
-            showFeatured
         />
     );
 }

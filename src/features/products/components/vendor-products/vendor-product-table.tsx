@@ -1,5 +1,6 @@
 "use client";
 
+import { Boxes, Package, Plus } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -7,24 +8,22 @@ import { toast } from "sonner";
 import {
     useDeleteProductMutation,
     useMyVendorProductsQuery,
-    useSetProductPublishedMutation,
-    useSubmitProductForReviewMutation,
 } from "@/features/products/api/product.api";
+import { useVendorProductFilters } from "@/features/products/hooks/use-vendor-product-filters";
 import { TProduct } from "@/features/products/types/product.types";
 import { DataTable, TableLoading } from "@/shared/components/table";
 import TDButton from "@/shared/components/td-button";
 import { TDModal } from "@/shared/components/td-modal";
-import { allSortOptions } from "@/shared/constants/sort-options";
-import { useTableFilters } from "@/shared/hooks/use-table-filters";
+import { productTableSortOptions } from "@/shared/constants/sort-options";
 import { Button } from "@/shared/ui/button";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 import { vendorProductColumns } from "./vendor-product-columns";
 
-const apiMessage = (error: unknown) =>
-    (error as { data?: { message?: string } })?.data?.message;
-
 /**
- * The seller's own catalogue, in every moderation state.
+ * The seller's own catalogue, in every moderation state — the same
+ * `DataTable`, filter panel and column menu as the admin catalogue, with the
+ * seller's columns and actions (`vendor-product-columns.tsx`).
  *
  * Uses `/products/vendor/my-products` rather than `/products`, because the
  * public listing only returns approved+published rows — a seller has to be
@@ -37,7 +36,7 @@ export default function VendorProductTable({
     editHref?: (product: TProduct) => string;
     addHref?: string;
 }) {
-    const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
+    const { filters, toolbarFilters } = useVendorProductFilters();
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     const {
@@ -50,37 +49,8 @@ export default function VendorProductTable({
         filters.queryParams as Record<string, string>,
     );
 
-    const [submitForReview, { isLoading: isSubmitting }] =
-        useSubmitProductForReviewMutation();
-    const [setPublished, { isLoading: isPublishing }] =
-        useSetProductPublishedMutation();
     const [deleteProduct, { isLoading: isDeleting }] =
         useDeleteProductMutation();
-
-    const handleSubmitForReview = async (id: string) => {
-        try {
-            await submitForReview(id).unwrap();
-            toast.success("Sent for review");
-        } catch (error) {
-            toast.error(apiMessage(error) ?? "Could not submit for review");
-        }
-    };
-
-    const handleTogglePublished = async (product: TProduct) => {
-        try {
-            await setPublished({
-                id: product.id,
-                isPublished: !product.isPublished,
-            }).unwrap();
-            toast.success(
-                product.isPublished
-                    ? "Hidden from the storefront"
-                    : "Now live on the storefront",
-            );
-        } catch (error) {
-            toast.error(apiMessage(error) ?? "Could not change visibility");
-        }
-    };
 
     const confirmDelete = async () => {
         if (!deleteId) return;
@@ -89,34 +59,29 @@ export default function VendorProductTable({
             toast.success("Product deleted");
             setDeleteId(null);
         } catch (error) {
-            toast.error(apiMessage(error) ?? "Could not delete product");
+            toast.error(getApiErrorMessage(error, "Could not delete product"));
         }
     };
 
     if (isLoading) return <TableLoading />;
 
     return (
-        <div className="space-y-5 bg-white p-5 rounded-md">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h5 className="text-lg font-semibold">My products</h5>
-                    <p className="text-sm text-muted-foreground">
-                        A listing goes live once it is approved and published.
-                    </p>
-                </div>
-                <Button asChild>
-                    <Link href={addHref}>Add product</Link>
-                </Button>
-            </div>
-
+        <div className="space-y-5 rounded-md bg-white p-5">
             <DataTable
-                columns={vendorProductColumns({
-                    onSubmitForReview: handleSubmitForReview,
-                    onTogglePublished: handleTogglePublished,
-                    onDelete: setDeleteId,
-                    editHref,
-                    isMutating: isSubmitting || isPublishing,
-                })}
+                title="My products"
+                description="A listing goes live once it is approved and you publish it."
+                icon={Package}
+                actions={
+                    <Button size="sm" className="h-9" asChild>
+                        <Link href={addHref}>
+                            <Plus />
+                            Add product
+                        </Link>
+                    </Button>
+                }
+                columnConfig={{ storageKey: "vendor-products" }}
+                toolbarFilters={toolbarFilters}
+                columns={vendorProductColumns({ onDelete: setDeleteId, editHref })}
                 data={data?.result || []}
                 rowKey={(row) => row.id}
                 error={listError}
@@ -124,8 +89,24 @@ export default function VendorProductTable({
                 isFetching={isFetching}
                 filters={filters}
                 meta={data?.meta}
-                sortByOptions={allSortOptions}
+                sortByOptions={productTableSortOptions}
+                // The seller's list searches name and description.
                 placeholder="Search your products..."
+                emptyState={{
+                    icon: Boxes,
+                    title: filters.isFiltered
+                        ? "No products match these filters"
+                        : "You have no products yet",
+                    description: filters.isFiltered
+                        ? "Try clearing a filter or two."
+                        : "Add your first product, then submit it for review.",
+                    ...(filters.isFiltered
+                        ? {
+                              actionLabel: "Clear all filters",
+                              onAction: filters.handleResetFilters,
+                          }
+                        : {}),
+                }}
             />
 
             <TDModal
@@ -134,7 +115,7 @@ export default function VendorProductTable({
                 title="Delete this product?"
                 description="It will be removed from your store. Past orders keep their record of it."
             >
-                <div className="flex justify-end gap-2 mt-4">
+                <div className="mt-4 flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setDeleteId(null)}>
                         Cancel
                     </Button>

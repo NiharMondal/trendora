@@ -31,7 +31,7 @@ export function DashboardSidebar({ session, role }: TProps) {
     const userImage = data?.result?.avatar || "";
     return (
         <Sidebar collapsible="icon">
-            <SidebarHeader className="h-14 flex-row items-center justify-between border-b px-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+            <SidebarHeader className="h-13 flex-row items-center justify-between border-b px-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
                 <span className="truncate text-sm font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
                     {label}
                 </span>

@@ -343,8 +343,11 @@ state machinery:
 
 **Use `setFilters` (plural), not two `setFilter` calls,** when moving more than one param at once.
 Both build their `URLSearchParams` from the same render's snapshot, so the second silently discards
-the first — a price min/max pair loses its min. `PriceFilter` applies on submit rather than per
-keystroke for the same class of reason: a number input fires on every digit.
+the first — a price min/max pair loses its min. `PriceFilter` never applies per movement, for the same class of reason:
+it is a `react-slider-range` slider that applies on release via `onChangeCommitted` (dragging
+fires `onChange` on every pixel). The package's stylesheet is imported
+in `globals.css` **into `layer(components)`** — unlayered, it would beat every Tailwind utility put
+on the slider. A side left at its facet bound is sent as "no limit", not as that number.
 
 `app/(root)/products/page.tsx` wraps the wrapper in `<Suspense>` — Next 15 requires it for
 `useSearchParams`, and without it the route opts out of static rendering at build time.
@@ -394,11 +397,16 @@ shelf previewed — which also means **a new rail filter must be registered in
 `PRODUCT_FILTER_KEYS`** or `useTableFilters` drops it from `queryParams` and the link silently
 shows everything.
 
-**The Featured rail is curated at `/admin/featured-products`.** Both run the same
-`featuredRailQuery` (`features/products/constants/featured.ts`), so the admin's "On the home
-page now" summary is exactly what shoppers see. The rail has no "View all": `isFeatured` is not in
-`PRODUCT_FILTER_KEYS`, so a catalogue link would silently show everything. Only admin product forms
-pass `showFeatured` to `ProductForm`; the backend ignores `isFeatured` from a vendor.
+**The Featured rail is curated from the admin product table.** Featuring is a per-row action —
+the Featured column's star and the row menu, both via `useToggleFeatured` →
+`PATCH /products/:id/feature` (admin-only). It is **not** a form field: `isFeatured` is gone from
+`ProductForm`, its schema and `mapProductToFormValues`, and the backend strips it from every
+create/edit. Products → **Featured** (`/admin/product-list/featured`) is the same `ProductTable`
+with `featuredOnly` (which makes `isFeatured=true` the filter *default*), under `FeaturedSummary`.
+That summary runs the rail's own `featuredRailQuery` (`features/products/constants/featured.ts`), so
+"On the home page now" is exactly what shoppers see. The old `/admin/featured-products` is a 308 in
+`next.config.ts`. The rail has no "View all": `isFeatured` is not in `PRODUCT_FILTER_KEYS`, so a
+catalogue link would silently show everything.
 
 **`CategoryTiles` reads `GET /products/filters`, not `GET /categories`.** The taxonomy is
 admin-owned and aspirational — it carries Belt, Bag, Heels and a dozen more nobody has listed a
@@ -470,6 +478,30 @@ const filters = useTableFilters({
   …
 />
 ```
+
+**Many filters → mark most of them `placement: "advanced"`.** Primary filters render inline
+beside search; advanced ones go in a collapsible panel opened from a "Filters" button in the
+header strip (beside "Columns"), which shows the active count and opens itself when the URL already
+carries one. In the panel every filter is a select, so it takes the same space with
+2 options or 200; `display: "chips"` is opt-in for a short fixed list only. Keep a big table's filter config in a
+`use-<resource>-filters` hook that returns `{ filters, toolbarFilters }` — see
+`features/products/hooks/use-admin-product-filters.ts`.
+
+**The admin and seller product tables share cells, not columns.** `product-table/product-cells.tsx`
+holds the product, review-status, price, rating and date cells plus `optionalProductColumns` (the
+hidden-by-default secondary set); `product-columns.tsx` (admin: Store, Visibility, feature toggle)
+and `vendor-products/vendor-product-columns.tsx` (seller: publish toggle, submit, read-only
+"Featured by Trendora") each keep their own list and actions. Filters are
+`use-admin-product-filters.ts` / `use-vendor-product-filters.ts`. Row actions that mutate own their
+mutation per row, so one busy row never disables the rest.
+
+**Column show/hide is opt-in per table.** Pass `columnConfig={{ storageKey: "admin-products" }}`
+and the toolbar gets a "Columns" menu; the viewer's choice is kept in `localStorage` (hidden keys
+only, read after mount so SSR markup matches — `shared/hooks/use-column-visibility.ts`). On a column,
+`hideable: false` pins it (use it for the identifying column and actions), `defaultHidden: true`
+starts it off, and `label` names it in the menu when `header` is not a string. Without
+`columnConfig`, `defaultHidden` is ignored — there would be no way to bring the column back.
+`product-table.tsx` is the reference.
 
 An empty filter value is **dropped from `queryParams`** on purpose: the backend turns any unknown
 key into a `where` clause, so `status: ""` would match nothing rather than meaning "all". The

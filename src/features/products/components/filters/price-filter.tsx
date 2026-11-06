@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Slider } from "react-slider-range";
 
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
-import TDButton from "@/shared/components/td-button";
-import { Input } from "@/shared/ui/input";
 
 type PriceFilterProps = {
     /** The range that exists in the current result set, from the server. */
@@ -14,13 +13,23 @@ type PriceFilterProps = {
     onApply: (min: string, max: string) => void;
 };
 
+type Range = [number, number];
+
+/** A URL value inside the bounds, or the bound itself when unset/garbage. */
+const toValue = (raw: string, fallback: number, bounds: Range) => {
+    const n = Number(raw);
+    if (raw === "" || Number.isNaN(n)) return fallback;
+    return Math.min(bounds[1], Math.max(bounds[0], n));
+};
+
 /**
- * Min/max price, applied on submit rather than per keystroke.
+ * Price range slider, applied on release (`onChangeCommitted`), never per
+ * movement: dragging fires `onChange` on every pixel and each would be a
+ * refetch.
  *
- * A number input fires on every digit, so live-applying would refetch on "1",
- * "12", "120" and, worse, briefly filter to `minPrice=1` on the way to 100.
- * The bounds come from the facet response and are the range of the price the
- * shopper is actually shown — the discounted one where there is a discount.
+ * The bounds come from the facet response, computed with the price filter
+ * itself left out, so the slider can always be dragged back out to the full
+ * range. They are the range of the price the shopper is actually shown.
  */
 export default function PriceFilter({
     bounds,
@@ -28,75 +37,81 @@ export default function PriceFilter({
     max,
     onApply,
 }: PriceFilterProps) {
-    const [draftMin, setDraftMin] = useState(min);
-    const [draftMax, setDraftMax] = useState(max);
+    const limits: Range = [bounds.min, bounds.max];
+    // One price in the whole result set: the slider would divide by zero, and
+    // there is nothing to drag between anyway.
+    const canSlide = bounds.max > bounds.min;
 
-    // The URL is the source of truth: a reset or a chip removal has to show up
-    // in these inputs, and they are not remounted when it happens.
-    useEffect(() => setDraftMin(min), [min]);
-    useEffect(() => setDraftMax(max), [max]);
+    const [draft, setDraft] = useState<Range>([
+        toValue(min, bounds.min, limits),
+        toValue(max, bounds.max, limits),
+    ]);
 
-    const handleApply = () => {
-        // Swapped bounds return nothing at all, which reads as a broken page.
-        const from = Number(draftMin);
-        const to = Number(draftMax);
-        const isSwapped =
-            draftMin !== "" && draftMax !== "" && from > to;
+    // The URL is the source of truth: a reset or a chip removal has to move
+    // the thumbs, and the slider is not remounted when it happens.
+    useEffect(() => {
+        setDraft([
+            toValue(min, bounds.min, [bounds.min, bounds.max]),
+            toValue(max, bounds.max, [bounds.min, bounds.max]),
+        ]);
+    }, [min, max, bounds.min, bounds.max]);
 
+    // The package hands `onChangeCommitted` the value from BEFORE a keyboard
+    // step, so commit from the latest `onChange` value instead.
+    const latest = useRef<Range>(draft);
+    latest.current = draft;
+
+    // The package renders its thumbs without a label; name them so a screen
+    // reader announces more than "slider, slider".
+    const sliderRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const thumbs = sliderRef.current?.querySelectorAll('[role="slider"]');
+        thumbs?.[0]?.setAttribute("aria-label", "Minimum price");
+        thumbs?.[1]?.setAttribute("aria-label", "Maximum price");
+    }, [canSlide]);
+
+    /**
+     * A thumb sitting on its bound is "no limit", not a limit that happens to
+     * equal today's cheapest item — so a full-range slider is no filter at all.
+     */
+    const handleCommit = () => {
+        const [lo, hi] = latest.current;
         onApply(
-            isSwapped ? draftMax : draftMin,
-            isSwapped ? draftMin : draftMax,
+            lo <= bounds.min ? "" : String(lo),
+            hi >= bounds.max ? "" : String(hi),
         );
     };
 
     return (
         <div className="border-b border-muted pb-4">
-            <p className="py-2 text-sm font-semibold">Price</p>
+            <div className="flex items-baseline justify-between py-2">
+                <p className="text-sm font-semibold">Price</p>
+                <p className="text-xs font-medium text-primary-600 tabular-nums">
+                    {canSlide
+                        ? `${currencyFormatter(draft[0])} – ${currencyFormatter(draft[1])}`
+                        : currencyFormatter(bounds.min)}
+                </p>
+            </div>
 
-            <p className="pb-2 text-xs text-muted-foreground">
-                {currencyFormatter(bounds.min)} – {currencyFormatter(bounds.max)}
-            </p>
-
-            <form
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    handleApply();
-                }}
-                className="space-y-2"
-            >
-                <div className="flex items-center gap-2">
-                    <Input
-                        type="number"
-                        inputMode="numeric"
-                        min={0}
-                        aria-label="Minimum price"
-                        placeholder={String(bounds.min)}
-                        value={draftMin}
-                        onChange={(event) => setDraftMin(event.target.value)}
-                        className="h-9"
-                    />
-                    <span className="text-muted-foreground">–</span>
-                    <Input
-                        type="number"
-                        inputMode="numeric"
-                        min={0}
-                        aria-label="Maximum price"
-                        placeholder={String(bounds.max)}
-                        value={draftMax}
-                        onChange={(event) => setDraftMax(event.target.value)}
-                        className="h-9"
+            {canSlide && (
+                // Track and thumbs take the theme's primary scale through the
+                // package's CSS variables; px-2 keeps the thumbs (centred on
+                // the ends) inside the panel.
+                <div className="px-2 pt-3 pb-1 [--slider-focus-ring-1:var(--color-primary-500)] [--slider-focus-ring-2:var(--color-primary-100)] [--slider-range-bg:var(--color-primary-500)] [--slider-track-bg:var(--color-muted)]">
+                    <Slider
+                        ref={sliderRef}
+                        min={bounds.min}
+                        max={bounds.max}
+                        value={draft}
+                        onChange={setDraft}
+                        onChangeCommitted={handleCommit}
+                        showTooltip
+                        formatTooltip={(value) => currencyFormatter(value)}
+                        trackClassName="h-1.5"
+                        thumbClassName="size-4 border-2 bg-white shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing"
                     />
                 </div>
-
-                <TDButton
-                    type="submit"
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                >
-                    Apply
-                </TDButton>
-            </form>
+            )}
         </div>
     );
 }

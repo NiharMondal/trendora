@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Layered so Tailwind utilities on the slider (price filter) can override it —
+   unlayered CSS would beat every utility regardless of specificity. */
+@import "react-slider-range/dist/slider.css" layer(components);
 
 @custom-variant dark (&:is(.dark *));
 

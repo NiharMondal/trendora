@@ -35,12 +35,6 @@ type ProductFormProps = {
     vendorOptions?: { label: string; value: string }[];
     /** Show the "submit for review" checkbox (create flow only). */
     showSubmitForReview?: boolean;
-    /**
-     * Show the "Featured" checkbox. Admin screens only: featuring puts a
-     * listing on the home page, and the backend ignores `isFeatured` from a
-     * vendor — so showing it to one would be a control that does nothing.
-     */
-    showFeatured?: boolean;
 };
 export default function ProductForm({
     productId,
@@ -49,7 +43,6 @@ export default function ProductForm({
     isLoading,
     vendorOptions,
     showSubmitForReview,
-    showFeatured,
 }: ProductFormProps) {
     const [categoryId, setCategoryId] = useState(
         defaultValues?.categoryId || "",
@@ -85,7 +78,6 @@ export default function ProductForm({
             description: "",
             gender: "",
             stockQuantity: 200,
-            isFeatured: false,
             brandId: "",
             vendorId: "",
             submitForReview: true,
@@ -196,25 +188,18 @@ export default function ProductForm({
                         required
                     />
 
-                    {(showFeatured || showSubmitForReview) && (
-                    <div className="border p-4 rounded-md space-y-4">
-                        {showFeatured && (
-                            <TDCheckbox
-                                form={form}
-                                name="isFeatured"
-                                label="Featured Product"
-                                description="Show this product in the home page's Featured rail once it is live."
-                            />
-                        )}
-                        {showSubmitForReview && (
+                    {/* No "Featured" checkbox: featuring is an admin action
+                        on the product table (PATCH /products/:id/feature),
+                        and the backend strips `isFeatured` from edits. */}
+                    {showSubmitForReview && (
+                        <div className="border p-4 rounded-md space-y-4">
                             <TDCheckbox
                                 form={form}
                                 name="submitForReview"
                                 label="Submit for review now"
                                 description="Send this listing to the admin review queue. Leave it off to keep it as a draft — either way it is not visible to shoppers until it has been approved and published."
                             />
-                        )}
-                    </div>
+                        </div>
                     )}
                 </div>
 

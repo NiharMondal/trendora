@@ -14,7 +14,8 @@ import { categorySchema, TCategoryFormValues } from "@/features/categories/schem
 
 type Props = {
     defaultValues?: TCategoryFormValues | undefined;
-    onSubmit: (values: TCategoryFormValues) => Promise<void> | void;
+    /** Resolve `false` on failure so the form keeps what was entered. */
+    onSubmit: (values: TCategoryFormValues) => Promise<boolean> | boolean;
     isSubmitting?: boolean;
     onSuccess?: () => void;
     categories: { label: string; value: string }[];
@@ -42,8 +43,13 @@ export default function CategoryForm({
         },
     });
 
-    const handleCategorySubmit = (values: TCategoryFormValues) => {
-        onSubmit(values);
+    // Reset and close only once the save has landed: resetting straight
+    // away wiped the uploaded image and closed the sheet on a failed save.
+    const handleCategorySubmit = async (values: TCategoryFormValues) => {
+        // Removing the picture leaves `{ url: "", publicId: "" }`; send that
+        // as `null` (clear it) rather than saving "" as the image.
+        const image = values.image?.url && values.image.publicId ? values.image : null;
+        if (!(await onSubmit({ ...values, image }))) return;
         hookForm.reset();
         onSuccess?.();
     };
@@ -87,7 +93,7 @@ export default function CategoryForm({
                         form={hookForm}
                         urlName="image.url"
                         publicIdName="image.publicId"
-                        folderName="categories"
+                        folderName="temp/categories"
                     />
                 </div>
 

@@ -107,6 +107,9 @@ importers:
       react-redux:
         specifier: ^9.2.0
         version: 9.2.0(@types/react@19.1.12)(react@19.1.0)(redux@5.0.1)
+      react-slider-range:
+        specifier: ^0.0.3
+        version: 0.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-smart-rating:
         specifier: ^3.0.5
         version: 3.0.5(vite@7.3.1(@types/node@20.19.13)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -3336,6 +3339,12 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
+
+  react-slider-range@0.0.3:
+    resolution: {integrity: sha512-NjrHilqyLF3/7dyT4+trIduucneUXqskaUl7099LI2E8v5tszKx7J0A+mJTPAuJ3r0M5XJr0PxfI8cOwx9JXsg==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   react-smart-rating@3.0.5:
     resolution: {integrity: sha512-go68yRkYfNUBtJw7vdSJjhz6rw1un9j2xaXcwFUbTYlnX7x0rId02EuVKFdaSWpmKWEN4RkCkYVFUF7CvApGdQ==}
@@ -7051,6 +7060,11 @@ snapshots:
       react: 19.1.0
       set-cookie-parser: 2.7.2
     optionalDependencies:
+      react-dom: 19.1.0(react@19.1.0)
+
+  react-slider-range@0.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
   react-smart-rating@3.0.5(vite@7.3.1(@types/node@20.19.13)(jiti@2.6.1)(lightningcss@1.30.2)):

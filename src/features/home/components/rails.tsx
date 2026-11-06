@@ -24,7 +24,7 @@ import ProductRail from "./product-rail";
  */
 
 /**
- * Hand-picked by admins at `/admin/featured-products`. No "View all":
+ * Hand-picked by admins (star on `/admin/product-list`; the Featured tab lists them). No "View all":
  * `isFeatured` is not a storefront filter key (PRODUCT_FILTER_KEYS /
  * STOREFRONT_FILTER_KEYS), so a `/products?isFeatured=true` link would be
  * dropped by `useTableFilters` and land on the whole catalogue.

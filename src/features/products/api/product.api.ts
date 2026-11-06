@@ -198,6 +198,23 @@ export const productApi = baseApi.injectEndpoints({
             invalidatesTags: ["products"],
         }),
 
+        /**
+         * Admin-only: put a listing in (or out of) the home page's Featured
+         * rail. Its own endpoint — the general product edit ignores
+         * `isFeatured` entirely.
+         */
+        setProductFeatured: builder.mutation<
+            TServerResponse<TProduct>,
+            { id: string; isFeatured: boolean }
+        >({
+            query: ({ id, isFeatured }) => ({
+                url: `/products/${id}/feature`,
+                method: "PATCH",
+                body: { isFeatured },
+            }),
+            invalidatesTags: ["products"],
+        }),
+
         approveProduct: builder.mutation<TServerResponse<TProduct>, string>({
             query: (id) => ({
                 url: `/products/${id}/approve`,
@@ -248,6 +265,7 @@ export const {
     useSetProductPublishedMutation,
     //
     useAllProductsForAdminQuery,
+    useSetProductFeaturedMutation,
     useApproveProductMutation,
     useRejectProductMutation,
 } = productApi;

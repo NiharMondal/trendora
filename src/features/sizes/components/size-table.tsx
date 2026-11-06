@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -18,9 +18,8 @@ import { sizeColumns } from "./size-columns";
 import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function SizeTable() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const categoryId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const categoryId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -36,10 +35,10 @@ export default function SizeTable() {
     } = useAllSizesQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (size: TSize) => {
-        router.push(`?id=${size.id}`, { scroll: false });
+        editParam.set(size.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (size: TSize) => {
         setDeleteSizeId(size.id);

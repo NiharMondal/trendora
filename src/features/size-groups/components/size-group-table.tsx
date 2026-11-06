@@ -1,5 +1,6 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useUrlParam } from "@/shared/hooks/use-url-param";
 import { ComponentType, useState } from "react";
 import { toast } from "sonner";
 
@@ -23,8 +24,8 @@ import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 export default function CategoryTable() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const sizeGroupId = searchParams.get("id");
+    const editParam = useUrlParam("id");
+    const sizeGroupId = editParam.value;
     // filter section
     const filters = useTableFilters({ defaultSortBy: "createdAt:desc" });
 
@@ -42,10 +43,10 @@ export default function CategoryTable() {
     } = useAllSizeGroupsQuery(filters.queryParams as Record<string, string>);
 
     const handleEdit = (sizeGroup: TSizeGroup) => {
-        router.push(`?id=${sizeGroup.id}`, { scroll: false });
+        editParam.set(sizeGroup.id);
     };
     const handleCloseDrawer = () => {
-        router.push(`?`, { scroll: false });
+        editParam.clear();
     };
     const handleDelete = (sizeGroup: TSizeGroup) => {
         setDeleteSizeGroupId(sizeGroup.id);
