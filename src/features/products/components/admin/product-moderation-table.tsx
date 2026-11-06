@@ -177,11 +177,11 @@ export default function ProductModerationTable({
             header: "Actions",
             cell: (row) => (
                 <div className="flex items-center gap-1">
-                    <Link href={`/admin/product-list/${row.id}`}>
-                        <Button variant="ghost" size="icon" title="Inspect">
+                    <Button variant="ghost" size="icon" title="Inspect" asChild>
+                        <Link href={`/admin/product-list/${row.id}`}>
                             <Eye className="size-4" />
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
 
                     {row.status !== "APPROVED" && (
                         <Button

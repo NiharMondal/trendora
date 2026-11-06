@@ -44,7 +44,7 @@ export default function ProductDetailsPage({
         <Container className="py-10 space-y-5">
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Photo section  */}
-                <ProductPhotoView images={product?.images} />
+                <ProductPhotoView images={product?.images} productName={product.name} />
                 {/* details section  */}
                 <ProductDetails product={product} />
             </section>
@@ -63,8 +63,10 @@ export default function ProductDetailsPage({
 
 const ProductPhotoView = ({
     images,
+    productName,
 }: {
     images: TProductImage[] | undefined;
+    productName: string;
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     return (
@@ -80,9 +82,11 @@ const ProductPhotoView = ({
                                 height={200}
                                 width={200}
                                 src={images[currentIndex]?.url}
-                                alt={item.productId}
+                                // Was the product's ID. The no-op onClick that sat here
+                                // (setCurrentIndex(currentIndex)) is gone: PhotoView
+                                // already opens the viewer on click.
+                                alt={productName}
                                 className="w-full h-[600px] object-cover rounded cursor-crosshair"
-                                onClick={() => setCurrentIndex(currentIndex)}
                                 loading="lazy"
                             />
                         ) : undefined}
@@ -92,20 +96,26 @@ const ProductPhotoView = ({
             {/* ⭐ THUMBNAILS */}
             <div className="grid grid-cols-4 gap-4">
                 {images?.map((img, index) => (
-                    <Image
+                    // A button, not a clickable <Image>: keyboard users could
+                    // not switch photos before.
+                    <button
                         key={img.id}
-                        height={80}
-                        width={100}
-                        src={img.url}
-                        alt="thumb"
-                        className={cn(
-                            "h-20 w-full object-cover rounded cursor-pointer",
-                            {
-                                "ring-2 ring-blue-500": index === currentIndex,
-                            },
-                        )}
+                        type="button"
                         onClick={() => setCurrentIndex(index)}
-                    />
+                        aria-label={`Show photo ${index + 1} of ${images.length}`}
+                        aria-pressed={index === currentIndex}
+                        className={cn("rounded focus-visible:outline-2 focus-visible:outline-primary", {
+                            "ring-2 ring-blue-500": index === currentIndex,
+                        })}
+                    >
+                        <Image
+                            height={80}
+                            width={100}
+                            src={img.url}
+                            alt=""
+                            className="h-20 w-full object-cover rounded"
+                        />
+                    </button>
                 ))}
             </div>
         </div>

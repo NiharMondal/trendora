@@ -124,36 +124,34 @@ export const productColumns = (
         cell: (row) => (
             <TDPopover
                 trigger={
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`}>
                         <EllipsisVertical />
                     </Button>
                 }
                 className="max-w-[150px]"
             >
                 <div className="flex flex-col gap-2">
-                    <Link href={`/products/${row.slug}`} className="min-w-full">
-                        <Button
+                    <Button
                             variant={"secondary"}
                             size={"sm"}
-                            className="w-full"
-                        >
+                            className="w-full" asChild>
+                        <Link href={`/products/${row.slug}`} className="min-w-full">
                             <Eye />
                             View
-                        </Button>
-                    </Link>
-                    <Link
+                        </Link>
+                    </Button>
+                    <Button
+                            variant={"outline"}
+                            size={"sm"}
+                            className=" min-w-full" asChild>
+                        <Link
                         href={`/admin/product-list/update-product/${row.id}`}
                         className="min-w-full"
                     >
-                        <Button
-                            variant={"outline"}
-                            size={"sm"}
-                            className=" min-w-full"
-                        >
                             <Edit />
                             Edit
-                        </Button>
-                    </Link>
+                        </Link>
+                    </Button>
 
                     <Button
                         variant={"destructive"}

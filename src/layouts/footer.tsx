@@ -74,12 +74,16 @@ export default function Footer() {
                         <h4>Subscribe to Our Newsletter!</h4>
 
                         <div className="flex items-center justify-between bg-white shadow gap-x-2 px-2 py-1 rounded">
+                            {/* No submit or API behind this yet (FE-38) — but a
+                                field is still announced, so it needs a name. */}
                             <input
-                                type="text"
+                                type="email"
+                                aria-label="Email address for the newsletter"
+                                autoComplete="email"
                                 placeholder="Enter your e-mail"
                                 className="border-none outline-none py-2 bg-white text-black"
                             />
-                            <Mail className="text-black" />
+                            <Mail className="text-black" aria-hidden="true" />
                         </div>
                         <p className="text-gray-300">
                             By entering your email, you agree to our Terms of

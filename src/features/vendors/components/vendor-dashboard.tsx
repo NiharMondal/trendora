@@ -99,12 +99,12 @@ export default function VendorDashboard() {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/vendor/products/add">
-                        <Button>Add product</Button>
-                    </Link>
-                    <Link href="/vendor/orders">
-                        <Button variant="outline">View orders</Button>
-                    </Link>
+                    <Button asChild>
+                        <Link href="/vendor/products/add">Add product</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                        <Link href="/vendor/orders">View orders</Link>
+                    </Button>
                 </div>
             </div>
 

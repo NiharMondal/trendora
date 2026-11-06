@@ -94,6 +94,7 @@ export default function AddressList() {
 							<TDButton
 								variant="outline"
 								size="icon"
+								aria-label={`Edit address: ${address.street}, ${address.city}`}
 								onClick={() => onEditClick(address)}
 							>
 								<Edit />
@@ -101,6 +102,7 @@ export default function AddressList() {
 							<TDButton
 								variant="destructive"
 								size="icon"
+								aria-label={`Delete address: ${address.street}, ${address.city}`}
 								onClick={() => handleDelete(address.id)}
 								isLoading={deletingId === address.id}
 							>

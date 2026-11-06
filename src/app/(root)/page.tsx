@@ -27,7 +27,8 @@ import {
  */
 export default function Home() {
     return (
-        <main>
+        // The <main> landmark is in (root)/layout.tsx; a second one here is invalid.
+        <div>
             <HeroSlider />
             <TrustStrip />
             <CategoryTiles />
@@ -38,6 +39,6 @@ export default function Home() {
             <TopRatedRail />
             <BrandStrip />
             <TopStores />
-        </main>
+        </div>
     );
 }

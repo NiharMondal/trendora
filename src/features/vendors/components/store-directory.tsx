@@ -33,6 +33,7 @@ export default function StoreDirectory() {
                 </div>
                 <Input
                     placeholder="Search stores..."
+                    aria-label="Search stores"
                     defaultValue={filters.search}
                     onChange={(event) => filters.setSearch(event.target.value)}
                     className="sm:max-w-xs bg-white"

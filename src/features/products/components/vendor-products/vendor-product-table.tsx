@@ -104,9 +104,9 @@ export default function VendorProductTable({
                         A listing goes live once it is approved and published.
                     </p>
                 </div>
-                <Link href={addHref}>
-                    <Button>Add product</Button>
-                </Link>
+                <Button asChild>
+                    <Link href={addHref}>Add product</Link>
+                </Button>
             </div>
 
             <DataTable

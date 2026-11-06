@@ -51,7 +51,7 @@ export default function ProductDetailsPage({
                     {mainImage ? (
                         <Image
                             src={mainImage}
-                            alt="top-product-image"
+                            alt={product.result.name}
                             height={600}
                             width={700}
                             className="aspect-auto "
@@ -64,9 +64,12 @@ export default function ProductDetailsPage({
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                     {product?.result.images.map((image, index) => (
-                        <div
+                        <button
+                            type="button"
                             key={image.id}
                             onClick={() => setSelectedImage(index)}
+                            aria-label={`Show image ${index + 1}`}
+                            aria-pressed={selectedImage === index}
                             className={cn(
                                 "h-[120px] sm:h-[100px] rounded-md overflow-hidden",
                                 selectedImage === index
@@ -76,12 +79,12 @@ export default function ProductDetailsPage({
                         >
                             <Image
                                 src={image.url}
-                                alt="product-image"
+                                alt=""
                                 height={200}
                                 width={200}
                                 className="h-full w-full object-top object-cover"
                             />
-                        </div>
+                        </button>
                     ))}
                 </div>
             </div>

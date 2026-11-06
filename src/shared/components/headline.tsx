@@ -41,6 +41,7 @@ export default function Headline({
                         <TooltipTrigger asChild>
                             <Button
                                 onClick={handleBack}
+                                aria-label="Go back"
                                 variant={"outline"}
                                 className="hover:bg-transparent group"
                             >
@@ -57,9 +58,9 @@ export default function Headline({
             </div>
             <div>
                 {href && buttonText && (
-                    <Link href={href}>
-                        <Button>{buttonText}</Button>
-                    </Link>
+                    <Button asChild>
+                        <Link href={href}>{buttonText}</Link>
+                    </Button>
                 )}
             </div>
             {children}

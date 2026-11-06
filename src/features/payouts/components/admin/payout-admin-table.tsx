@@ -242,6 +242,7 @@ export default function PayoutAdminTable() {
                         value={reference}
                         onChange={(event) => setReference(event.target.value)}
                         placeholder="Bank / gateway reference"
+                        aria-label="Bank or gateway reference"
                     />
                     <div className="flex justify-end gap-2">
                         <Button

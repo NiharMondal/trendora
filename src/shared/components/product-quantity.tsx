@@ -23,6 +23,8 @@ export default function ProductQuantity({
             )}
         >
             <button
+                type="button"
+                aria-label="Decrease quantity"
                 onClick={onDecrease}
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
                 disabled={quantity <= min}
@@ -33,6 +35,8 @@ export default function ProductQuantity({
                 {quantity}
             </span>
             <button
+                type="button"
+                aria-label="Increase quantity"
                 className="size-8 inline-flex justify-center items-center cursor-pointer hover:text-accent"
                 onClick={onIncrease}
             >

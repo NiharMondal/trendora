@@ -32,10 +32,14 @@ export default async function DashboardLayout({
                     <SidebarTrigger className="cursor-pointer" />
                     {role === EnumUserRole.VENDOR ? <VendorBalance /> : null}
                 </div>
-                <div className="p-2 sm:px-3 md:p-5 bg-neutral-light">
+                <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className="p-2 sm:px-3 md:p-5 bg-neutral-light outline-none"
+                >
                     <DashboardTabs role={role as EnumUserRole} />
                     {children}
-                </div>
+                </main>
             </section>
         </SidebarProvider>
     );

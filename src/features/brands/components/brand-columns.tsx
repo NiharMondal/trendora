@@ -43,7 +43,7 @@ export const brandColumns = ({
             return (
                 <TDPopover
                     trigger={
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`}>
                             <EllipsisVertical />
                         </Button>
                     }

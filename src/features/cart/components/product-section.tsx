@@ -94,6 +94,7 @@ export default function ProductSection() {
 								className="bg-none text-destructive hover:bg-destructive"
 								variant="ghost"
 								size="icon-sm"
+								aria-label={`Remove ${item.productName} from cart`}
 								onClick={() =>
 									dispatch(
 										removeCartItem({

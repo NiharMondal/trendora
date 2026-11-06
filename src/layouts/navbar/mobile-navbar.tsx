@@ -78,6 +78,9 @@ export default function MobileNavbar({
 					className="absolute top-20 left-0 right-0 h-20  border-b z-50 bg-gray-100"
 				>
 					<div className="h-full flex items-center justify-between gap-x-5 p-5 z-50">
+						{/* Escape-to-close listens on the form so it catches the key from
+							the input inside it; the form itself is not a click target. */}
+						{/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
 						<form
 							role="search"
 							onSubmit={handleSubmit}
@@ -94,6 +97,7 @@ export default function MobileNavbar({
 								// The panel only exists because the shopper just
 								// tapped the search icon, so the keyboard should
 								// already be up by the time it lands.
+								// eslint-disable-next-line jsx-a11y/no-autofocus -- opened by the user's tap on the search icon
 								autoFocus
 								value={query}
 								onChange={(event) =>
