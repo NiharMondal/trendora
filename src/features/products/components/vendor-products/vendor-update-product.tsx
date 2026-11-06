@@ -1,8 +1,10 @@
 "use client";
+import { CircleAlert } from "lucide-react";
 import { toast } from "sonner";
 
 import {
     useMyVendorProductByIdQuery,
+    useSubmitProductForReviewMutation,
     useUpdateProductMutation,
 } from "@/features/products/api/product.api";
 import ProductForm from "@/features/products/components/product-form/product-form";
@@ -11,6 +13,8 @@ import { mapProductToFormValues } from "@/features/products/utils/map-product-fo
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
 import QueryError from "@/shared/components/query-error";
+import TDButton from "@/shared/components/td-button";
+import { getApiErrorMessage } from "@/shared/utils/api-error";
 
 /**
  * A vendor editing their own listing.
@@ -32,6 +36,8 @@ export default function VendorUpdateProduct({ id }: { id: string }) {
     } = useMyVendorProductByIdQuery(id);
     const [updateProduct, { isLoading: isUpdating }] =
         useUpdateProductMutation();
+    const [submitForReview, { isLoading: isSubmitting }] =
+        useSubmitProductForReviewMutation();
 
     if (isLoading) return <SpinnerLoading />;
     if (loadError) {
@@ -64,6 +70,17 @@ export default function VendorUpdateProduct({ id }: { id: string }) {
     // stops an edit from deleting and recreating the product's media.
     const defaultValues = mapProductToFormValues(product);
 
+    // Saving a REJECTED listing leaves it REJECTED — only an APPROVED one is
+    // re-queued by an edit — so resubmitting is its own, explicit step.
+    const handleResubmit = async () => {
+        try {
+            await submitForReview(id).unwrap();
+            toast.success("Sent for review");
+        } catch (error: unknown) {
+            toast.error(getApiErrorMessage(error, "Could not submit for review"));
+        }
+    };
+
     const handleUpdate = async (values: TProductFormValues) => {
         try {
             const updated = await updateProduct({ payload: values, id }).unwrap();
@@ -86,11 +103,44 @@ export default function VendorUpdateProduct({ id }: { id: string }) {
     };
 
     return (
-        <ProductForm
-            productId={id}
-            defaultValues={defaultValues}
-            onSubmit={handleUpdate}
-            isLoading={isUpdating}
-        />
+        <div className="space-y-5">
+            {/* The list shows the reason too, but this is where the seller
+                fixes the listing, so it is repeated beside the form. */}
+            {product.status === "REJECTED" && (
+                <div
+                    role="status"
+                    className="flex flex-col gap-3 rounded-md border border-destructive-100 bg-destructive-50 p-4 text-sm sm:flex-row sm:items-start"
+                >
+                    <CircleAlert className="size-5 shrink-0 text-destructive-600" />
+                    <div className="flex-1 space-y-1">
+                        <p className="font-medium text-destructive-600">
+                            This listing was rejected
+                        </p>
+                        <p>
+                            {product.rejectionReason ??
+                                "No reason was given."}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                            Fix what the reviewer flagged and save, then submit
+                            it for review again.
+                        </p>
+                    </div>
+                    <TDButton
+                        type="button"
+                        size="sm"
+                        isLoading={isSubmitting}
+                        onClick={handleResubmit}
+                    >
+                        Submit for review
+                    </TDButton>
+                </div>
+            )}
+            <ProductForm
+                productId={id}
+                defaultValues={defaultValues}
+                onSubmit={handleUpdate}
+                isLoading={isUpdating}
+            />
+        </div>
     );
 }

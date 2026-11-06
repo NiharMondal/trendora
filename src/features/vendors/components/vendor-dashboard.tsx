@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
     Banknote,
     Boxes,
@@ -15,6 +16,7 @@ import {
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { orderStatusMap, productStatusMap } from "@/features/orders/constants/status-maps";
 import { useVendorDashboardQuery } from "@/features/vendors/api/vendor.api";
+import VendorSalesTrend from "@/features/vendors/components/vendor-sales-trend";
 import SpinnerLoading from "@/shared/components/loading/spinner-loading";
 import NoDataFound from "@/shared/components/no-data-found";
 import QueryError from "@/shared/components/query-error";
@@ -23,8 +25,44 @@ import {
     getApiErrorStatus,
 } from "@/shared/utils/api-error";
 import { Button } from "@/shared/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/ui/select";
 import { StatusBadge } from "@/shared/ui/status-badge";
 import type { TOrderStatus, TProductModerationStatus } from "@/shared/types/status.types";
+
+const RANGES = [
+    { value: "all", label: "All time", days: null },
+    { value: "7", label: "Last 7 days", days: 7 },
+    { value: "30", label: "Last 30 days", days: 30 },
+    { value: "90", label: "Last 90 days", days: 90 },
+    { value: "365", label: "Last 12 months", days: 365 },
+] as const;
+
+type TRangeValue = (typeof RANGES)[number]["value"];
+
+/**
+ * The query args for a range, computed ONCE when it is picked. Building them
+ * during render would put a fresh `new Date()` in the cache key every render,
+ * and RTK Query would refetch in a loop.
+ */
+const rangeParams = (value: TRangeValue): Record<string, string> | undefined => {
+    const days = RANGES.find((range) => range.value === value)?.days;
+    if (!days) return undefined;
+
+    // The backend buckets the trend by UTC day, so the window starts at UTC
+    // midnight. A local midnight lands mid-way through a UTC day and "last 7
+    // days" came back as 8 points, the first one partial.
+    const end = new Date();
+    const start = new Date(
+        Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate() - (days - 1)),
+    );
+    return { startDate: start.toISOString(), endDate: end.toISOString() };
+};
 
 /**
  * The seller's overview.
@@ -35,7 +73,12 @@ import type { TOrderStatus, TProductModerationStatus } from "@/shared/types/stat
  */
 export default function VendorDashboard() {
     const router = useRouter();
-    const { data, isLoading, error, refetch } = useVendorDashboardQuery();
+    const [range, setRange] = useState<{
+        value: TRangeValue;
+        params?: Record<string, string>;
+    }>({ value: "all" });
+    const { data, isLoading, isFetching, error, refetch } =
+        useVendorDashboardQuery(range.params);
 
     if (isLoading) return <SpinnerLoading />;
 
@@ -68,8 +111,16 @@ export default function VendorDashboard() {
     const dashboard = data?.result;
     if (!dashboard) return null;
 
-    const { store, overview, ordersByStatus, productsByStatus, topProducts } =
-        dashboard;
+    const {
+        store,
+        overview,
+        ordersByStatus,
+        productsByStatus,
+        topProducts,
+        salesTrend,
+    } = dashboard;
+    const rangeLabel =
+        RANGES.find((option) => option.value === range.value)?.label ?? "";
 
     return (
         <div className="space-y-5">
@@ -108,6 +159,37 @@ export default function VendorDashboard() {
                 </div>
             </div>
 
+            {/* Everything below is scoped to this range except "Ready for
+                payout", which is a balance, not a period figure. */}
+            <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                    {range.value === "all"
+                        ? "Showing all-time figures."
+                        : `Showing ${rangeLabel.toLowerCase()}.`}
+                </p>
+                <Select
+                    value={range.value}
+                    onValueChange={(value: TRangeValue) =>
+                        setRange({ value, params: rangeParams(value) })
+                    }
+                >
+                    <SelectTrigger
+                        className="w-40 bg-white"
+                        aria-label="Date range"
+                        aria-busy={isFetching}
+                    >
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {RANGES.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
             {/* Money */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 <StatCard
@@ -127,7 +209,7 @@ export default function VendorDashboard() {
                     icon={<Banknote className="size-5" />}
                     label="Ready for payout"
                     value={currencyFormatter(overview.pendingPayoutAmount)}
-                    hint={`${overview.pendingPayoutOrders} delivered order(s)`}
+                    hint={`${overview.pendingPayoutOrders} delivered order(s) · current balance`}
                 />
                 <StatCard
                     icon={<Package className="size-5" />}
@@ -136,6 +218,13 @@ export default function VendorDashboard() {
                     hint={`Avg ${currencyFormatter(overview.averageOrderValue)}`}
                 />
             </div>
+
+            <VendorSalesTrend
+                points={salesTrend ?? []}
+                // With no range the headline is all-time but the series is
+                // the backend's default 30-day window, so say which.
+                caption={range.value === "all" ? "Last 30 days" : rangeLabel}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
                 {/* Order pipeline */}

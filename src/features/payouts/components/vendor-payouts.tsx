@@ -1,6 +1,7 @@
 "use client";
 
 import { Banknote, Clock, Wallet } from "lucide-react";
+import Link from "next/link";
 
 import { currencyFormatter } from "@/features/cart/utils/calculate-order-total";
 import { payoutStatusMap } from "@/features/orders/constants/status-maps";
@@ -45,7 +46,15 @@ export default function VendorPayouts() {
         {
             key: "createdAt",
             header: "Created",
-            cell: (row) => <span>{formatDate(row.createdAt, "ll")}</span>,
+            cell: (row) => (
+                <Link
+                    href={`/vendor/payouts/${row.id}`}
+                    className="font-medium hover:underline"
+                    aria-label={`Payout of ${currencyFormatter(Number(row.amount))} created ${formatDate(row.createdAt, "ll")}`}
+                >
+                    {formatDate(row.createdAt, "ll")}
+                </Link>
+            ),
         },
         {
             key: "period",

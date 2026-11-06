@@ -115,6 +115,20 @@ export type TVendorDashboard = {
         revenue: number;
     }[];
     recentOrders: unknown[];
+    /**
+     * One zero-filled point per UTC day. It covers the requested range, or the
+     * last 30 days when none is sent (the headline figures are then all-time).
+     * Money follows the `overview` rule: paid and not cancelled.
+     */
+    salesTrend: TVendorSalesPoint[];
+};
+
+export type TVendorSalesPoint = {
+    /** `YYYY-MM-DD`, UTC. */
+    date: string;
+    orders: number;
+    grossSales: number;
+    netEarnings: number;
 };
 
 export type TVendorReview = {

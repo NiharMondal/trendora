@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { orderStatusMap, paymentStatusMap } from "@/features/orders/constants/status-maps";
@@ -47,7 +48,12 @@ export default function VendorOrderTable() {
             header: "Parcel",
             cell: (row) => (
                 <div>
-                    <p className="font-medium">{row.vendorOrderNumber}</p>
+                    <Link
+                        href={`/vendor/orders/${row.id}`}
+                        className="font-medium hover:underline"
+                    >
+                        {row.vendorOrderNumber}
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                         Order {row.order?.orderNumber}
                     </p>
