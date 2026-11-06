@@ -35,6 +35,12 @@ type ProductFormProps = {
     vendorOptions?: { label: string; value: string }[];
     /** Show the "submit for review" checkbox (create flow only). */
     showSubmitForReview?: boolean;
+    /**
+     * Show the "Featured" checkbox. Admin screens only: featuring puts a
+     * listing on the home page, and the backend ignores `isFeatured` from a
+     * vendor — so showing it to one would be a control that does nothing.
+     */
+    showFeatured?: boolean;
 };
 export default function ProductForm({
     productId,
@@ -43,6 +49,7 @@ export default function ProductForm({
     isLoading,
     vendorOptions,
     showSubmitForReview,
+    showFeatured,
 }: ProductFormProps) {
     const [categoryId, setCategoryId] = useState(
         defaultValues?.categoryId || "",
@@ -189,13 +196,16 @@ export default function ProductForm({
                         required
                     />
 
+                    {(showFeatured || showSubmitForReview) && (
                     <div className="border p-4 rounded-md space-y-4">
-                        <TDCheckbox
-                            form={form}
-                            name="isFeatured"
-                            label="Featured Product"
-                            description="Enable this to mark as a featured item"
-                        />
+                        {showFeatured && (
+                            <TDCheckbox
+                                form={form}
+                                name="isFeatured"
+                                label="Featured Product"
+                                description="Show this product in the home page's Featured rail once it is live."
+                            />
+                        )}
                         {showSubmitForReview && (
                             <TDCheckbox
                                 form={form}
@@ -205,6 +215,7 @@ export default function ProductForm({
                             />
                         )}
                     </div>
+                    )}
                 </div>
 
                 <div className="bg-white shadow rounded-md  p-5 space-y-5">

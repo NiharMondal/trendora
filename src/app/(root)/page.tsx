@@ -7,6 +7,7 @@ import TrustStrip from "@/features/home/components/trust-strip";
 import {
     BestSellersRail,
     DealsRail,
+    FeaturedRail,
     NewArrivalsRail,
     RecentlyViewedRail,
     TopRatedRail,
@@ -32,6 +33,8 @@ export default function Home() {
         <div>
             <HeroSlider />
             <TrustStrip />
+            {/* Curated picks lead; the tiles keep them off the Deals shelf. */}
+            <FeaturedRail />
             <CategoryTiles />
             <DealsRail />
             <PromoBanner />

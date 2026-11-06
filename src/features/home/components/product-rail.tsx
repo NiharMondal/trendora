@@ -92,7 +92,7 @@ export default function ProductRail({
                     <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
                         {Array.from({ length: 4 }, (_, index) => (
                             <div key={index} className="space-y-2">
-                                <Skeleton className="h-[330px] w-full rounded" />
+                                <Skeleton className="aspect-[3/4] w-full rounded-xl" />
                                 <Skeleton className="h-4 w-4/5" />
                                 <Skeleton className="h-4 w-1/3" />
                             </div>
