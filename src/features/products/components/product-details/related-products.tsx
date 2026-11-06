@@ -18,7 +18,6 @@ export default function RelatedProducts({ productId }: { productId: string }) {
     const [api, setApi] = useState<CarouselApi>();
     const [count, setCount] = useState(0);
 
-    console.log(count)
     const { data: relatedProducts } = useRelatedProductsQuery(productId, {
         skip: !productId,
     });
