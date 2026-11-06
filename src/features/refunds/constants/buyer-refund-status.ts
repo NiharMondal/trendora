@@ -1,4 +1,5 @@
 import { TRefundStatus } from "@/features/refunds/types/refund.types";
+import type { TStatusMap } from "@/shared/ui/status-badge";
 
 /**
  * Refund status in the BUYER's words. `refundStatusMap` (orders/constants) is
@@ -9,30 +10,12 @@ import { TRefundStatus } from "@/features/refunds/types/refund.types";
  * is FAILED is a buyer who has not been paid, so FAILED must never read as
  * settled.
  */
-export const buyerRefundStatusMap: Record<
-    TRefundStatus,
-    { label: string; className: string }
-> = {
-    PENDING: {
-        label: "Processing",
-        className: "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    PROCESSING: {
-        label: "On its way",
-        className: "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
-    },
-    SUCCEEDED: {
-        label: "Refunded",
-        className: "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    FAILED: {
-        label: "Delayed",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
-    CANCELED: {
-        label: "Not refunded",
-        className: "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
-    },
+export const buyerRefundStatusMap: TStatusMap<TRefundStatus> = {
+    PENDING: { label: "Processing" },
+    PROCESSING: { label: "On its way" },
+    SUCCEEDED: { label: "Refunded" },
+    FAILED: { label: "Delayed" },
+    CANCELED: { label: "Not refunded" },
 };
 
 /** One line under the badge: what the status means for the buyer. */

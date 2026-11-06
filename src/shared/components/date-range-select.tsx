@@ -71,10 +71,12 @@ export default function DateRangeSelect({
     value,
     onChange,
     isFetching,
+    size
 }: {
     value: TDateRangeValue;
     onChange: (value: TDateRangeValue) => void;
     isFetching?: boolean;
+    size?: "sm" | "default" | "lg"
 }) {
     return (
         <Select value={value} onValueChange={onChange}>
@@ -82,6 +84,7 @@ export default function DateRangeSelect({
                 className="w-40 bg-white"
                 aria-label="Date range"
                 aria-busy={isFetching}
+                size={size}
             >
                 <SelectValue />
             </SelectTrigger>

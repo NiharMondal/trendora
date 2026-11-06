@@ -3,7 +3,7 @@ import { Ban, EllipsisVertical, RotateCcw, UserCog } from "lucide-react";
 import { DataTableColumn } from "@/shared/components/table/table-types";
 import TDPopover from "@/shared/components/td-popover";
 import { Button } from "@/shared/ui/button";
-import TdAvatar from "@/shared/components/td-avatar";
+import TdUserInfo from "@/shared/components/td-user-info";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { cn } from "@/shared/lib/utils";
 import { TUser } from "@/features/users/types/user.types";
@@ -33,22 +33,11 @@ export const userManagementColumns = ({
         header: "User",
         key: "user",
         cell: (row) => (
-            <div className="flex items-center gap-x-3">
-                <TdAvatar
-                    src={row.avatar || undefined}
-                    alt={row.name}
-                    fallback={row.name?.charAt(0).toUpperCase() || "U"}
-                    className="border border-muted flex items-center justify-center rounded-full"
-                    
-                />
-                
-                <div className="space-y-0.5">
-                    <p className="font-semibold">{row.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                        {row.email ?? "No login credentials"}
-                    </p>
-                </div>
-            </div>
+            <TdUserInfo
+                name={row.name}
+                email={row.email ?? "No login credentials"}
+                avatar={row.avatar}
+            />
         ),
     },
     {

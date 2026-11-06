@@ -13,7 +13,7 @@ import NoDataFound from "@/shared/components/no-data-found";
 import QueryError from "@/shared/components/query-error";
 import { DataTable } from "@/shared/components/table";
 import { DataTableColumn } from "@/shared/components/table/table-types";
-import TdAvatar from "@/shared/components/td-avatar";
+import TdUserInfo from "@/shared/components/td-user-info";
 import { useTableFilters } from "@/shared/hooks/use-table-filters";
 import { formatDate } from "@/shared/lib/format-date-time";
 import { cn } from "@/shared/lib/utils";
@@ -40,15 +40,12 @@ const columns: DataTableColumn<TVendorReview>[] = [
         key: "user",
         header: "Buyer",
         cell: (row) => (
-            <div className="flex items-center gap-2">
-                <TdAvatar
-                    src={row.user?.avatar ?? undefined}
-                    alt={row.user?.name}
-                    size="sm"
-                    fallback={row.user?.name?.charAt(0).toUpperCase() || "B"}
-                />
-                <span className="font-medium">{row.user?.name ?? "A buyer"}</span>
-            </div>
+            <TdUserInfo
+                name={row.user?.name}
+                avatar={row.user?.avatar}
+                size="sm"
+                nameFallback="A buyer"
+            />
         ),
     },
     {

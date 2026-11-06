@@ -171,6 +171,20 @@ export type TCreateOrderPayload =
  * of which is owed to vendors. `platformCommission` is what the platform
  * actually earns; report them separately or the dashboard overstates income.
  */
+export type TTopProduct = {
+	productId: string;
+	/** The name at purchase, so a renamed listing still reads as sold. */
+	productName: string;
+	quantitySold: number;
+	/** Merchandise value of those units, before tax and shipping. */
+	revenue: number;
+	/** `null` once the listing is deleted. */
+	slug: string | null;
+	image: string | null;
+	storeName: string | null;
+	storeSlug: string | null;
+};
+
 export type TOrderAnalytics = {
 	overview: {
 		totalOrders: number;
@@ -181,11 +195,8 @@ export type TOrderAnalytics = {
 	};
 	ordersByStatus: { status: string; count: number }[];
 	vendorsByStatus: { status: string; count: number }[];
-	topProducts: {
-		productId: string;
-		productName: string;
-		quantitySold: number;
-	}[];
+	/** Best-selling products by units, cancelled parcels excluded. Top 10. */
+	topProducts: TTopProduct[];
 	topVendors: {
 		vendorId: string;
 		storeName: string | null;
@@ -196,6 +207,30 @@ export type TOrderAnalytics = {
 		vendorEarnings: number;
 	}[];
 	recentOrders: TOrder[];
+};
+
+/**
+ * `GET /orders/analytics/sales-trend` — platform sales over time (ADMIN).
+ *
+ * Zero-filled buckets: one per UTC day for a window of up to 90 days, one per
+ * UTC month beyond that. `date` is the bucket's first day (`YYYY-MM-DD`). The
+ * money uses the same rules as `TOrderAnalytics.overview`, so the series sums
+ * to the headline tiles for the same window.
+ */
+export type TSalesTrendPoint = {
+	date: string;
+	orders: number;
+	/** GMV — the total of paid orders. */
+	grossSales: number;
+	/** The platform's cut of paid, non-cancelled parcels. */
+	commission: number;
+};
+
+export type TSalesTrend = {
+	granularity: "day" | "month";
+	startDate: string;
+	endDate: string;
+	points: TSalesTrendPoint[];
 };
 
 /**

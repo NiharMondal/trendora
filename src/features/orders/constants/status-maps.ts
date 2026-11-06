@@ -6,66 +6,26 @@ import type {
     TPayoutStatus,
     TRefundStatus,
 } from "@/shared/types/status.types";
+import type { TStatusMap as StatusMap } from "@/shared/ui/status-badge";
 
-type BadgeConfig = {
-    label: string;
-    className: string; // Tailwind classes for color override
-};
-
-type StatusMap<T extends string> = Record<T, BadgeConfig>;
-
+/**
+ * Labels only — the colour comes from the status value, via `getStatusTone`
+ * in `shared/components/td-status-badge.tsx`.
+ */
 export const paymentStatusMap: StatusMap<TPaymentStatus> = {
-    PENDING: {
-        label: "Pending",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    PAID: {
-        label: "Paid",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    FAILED: {
-        label: "Failed",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
-    PARTIALLY_REFUNDED: {
-        label: "Part refunded",
-        className:
-            "bg-indigo-100 text-indigo-800 hover:bg-indigo-100 border-indigo-200",
-    },
-    REFUNDED: {
-        label: "Refunded",
-        className:
-            "bg-purple-100 text-purple-800 hover:bg-purple-100 border-purple-200",
-    },
+    PENDING: { label: "Pending" },
+    PAID: { label: "Paid" },
+    FAILED: { label: "Failed" },
+    PARTIALLY_REFUNDED: { label: "Part refunded" },
+    REFUNDED: { label: "Refunded" },
 };
 
 export const orderStatusMap: StatusMap<TOrderStatus> = {
-    PENDING: {
-        label: "Pending",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    PROCESSING: {
-        label: "Processing",
-        className:
-            "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
-    },
-    SHIPPED: {
-        label: "Shipped",
-        className: "bg-sky-100 text-sky-800 hover:bg-sky-100 border-sky-200",
-    },
-    DELIVERED: {
-        label: "Delivered",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    CANCELED: {
-        label: "Canceled",
-        className:
-            "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
-    },
+    PENDING: { label: "Pending" },
+    PROCESSING: { label: "Processing" },
+    SHIPPED: { label: "Shipped" },
+    DELIVERED: { label: "Delivered" },
+    CANCELED: { label: "Canceled" },
 };
 
 /**
@@ -74,69 +34,24 @@ export const orderStatusMap: StatusMap<TOrderStatus> = {
  * it" from "we are looking at it" from "we said no".
  */
 export const productStatusMap: StatusMap<TProductModerationStatus> = {
-    DRAFT: {
-        label: "Draft",
-        className:
-            "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
-    },
-    PENDING: {
-        label: "In review",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    APPROVED: {
-        label: "Approved",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    REJECTED: {
-        label: "Rejected",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
+    DRAFT: { label: "Draft" },
+    PENDING: { label: "In review" },
+    APPROVED: { label: "Approved" },
+    REJECTED: { label: "Rejected" },
 };
 
 export const vendorStatusMap: StatusMap<TVendorStatus> = {
-    PENDING: {
-        label: "In review",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    APPROVED: {
-        label: "Approved",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    REJECTED: {
-        label: "Rejected",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
-    SUSPENDED: {
-        label: "Suspended",
-        className:
-            "bg-orange-100 text-orange-800 hover:bg-orange-100 border-orange-200",
-    },
+    PENDING: { label: "In review" },
+    APPROVED: { label: "Approved" },
+    REJECTED: { label: "Rejected" },
+    SUSPENDED: { label: "Suspended" },
 };
 
 export const payoutStatusMap: StatusMap<TPayoutStatus> = {
-    PENDING: {
-        label: "Pending",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    PROCESSING: {
-        label: "Processing",
-        className:
-            "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
-    },
-    PAID: {
-        label: "Paid",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    FAILED: {
-        label: "Failed",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
+    PENDING: { label: "Pending" },
+    PROCESSING: { label: "Processing" },
+    PAID: { label: "Paid" },
+    FAILED: { label: "Failed" },
 };
 
 /**
@@ -145,28 +60,9 @@ export const payoutStatusMap: StatusMap<TPayoutStatus> = {
  * operator has to chase, so FAILED is styled as loudly as a payment failure.
  */
 export const refundStatusMap: StatusMap<TRefundStatus> = {
-    PENDING: {
-        label: "Owed",
-        className:
-            "bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200",
-    },
-    PROCESSING: {
-        label: "Sending",
-        className:
-            "bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200",
-    },
-    SUCCEEDED: {
-        label: "Refunded",
-        className:
-            "bg-green-100 text-green-800 hover:bg-green-100 border-green-200",
-    },
-    FAILED: {
-        label: "Failed",
-        className: "bg-red-100 text-red-800 hover:bg-red-100 border-red-200",
-    },
-    CANCELED: {
-        label: "Abandoned",
-        className:
-            "bg-gray-100 text-gray-600 hover:bg-gray-100 border-gray-200",
-    },
+    PENDING: { label: "Owed" },
+    PROCESSING: { label: "Sending" },
+    SUCCEEDED: { label: "Refunded" },
+    FAILED: { label: "Failed" },
+    CANCELED: { label: "Abandoned" },
 };

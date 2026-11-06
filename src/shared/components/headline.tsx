@@ -14,6 +14,9 @@ type THeadlineProps = {
     showBackButton?: boolean;
     href?: string;
     buttonText?: string;
+    /** Shown right beside the title, e.g. a status badge. */
+    titleExtra?: React.ReactNode;
+    /** Right-hand side: actions or page-level details. */
     children?: React.ReactNode;
 };
 export default function Headline({
@@ -22,7 +25,8 @@ export default function Headline({
     showBackButton = false,
     href,
     buttonText,
-    children
+    titleExtra,
+    children,
 }: THeadlineProps) {
     const router = useRouter();
     const handleBack = () => {
@@ -31,7 +35,7 @@ export default function Headline({
     return (
         <div
             className={cn(
-                "bg-white p-5 rounded-md border border-muted flex items-center gap-x-5 justify-between",
+                "bg-white p-5 rounded-md border border-muted flex flex-wrap items-center gap-x-5 gap-y-3 justify-between",
                 className,
             )}
         >
@@ -55,14 +59,13 @@ export default function Headline({
                 )}
 
                 <h4>{title}</h4>
+                {titleExtra}
             </div>
-            <div>
-                {href && buttonText && (
-                    <Button asChild>
-                        <Link href={href}>{buttonText}</Link>
-                    </Button>
-                )}
-            </div>
+            {href && buttonText && (
+                <Button asChild>
+                    <Link href={href}>{buttonText}</Link>
+                </Button>
+            )}
             {children}
         </div>
     );
