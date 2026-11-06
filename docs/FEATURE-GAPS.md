@@ -34,7 +34,7 @@ uses `BE-nn` and the same `XR-nn` numbers.
 | ~~FE-03~~ | ~~The home page renders only the hero slider~~ | ✅ **FIXED** 2026-09-23 | — | storefront |
 | ~~FE-04~~ | ~~Forgot-password form submits to `console.log`~~ | ✅ **FIXED** 2026-09-24 | — | auth |
 | ~~FE-05~~ | ~~No `error.tsx`, `not-found.tsx` or `loading.tsx` anywhere~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
-| ~~FE-06~~ | ~~Only one component in the app handles `isError`~~ | ✅ **FIXED** 2026-09-24 | — | robustness |
+| FE-06 | Only one component in the app handles `isError` | P0 | M | robustness |
 | FE-07 | Placeholder pages wired into live navigation | P1 | M | dashboard |
 | FE-08 | `/admin/user-management` is empty; the real table is unlinked | P1 | S | admin |
 | FE-09 | Hardcoded "Your Balance $12627" on every dashboard page | P1 | S | dashboard |
@@ -254,12 +254,11 @@ button calls `router.refresh()` and then `reset()` inside a transition. `reset()
 re-renders the client tree, so it can never recover an error thrown by a server component. The
 `digest` is shown as an "Error reference", so a user's report can be matched to the server log.
 
-`pnpm build` still reports `/`, `/products`, `/cart` and `/about-us` as `○ Static`. Verified
-against `pnpm start`: `/faq` returns 404 with the branded page.
+`pnpm build` still reports `/`, `/products`, `/cart` and `/about-us` as `○ Static`.
 
-**Still open:** nothing calls `notFound()`. A bad `/products/<slug>` or `/stores/<slug>` matches a
-real route and renders client-side, so it answers 200 with FE-06's inline "not found" state, not
-this page.
+**Still open (FE-06):** nothing calls `notFound()`. A bad `/products/<slug>` or `/stores/<slug>`
+matches a real route and is rendered client-side, so it gets a 200 and whatever that component does
+with a failed query. It does not get this 404.
 
 ---
 
@@ -275,18 +274,10 @@ product with no images (`images[selectedImage].url`).
 
 **Now there is one pattern, in three pieces:**
 
-- **`shared/utils/api-error.ts`**: `getApiErrorStatus(error)` returns the HTTP status, or
-  `undefined` when the server never answered. `getApiErrorMessage(error, fallback)` returns the
-  backend's `message` from the error envelope. When the request never reached the server it says
-  that, rather than "Something went wrong". Also `isNotFoundError(error)`. This is the helper FE-27
-  asks for.
-- **`shared/components/query-error.tsx`** (`QueryError`) is the inline "this request failed"
-  state: the backend's message plus a "Try again" button wired to the hook's `refetch`. An optional
-  `notFound` prop gives a 404 its own copy and no retry, because a missing record is not a failure.
-- **`DataTable` takes `error` and `onRetry`.** It renders `QueryError` instead of rows **even
-  when stale `data` from a previous page is still cached**. RTK Query keeps the last good result, so
-  a failed page 2 would otherwise still show page 1's rows. Pagination is hidden while in the error
-  state.
+Worst case: `src/app/(dashboard)/admin/(products)/product-list/[id]/page.tsx:19` is
+`if (isLoading) return;` — returning `undefined` renders nothing — and then `:27` dereferences
+`product?.result?.images[selectedImage].url`, which **throws on a product with no images**. With
+FE-05 fixed, that now lands on `(dashboard)/error.tsx` rather than a blank screen — but it still throws.
 
 **Where it is applied:**
 
@@ -376,7 +367,7 @@ it can be removed, or wired the way FE-02 wired the navbar — `useNavbarSearch`
 `/not-found` (:5), `/maintenance` (:6), `/faq` (:10), `/privacy-policy` (:11), `/cookie-policy`
 (:12, twice), `/terms-and-conditions` (:13) and `/dashboard-wishlist` (:19).
 
-**Gap:** Every one is a 404 — now at least the branded `not-found.tsx` (FE-05). The last
+**Gap:** Every one is a hard 404 — now at least the branded `not-found.tsx` (FE-05). The last
 is a typo for `/dashboard/wishlist`. A site with no privacy policy or terms page is also a
 compliance problem before launch.
 
