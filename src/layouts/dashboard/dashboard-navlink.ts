@@ -3,7 +3,6 @@ import {
     Banknote,
     Blend,
     Boxes,
-    Coffee,
     Feather,
     FilePlus,
     Heart,
@@ -138,7 +137,6 @@ export const adminDashboardLinks: TSidebarLink[] = [
         icon: Feather,
     },
     { title: "Reviews", url: "/admin/reviews", icon: Star },
-    { title: "Hot Offers", url: "/admin/hot-offers", icon: Coffee },
     { title: "Home", url: "/", icon: Home },
 ];
 
