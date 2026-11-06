@@ -181,6 +181,7 @@ export const vendorDashboardLinks: TSidebarLink[] = [
     },
     { title: "Orders", url: "/vendor/orders", icon: ScrollText },
     { title: "Payouts", url: "/vendor/payouts", icon: Banknote },
+    { title: "Reviews", url: "/vendor/reviews", icon: Star },
     { title: "Store Settings", url: "/vendor/settings", icon: Settings },
     { title: "My Orders", url: "/dashboard/my-orders", icon: FilePlus },
     // A seller is a shopper too — these are refunds on orders they PLACED.
