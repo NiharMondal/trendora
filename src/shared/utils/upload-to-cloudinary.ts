@@ -1,14 +1,16 @@
+import { envConfig } from "@/shared/config/env-config";
+
 export const uploadToCloudinary = async (file: File, folder: string) => {
 	const formData = new FormData();
 	formData.append("file", file);
 	formData.append(
         "upload_preset",
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_PRESET_NAME}`,
+        envConfig.cloudinary_preset_name,
     );
 	formData.append("folder", `trendora/${folder}`);
 
 	const res = await fetch(
-		`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+		`https://api.cloudinary.com/v1_1/${envConfig.cloudinary_cloud_name}/image/upload`,
 		{
 			method: "POST",
 			body: formData,

@@ -23,11 +23,12 @@ import { envConfig } from "@/shared/config/env-config";
 const round2 = (value: number) =>
     Math.round((value + Number.EPSILON) * 100) / 100;
 
-const TAX_RATE = Number(envConfig.tax_rate) || 0;
+// Validated numbers (FE-30) — no `|| 0`: a missing tax rate used to quote 0%
+// here while the backend charged its own.
+const TAX_RATE = envConfig.tax_rate;
 /** Legacy/global fallbacks — see the note above. */
-const FALLBACK_SHIPPING_FEE = Number(envConfig.shipping_cost) || 0;
-const FALLBACK_FREE_SHIPPING_THRESHOLD =
-    Number(envConfig.free_shipping_threshold) || 0;
+const FALLBACK_SHIPPING_FEE = envConfig.shipping_cost;
+const FALLBACK_FREE_SHIPPING_THRESHOLD = envConfig.free_shipping_threshold;
 
 /** Groups cart lines by their owning store, preserving insertion order. */
 export function groupCartByVendor(items: TCartItem[]): TCartVendorGroup[] {
